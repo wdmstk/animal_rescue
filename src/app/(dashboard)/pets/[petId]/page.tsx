@@ -1,5 +1,6 @@
 import { EmergencyCard } from "@/components/features/pets/emergency-card";
 import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
+import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 
 export default async function PetDetailPage({
@@ -33,6 +34,14 @@ export default async function PetDetailPage({
       </a>
 
       <PetProfileCard pet={pet} />
+
+      <PetPhotoGallery
+        photos={[
+          "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
+          "https://images.unsplash.com/photo-1548681528-6a5c45b66b42",
+          "https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8"
+        ]}
+      />
 
       <EmergencyCard
         disease="僧帽弁閉鎖不全症（軽度）"
