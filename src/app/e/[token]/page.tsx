@@ -1,11 +1,17 @@
 import { EmergencyPublicView } from "@/components/features/pets/emergency-public-view";
 
-export default function EmergencyPublicPage({ params }: { params: { token: string } }) {
+export default async function EmergencyPublicPage({
+  params
+}: {
+  params: Promise<{ token: string }>;
+}) {
+  const { token } = await params;
+
   return (
     <div className="min-h-screen bg-emergency-50 p-4">
       <div className="mx-auto w-full max-w-md">
         <EmergencyPublicView
-          token={params.token}
+          token={token}
           data={{
             petName: "モカ",
             disease: "僧帽弁閉鎖不全症（軽度）",

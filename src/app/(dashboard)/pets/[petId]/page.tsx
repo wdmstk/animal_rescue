@@ -2,9 +2,15 @@ import { EmergencyCard } from "@/components/features/pets/emergency-card";
 import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 
-export default function PetDetailPage({ params }: { params: { petId: string } }) {
+export default async function PetDetailPage({
+  params
+}: {
+  params: Promise<{ petId: string }>;
+}) {
+  const { petId } = await params;
+
   const pet = {
-    id: params.petId,
+    id: petId,
     name: "モカ",
     species: "犬",
     breed: "トイプードル",
