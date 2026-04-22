@@ -27,3 +27,8 @@
 - RLS は全テーブルで有効化
 - `auth.uid()` と所属テーブルを用いて `organization_id` 単位で許可
 - service role の利用はサーバー側の管理処理に限定
+
+## Emergency 公開参照（追加）
+- `PetEmergencyToken.token` をキーに匿名参照するため、RPC `public.get_public_emergency_by_token(uuid)` を提供
+- 返却項目は緊急表示に必要な最小項目のみ
+- `anon` には当該RPCの `execute` のみ付与し、テーブル直接アクセスは許可しない
