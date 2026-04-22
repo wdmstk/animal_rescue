@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum HouseholdRole {
+  OWNER
+  FAMILY
+}
+
+enum PetSex {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
+enum MedicalRecordType {
+  EXAM
+  SURGERY
+  LAB
+  MEDICATION
+  OTHER
+}
+
+enum VaccinationType {
+  RABIES
+  CORE
+  HEARTWORM
+  FLEA_TICK
+  OTHER
+}
+
+model Household {
+  id        String            @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  members     HouseholdMember[]
+  pets        Pet[]
+  inviteCodes HouseholdInviteCode[]
+}
+
+model HouseholdMember {
+  id          String        @id @default(uuid()) @db.Uuid
+  householdId String        @db.Uuid
+  userId      String        @db.Uuid
+  role        HouseholdRole @default(FAMILY)
+  createdAt   DateTime      @default(now())
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, userId])
+  @@index([userId])
+}
+
+model HouseholdInviteCode {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @db.Uuid
+  code        String   @unique
+  expiresAt   DateTime
+  usedAt      DateTime?
+  usedBy      String?  @db.Uuid
+  createdBy   String   @db.Uuid
+  createdAt   DateTime @default(now())
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId])
+}
+
+model Pet {
+  id               String   @id @default(uuid()) @db.Uuid
+  householdId      String   @db.Uuid
+  name             String
+  species          String
+  breed            String?
+  sex              PetSex   @default(UNKNOWN)
+  birthday         DateTime?
+  ageYears         Int?
+  weightKg         Decimal? @db.Decimal(4, 1)
+  mainPhotoUrl     String?
+  notesPersonality String?
+  notesFeatures    String?
+  microchipNumber  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  household      Household             @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  photos         PetPhoto[]
+  emergencyInfo  PetEmergencyInfo?
+  medicalRecords PetMedicalRecord[]
+  medications    PetMedication[]
+  vaccinations   PetVaccination[]
+  emergencyToken PetEmergencyToken?
+
+  @@index([householdId])
+}
+
+model PetPhoto {
+  id        String   @id @default(uuid()) @db.Uuid
+  petId      String   @db.Uuid
+  photoUrl   String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId])
+}
+
+model PetEmergencyInfo {
+  id                  String   @id @default(uuid()) @db.Uuid
+  petId                String   @unique @db.Uuid
+  disease              String?
+  allergy              String?
+  currentMedications   String?
+  vetName              String?
+  vetPhone             String?
+  emergencyContactName String?
+  emergencyContactPhone String?
+  updatedAt            DateTime @updatedAt
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model PetMedicalRecord {
+  id          String            @id @default(uuid()) @db.Uuid
+  petId       String            @db.Uuid
+  date        DateTime
+  recordType  MedicalRecordType @default(OTHER)
+  title       String
+  description String
+  photoUrl    String?
+  createdAt   DateTime          @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, date])
+}
+
+model PetMedication {
+  id        String   @id @default(uuid()) @db.Uuid
+  petId      String   @db.Uuid
+  name       String
+  dosage     String
+  frequency  String
+  startDate  DateTime
+  endDate    DateTime?
+  createdAt  DateTime @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, startDate])
+}
+
+model PetVaccination {
+  id        String          @id @default(uuid()) @db.Uuid
+  petId      String          @db.Uuid
+  type       VaccinationType
+  date       DateTime
+  nextDue    DateTime?
+  createdAt  DateTime        @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, date])
+}
+
+model PetEmergencyToken {
+  id         String   @id @default(uuid()) @db.Uuid
+  petId      String   @unique @db.Uuid
+  token      String   @unique @db.Uuid
+  isActive   Boolean  @default(true)
+  rotatedAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
