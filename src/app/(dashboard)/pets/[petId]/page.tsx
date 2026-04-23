@@ -1,4 +1,5 @@
 import { EmergencyCard } from "@/components/features/pets/emergency-card";
+import { EmergencyQrShareCard } from "@/components/features/pets/emergency-qr-share-card";
 import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
@@ -50,6 +51,8 @@ export default async function PetDetailPage({
         vet="みなと動物病院 03-1234-5678"
         contact="山田 花子 090-1234-5678"
       />
+
+      <EmergencyQrShareCard token="demo-token" />
 
       <MedicalTimeline
         items={[
