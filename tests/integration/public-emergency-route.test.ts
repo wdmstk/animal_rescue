@@ -75,4 +75,52 @@ describe("GET /api/public/emergency/[token]", () => {
       emergencyContactPhone: "090-0000-0000"
     });
   });
+
+  it("normalizes nullable and whitespace fields in response payload", async () => {
+    rpcMock.mockResolvedValue({
+      data: [
+        {
+          pet_name: "Mugi",
+          disease: "  ",
+          current_medications: " Renal meds ",
+          allergy: null,
+          vet_name: " ",
+          vet_phone: null,
+          emergency_contact_name: " Owner ",
+          emergency_contact_phone: "090-0000-0000"
+        }
+      ],
+      error: null
+    });
+
+    const response = await GET(new Request("http://localhost"), {
+      params: { token: "11111111-1111-4111-8111-111111111111" }
+    });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data).toEqual({
+      petName: "Mugi",
+      disease: null,
+      medications: "Renal meds",
+      allergy: null,
+      vetName: null,
+      vetPhone: null,
+      emergencyContactName: "Owner",
+      emergencyContactPhone: "090-0000-0000"
+    });
+  });
+
+  it("throws when RPC execution fails", async () => {
+    rpcMock.mockResolvedValue({
+      data: null,
+      error: { message: "db timeout" }
+    });
+
+    await expect(
+      GET(new Request("http://localhost"), {
+        params: { token: "11111111-1111-4111-8111-111111111111" }
+      })
+    ).rejects.toThrow("Failed to load public emergency data: db timeout");
+  });
 });
