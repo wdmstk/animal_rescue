@@ -40,6 +40,7 @@ export default async function PetDetailPage({
       <PetProfileCard pet={pet} />
 
       <PetPhotoGallery
+        petId={petId}
         photos={[
           "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
           "https://images.unsplash.com/photo-1548681528-6a5c45b66b42",
