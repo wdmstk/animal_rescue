@@ -1,11 +1,11 @@
 import { EmergencyCard } from "@/components/features/pets/emergency-card";
 import { EmergencyQrShareCard } from "@/components/features/pets/emergency-qr-share-card";
 import { HealthTrackingPanel } from "@/components/features/pets/health-tracking-panel";
-import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
+import { MedicalRecordManager } from "@/components/features/pets/medical-record-manager";
 import { MedicationCalendar } from "@/components/features/pets/medication-calendar";
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
-import { VaccinationHistory } from "@/components/features/pets/vaccination-history";
+import { VaccinationManager } from "@/components/features/pets/vaccination-manager";
 
 export default async function PetDetailPage({
   params
@@ -55,7 +55,7 @@ export default async function PetDetailPage({
         contact="山田 花子 090-1234-5678"
       />
 
-      <EmergencyQrShareCard token="demo-token" />
+      <EmergencyQrShareCard petId={petId} initialToken="demo-token" />
 
       <MedicationCalendar
         periods={[
@@ -64,30 +64,20 @@ export default async function PetDetailPage({
         ]}
       />
 
-      <VaccinationHistory
-        items={[
+      <VaccinationManager
+        petId={petId}
+        initialItems={[
           { type: "狂犬病", date: "2026-03-20", nextDue: "2027-03-20" },
           { type: "混合ワクチン", date: "2025-04-10", nextDue: "2026-04-10" },
           { type: "フィラリア", date: "2026-04-01", nextDue: "2026-05-01" }
         ]}
       />
 
-      <section className="rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="text-base font-bold text-slate-900">記録を追加</h2>
-        <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-          <button type="button" className="rounded-lg bg-slate-900 px-3 py-2 font-semibold text-white">
-            診察を追加
-          </button>
-          <button type="button" className="rounded-lg bg-slate-100 px-3 py-2 font-semibold text-slate-700">
-            検査を追加
-          </button>
-        </div>
-      </section>
-
       <HealthTrackingPanel petId={petId} />
 
-      <MedicalTimeline
-        items={[
+      <MedicalRecordManager
+        petId={petId}
+        initialItems={[
           {
             id: "1",
             date: "2026-04-01",
