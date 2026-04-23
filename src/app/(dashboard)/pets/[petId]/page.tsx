@@ -4,6 +4,7 @@ import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
 import { MedicationCalendar } from "@/components/features/pets/medication-calendar";
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
+import { VaccinationHistory } from "@/components/features/pets/vaccination-history";
 
 export default async function PetDetailPage({
   params
@@ -59,6 +60,14 @@ export default async function PetDetailPage({
         periods={[
           { name: "ピモベンダン", startDate: "2026-01-01", endDate: null },
           { name: "整腸剤", startDate: "2026-04-20", endDate: "2026-04-25" }
+        ]}
+      />
+
+      <VaccinationHistory
+        items={[
+          { type: "狂犬病", date: "2026-03-20", nextDue: "2027-03-20" },
+          { type: "混合ワクチン", date: "2025-04-10", nextDue: "2026-04-10" },
+          { type: "フィラリア", date: "2026-04-01", nextDue: "2026-05-01" }
         ]}
       />
 
