@@ -43,3 +43,8 @@ npm run test:e2e
 - 公開URLは UUID トークン
 - RLSポリシーは `supabase/migrations/20260423_rls.sql`
 - `SUPABASE_SERVICE_ROLE_KEY` はサーバーのみ
+
+## 開発運用
+- 並列実装フロー: `docs/development-workflow.md`
+- PRテンプレート: `docs/pr-template-ja.md`
+- PR本文は `gh pr create --body-file` を使い、改行崩れを防ぐ
