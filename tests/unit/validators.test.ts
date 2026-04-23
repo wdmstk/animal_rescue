@@ -1,0 +1,28 @@
+import { describe, expect, it } from "vitest";
+import { emergencyInfoInputSchema } from "../../src/lib/validators/emergency";
+import { petInputSchema } from "../../src/lib/validators/pet";
+
+describe("validators", () => {
+  it("rejects invalid pet species", () => {
+    const result = petInputSchema.safeParse({
+      householdId: "c4a5c8b5-2dc0-4a9a-8d95-218f6e0aef54",
+      name: "モカ",
+      species: "rabbit",
+      sex: "UNKNOWN"
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts emergency info with nullable fields", () => {
+    const result = emergencyInfoInputSchema.safeParse({
+      disease: null,
+      allergy: "鶏肉",
+      currentMedications: null,
+      vetName: "みなと動物病院",
+      vetPhone: "03-1234-5678"
+    });
+
+    expect(result.success).toBe(true);
+  });
+});
