@@ -19,18 +19,31 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+1. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+2. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ### todo
-1. `TASK-109` 認証 + 家族招待コード基盤
-2. `TASK-108` スキーマ + RLS実装
-3. `TASK-107` ペットプロフィール + 写真管理
-4. `TASK-106` 緊急情報 + QR公開画面
-5. `TASK-105` 医療タイムライン
-6. `TASK-104` 投薬管理 + カレンダー
-7. `TASK-103` ワクチン・予防歴
-8. `TASK-102` 統合テスト（unit/integration/e2e）
-9. `TASK-101` ドキュメント整備
+1. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
+2. `TASK-122` 健康トラッキングのグラフ可視化UI
+3. `TASK-121` 健康トラッキングの入力UI
+4. `TASK-120` 健康トラッキングAPI/スキーマ整備
+5. `TASK-119` 実DB統合テスト + CI記載更新
+6. `TASK-118` ワクチン履歴編集フロー
+7. `TASK-117` 投薬リマインダー実送信
+8. `TASK-116` 医療記録追加フォーム永続化
+9. `TASK-115` 写真Storageアップロード接続
+10. `TASK-114` QRトークン再生成UI連携
+11. `TASK-113` 公開緊急APIのRPC移行
+12. `TASK-112` 認証/招待ユーザー連携
+13. `TASK-109` 認証 + 家族招待コード基盤
+14. `TASK-108` スキーマ + RLS実装
+15. `TASK-107` ペットプロフィール + 写真管理
+16. `TASK-106` 緊急情報 + QR公開画面
+17. `TASK-105` 医療タイムライン
+18. `TASK-104` 投薬管理 + カレンダー
+19. `TASK-103` ワクチン・予防歴
+20. `TASK-102` 統合テスト（unit/integration/e2e）
+21. `TASK-101` ドキュメント整備
 
 ### blocked
 （なし）
@@ -42,15 +55,96 @@ Development Task List
 
 ## 正式タスク詳細
 
+### 疾患非依存の健康トラッキング + グラフ表示
+- Task ID: `TASK-111`
+- ブランチ: `feat/TASK-111-health-metrics-tracking-graphs`
+- ステータス: `in_progress`
+- 概要: 全ペット共通コア項目 + 拡張項目（例: 点滴量）を記録し、時系列グラフで可視化
+- 完了条件:
+  - `POST/GET /api/pets/[petId]/health/core-metrics` が実装される
+  - `POST/GET /api/pets/[petId]/health/lab-results` が実装される
+  - `POST/GET /api/pets/[petId]/health/extensions` が実装される
+  - `GET /api/pets/[petId]/health/trends` が実装される
+  - ペット詳細画面に健康記録セクション（入力/履歴/グラフ）が表示される
+  - `npm run lint` / `npx vitest run` が通る
+
+### 健康トラッキングAPI/スキーマ整備
+- Task ID: `TASK-120`
+- ブランチ: `feat/TASK-120-health-metrics-api-schema`
+- ステータス: `todo`
+- 概要: 共通コア + 拡張セットの保存モデルとAPI契約を整備
+
+### 健康トラッキングの入力UI
+- Task ID: `TASK-121`
+- ブランチ: `feat/TASK-121-health-metrics-input-ui`
+- ステータス: `todo`
+- 概要: 共通フォームと条件付き拡張フォームを提供
+
+### 健康トラッキングのグラフ可視化UI
+- Task ID: `TASK-122`
+- ブランチ: `feat/TASK-122-health-metrics-graph-ui`
+- ステータス: `todo`
+- 概要: 項目切替可能な時系列グラフを実装
+
+### 健康トラッキングのテスト拡充（unit/integration/e2e）
+- Task ID: `TASK-123`
+- ブランチ: `test/TASK-123-health-metrics-coverage`
+- ステータス: `todo`
+- 概要: バリデーション、API、主要画面導線を自動テスト化
+
+### 実DB統合テスト + CI記載更新
+- Task ID: `TASK-119`
+- ブランチ: `test/TASK-119-db-integration-and-ci-docs`
+- ステータス: `todo`
+- 概要: 実DB統合テストとCI連携ドキュメントを更新
+
+### ワクチン履歴編集フロー
+- Task ID: `TASK-118`
+- ブランチ: `feat/TASK-118-vaccination-edit-flow`
+- ステータス: `todo`
+- 概要: ワクチン履歴の追加/編集導線を実装
+
+### 投薬リマインダー実送信
+- Task ID: `TASK-117`
+- ブランチ: `feat/TASK-117-medication-reminder-delivery`
+- ステータス: `todo`
+- 概要: 現在stubの通知処理を実送信へ切替
+
+### 医療記録追加フォーム永続化
+- Task ID: `TASK-116`
+- ブランチ: `feat/TASK-116-medical-record-form-persistence`
+- ステータス: `todo`
+- 概要: 記録追加UIをAPI永続化に接続
+
+### 写真Storageアップロード接続
+- Task ID: `TASK-115`
+- ブランチ: `feat/TASK-115-photo-storage-upload`
+- ステータス: `todo`
+- 概要: 画像アップロードをStorageに接続
+
+### QRトークン再生成UI連携
+- Task ID: `TASK-114`
+- ブランチ: `feat/TASK-114-qr-token-rotation-ui`
+- ステータス: `todo`
+- 概要: QRトークン再生成APIとUIを接続
+
+### 公開緊急APIのRPC移行
+- Task ID: `TASK-113`
+- ブランチ: `feat/TASK-113-public-emergency-rpc-migration`
+- ステータス: `todo`
+- 概要: 公開参照をRPCベースに統一
+
+### 認証/招待ユーザー連携
+- Task ID: `TASK-112`
+- ブランチ: `feat/TASK-112-auth-invite-user-linkage`
+- ステータス: `todo`
+- 概要: 招待参加導線を実ユーザー認証と接続
+
 ### 基盤セットアップ（Next.js + Supabase + Prisma）
 - Task ID: `TASK-110`
 - ブランチ: `chore/TASK-110-bootstrap-next-supabase-prisma`
 - ステータス: `in_progress`
 - 概要: アプリ基盤、型、スタイル、テスト基盤を整備
-- 完了条件:
-  - `npm ci` が通る
-  - `npm run lint` / `npx vitest run` が通る
-  - Prisma schema / Supabase migration が追加される
 
 ### 認証 + 家族招待コード基盤
 - Task ID: `TASK-109`

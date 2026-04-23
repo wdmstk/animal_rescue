@@ -32,6 +32,26 @@ enum VaccinationType {
   FLEA_TICK
   OTHER
 }
+enum CoreMetricType {
+  WEIGHT_KG
+  WATER_INTAKE_ML
+  APPETITE_SCORE
+  URINATION_COUNT
+  DEFECATION_COUNT
+  VOMIT_COUNT
+  BODY_TEMPERATURE_C
+}
+
+enum LabMarkerType {
+  CRE
+  BUN
+  SDMA
+  PHOSPHORUS
+}
+
+enum HealthExtensionKey {
+  INFUSION_ML
+}
 
 model Household {
   id        String            @id @default(uuid()) @db.Uuid
@@ -93,9 +113,12 @@ model Pet {
   photos         PetPhoto[]
   emergencyInfo  PetEmergencyInfo?
   medicalRecords PetMedicalRecord[]
-  medications    PetMedication[]
-  vaccinations   PetVaccination[]
-  emergencyToken PetEmergencyToken?
+  medications      PetMedication[]
+  vaccinations     PetVaccination[]
+  emergencyToken   PetEmergencyToken?
+  coreMetrics      PetCoreMetricEntry[]
+  labResults       PetLabResultEntry[]
+  healthExtensions PetHealthExtensionEntry[]
 
   @@index([householdId])
 }
@@ -180,3 +203,48 @@ model PetEmergencyToken {
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 }
+
+model PetCoreMetricEntry {
+  id         String         @id @default(uuid()) @db.Uuid
+  petId      String         @db.Uuid
+  type       CoreMetricType
+  value      Decimal        @db.Decimal(10, 2)
+  recordedAt DateTime
+  note       String?
+  createdAt  DateTime       @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, type, recordedAt])
+}
+
+model PetLabResultEntry {
+  id         String        @id @default(uuid()) @db.Uuid
+  petId      String        @db.Uuid
+  marker     LabMarkerType
+  value      Decimal       @db.Decimal(10, 2)
+  unit       String
+  recordedAt DateTime
+  note       String?
+  createdAt  DateTime      @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, marker, recordedAt])
+}
+
+model PetHealthExtensionEntry {
+  id         String             @id @default(uuid()) @db.Uuid
+  petId      String             @db.Uuid
+  key        HealthExtensionKey
+  value      Decimal            @db.Decimal(10, 2)
+  unit       String?
+  recordedAt DateTime
+  note       String?
+  createdAt  DateTime           @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@index([petId, key, recordedAt])
+}
+

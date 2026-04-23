@@ -1,5 +1,6 @@
 import { EmergencyCard } from "@/components/features/pets/emergency-card";
 import { EmergencyQrShareCard } from "@/components/features/pets/emergency-qr-share-card";
+import { HealthTrackingPanel } from "@/components/features/pets/health-tracking-panel";
 import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
 import { MedicationCalendar } from "@/components/features/pets/medication-calendar";
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
@@ -82,6 +83,8 @@ export default async function PetDetailPage({
           </button>
         </div>
       </section>
+
+      <HealthTrackingPanel petId={petId} />
 
       <MedicalTimeline
         items={[
