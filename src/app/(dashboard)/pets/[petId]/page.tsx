@@ -1,6 +1,7 @@
 import { EmergencyCard } from "@/components/features/pets/emergency-card";
 import { EmergencyQrShareCard } from "@/components/features/pets/emergency-qr-share-card";
 import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
+import { MedicationCalendar } from "@/components/features/pets/medication-calendar";
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 
@@ -53,6 +54,13 @@ export default async function PetDetailPage({
       />
 
       <EmergencyQrShareCard token="demo-token" />
+
+      <MedicationCalendar
+        periods={[
+          { name: "ピモベンダン", startDate: "2026-01-01", endDate: null },
+          { name: "整腸剤", startDate: "2026-04-20", endDate: "2026-04-25" }
+        ]}
+      />
 
       <section className="rounded-2xl bg-white p-4 shadow-sm">
         <h2 className="text-base font-bold text-slate-900">記録を追加</h2>
