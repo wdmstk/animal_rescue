@@ -19,8 +19,11 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-2. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+1. `TASK-118` ワクチン履歴編集フロー
+2. `TASK-116` 医療記録追加フォーム永続化
+3. `TASK-114` QRトークン再生成UI連携
+4. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+5. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ### todo
 1. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
@@ -28,23 +31,19 @@ Development Task List
 3. `TASK-121` 健康トラッキングの入力UI
 4. `TASK-120` 健康トラッキングAPI/スキーマ整備
 5. `TASK-119` 実DB統合テスト + CI記載更新
-6. `TASK-118` ワクチン履歴編集フロー
-7. `TASK-117` 投薬リマインダー実送信
-8. `TASK-116` 医療記録追加フォーム永続化
-9. `TASK-115` 写真Storageアップロード接続
-10. `TASK-114` QRトークン再生成UI連携
-11. `TASK-113` 公開緊急APIのRPC移行
-12. `TASK-112` 認証/招待ユーザー連携
-13. `TASK-109` 認証 + 家族招待コード基盤
-14. `TASK-108` スキーマ + RLS実装
-15. `TASK-107` ペットプロフィール + 写真管理
-16. `TASK-106` 緊急情報 + QR公開画面
-17. `TASK-105` 医療タイムライン
-18. `TASK-104` 投薬管理 + カレンダー
-19. `TASK-103` ワクチン・予防歴
-20. `TASK-102` 統合テスト（unit/integration/e2e）
-21. `TASK-101` ドキュメント整備
-
+6. `TASK-117` 投薬リマインダー実送信
+7. `TASK-115` 写真Storageアップロード接続
+8. `TASK-113` 公開緊急APIのRPC移行
+9. `TASK-112` 認証/招待ユーザー連携
+10. `TASK-109` 認証 + 家族招待コード基盤
+11. `TASK-108` スキーマ + RLS実装
+12. `TASK-107` ペットプロフィール + 写真管理
+13. `TASK-106` 緊急情報 + QR公開画面
+14. `TASK-105` 医療タイムライン
+15. `TASK-104` 投薬管理 + カレンダー
+16. `TASK-103` ワクチン・予防歴
+17. `TASK-102` 統合テスト（unit/integration/e2e）
+18. `TASK-101` ドキュメント整備
 ### blocked
 （なし）
 
@@ -101,7 +100,7 @@ Development Task List
 ### ワクチン履歴編集フロー
 - Task ID: `TASK-118`
 - ブランチ: `feat/TASK-118-vaccination-edit-flow`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: ワクチン履歴の追加/編集導線を実装
 
 ### 投薬リマインダー実送信
@@ -113,7 +112,7 @@ Development Task List
 ### 医療記録追加フォーム永続化
 - Task ID: `TASK-116`
 - ブランチ: `feat/TASK-116-medical-record-form-persistence`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 記録追加UIをAPI永続化に接続
 
 ### 写真Storageアップロード接続
@@ -125,7 +124,7 @@ Development Task List
 ### QRトークン再生成UI連携
 - Task ID: `TASK-114`
 - ブランチ: `feat/TASK-114-qr-token-rotation-ui`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: QRトークン再生成APIとUIを接続
 
 ### 公開緊急APIのRPC移行
@@ -199,3 +198,5 @@ Development Task List
 - ブランチ: `docs/TASK-101-mvp-docs-security-ops`
 - ステータス: `todo`
 - 概要: セットアップ、設計、運用手順の明文化
+
+
