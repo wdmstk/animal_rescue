@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { joinByInviteSchema } from "@/lib/validators/invite";
 
 export async function POST(request: Request) {
@@ -8,6 +9,16 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+    error: authError
+  } = await supabase.auth.getUser();
+
+  if (authError || !user) {
+    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
   }
 
   const invite = await prisma.householdInviteCode.findUnique({ where: { code: parsed.data.code } });
@@ -20,7 +31,7 @@ export async function POST(request: Request) {
     prisma.householdMember.create({
       data: {
         householdId: invite.householdId,
-        userId: parsed.data.userId,
+        userId: user.id,
         role: "FAMILY"
       }
     }),
@@ -28,7 +39,7 @@ export async function POST(request: Request) {
       where: { id: invite.id },
       data: {
         usedAt: new Date(),
-        usedBy: parsed.data.userId
+        usedBy: user.id
       }
     })
   ]);
