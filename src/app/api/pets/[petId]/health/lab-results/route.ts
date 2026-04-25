@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { labResultEntryInputSchema } from "@/lib/validators/health";
+import { healthPetIdParamSchema, labResultEntryInputSchema } from "@/lib/validators/health";
 import type { LabMarkerType } from "@/types/health";
 
 const defaultUnitMap: Record<LabMarkerType, string> = {
@@ -10,9 +10,15 @@ const defaultUnitMap: Record<LabMarkerType, string> = {
   PHOSPHORUS: "mg/dL"
 };
 
-export async function GET(_: Request, { params }: { params: { petId: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = healthPetIdParamSchema.safeParse(await params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
+  const { petId } = parsedParams.data;
   const data = await prisma.petLabResultEntry.findMany({
-    where: { petId: params.petId },
+    where: { petId },
     orderBy: { recordedAt: "desc" }
   });
 
@@ -29,7 +35,13 @@ export async function GET(_: Request, { params }: { params: { petId: string } })
   });
 }
 
-export async function POST(request: Request, { params }: { params: { petId: string } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = healthPetIdParamSchema.safeParse(await params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
+  const { petId } = parsedParams.data;
   const body = await request.json();
   const parsed = labResultEntryInputSchema.safeParse(body);
 
@@ -39,7 +51,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
 
   const created = await prisma.petLabResultEntry.create({
     data: {
-      petId: params.petId,
+      petId,
       marker: parsed.data.marker,
       value: parsed.data.value,
       unit: parsed.data.unit ?? defaultUnitMap[parsed.data.marker],
