@@ -19,11 +19,12 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-118` ワクチン履歴編集フロー
-2. `TASK-116` 医療記録追加フォーム永続化
-3. `TASK-114` QRトークン再生成UI連携
-4. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-5. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+1. `TASK-124` Prisma adapter未設定による500エラー修正
+2. `TASK-118` ワクチン履歴編集フロー
+3. `TASK-116` 医療記録追加フォーム永続化
+4. `TASK-114` QRトークン再生成UI連携
+5. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+6. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ### todo
 1. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
@@ -53,6 +54,16 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### Prisma adapter未設定による500エラー修正
+- Task ID: `TASK-124`
+- ブランチ: `fix/TASK-124-prisma-adapter-client-engine`
+- ステータス: `in_progress`
+- 概要: Prisma Clientの`engineType=client`構成でadapter未指定時に発生するAPI 500を解消
+- 完了条件:
+  - `src/lib/prisma.ts` が adapter 前提で初期化される
+  - `/api/pets/[petId]/health/*` の500が解消する
+  - `npm run lint` / `npx vitest run` が通る
 
 ### 疾患非依存の健康トラッキング + グラフ表示
 - Task ID: `TASK-111`
