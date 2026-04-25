@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { filterHealthSeries, pickDisplaySeriesKey, type HealthSeriesCategory } from "@/lib/services/health-series-filter";
 import type { CoreHealthEntry, HealthExtensionEntry, HealthTrendSeries, LabResultEntry } from "@/types/health";
 import { CORE_METRIC_TYPES, LAB_MARKER_TYPES } from "@/types/health";
 import { isValidDateInput, parseNonNegativeNumber } from "@/lib/validators/health-input-ui";
@@ -34,6 +35,18 @@ const labMarkerLabelMap: Record<(typeof LAB_MARKER_TYPES)[number], string> = {
 };
 
 const today = new Date().toISOString().slice(0, 10);
+const periodOptions: { label: string; value: number | null }[] = [
+  { label: "全期間", value: null },
+  { label: "90日", value: 90 },
+  { label: "30日", value: 30 },
+  { label: "7日", value: 7 }
+];
+const categoryOptions: { label: string; value: HealthSeriesCategory }[] = [
+  { label: "全項目", value: "all" },
+  { label: "共通コア", value: "core" },
+  { label: "血液検査", value: "lab" },
+  { label: "拡張項目", value: "ext" }
+];
 
 type TrendLineChartProps = {
   series: HealthTrendSeries;
@@ -135,6 +148,8 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
   const [extensionDate, setExtensionDate] = useState(today);
 
   const [selectedSeriesKey, setSelectedSeriesKey] = useState<string>("core:WEIGHT_KG");
+  const [seriesCategory, setSeriesCategory] = useState<HealthSeriesCategory>("all");
+  const [seriesDays, setSeriesDays] = useState<number | null>(30);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -184,9 +199,10 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
     };
   }, [petId]);
 
+  const displaySeries = useMemo(() => filterHealthSeries(series, seriesCategory, seriesDays), [series, seriesCategory, seriesDays]);
   const selectedSeries = useMemo(
-    () => series.find((item) => item.key === selectedSeriesKey) ?? series[0] ?? null,
-    [selectedSeriesKey, series]
+    () => displaySeries.find((item) => item.key === selectedSeriesKey) ?? displaySeries[0] ?? null,
+    [selectedSeriesKey, displaySeries]
   );
   const parsedCoreValue = parseNonNegativeNumber(coreValue);
   const parsedLabValue = parseNonNegativeNumber(labValue);
@@ -393,14 +409,61 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
       )}
 
       <div className="mt-4 rounded-xl border border-slate-200 p-3">
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm font-semibold text-slate-800">推移グラフ</p>
+          <div className="flex items-center gap-2">
+            <select
+              value={seriesDays === null ? "all" : String(seriesDays)}
+              onChange={(event) => setSeriesDays(event.target.value === "all" ? null : Number(event.target.value))}
+              className="rounded border border-slate-300 px-2 py-1 text-xs"
+            >
+              {periodOptions.map((item) => (
+                <option key={item.label} value={item.value === null ? "all" : item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {categoryOptions.map((item) => (
+            <button
+              key={item.value}
+              type="button"
+              onClick={() => {
+                setSeriesCategory(item.value);
+                setSelectedSeriesKey((current) => pickDisplaySeriesKey(filterHealthSeries(series, item.value, seriesDays), current));
+              }}
+              className={`rounded-full border px-2 py-1 text-xs ${
+                seriesCategory === item.value ? "border-slate-900 bg-slate-900 text-white" : "border-slate-300 text-slate-700"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {displaySeries.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setSelectedSeriesKey(item.key)}
+              className={`rounded border px-2 py-1 text-xs ${
+                selectedSeries?.key === item.key ? "border-teal-700 bg-teal-700 text-white" : "border-slate-300 text-slate-700"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+          {displaySeries.length === 0 && <p className="text-xs text-slate-500">選択条件の系列データはありません</p>}
+        </div>
+        <div className="mt-2">
           <select
             value={selectedSeries?.key ?? ""}
             onChange={(event) => setSelectedSeriesKey(event.target.value)}
             className="rounded border border-slate-300 px-2 py-1 text-xs"
           >
-            {series.map((item) => (
+            {displaySeries.map((item) => (
               <option key={item.key} value={item.key}>
                 {item.label}
               </option>
