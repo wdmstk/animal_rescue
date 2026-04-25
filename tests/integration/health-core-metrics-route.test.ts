@@ -54,6 +54,24 @@ describe("/api/pets/[petId]/health/core-metrics", () => {
     expect(createMock).toHaveBeenCalledOnce();
   });
 
+  it("returns 400 on invalid payload", async () => {
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "WEIGHT_KG",
+          value: -1,
+          recordedAt: "2026-04-20"
+        })
+      }),
+      { params: { petId: "pet-1" } }
+    );
+
+    expect(response.status).toBe(400);
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
   it("returns entries on GET", async () => {
     findManyMock.mockResolvedValue([
       {
@@ -71,5 +89,21 @@ describe("/api/pets/[petId]/health/core-metrics", () => {
     expect(response.status).toBe(200);
     const payload = await response.json();
     expect(payload.data).toHaveLength(1);
+  });
+
+  it("applies type filter on GET", async () => {
+    findManyMock.mockResolvedValue([]);
+
+    const response = await GET(new Request("http://localhost?type=WEIGHT_KG"), { params: { petId: "pet-1" } });
+
+    expect(response.status).toBe(200);
+    expect(findManyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          petId: "pet-1",
+          type: "WEIGHT_KG"
+        })
+      })
+    );
   });
 });

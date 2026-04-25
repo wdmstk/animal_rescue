@@ -73,4 +73,16 @@ describe("/api/pets/[petId]/health/trends", () => {
       ])
     );
   });
+
+  it("returns empty series when no records exist", async () => {
+    coreFindManyMock.mockResolvedValue([]);
+    labFindManyMock.mockResolvedValue([]);
+    extensionFindManyMock.mockResolvedValue([]);
+
+    const response = await GET(new Request("http://localhost"), { params: { petId: "pet-1" } });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data.series).toEqual([]);
+  });
 });
