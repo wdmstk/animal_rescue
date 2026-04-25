@@ -13,10 +13,12 @@
     "prisma:migrate": "prisma migrate dev && prisma generate"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.104.0",
     "next": "^16.2.4",
+    "pg": "^8.20.0",
     "qrcode": "^1.5.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
