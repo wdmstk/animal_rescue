@@ -44,4 +44,14 @@ describe("health validators", () => {
 
     expect(parsed.success).toBe(false);
   });
+
+  it("rejects invalid recordedAt value", () => {
+    const parsed = coreHealthEntryInputSchema.safeParse({
+      type: "WEIGHT_KG",
+      value: 4.25,
+      recordedAt: "not-a-date"
+    });
+
+    expect(parsed.success).toBe(false);
+  });
 });
