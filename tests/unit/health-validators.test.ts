@@ -33,4 +33,15 @@ describe("health validators", () => {
 
     expect(parsed.success).toBe(true);
   });
+
+  it("rejects blank lab unit", () => {
+    const parsed = labResultEntryInputSchema.safeParse({
+      marker: "CRE",
+      value: 1.8,
+      unit: "   ",
+      recordedAt: "2026-04-20"
+    });
+
+    expect(parsed.success).toBe(false);
+  });
 });
