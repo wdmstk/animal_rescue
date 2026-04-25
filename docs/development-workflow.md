@@ -11,8 +11,9 @@
    - `npm run lint`
    - `npx vitest run`
    - 画面影響あり: `npm run test:e2e`
+   - 実DB依存の変更: `RUN_DB_INTEGRATION=1 npx vitest run tests/integration/health-db-real-route.test.ts`
 3. コミット・push
-4. Draft PR作成
+4. PR作成（通常PR）
 
 ## PR作成（日本語サマリ）
 `\n` の文字列表示を避けるため、必ず `--body-file` を使う。

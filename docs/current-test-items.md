@@ -25,3 +25,4 @@
 1. `npm run lint`
 2. `npx vitest run`
 3. `npm run test:e2e`（影響範囲のみでも可）
+4. 実DB統合テストが必要な変更時は `RUN_DB_INTEGRATION=1 npx vitest run tests/integration/health-db-real-route.test.ts`
