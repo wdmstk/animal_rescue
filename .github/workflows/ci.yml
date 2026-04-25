@@ -58,6 +58,46 @@ jobs:
       - name: Run unit/integration tests
         run: npx vitest run
 
+  db-integration:
+    name: DB Integration (Real Postgres)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: animal_rescue_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d animal_rescue_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/animal_rescue_test
+      RUN_DB_INTEGRATION: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply migrations
+        run: npx prisma migrate deploy
+
+      - name: Run real DB integration test
+        run: npx vitest run tests/integration/health-db-real-route.test.ts
+
   e2e:
     name: E2E (Playwright)
     runs-on: ubuntu-latest
