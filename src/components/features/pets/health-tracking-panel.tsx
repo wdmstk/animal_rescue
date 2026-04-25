@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { CoreHealthEntry, HealthExtensionEntry, HealthTrendSeries, LabResultEntry } from "@/types/health";
 import { CORE_METRIC_TYPES, LAB_MARKER_TYPES } from "@/types/health";
+import { isValidDateInput, parseNonNegativeNumber } from "@/lib/validators/health-input-ui";
 
 type HealthTrackingPanelProps = {
   petId: string;
@@ -187,18 +188,30 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
     () => series.find((item) => item.key === selectedSeriesKey) ?? series[0] ?? null,
     [selectedSeriesKey, series]
   );
+  const parsedCoreValue = parseNonNegativeNumber(coreValue);
+  const parsedLabValue = parseNonNegativeNumber(labValue);
+  const parsedExtensionValue = parseNonNegativeNumber(extensionValue);
+  const hasCoreInputError = parsedCoreValue === null || !isValidDateInput(coreDate);
+  const hasLabInputError = parsedLabValue === null || !isValidDateInput(labDate) || labUnit.trim().length === 0;
+  const hasExtensionInputError = parsedExtensionValue === null || !isValidDateInput(extensionDate);
 
   const submitCore = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSubmitting(true);
+    if (hasCoreInputError || parsedCoreValue === null) {
+      setErrorMessage("共通コアの入力値または日付が不正です。");
+      return;
+    }
 
+    setIsSubmitting(true);
     try {
       await postJson(`/api/pets/${petId}/health/core-metrics`, {
         type: coreType,
-        value: Number(coreValue),
+        value: parsedCoreValue,
         recordedAt: coreDate
       });
       await refreshData();
+    } catch {
+      setErrorMessage("共通コアの保存に失敗しました。");
     } finally {
       setIsSubmitting(false);
     }
@@ -206,16 +219,22 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
 
   const submitLab = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSubmitting(true);
+    if (hasLabInputError || parsedLabValue === null) {
+      setErrorMessage("血液検査の入力値・単位・日付を確認してください。");
+      return;
+    }
 
+    setIsSubmitting(true);
     try {
       await postJson(`/api/pets/${petId}/health/lab-results`, {
         marker: labMarker,
-        value: Number(labValue),
-        unit: labUnit,
+        value: parsedLabValue,
+        unit: labUnit.trim(),
         recordedAt: labDate
       });
       await refreshData();
+    } catch {
+      setErrorMessage("血液検査の保存に失敗しました。");
     } finally {
       setIsSubmitting(false);
     }
@@ -223,16 +242,22 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
 
   const submitExtension = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsSubmitting(true);
+    if (hasExtensionInputError || parsedExtensionValue === null) {
+      setErrorMessage("拡張項目の入力値または日付が不正です。");
+      return;
+    }
 
+    setIsSubmitting(true);
     try {
       await postJson(`/api/pets/${petId}/health/extensions`, {
         key: "INFUSION_ML",
-        value: Number(extensionValue),
-        unit: extensionUnit,
+        value: parsedExtensionValue,
+        unit: extensionUnit.trim() || null,
         recordedAt: extensionDate
       });
       await refreshData();
+    } catch {
+      setErrorMessage("拡張項目の保存に失敗しました。");
     } finally {
       setIsSubmitting(false);
     }
@@ -280,7 +305,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
           />
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || hasCoreInputError}
             className="w-full rounded bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
           >
             保存
@@ -323,7 +348,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
           />
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || hasLabInputError}
             className="w-full rounded bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
           >
             保存
@@ -359,7 +384,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
           </div>
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || hasExtensionInputError}
             className="w-full rounded bg-teal-700 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
           >
             点滴量を保存
