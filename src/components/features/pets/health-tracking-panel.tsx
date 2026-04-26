@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { filterHealthSeries, pickDisplaySeriesKey, type HealthSeriesCategory } from "@/lib/services/health-series-filter";
+import { summarizeHealthTrendSeries } from "@/lib/services/health-graph-summary";
 import type { CoreHealthEntry, HealthExtensionEntry, HealthTrendSeries, LabResultEntry } from "@/types/health";
 import { CORE_METRIC_TYPES, LAB_MARKER_TYPES } from "@/types/health";
 import { isValidDateInput, parseNonNegativeNumber } from "@/lib/validators/health-input-ui";
@@ -204,6 +205,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
     () => displaySeries.find((item) => item.key === selectedSeriesKey) ?? displaySeries[0] ?? null,
     [selectedSeriesKey, displaySeries]
   );
+  const selectedSeriesSummary = useMemo(() => summarizeHealthTrendSeries(selectedSeries), [selectedSeries]);
   const parsedCoreValue = parseNonNegativeNumber(coreValue);
   const parsedLabValue = parseNonNegativeNumber(labValue);
   const parsedExtensionValue = parseNonNegativeNumber(extensionValue);
@@ -471,6 +473,32 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
           </select>
         </div>
         {selectedSeries ? <TrendLineChart series={selectedSeries} /> : <p className="mt-2 text-sm text-slate-500">系列データなし</p>}
+        {selectedSeriesSummary && (
+          <dl className="mt-3 grid gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2 text-xs text-slate-700 md:grid-cols-5">
+            <div>
+              <dt className="text-slate-500">最新値</dt>
+              <dd className="font-semibold text-slate-900">{selectedSeriesSummary.latest}</dd>
+            </div>
+            <div>
+              <dt className="text-slate-500">最小値</dt>
+              <dd className="font-semibold text-slate-900">{selectedSeriesSummary.min}</dd>
+            </div>
+            <div>
+              <dt className="text-slate-500">最大値</dt>
+              <dd className="font-semibold text-slate-900">{selectedSeriesSummary.max}</dd>
+            </div>
+            <div>
+              <dt className="text-slate-500">件数</dt>
+              <dd className="font-semibold text-slate-900">{selectedSeriesSummary.count}</dd>
+            </div>
+            <div>
+              <dt className="text-slate-500">期間</dt>
+              <dd className="font-semibold text-slate-900">
+                {selectedSeriesSummary.startDate} - {selectedSeriesSummary.endDate}
+              </dd>
+            </div>
+          </dl>
+        )}
       </div>
 
       <div className="mt-4 grid gap-3 md:grid-cols-3">
