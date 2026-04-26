@@ -22,19 +22,18 @@ Development Task List
 （なし）
 
 ### todo
-1. `TASK-117` 投薬リマインダー実送信
-2. `TASK-115` 写真Storageアップロード接続
-3. `TASK-113` 公開緊急APIのRPC移行
-4. `TASK-112` 認証/招待ユーザー連携
-5. `TASK-109` 認証 + 家族招待コード基盤
-6. `TASK-108` スキーマ + RLS実装
-7. `TASK-107` ペットプロフィール + 写真管理
-8. `TASK-106` 緊急情報 + QR公開画面
-9. `TASK-105` 医療タイムライン
-10. `TASK-104` 投薬管理 + カレンダー
-11. `TASK-103` ワクチン・予防歴
-12. `TASK-102` 統合テスト（unit/integration/e2e）
-13. `TASK-101` ドキュメント整備
+1. `TASK-115` 写真Storageアップロード接続
+2. `TASK-113` 公開緊急APIのRPC移行
+3. `TASK-112` 認証/招待ユーザー連携
+4. `TASK-109` 認証 + 家族招待コード基盤
+5. `TASK-108` スキーマ + RLS実装
+6. `TASK-107` ペットプロフィール + 写真管理
+7. `TASK-106` 緊急情報 + QR公開画面
+8. `TASK-105` 医療タイムライン
+9. `TASK-104` 投薬管理 + カレンダー
+10. `TASK-103` ワクチン・予防歴
+11. `TASK-102` 統合テスト（unit/integration/e2e）
+12. `TASK-101` ドキュメント整備
 ### blocked
 （なし）
 
@@ -47,10 +46,11 @@ Development Task List
 6. `TASK-120` 健康トラッキングAPI/スキーマ整備
 7. `TASK-119` 実DB統合テスト + CI記載更新
 8. `TASK-118` ワクチン履歴編集フロー
-9. `TASK-116` 医療記録追加フォーム永続化
-10. `TASK-114` QRトークン再生成UI連携
-11. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-12. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+9. `TASK-117` 投薬リマインダー実送信
+10. `TASK-116` 医療記録追加フォーム永続化
+11. `TASK-114` QRトークン再生成UI連携
+12. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+13. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ---
 
@@ -128,8 +128,8 @@ Development Task List
 
 ### 投薬リマインダー実送信
 - Task ID: `TASK-117`
-- ブランチ: `feat/TASK-117-medication-reminder-delivery`
-- ステータス: `todo`
+- ブランチ: `feat/TASK-113-117-parallel-backend-wiring`
+- ステータス: `done`
 - 概要: 現在stubの通知処理を実送信へ切替
 
 ### 医療記録追加フォーム永続化
