@@ -18,6 +18,61 @@ env:
   NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
 
 jobs:
+  pr-operational-guard:
+    name: PR Operational Guard
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate branch naming
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          if [[ -z "${BRANCH_NAME}" ]]; then
+            echo "head_ref is empty."
+            exit 1
+          fi
+
+          if [[ ! "${BRANCH_NAME}" =~ ^(feat|fix|refactor|test|docs|chore)/TASK-[0-9]+-[a-z0-9-]+$ ]]; then
+            echo "Invalid branch format: ${BRANCH_NAME}"
+            echo "Expected: <type>/TASK-<id>-<short-description>"
+            exit 1
+          fi
+
+      - name: Validate PR checklist
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [[ -z "${PR_BODY}" ]]; then
+            echo "PR body is empty. Use pull request template and complete checklist."
+            exit 1
+          fi
+
+          required_items=(
+            "task_updated"
+            "task_order_checked"
+            "branch_naming_checked"
+            "tests_run_lint"
+            "tests_run_vitest"
+            "tests_run_e2e_or_na"
+            "ci_green_confirmed"
+            "self_review_done"
+            "ready_for_main_merge"
+          )
+
+          missing=0
+          for item in "${required_items[@]}"; do
+            if ! printf '%s\n' "${PR_BODY}" | grep -Eiq -- "- \[[xX]\] ${item}"; then
+              echo "Checklist item is not checked: ${item}"
+              missing=1
+            fi
+          done
+
+          if [[ "${missing}" -ne 0 ]]; then
+            echo "Please complete all required checklist items in PR body."
+            exit 1
+          fi
+
   lint:
     name: Lint
     runs-on: ubuntu-latest

@@ -28,33 +28,44 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
-2. `TASK-124` Prisma adapter未設定による500エラー修正
-3. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
-4. `TASK-122` 健康トラッキングのグラフ可視化UI
-5. `TASK-121` 健康トラッキングの入力UI
-6. `TASK-120` 健康トラッキングAPI/スキーマ整備
-7. `TASK-119` 実DB統合テスト + CI記載更新
-8. `TASK-118` ワクチン履歴編集フロー
-9. `TASK-117` 投薬リマインダー実送信
-10. `TASK-116` 医療記録追加フォーム永続化
-11. `TASK-115` 写真Storageアップロード接続
-12. `TASK-114` QRトークン再生成UI連携
-13. `TASK-113` 公開緊急APIのRPC移行
-14. `TASK-112` 認証/招待ユーザー連携
-15. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-16. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
-17. `TASK-102` 統合テスト（unit/integration/e2e）
-18. `TASK-101` ドキュメント整備
-19. `TASK-103` ワクチン・予防歴
-20. `TASK-104` 投薬管理 + カレンダー
-21. `TASK-105` 医療タイムライン
-22. `TASK-106` 緊急情報 + QR公開画面
-23. `TASK-107` ペットプロフィール + 写真管理
+1. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
+2. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
+3. `TASK-124` Prisma adapter未設定による500エラー修正
+4. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
+5. `TASK-122` 健康トラッキングのグラフ可視化UI
+6. `TASK-121` 健康トラッキングの入力UI
+7. `TASK-120` 健康トラッキングAPI/スキーマ整備
+8. `TASK-119` 実DB統合テスト + CI記載更新
+9. `TASK-118` ワクチン履歴編集フロー
+10. `TASK-117` 投薬リマインダー実送信
+11. `TASK-116` 医療記録追加フォーム永続化
+12. `TASK-115` 写真Storageアップロード接続
+13. `TASK-114` QRトークン再生成UI連携
+14. `TASK-113` 公開緊急APIのRPC移行
+15. `TASK-112` 認証/招待ユーザー連携
+16. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+17. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+18. `TASK-102` 統合テスト（unit/integration/e2e）
+19. `TASK-101` ドキュメント整備
+20. `TASK-103` ワクチン・予防歴
+21. `TASK-104` 投薬管理 + カレンダー
+22. `TASK-105` 医療タイムライン
+23. `TASK-106` 緊急情報 + QR公開画面
+24. `TASK-107` ペットプロフィール + 写真管理
 
 ---
 
 ## 正式タスク詳細
+
+### 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
+- Task ID: `TASK-126`
+- ブランチ: `chore/TASK-126-delivery-guardrail`
+- ステータス: `done`
+- 概要: 実装時の必須運用（タスク/ブランチ/テスト/PR/CI/セルフレビュー/mainマージ）を文書化し、PRテンプレートとCIで実行漏れを抑止
+- 完了条件:
+  - `AGENTS.md` に毎回の必須フローが追記される
+  - `.github/pull_request_template.md` に必須チェックリストが追加される
+  - `.github/workflows/ci.yml` でブランチ命名とPRチェックリスト完了が検証される
 
 ### Prisma adapter未設定による500エラー修正
 - Task ID: `TASK-124`

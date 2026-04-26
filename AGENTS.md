@@ -138,3 +138,37 @@ Branch format:
 
 When requested by policy, provide code changes as unified diff.
 Keep unrelated lines untouched.
+
+---
+
+## 10. Mandatory Delivery Flow (Every Change)
+
+The following flow is mandatory for every implementation/fix task:
+
+1. Task management
+   - Add/update task in `TASKS.md` first (`TASK INDEX` + detail section)
+   - Keep status order and Task ID descending rules
+2. Branch management
+   - Create branch from latest `main`
+   - Branch format: `<type>/TASK-<id>-<short-description>`
+3. Implementation and tests
+   - Implement with minimal diff
+   - Run required checks with no omission:
+     - `npm run lint`
+     - `npx vitest run`
+     - UI/route impact exists: `npm run test:e2e`
+     - DB dependent change exists: required DB integration test
+4. PR creation
+   - Open 1 task = 1 PR
+   - Fill PR checklist completely (task/branch/tests/CI/self-review)
+5. CI confirmation
+   - Confirm required checks are green before merge
+   - If failed, fix and re-run until green
+6. Self review
+   - Review diff by yourself before merge
+   - Ensure no unrelated changes are included
+7. Merge to `main`
+   - Merge only after CI is green and self review is done
+   - Delete merged branch and update local `main`
+
+Do not mark work done before this full flow is completed.
