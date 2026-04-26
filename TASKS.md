@@ -23,11 +23,10 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-109` 認証 + 家族招待コード基盤
 
 ### todo
-1. `TASK-109` 認証 + 家族招待コード基盤
-2. `TASK-108` スキーマ + RLS実装
+1. `TASK-108` スキーマ + RLS実装
 ### blocked
 （なし）
 
@@ -223,8 +222,14 @@ Development Task List
 ### 認証 + 家族招待コード基盤
 - Task ID: `TASK-109`
 - ブランチ: `feat/TASK-109-auth-household-invite`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: メールログインと家族共同編集の参加導線を実装
+- Issue: `#78`
+- 完了条件:
+  - `/login` からメール/パスワード認証を実行し、成功時に `/pets` へ遷移できる
+  - `/invite/join` から招待コードで `POST /api/households/join` を実行できる
+  - 招待参加の失敗時に、入力値を保持したままエラーが表示される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### スキーマ + RLS実装
 - Task ID: `TASK-108`
