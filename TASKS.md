@@ -28,34 +28,47 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
-2. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
-3. `TASK-124` Prisma adapter未設定による500エラー修正
-4. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
-5. `TASK-122` 健康トラッキングのグラフ可視化UI
-6. `TASK-121` 健康トラッキングの入力UI
-7. `TASK-120` 健康トラッキングAPI/スキーマ整備
-8. `TASK-119` 実DB統合テスト + CI記載更新
-9. `TASK-118` ワクチン履歴編集フロー
-10. `TASK-117` 投薬リマインダー実送信
-11. `TASK-116` 医療記録追加フォーム永続化
-12. `TASK-115` 写真Storageアップロード接続
-13. `TASK-114` QRトークン再生成UI連携
-14. `TASK-113` 公開緊急APIのRPC移行
-15. `TASK-112` 認証/招待ユーザー連携
-16. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-17. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
-18. `TASK-102` 統合テスト（unit/integration/e2e）
-19. `TASK-101` ドキュメント整備
-20. `TASK-103` ワクチン・予防歴
-21. `TASK-104` 投薬管理 + カレンダー
-22. `TASK-105` 医療タイムライン
-23. `TASK-106` 緊急情報 + QR公開画面
-24. `TASK-107` ペットプロフィール + 写真管理
+1. `TASK-127` 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
+2. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
+3. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
+4. `TASK-124` Prisma adapter未設定による500エラー修正
+5. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
+6. `TASK-122` 健康トラッキングのグラフ可視化UI
+7. `TASK-121` 健康トラッキングの入力UI
+8. `TASK-120` 健康トラッキングAPI/スキーマ整備
+9. `TASK-119` 実DB統合テスト + CI記載更新
+10. `TASK-118` ワクチン履歴編集フロー
+11. `TASK-117` 投薬リマインダー実送信
+12. `TASK-116` 医療記録追加フォーム永続化
+13. `TASK-115` 写真Storageアップロード接続
+14. `TASK-114` QRトークン再生成UI連携
+15. `TASK-113` 公開緊急APIのRPC移行
+16. `TASK-112` 認証/招待ユーザー連携
+17. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+18. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+19. `TASK-102` 統合テスト（unit/integration/e2e）
+20. `TASK-101` ドキュメント整備
+21. `TASK-103` ワクチン・予防歴
+22. `TASK-104` 投薬管理 + カレンダー
+23. `TASK-105` 医療タイムライン
+24. `TASK-106` 緊急情報 + QR公開画面
+25. `TASK-107` ペットプロフィール + 写真管理
 
 ---
 
 ## 正式タスク詳細
+
+### 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
+- Task ID: `TASK-127`
+- ブランチ: `feat/TASK-127-public-emergency-flow-alignment`
+- ステータス: `done`
+- 概要: 公開QR導線のURL整合、トークン無効化API、関連ドキュメント、E2E導線を一貫させる
+- 完了条件:
+  - `GET /api/pets/[petId]/qr-image` が `PetEmergencyToken` ベースの公開URLを返す
+  - `DELETE /api/pets/[petId]/qr-token` でトークン無効化（`isActive=false`）ができる
+  - 公開導線のE2E（正常系/404系）が追加される
+  - 関連ドキュメント（ER/導線/API/RLS/テストマップ）が実装と整合する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
 - Task ID: `TASK-126`

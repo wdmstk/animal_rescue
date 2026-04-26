@@ -1,10 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { findPetMock, findUniqueMock, createMock, upsertMock } = vi.hoisted(() => ({
+const { findPetMock, findUniqueMock, createMock, upsertMock, updateMock } = vi.hoisted(() => ({
   findPetMock: vi.fn(),
   findUniqueMock: vi.fn(),
   createMock: vi.fn(),
-  upsertMock: vi.fn()
+  upsertMock: vi.fn(),
+  updateMock: vi.fn()
 }));
 
 vi.mock("@/lib/prisma", () => ({
@@ -15,7 +16,8 @@ vi.mock("@/lib/prisma", () => ({
     petEmergencyToken: {
       findUnique: findUniqueMock,
       create: createMock,
-      upsert: upsertMock
+      upsert: upsertMock,
+      update: updateMock
     }
   }
 }));
@@ -24,7 +26,7 @@ vi.mock("@/lib/security/emergency-token", () => ({
   generateEmergencyToken: () => "11111111-1111-4111-8111-111111111111"
 }));
 
-import { GET, POST } from "../../src/app/api/pets/[petId]/qr-token/route";
+import { DELETE, GET, POST } from "../../src/app/api/pets/[petId]/qr-token/route";
 
 describe("/api/pets/[petId]/qr-token", () => {
   const validPetId = "22222222-2222-4222-8222-222222222222";
@@ -102,5 +104,58 @@ describe("/api/pets/[petId]/qr-token", () => {
     expect(payload.data.token).toBe("11111111-1111-4111-8111-111111111111");
     expect(payload.data.publicUrl).toBe("/e/11111111-1111-4111-8111-111111111111");
     expect(upsertMock).toHaveBeenCalledOnce();
+  });
+
+  it("returns 404 on DELETE when token does not exist", async () => {
+    findPetMock.mockResolvedValue({ id: validPetId });
+    findUniqueMock.mockResolvedValue(null);
+
+    const response = await DELETE(new Request("http://localhost", { method: "DELETE" }), {
+      params: Promise.resolve({ petId: validPetId })
+    });
+
+    expect(response.status).toBe(404);
+    expect(updateMock).not.toHaveBeenCalled();
+  });
+
+  it("deactivates active token on DELETE", async () => {
+    findPetMock.mockResolvedValue({ id: validPetId });
+    findUniqueMock.mockResolvedValue({
+      token: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      isActive: true
+    });
+    updateMock.mockResolvedValue({
+      token: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      isActive: false
+    });
+
+    const response = await DELETE(new Request("http://localhost", { method: "DELETE" }), {
+      params: Promise.resolve({ petId: validPetId })
+    });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data.token).toBe("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    expect(payload.data.publicUrl).toBe("/e/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    expect(payload.data.isActive).toBe(false);
+    expect(updateMock).toHaveBeenCalledOnce();
+  });
+
+  it("returns existing inactive token on DELETE", async () => {
+    findPetMock.mockResolvedValue({ id: validPetId });
+    findUniqueMock.mockResolvedValue({
+      token: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      isActive: false
+    });
+
+    const response = await DELETE(new Request("http://localhost", { method: "DELETE" }), {
+      params: Promise.resolve({ petId: validPetId })
+    });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data.token).toBe("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+    expect(payload.data.isActive).toBe(false);
+    expect(updateMock).not.toHaveBeenCalled();
   });
 });

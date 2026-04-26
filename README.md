@@ -54,6 +54,11 @@ npm run test:e2e
 - 開発フロー（PR/CI/マージ）: `docs/development-workflow.md`
 - PRテンプレート: `docs/pr-template-ja.md`
 - 現在のテスト観点: `docs/current-test-items.md`
+- 画面導線: `docs/screen-flow.md`
+- APIフロー図: `docs/api-sequence.md`
+- 認可マトリクス: `docs/authz-matrix.md`
+- 公開トークン状態遷移: `docs/token-state.md`
+- テストマップ: `docs/test-map.md`
 
 ## アーキテクチャ参照
 - 全体構成: `architecture.md`

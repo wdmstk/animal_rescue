@@ -91,3 +91,49 @@ export async function POST(_: Request, { params }: { params: Promise<{ petId: st
     }
   });
 }
+
+export async function DELETE(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = petIdParamSchema.safeParse(await params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
+  const petId = parsedParams.data.petId;
+  const pet = await resolvePet(petId);
+
+  if (!pet) {
+    return NextResponse.json({ error: "Pet not found" }, { status: 404 });
+  }
+
+  const existing = await prisma.petEmergencyToken.findUnique({
+    where: { petId },
+    select: { token: true, isActive: true }
+  });
+
+  if (!existing) {
+    return NextResponse.json({ error: "Token not found" }, { status: 404 });
+  }
+
+  if (!existing.isActive) {
+    return NextResponse.json({
+      data: {
+        token: existing.token,
+        publicUrl: `/e/${existing.token}`,
+        isActive: false
+      }
+    });
+  }
+
+  const updated = await prisma.petEmergencyToken.update({
+    where: { petId },
+    data: { isActive: false }
+  });
+
+  return NextResponse.json({
+    data: {
+      token: updated.token,
+      publicUrl: `/e/${updated.token}`,
+      isActive: updated.isActive
+    }
+  });
+}

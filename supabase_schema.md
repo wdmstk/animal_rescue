@@ -1,34 +1,163 @@
 # Supabase Schema Design
 
-## テーブル一覧（MVP）
-- `organizations`（組織）
-- `members`（メンバー）
-- `resource_a`
-- `resource_b`
-- `files`
-- `notification_logs`
+本ドキュメントは、`prisma/schema.prisma` を基準にした現在のER構成です。
 
-## キー設計
-- 主キーは `uuid` (`gen_random_uuid()`) を基本
-- 主要テーブルに `created_at`, `updated_at`
-- すべての業務テーブルに `organization_id` を持たせ分離
+## ER図（Mermaid）
+```mermaid
+erDiagram
+  Household ||--o{ HouseholdMember : has
+  Household ||--o{ HouseholdInviteCode : issues
+  Household ||--o{ Pet : owns
 
-## リレーション概要
-- `organizations` 1 - n `members`
-- `organizations` 1 - n `resource_a`
-- `organizations` 1 - n `resource_b`
-- `resource_a` 1 - n `files`（必要に応じて）
+  Pet ||--o{ PetPhoto : has
+  Pet ||--|| PetEmergencyInfo : has
+  Pet ||--o{ PetMedicalRecord : has
+  Pet ||--o{ PetMedication : has
+  Pet ||--o{ PetVaccination : has
+  Pet ||--|| PetEmergencyToken : has
+  Pet ||--o{ PetCoreMetricEntry : records
+  Pet ||--o{ PetLabResultEntry : records
+  Pet ||--o{ PetHealthExtensionEntry : records
 
-## インデックス方針
-- 検索キー（`organization_id`, `created_at`, `status` など）へ付与
-- 一覧系は `organization_id + created_at` の複合インデックスを優先
+  Household {
+    uuid id PK
+    text name
+    timestamptz createdAt
+    timestamptz updatedAt
+  }
 
-## RLS方針
-- RLS は全テーブルで有効化
-- `auth.uid()` と所属テーブルを用いて `organization_id` 単位で許可
-- service role の利用はサーバー側の管理処理に限定
+  HouseholdMember {
+    uuid id PK
+    uuid householdId FK
+    uuid userId
+    enum role
+    timestamptz createdAt
+  }
 
-## Emergency 公開参照（追加）
-- `PetEmergencyToken.token` をキーに匿名参照するため、RPC `public.get_public_emergency_by_token(uuid)` を提供
-- 返却項目は緊急表示に必要な最小項目のみ
-- `anon` には当該RPCの `execute` のみ付与し、テーブル直接アクセスは許可しない
+  HouseholdInviteCode {
+    uuid id PK
+    uuid householdId FK
+    text code UK
+    timestamptz expiresAt
+    timestamptz usedAt
+    uuid usedBy
+    uuid createdBy
+    timestamptz createdAt
+  }
+
+  Pet {
+    uuid id PK
+    uuid householdId FK
+    text name
+    text species
+    text breed
+    enum sex
+    timestamptz birthday
+    int ageYears
+    decimal weightKg
+    text mainPhotoUrl
+    text notesPersonality
+    text notesFeatures
+    text microchipNumber
+    timestamptz createdAt
+    timestamptz updatedAt
+  }
+
+  PetPhoto {
+    uuid id PK
+    uuid petId FK
+    text photoUrl
+    int sortOrder
+    timestamptz createdAt
+  }
+
+  PetEmergencyInfo {
+    uuid id PK
+    uuid petId FK,UK
+    text disease
+    text allergy
+    text currentMedications
+    text vetName
+    text vetPhone
+    text emergencyContactName
+    text emergencyContactPhone
+    timestamptz updatedAt
+  }
+
+  PetMedicalRecord {
+    uuid id PK
+    uuid petId FK
+    timestamptz date
+    enum recordType
+    text title
+    text description
+    text photoUrl
+    timestamptz createdAt
+  }
+
+  PetMedication {
+    uuid id PK
+    uuid petId FK
+    text name
+    text dosage
+    text frequency
+    timestamptz startDate
+    timestamptz endDate
+    timestamptz createdAt
+  }
+
+  PetVaccination {
+    uuid id PK
+    uuid petId FK
+    enum type
+    timestamptz date
+    timestamptz nextDue
+    timestamptz createdAt
+  }
+
+  PetEmergencyToken {
+    uuid id PK
+    uuid petId FK,UK
+    uuid token UK
+    bool isActive
+    timestamptz rotatedAt
+    timestamptz createdAt
+  }
+
+  PetCoreMetricEntry {
+    uuid id PK
+    uuid petId FK
+    enum type
+    decimal value
+    timestamptz recordedAt
+    text note
+    timestamptz createdAt
+  }
+
+  PetLabResultEntry {
+    uuid id PK
+    uuid petId FK
+    enum marker
+    decimal value
+    text unit
+    timestamptz recordedAt
+    text note
+    timestamptz createdAt
+  }
+
+  PetHealthExtensionEntry {
+    uuid id PK
+    uuid petId FK
+    enum key
+    decimal value
+    text unit
+    timestamptz recordedAt
+    text note
+    timestamptz createdAt
+  }
+```
+
+## 補足
+- すべての外部キーは `ON DELETE CASCADE`。
+- 1:1は `PetEmergencyInfo.petId` と `PetEmergencyToken.petId` の `UNIQUE` で担保。
+- `HouseholdMember.userId`, `HouseholdInviteCode.usedBy`, `HouseholdInviteCode.createdBy` は Supabase Auth (`auth.users.id`) を参照する想定。
