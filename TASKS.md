@@ -27,7 +27,6 @@ Development Task List
 3. `TASK-107` ペットプロフィール + 写真管理
 4. `TASK-106` 緊急情報 + QR公開画面
 5. `TASK-105` 医療タイムライン
-6. `TASK-104` 投薬管理 + カレンダー
 ### blocked
 （なし）
 
@@ -51,6 +50,7 @@ Development Task List
 17. `TASK-102` 統合テスト（unit/integration/e2e）
 18. `TASK-101` ドキュメント整備
 19. `TASK-103` ワクチン・予防歴
+20. `TASK-104` 投薬管理 + カレンダー
 
 ---
 
@@ -201,8 +201,13 @@ Development Task List
 ### 投薬管理 + カレンダー
 - Task ID: `TASK-104`
 - ブランチ: `feat/TASK-104-medication-calendar-integration`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 投薬スケジュール可視化と外部通知連携I/F
+- 完了条件:
+  - `GET/POST /api/pets/[petId]/medications` の正常系・異常系が integration test で検証される
+  - 投薬カレンダー生成ロジックの境界条件（endDate 含む/開始日前）が unit test で検証される
+  - ペット詳細画面で投薬カレンダー表示が e2e test で検証される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### ワクチン・予防歴
 - Task ID: `TASK-103`

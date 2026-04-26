@@ -15,4 +15,29 @@ describe("buildMedicationCalendar", () => {
     expect(first).toContain("ピモベンダン");
     expect(first).not.toContain("抗生剤");
   });
+
+  it("includes medication on endDate (inclusive)", () => {
+    const keys = Object.keys(buildMedicationCalendar([], 2));
+    const start = keys[0];
+    const end = keys[1];
+    const calendar = buildMedicationCalendar(
+      [{ name: "整腸剤", startDate: start, endDate: end }],
+      2
+    );
+
+    expect(calendar[end]).toContain("整腸剤");
+  });
+
+  it("returns empty list for date before startDate", () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const startDate = tomorrow.toISOString().slice(0, 10);
+    const calendar = buildMedicationCalendar(
+      [{ name: "抗生剤", startDate, endDate: null }],
+      1
+    );
+
+    const first = Object.values(calendar)[0];
+    expect(first).toEqual([]);
+  });
 });

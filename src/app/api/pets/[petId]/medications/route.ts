@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 
+const petIdParamSchema = z.object({
+  petId: z.string().uuid()
+});
+
 const medicationSchema = z.object({
   name: z.string().min(1).max(120),
   dosage: z.string().min(1).max(80),
@@ -11,8 +15,13 @@ const medicationSchema = z.object({
 });
 
 export async function GET(_: Request, { params }: { params: { petId: string } }) {
+  const parsedParams = petIdParamSchema.safeParse(params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
   const data = await prisma.petMedication.findMany({
-    where: { petId: params.petId },
+    where: { petId: parsedParams.data.petId },
     orderBy: { startDate: "desc" }
   });
 
@@ -20,6 +29,11 @@ export async function GET(_: Request, { params }: { params: { petId: string } })
 }
 
 export async function POST(request: Request, { params }: { params: { petId: string } }) {
+  const parsedParams = petIdParamSchema.safeParse(params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
   const body = await request.json();
   const parsed = medicationSchema.safeParse(body);
 
@@ -30,7 +44,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
   const created = await prisma.petMedication.create({
     data: {
       ...parsed.data,
-      petId: params.petId,
+      petId: parsedParams.data.petId,
       startDate: new Date(parsed.data.startDate),
       endDate: parsed.data.endDate ? new Date(parsed.data.endDate) : null
     }
