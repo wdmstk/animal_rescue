@@ -6,6 +6,7 @@ import { MedicationCalendar } from "@/components/features/pets/medication-calend
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 import { VaccinationManager } from "@/components/features/pets/vaccination-manager";
+import { E2E_PUBLIC_EMERGENCY_TOKEN } from "@/lib/constants/emergency";
 
 export default async function PetDetailPage({
   params
@@ -31,7 +32,7 @@ export default async function PetDetailPage({
   return (
     <div className="space-y-4">
       <a
-        href={`/e/demo-token`}
+        href={`/e/${E2E_PUBLIC_EMERGENCY_TOKEN}`}
         className="sticky top-[68px] z-10 block rounded-xl bg-emergency-500 px-4 py-3 text-center text-sm font-bold text-white shadow"
       >
         緊急情報を確認

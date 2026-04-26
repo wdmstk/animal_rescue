@@ -1,13 +1,32 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { toDataUrlMock } = vi.hoisted(() => ({
-  toDataUrlMock: vi.fn()
+const { toDataUrlMock, findPetMock, findTokenMock, createTokenMock } = vi.hoisted(() => ({
+  toDataUrlMock: vi.fn(),
+  findPetMock: vi.fn(),
+  findTokenMock: vi.fn(),
+  createTokenMock: vi.fn()
 }));
 
 vi.mock("qrcode", () => ({
   default: {
     toDataURL: toDataUrlMock
   }
+}));
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    pet: {
+      findUnique: findPetMock
+    },
+    petEmergencyToken: {
+      findUnique: findTokenMock,
+      create: createTokenMock
+    }
+  }
+}));
+
+vi.mock("@/lib/security/emergency-token", () => ({
+  generateEmergencyToken: () => "33333333-3333-4333-8333-333333333333"
 }));
 
 import { GET } from "../../src/app/api/pets/[petId]/qr-image/route";
@@ -18,6 +37,7 @@ describe("GET /api/pets/[petId]/qr-image", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     toDataUrlMock.mockResolvedValue("data:image/png;base64,mock");
+    findPetMock.mockResolvedValue({ id: validPetId });
   });
 
   it("returns 400 on invalid petId", async () => {
@@ -29,15 +49,51 @@ describe("GET /api/pets/[petId]/qr-image", () => {
     expect(toDataUrlMock).not.toHaveBeenCalled();
   });
 
-  it("returns QR image data for valid petId", async () => {
+  it("returns 404 when pet does not exist", async () => {
+    findPetMock.mockResolvedValue(null);
+
+    const response = await GET(new Request("http://localhost"), {
+      params: { petId: validPetId }
+    });
+
+    expect(response.status).toBe(404);
+    expect(toDataUrlMock).not.toHaveBeenCalled();
+  });
+
+  it("returns QR image data with existing token", async () => {
+    findTokenMock.mockResolvedValue({
+      token: "99999999-9999-4999-8999-999999999999"
+    });
+
     const response = await GET(new Request("http://localhost"), {
       params: { petId: validPetId }
     });
 
     expect(response.status).toBe(200);
     const payload = await response.json();
-    expect(payload.data.publicUrl).toContain(`/e/${validPetId}`);
+    expect(payload.data.publicUrl).toContain("/e/99999999-9999-4999-8999-999999999999");
+    expect(createTokenMock).not.toHaveBeenCalled();
+    expect(toDataUrlMock).toHaveBeenCalledWith(
+      "http://localhost:3000/e/99999999-9999-4999-8999-999999999999",
+      expect.any(Object)
+    );
+  });
+
+  it("creates token when missing and returns QR image", async () => {
+    findTokenMock.mockResolvedValue(null);
+    createTokenMock.mockResolvedValue({
+      token: "33333333-3333-4333-8333-333333333333"
+    });
+
+    const response = await GET(new Request("http://localhost"), {
+      params: { petId: validPetId }
+    });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data.publicUrl).toContain("/e/33333333-3333-4333-8333-333333333333");
     expect(payload.data.image).toBe("data:image/png;base64,mock");
     expect(toDataUrlMock).toHaveBeenCalledOnce();
+    expect(createTokenMock).toHaveBeenCalledOnce();
   });
 });
