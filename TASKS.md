@@ -19,8 +19,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-2. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+1. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ### todo
 1. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
@@ -50,6 +49,7 @@ Development Task List
 3. `TASK-118` ワクチン履歴編集フロー
 4. `TASK-116` 医療記録追加フォーム永続化
 5. `TASK-114` QRトークン再生成UI連携
+6. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
 
 ---
 
@@ -79,7 +79,7 @@ Development Task List
 ### 疾患非依存の健康トラッキング + グラフ表示
 - Task ID: `TASK-111`
 - ブランチ: `feat/TASK-111-health-metrics-tracking-graphs`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 全ペット共通コア項目 + 拡張項目（例: 点滴量）を記録し、時系列グラフで可視化
 - 完了条件:
   - `POST/GET /api/pets/[petId]/health/core-metrics` が実装される

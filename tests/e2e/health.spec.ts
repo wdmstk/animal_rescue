@@ -22,3 +22,11 @@ test("health graph controls and extension form are interactive", async ({ page }
   await labButton.click();
   await expect(page.getByText("推移グラフ")).toBeVisible();
 });
+
+test("health panel shows input, history and graph sections", async ({ page }) => {
+  await page.goto("/pets/demo-pet");
+  await expect(page.getByText("共通コアを記録")).toBeVisible();
+  await expect(page.getByText("血液検査を記録")).toBeVisible();
+  await expect(page.getByText("推移グラフ")).toBeVisible();
+  await expect(page.getByText("共通コア履歴")).toBeVisible();
+});
