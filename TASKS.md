@@ -19,7 +19,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+（なし）
 
 ### todo
 1. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
@@ -50,6 +50,7 @@ Development Task List
 4. `TASK-116` 医療記録追加フォーム永続化
 5. `TASK-114` QRトークン再生成UI連携
 6. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+7. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ---
 
@@ -164,7 +165,7 @@ Development Task List
 ### 基盤セットアップ（Next.js + Supabase + Prisma）
 - Task ID: `TASK-110`
 - ブランチ: `chore/TASK-110-bootstrap-next-supabase-prisma`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: アプリ基盤、型、スタイル、テスト基盤を整備
 
 ### 認証 + 家族招待コード基盤

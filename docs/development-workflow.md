@@ -14,6 +14,7 @@
    - 実DB依存の変更: `RUN_DB_INTEGRATION=1 npx vitest run tests/integration/health-db-real-route.test.ts`
 3. コミット・push
 4. PR作成（通常PR）
+5. CIグリーン確認後にマージし、ブランチ削除・`main` 最新化まで実施
 
 ## PR作成（日本語サマリ）
 `\n` の文字列表示を避けるため、必ず `--body-file` を使う。
@@ -33,7 +34,6 @@ cat > .github/pr-body/TASK-xxx.md <<'EOF'
 EOF
 
 gh pr create \
-  --draft \
   --base main \
   --head feat/TASK-xxx-... \
   --title "feat: TASK-xxx ..." \
