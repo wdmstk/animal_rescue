@@ -7,6 +7,9 @@ test("pet detail shows health tracking section", async ({ page }) => {
 
 test("pet detail shows parallel implementation sections", async ({ page }) => {
   await page.goto("/pets/demo-pet");
+  await expect(page.getByRole("heading", { name: "緊急情報" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "QR共有" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "公開画面を確認" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "ワクチン・予防歴" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "投薬カレンダー（7日）" })).toBeVisible();
   const medicationSection = page.locator("section", { hasText: "投薬カレンダー（7日）" });

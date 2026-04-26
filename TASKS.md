@@ -25,7 +25,6 @@ Development Task List
 1. `TASK-109` 認証 + 家族招待コード基盤
 2. `TASK-108` スキーマ + RLS実装
 3. `TASK-107` ペットプロフィール + 写真管理
-4. `TASK-106` 緊急情報 + QR公開画面
 ### blocked
 （なし）
 
@@ -51,6 +50,7 @@ Development Task List
 19. `TASK-103` ワクチン・予防歴
 20. `TASK-104` 投薬管理 + カレンダー
 21. `TASK-105` 医療タイムライン
+22. `TASK-106` 緊急情報 + QR公開画面
 
 ---
 
@@ -189,8 +189,13 @@ Development Task List
 ### 緊急情報 + QR公開画面
 - Task ID: `TASK-106`
 - ブランチ: `feat/TASK-106-emergency-qr-public-view`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 最小情報公開の閲覧専用画面とQR共有
+- 完了条件:
+  - `PUT /api/pets/[petId]/emergency-info` の正常系・異常系（petId/入力値/存在確認）が integration test で検証される
+  - `GET /api/pets/[petId]/qr-image` の petId バリデーションと生成結果が integration test で検証される
+  - ペット詳細画面で緊急情報/QR共有セクションが e2e test で検証される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 医療タイムライン
 - Task ID: `TASK-105`
