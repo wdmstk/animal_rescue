@@ -1,19 +1,26 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { buildHealthTrendSeries } from "@/lib/services/health-trends";
+import { healthPetIdParamSchema } from "@/lib/validators/health";
 
-export async function GET(_: Request, { params }: { params: { petId: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = healthPetIdParamSchema.safeParse(await params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
+  const { petId } = parsedParams.data;
   const [coreMetrics, labResults, extensions] = await Promise.all([
     prisma.petCoreMetricEntry.findMany({
-      where: { petId: params.petId },
+      where: { petId },
       orderBy: { recordedAt: "asc" }
     }),
     prisma.petLabResultEntry.findMany({
-      where: { petId: params.petId },
+      where: { petId },
       orderBy: { recordedAt: "asc" }
     }),
     prisma.petHealthExtensionEntry.findMany({
-      where: { petId: params.petId },
+      where: { petId },
       orderBy: { recordedAt: "asc" }
     })
   ]);

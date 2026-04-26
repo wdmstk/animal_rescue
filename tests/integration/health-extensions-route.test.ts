@@ -17,8 +17,17 @@ vi.mock("@/lib/prisma", () => ({
 import { GET, POST } from "../../src/app/api/pets/[petId]/health/extensions/route";
 
 describe("/api/pets/[petId]/health/extensions", () => {
+  const validPetId = "11111111-1111-4111-8111-111111111111";
+
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it("returns 400 on invalid petId", async () => {
+    const response = await GET(new Request("http://localhost"), { params: Promise.resolve({ petId: "sample-pet" }) });
+
+    expect(response.status).toBe(400);
+    expect(findManyMock).not.toHaveBeenCalled();
   });
 
   it("returns 400 on invalid payload", async () => {
@@ -32,7 +41,7 @@ describe("/api/pets/[petId]/health/extensions", () => {
           recordedAt: "2026-04-20"
         })
       }),
-      { params: { petId: "pet-1" } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(400);
@@ -42,7 +51,7 @@ describe("/api/pets/[petId]/health/extensions", () => {
   it("creates entry with nullable unit", async () => {
     createMock.mockResolvedValue({
       id: "id-1",
-      petId: "pet-1",
+      petId: validPetId,
       key: "INFUSION_ML",
       value: 120,
       unit: null,
@@ -61,14 +70,14 @@ describe("/api/pets/[petId]/health/extensions", () => {
           recordedAt: "2026-04-20"
         })
       }),
-      { params: { petId: "pet-1" } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(201);
     expect(createMock).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
-          petId: "pet-1",
+          petId: validPetId,
           key: "INFUSION_ML",
           unit: null
         })
@@ -80,7 +89,7 @@ describe("/api/pets/[petId]/health/extensions", () => {
     findManyMock.mockResolvedValue([
       {
         id: "id-1",
-        petId: "pet-1",
+        petId: validPetId,
         key: "INFUSION_ML",
         value: 100,
         unit: "mL",
@@ -89,7 +98,7 @@ describe("/api/pets/[petId]/health/extensions", () => {
       }
     ]);
 
-    const response = await GET(new Request("http://localhost"), { params: { petId: "pet-1" } });
+    const response = await GET(new Request("http://localhost"), { params: Promise.resolve({ petId: validPetId }) });
 
     expect(response.status).toBe(200);
     const payload = await response.json();

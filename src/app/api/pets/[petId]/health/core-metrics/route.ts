@@ -1,8 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { coreHealthEntryInputSchema, coreMetricTypeFilterSchema } from "@/lib/validators/health";
+import { coreHealthEntryInputSchema, coreMetricTypeFilterSchema, healthPetIdParamSchema } from "@/lib/validators/health";
 
-export async function GET(request: Request, { params }: { params: { petId: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = healthPetIdParamSchema.safeParse(await params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
+  const { petId } = parsedParams.data;
   const url = new URL(request.url);
   const parsedFilter = coreMetricTypeFilterSchema.safeParse({
     type: url.searchParams.get("type") ?? undefined
@@ -14,7 +20,7 @@ export async function GET(request: Request, { params }: { params: { petId: strin
 
   const data = await prisma.petCoreMetricEntry.findMany({
     where: {
-      petId: params.petId,
+      petId,
       type: parsedFilter.data.type
     },
     orderBy: { recordedAt: "desc" }
@@ -32,7 +38,13 @@ export async function GET(request: Request, { params }: { params: { petId: strin
   });
 }
 
-export async function POST(request: Request, { params }: { params: { petId: string } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = healthPetIdParamSchema.safeParse(await params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
+  const { petId } = parsedParams.data;
   const body = await request.json();
   const parsed = coreHealthEntryInputSchema.safeParse(body);
 
@@ -42,7 +54,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
 
   const created = await prisma.petCoreMetricEntry.create({
     data: {
-      petId: params.petId,
+      petId,
       type: parsed.data.type,
       value: parsed.data.value,
       recordedAt: parsed.data.recordedAt,

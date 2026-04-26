@@ -29,3 +29,7 @@ export const healthExtensionEntryInputSchema = z.object({
 export const coreMetricTypeFilterSchema = z.object({
   type: z.enum(CORE_METRIC_TYPES).optional()
 });
+
+export const healthPetIdParamSchema = z.object({
+  petId: z.string().uuid()
+});

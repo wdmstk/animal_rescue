@@ -23,15 +23,26 @@ vi.mock("@/lib/prisma", () => ({
 import { GET } from "../../src/app/api/pets/[petId]/health/trends/route";
 
 describe("/api/pets/[petId]/health/trends", () => {
+  const validPetId = "11111111-1111-4111-8111-111111111111";
+
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  it("returns 400 on invalid petId", async () => {
+    const response = await GET(new Request("http://localhost"), { params: Promise.resolve({ petId: "sample-pet" }) });
+
+    expect(response.status).toBe(400);
+    expect(coreFindManyMock).not.toHaveBeenCalled();
+    expect(labFindManyMock).not.toHaveBeenCalled();
+    expect(extensionFindManyMock).not.toHaveBeenCalled();
   });
 
   it("returns aggregated trend series", async () => {
     coreFindManyMock.mockResolvedValue([
       {
         id: "c1",
-        petId: "pet-1",
+        petId: validPetId,
         type: "WEIGHT_KG",
         value: 4.2,
         recordedAt: new Date("2026-04-02T00:00:00.000Z"),
@@ -41,7 +52,7 @@ describe("/api/pets/[petId]/health/trends", () => {
     labFindManyMock.mockResolvedValue([
       {
         id: "l1",
-        petId: "pet-1",
+        petId: validPetId,
         marker: "CRE",
         value: 1.8,
         unit: "mg/dL",
@@ -52,7 +63,7 @@ describe("/api/pets/[petId]/health/trends", () => {
     extensionFindManyMock.mockResolvedValue([
       {
         id: "e1",
-        petId: "pet-1",
+        petId: validPetId,
         key: "INFUSION_ML",
         value: 100,
         unit: "mL",
@@ -61,7 +72,7 @@ describe("/api/pets/[petId]/health/trends", () => {
       }
     ]);
 
-    const response = await GET(new Request("http://localhost"), { params: { petId: "pet-1" } });
+    const response = await GET(new Request("http://localhost"), { params: Promise.resolve({ petId: validPetId }) });
 
     expect(response.status).toBe(200);
     const payload = await response.json();
@@ -79,7 +90,7 @@ describe("/api/pets/[petId]/health/trends", () => {
     labFindManyMock.mockResolvedValue([]);
     extensionFindManyMock.mockResolvedValue([]);
 
-    const response = await GET(new Request("http://localhost"), { params: { petId: "pet-1" } });
+    const response = await GET(new Request("http://localhost"), { params: Promise.resolve({ petId: validPetId }) });
 
     expect(response.status).toBe(200);
     const payload = await response.json();

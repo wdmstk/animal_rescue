@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { healthExtensionEntryInputSchema } from "@/lib/validators/health";
+import { healthExtensionEntryInputSchema, healthPetIdParamSchema } from "@/lib/validators/health";
 
-export async function GET(_: Request, { params }: { params: { petId: string } }) {
+export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = healthPetIdParamSchema.safeParse(await params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
+  const { petId } = parsedParams.data;
   const data = await prisma.petHealthExtensionEntry.findMany({
-    where: { petId: params.petId },
+    where: { petId },
     orderBy: { recordedAt: "desc" }
   });
 
@@ -21,7 +27,13 @@ export async function GET(_: Request, { params }: { params: { petId: string } })
   });
 }
 
-export async function POST(request: Request, { params }: { params: { petId: string } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = healthPetIdParamSchema.safeParse(await params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
+  const { petId } = parsedParams.data;
   const body = await request.json();
   const parsed = healthExtensionEntryInputSchema.safeParse(body);
 
@@ -31,7 +43,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
 
   const created = await prisma.petHealthExtensionEntry.create({
     data: {
-      petId: params.petId,
+      petId,
       key: parsed.data.key,
       value: parsed.data.value,
       unit: parsed.data.unit || null,
