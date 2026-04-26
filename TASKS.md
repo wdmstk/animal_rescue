@@ -22,16 +22,15 @@ Development Task List
 （なし）
 
 ### todo
-1. `TASK-112` 認証/招待ユーザー連携
-2. `TASK-109` 認証 + 家族招待コード基盤
-3. `TASK-108` スキーマ + RLS実装
-4. `TASK-107` ペットプロフィール + 写真管理
-5. `TASK-106` 緊急情報 + QR公開画面
-6. `TASK-105` 医療タイムライン
-7. `TASK-104` 投薬管理 + カレンダー
-8. `TASK-103` ワクチン・予防歴
-9. `TASK-102` 統合テスト（unit/integration/e2e）
-10. `TASK-101` ドキュメント整備
+1. `TASK-109` 認証 + 家族招待コード基盤
+2. `TASK-108` スキーマ + RLS実装
+3. `TASK-107` ペットプロフィール + 写真管理
+4. `TASK-106` 緊急情報 + QR公開画面
+5. `TASK-105` 医療タイムライン
+6. `TASK-104` 投薬管理 + カレンダー
+7. `TASK-103` ワクチン・予防歴
+8. `TASK-102` 統合テスト（unit/integration/e2e）
+9. `TASK-101` ドキュメント整備
 ### blocked
 （なし）
 
@@ -49,8 +48,9 @@ Development Task List
 11. `TASK-115` 写真Storageアップロード接続
 12. `TASK-114` QRトークン再生成UI連携
 13. `TASK-113` 公開緊急APIのRPC移行
-14. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-15. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+14. `TASK-112` 認証/招待ユーザー連携
+15. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+16. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ---
 
@@ -159,7 +159,7 @@ Development Task List
 ### 認証/招待ユーザー連携
 - Task ID: `TASK-112`
 - ブランチ: `feat/TASK-112-auth-invite-user-linkage`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 招待参加導線を実ユーザー認証と接続
 
 ### 基盤セットアップ（Next.js + Supabase + Prisma）
