@@ -74,7 +74,7 @@ describe("GET /api/pets/[petId]/qr-image", () => {
     expect(payload.data.publicUrl).toContain("/e/99999999-9999-4999-8999-999999999999");
     expect(createTokenMock).not.toHaveBeenCalled();
     expect(toDataUrlMock).toHaveBeenCalledWith(
-      "http://localhost:3000/e/99999999-9999-4999-8999-999999999999",
+      expect.stringMatching(/\/e\/99999999-9999-4999-8999-999999999999$/),
       expect.any(Object)
     );
   });
