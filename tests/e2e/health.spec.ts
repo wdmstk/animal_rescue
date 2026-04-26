@@ -13,6 +13,8 @@ test("pet detail shows parallel implementation sections", async ({ page }) => {
   await expect(medicationSection.getByText("ピモベンダン").first()).toBeVisible();
   await expect(page.getByRole("button", { name: "トークン再生成" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "記録を追加" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "医療記録タイムライン" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "定期健診" })).toBeVisible();
 });
 
 test("health graph controls and extension form are interactive", async ({ page }) => {
