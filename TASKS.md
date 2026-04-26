@@ -19,11 +19,10 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-118` ワクチン履歴編集フロー
-2. `TASK-116` 医療記録追加フォーム永続化
-3. `TASK-114` QRトークン再生成UI連携
-4. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-5. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+1. `TASK-116` 医療記録追加フォーム永続化
+2. `TASK-114` QRトークン再生成UI連携
+3. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+4. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ### todo
 1. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
@@ -50,6 +49,7 @@ Development Task List
 ### done
 1. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
 2. `TASK-124` Prisma adapter未設定による500エラー修正
+3. `TASK-118` ワクチン履歴編集フロー
 
 ---
 
@@ -122,7 +122,7 @@ Development Task List
 ### ワクチン履歴編集フロー
 - Task ID: `TASK-118`
 - ブランチ: `feat/TASK-118-vaccination-edit-flow`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: ワクチン履歴の追加/編集導線を実装
 
 ### 投薬リマインダー実送信
