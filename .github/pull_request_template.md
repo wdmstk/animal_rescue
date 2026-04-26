@@ -1,6 +1,7 @@
 ## 概要
 
 - 対象TASK:
+- 対応Issue:
 - 目的:
 
 ## 変更内容
@@ -18,6 +19,9 @@
 
 - [ ] task_updated
 - [ ] task_order_checked
+- [ ] issue_created_and_linked
+- [ ] issue_split_for_parallelizable_units
+- [ ] issue_closed_on_task_done
 - [ ] branch_naming_checked
 - [ ] tests_run_lint
 - [ ] tests_run_vitest

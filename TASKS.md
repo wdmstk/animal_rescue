@@ -7,6 +7,10 @@ Development Task List
 ## TASK運用ルール
 - Task ID 形式: `TASK-xxx`
 - 正式タスクは `TASK INDEX` と詳細セクションを必ずセットで更新
+- 新規TASK作成時は、対応するGitHub Issueを必ず作成し、TASK詳細にIssue番号を記載する
+- IssueはCodexAppでの同時並行実装を想定し、独立実装可能な単位で分割する（API/UI/Test/Docs など）
+- Issue分割時は依存関係（blocked by / prerequisite）を明示する
+- TASKを`done`へ更新する際は、対応Issueをクローズしてから反映する
 - 表示順序:
   1. `in_progress`
   2. `todo`
@@ -28,35 +32,59 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-127` 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
-2. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
-3. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
-4. `TASK-124` Prisma adapter未設定による500エラー修正
-5. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
-6. `TASK-122` 健康トラッキングのグラフ可視化UI
-7. `TASK-121` 健康トラッキングの入力UI
-8. `TASK-120` 健康トラッキングAPI/スキーマ整備
-9. `TASK-119` 実DB統合テスト + CI記載更新
-10. `TASK-118` ワクチン履歴編集フロー
-11. `TASK-117` 投薬リマインダー実送信
-12. `TASK-116` 医療記録追加フォーム永続化
-13. `TASK-115` 写真Storageアップロード接続
-14. `TASK-114` QRトークン再生成UI連携
-15. `TASK-113` 公開緊急APIのRPC移行
-16. `TASK-112` 認証/招待ユーザー連携
-17. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-18. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
-19. `TASK-102` 統合テスト（unit/integration/e2e）
-20. `TASK-101` ドキュメント整備
-21. `TASK-103` ワクチン・予防歴
-22. `TASK-104` 投薬管理 + カレンダー
-23. `TASK-105` 医療タイムライン
-24. `TASK-106` 緊急情報 + QR公開画面
-25. `TASK-107` ペットプロフィール + 写真管理
+1. `TASK-129` TASK完了時のIssueクローズ必須化
+2. `TASK-128` TASK作成時のIssue必須化と並行実装向け分割方針の追加
+3. `TASK-127` 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
+4. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
+5. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
+6. `TASK-124` Prisma adapter未設定による500エラー修正
+7. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
+8. `TASK-122` 健康トラッキングのグラフ可視化UI
+9. `TASK-121` 健康トラッキングの入力UI
+10. `TASK-120` 健康トラッキングAPI/スキーマ整備
+11. `TASK-119` 実DB統合テスト + CI記載更新
+12. `TASK-118` ワクチン履歴編集フロー
+13. `TASK-117` 投薬リマインダー実送信
+14. `TASK-116` 医療記録追加フォーム永続化
+15. `TASK-115` 写真Storageアップロード接続
+16. `TASK-114` QRトークン再生成UI連携
+17. `TASK-113` 公開緊急APIのRPC移行
+18. `TASK-112` 認証/招待ユーザー連携
+19. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+20. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+21. `TASK-102` 統合テスト（unit/integration/e2e）
+22. `TASK-101` ドキュメント整備
+23. `TASK-103` ワクチン・予防歴
+24. `TASK-104` 投薬管理 + カレンダー
+25. `TASK-105` 医療タイムライン
+26. `TASK-106` 緊急情報 + QR公開画面
+27. `TASK-107` ペットプロフィール + 写真管理
 
 ---
 
 ## 正式タスク詳細
+
+### TASK完了時のIssueクローズ必須化
+- Task ID: `TASK-129`
+- ブランチ: `docs/TASK-129-task-done-close-issue`
+- ステータス: `done`
+- 概要: TASK完了時に対応Issueを必ずクローズする運用を、ドキュメント・PRテンプレート・CIチェックへ反映
+- Issue: `#76`
+- 完了条件:
+  - `AGENTS.md` と `TASKS.md` にTASK完了時のIssueクローズ必須が追記される
+  - `docs/development-workflow.md` にIssueクローズ手順が追記される
+  - PRテンプレートとCIチェックに `issue_closed_on_task_done` が追加される
+
+### TASK作成時のIssue必須化と並行実装向け分割方針の追加
+- Task ID: `TASK-128`
+- ブランチ: `docs/TASK-128-task-issue-parallel-policy`
+- ステータス: `done`
+- 概要: 新規TASK作成時のIssue必須化と、CodexAppの並行実装を想定したIssue分割ルールを運用ドキュメントに追加
+- Issue: `#75`
+- 完了条件:
+  - `AGENTS.md` にTASKとIssueの紐付け必須が追記される
+  - `TASKS.md` の運用ルールにIssue作成/分割/依存関係明示が追記される
+  - PRテンプレートとCIチェックにIssue管理チェック項目が追加される
 
 ### 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
 - Task ID: `TASK-127`
