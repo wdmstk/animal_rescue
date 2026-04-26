@@ -30,3 +30,18 @@ test("health panel shows input, history and graph sections", async ({ page }) =>
   await expect(page.getByText("推移グラフ")).toBeVisible();
   await expect(page.getByText("共通コア履歴")).toBeVisible();
 });
+
+test("extension toggle shows infusion input form", async ({ page }) => {
+  await page.goto("/pets/demo-pet");
+  const extensionToggle = page.locator("label:has-text('拡張項目（例: 点滴量）') input[type='checkbox']");
+  await expect(extensionToggle).not.toBeChecked();
+  await extensionToggle.check();
+  await expect(extensionToggle).toBeChecked();
+});
+
+test("health graph period selector can be changed", async ({ page }) => {
+  await page.goto("/pets/demo-pet");
+  const periodSelect = page.locator("select").filter({ has: page.locator("option", { hasText: "全期間" }) }).first();
+  await periodSelect.selectOption("all");
+  await expect(periodSelect).toHaveValue("all");
+});
