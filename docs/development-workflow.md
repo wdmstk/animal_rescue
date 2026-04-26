@@ -6,15 +6,18 @@
 - 1タスク1PRを徹底し、差分を混在させない
 
 ## 実装手順
-1. `main` を最新化してタスクブランチを作成
-2. 実装後に品質ゲートを実行
+1. `TASKS.md` にタスクを登録し、対応するGitHub Issueを作成
+   - CodexAppでの並行実装を想定し、Issueは独立実装可能な単位（API/UI/Test/Docs）で分割
+   - 依存関係（blocked by / prerequisite）をIssueに明記
+2. `main` を最新化してタスクブランチを作成
+3. 実装後に品質ゲートを実行
    - `npm run lint`
    - `npx vitest run`
    - 画面影響あり: `npm run test:e2e`
    - 実DB依存の変更: `RUN_DB_INTEGRATION=1 npx vitest run tests/integration/health-db-real-route.test.ts`
-3. コミット・push
-4. PR作成（通常PR）
-5. CIグリーン確認後にマージし、ブランチ削除・`main` 最新化まで実施
+4. コミット・push
+5. PR作成（通常PR）
+6. CIグリーン確認後にマージし、対応Issueをクローズ、ブランチ削除・`main` 最新化まで実施
 
 ## PR作成（日本語サマリ）
 `\n` の文字列表示を避けるため、必ず `--body-file` を使う。
@@ -46,12 +49,14 @@ gh pr create \
 2. 必須チェックがすべて成功したことを確認
    - `PR Operational Guard`（ブランチ命名 + PRチェックリスト）を含む
 3. `main` へ squash merge
-4. 作業ブランチをローカル/リモートから削除
-5. ローカル `main` を最新化
+4. 対応Issueをクローズ
+5. 作業ブランチをローカル/リモートから削除
+6. ローカル `main` を最新化
 
 ```bash
 gh pr checks --watch
 gh pr merge --squash --delete-branch
+gh issue close <issue-number>
 git checkout main
 git pull origin main
 ```

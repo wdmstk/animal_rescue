@@ -121,6 +121,9 @@ Commit format:
 
 Use `TASKS.md` as canonical task tracker.
 
+When creating a new task, create a corresponding GitHub Issue and manage progress with both (`TASKS.md` + Issue).
+When closing a task (`done`), close the corresponding GitHub Issue in the same delivery flow.
+
 Status order:
 1. `in_progress`
 2. `todo`
@@ -131,6 +134,11 @@ Within each status: Task ID descending.
 
 Branch format:
 `<type>/TASK-<id>-<short-description>`
+
+Issue design policy (for CodexApp parallel implementation):
+- Split issues into independently implementable units (API/UI/test/docs etc.) so they can run in parallel
+- Keep one issue focused on one primary objective and acceptance criteria
+- Define dependency order explicitly (`blocked by`, prerequisite issue IDs)
 
 ---
 
@@ -148,6 +156,7 @@ The following flow is mandatory for every implementation/fix task:
 1. Task management
    - Add/update task in `TASKS.md` first (`TASK INDEX` + detail section)
    - Keep status order and Task ID descending rules
+   - Create/update corresponding GitHub Issue and keep `TASK`/`Issue` linked
 2. Branch management
    - Create branch from latest `main`
    - Branch format: `<type>/TASK-<id>-<short-description>`
@@ -169,6 +178,7 @@ The following flow is mandatory for every implementation/fix task:
    - Ensure no unrelated changes are included
 7. Merge to `main`
    - Merge only after CI is green and self review is done
+   - Close corresponding GitHub Issue
    - Delete merged branch and update local `main`
 
 Do not mark work done before this full flow is completed.
