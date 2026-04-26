@@ -28,7 +28,6 @@ Development Task List
 4. `TASK-106` 緊急情報 + QR公開画面
 5. `TASK-105` 医療タイムライン
 6. `TASK-104` 投薬管理 + カレンダー
-7. `TASK-103` ワクチン・予防歴
 ### blocked
 （なし）
 
@@ -51,6 +50,7 @@ Development Task List
 16. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 17. `TASK-102` 統合テスト（unit/integration/e2e）
 18. `TASK-101` ドキュメント整備
+19. `TASK-103` ワクチン・予防歴
 
 ---
 
@@ -207,8 +207,13 @@ Development Task List
 ### ワクチン・予防歴
 - Task ID: `TASK-103`
 - ブランチ: `feat/TASK-103-vaccination-prevention`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 接種履歴と次回予定日管理
+- 完了条件:
+  - ワクチン履歴API（GET/POST/PATCH）の正常系・異常系が integration test で検証される
+  - 次回予定日の期限判定ロジック（overdue/upcoming/ok）が unit test で検証される
+  - ペット詳細画面でワクチン・予防歴セクション表示が e2e test で検証される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 統合テスト（unit/integration/e2e）
 - Task ID: `TASK-102`
