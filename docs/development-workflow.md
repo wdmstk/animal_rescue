@@ -18,6 +18,7 @@
 
 ## PR作成（日本語サマリ）
 `\n` の文字列表示を避けるため、必ず `--body-file` を使う。
+`pull_request_template.md` の必須チェックリストは全項目を完了させること。
 
 ```bash
 mkdir -p .github/pr-body
@@ -43,6 +44,7 @@ gh pr create \
 ## CI確認とマージ運用
 1. PR作成後にCI完了まで待機
 2. 必須チェックがすべて成功したことを確認
+   - `PR Operational Guard`（ブランチ命名 + PRチェックリスト）を含む
 3. `main` へ squash merge
 4. 作業ブランチをローカル/リモートから削除
 5. ローカル `main` を最新化
