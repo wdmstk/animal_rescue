@@ -19,9 +19,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-114` QRトークン再生成UI連携
-2. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-3. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+1. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+2. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ### todo
 1. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
@@ -50,6 +49,7 @@ Development Task List
 2. `TASK-124` Prisma adapter未設定による500エラー修正
 3. `TASK-118` ワクチン履歴編集フロー
 4. `TASK-116` 医療記録追加フォーム永続化
+5. `TASK-114` QRトークン再生成UI連携
 
 ---
 
@@ -146,7 +146,7 @@ Development Task List
 ### QRトークン再生成UI連携
 - Task ID: `TASK-114`
 - ブランチ: `feat/TASK-114-qr-token-rotation-ui`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: QRトークン再生成APIとUIを接続
 
 ### 公開緊急APIのRPC移行

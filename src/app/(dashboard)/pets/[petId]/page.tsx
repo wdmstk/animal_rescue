@@ -56,7 +56,7 @@ export default async function PetDetailPage({
         contact="山田 花子 090-1234-5678"
       />
 
-      <EmergencyQrShareCard petId={petId} initialToken="demo-token" />
+      <EmergencyQrShareCard petId={petId} />
 
       <MedicationCalendar
         periods={[
