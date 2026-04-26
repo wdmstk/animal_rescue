@@ -22,18 +22,17 @@ Development Task List
 （なし）
 
 ### todo
-1. `TASK-115` 写真Storageアップロード接続
-2. `TASK-113` 公開緊急APIのRPC移行
-3. `TASK-112` 認証/招待ユーザー連携
-4. `TASK-109` 認証 + 家族招待コード基盤
-5. `TASK-108` スキーマ + RLS実装
-6. `TASK-107` ペットプロフィール + 写真管理
-7. `TASK-106` 緊急情報 + QR公開画面
-8. `TASK-105` 医療タイムライン
-9. `TASK-104` 投薬管理 + カレンダー
-10. `TASK-103` ワクチン・予防歴
-11. `TASK-102` 統合テスト（unit/integration/e2e）
-12. `TASK-101` ドキュメント整備
+1. `TASK-113` 公開緊急APIのRPC移行
+2. `TASK-112` 認証/招待ユーザー連携
+3. `TASK-109` 認証 + 家族招待コード基盤
+4. `TASK-108` スキーマ + RLS実装
+5. `TASK-107` ペットプロフィール + 写真管理
+6. `TASK-106` 緊急情報 + QR公開画面
+7. `TASK-105` 医療タイムライン
+8. `TASK-104` 投薬管理 + カレンダー
+9. `TASK-103` ワクチン・予防歴
+10. `TASK-102` 統合テスト（unit/integration/e2e）
+11. `TASK-101` ドキュメント整備
 ### blocked
 （なし）
 
@@ -48,9 +47,10 @@ Development Task List
 8. `TASK-118` ワクチン履歴編集フロー
 9. `TASK-117` 投薬リマインダー実送信
 10. `TASK-116` 医療記録追加フォーム永続化
-11. `TASK-114` QRトークン再生成UI連携
-12. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-13. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+11. `TASK-115` 写真Storageアップロード接続
+12. `TASK-114` QRトークン再生成UI連携
+13. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+14. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 
 ---
 
@@ -140,8 +140,8 @@ Development Task List
 
 ### 写真Storageアップロード接続
 - Task ID: `TASK-115`
-- ブランチ: `feat/TASK-115-photo-storage-upload`
-- ステータス: `todo`
+- ブランチ: `feat/TASK-107-pet-profile-photos`
+- ステータス: `done`
 - 概要: 画像アップロードをStorageに接続
 
 ### QRトークン再生成UI連携
