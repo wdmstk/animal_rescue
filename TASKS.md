@@ -30,7 +30,6 @@ Development Task List
 6. `TASK-104` 投薬管理 + カレンダー
 7. `TASK-103` ワクチン・予防歴
 8. `TASK-102` 統合テスト（unit/integration/e2e）
-9. `TASK-101` ドキュメント整備
 ### blocked
 （なし）
 
@@ -51,6 +50,7 @@ Development Task List
 14. `TASK-112` 認証/招待ユーザー連携
 15. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
 16. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+17. `TASK-101` ドキュメント整備
 
 ---
 
@@ -219,7 +219,11 @@ Development Task List
 ### ドキュメント整備
 - Task ID: `TASK-101`
 - ブランチ: `docs/TASK-101-mvp-docs-security-ops`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: セットアップ、設計、運用手順の明文化
+- 完了条件:
+  - `README.md` にセットアップ/設計ドキュメント導線が整理される
+  - `docs/development-workflow.md` に PR作成〜CI確認〜マージ〜後片付け手順が明記される
+  - `docs/security-policy.md` に運用時のセキュリティ確認手順が明記される
 
 

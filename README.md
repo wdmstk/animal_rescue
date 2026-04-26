@@ -48,3 +48,16 @@ npm run test:e2e
 - 並列実装フロー: `docs/development-workflow.md`
 - PRテンプレート: `docs/pr-template-ja.md`
 - PR本文は `gh pr create --body-file` を使い、改行崩れを防ぐ
+
+## ドキュメント一覧
+- セキュリティ運用: `docs/security-policy.md`
+- 開発フロー（PR/CI/マージ）: `docs/development-workflow.md`
+- PRテンプレート: `docs/pr-template-ja.md`
+- 現在のテスト観点: `docs/current-test-items.md`
+
+## アーキテクチャ参照
+- 全体構成: `architecture.md`
+- API設計メモ: `api_routes_design.md`
+- Supabaseスキーマ: `supabase_schema.md`
+- Supabase認証設計: `supabase_auth_design.md`
+- Supabaseストレージ設計: `supabase_storage_design.md`

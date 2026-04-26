@@ -39,3 +39,19 @@ gh pr create \
   --title "feat: TASK-xxx ..." \
   --body-file .github/pr-body/TASK-xxx.md
 ```
+
+## CI確認とマージ運用
+1. PR作成後にCI完了まで待機
+2. 必須チェックがすべて成功したことを確認
+3. `main` へ squash merge
+4. 作業ブランチをローカル/リモートから削除
+5. ローカル `main` を最新化
+
+```bash
+gh pr checks --watch
+gh pr merge --squash --delete-branch
+git checkout main
+git pull origin main
+```
+
+CIが失敗した場合は修正コミットを追加して再pushし、再度 `gh pr checks --watch` でグリーン化を確認する。
