@@ -67,6 +67,22 @@ describe("/api/pets/[petId]/vaccinations", () => {
     expect(createMock).not.toHaveBeenCalled();
   });
 
+  it("returns 400 on invalid petId for POST", async () => {
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          type: "CORE",
+          date: "2026-04-20"
+        })
+      }),
+      { params: Promise.resolve({ petId: "sample-pet" }) }
+    );
+
+    expect(response.status).toBe(400);
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
   it("creates record on POST", async () => {
     createMock.mockResolvedValue({
       id: validVaccinationId,
@@ -110,6 +126,24 @@ describe("/api/pets/[petId]/vaccinations", () => {
         })
       }),
       { params: Promise.resolve({ petId: validPetId }) }
+    );
+
+    expect(response.status).toBe(400);
+    expect(findFirstMock).not.toHaveBeenCalled();
+    expect(updateMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 on invalid petId for PATCH", async () => {
+    const response = await PATCH(
+      new Request("http://localhost", {
+        method: "PATCH",
+        body: JSON.stringify({
+          id: validVaccinationId,
+          type: "CORE",
+          date: "2026-04-20"
+        })
+      }),
+      { params: Promise.resolve({ petId: "sample-pet" }) }
     );
 
     expect(response.status).toBe(400);
