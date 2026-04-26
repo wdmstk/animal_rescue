@@ -29,7 +29,6 @@ Development Task List
 5. `TASK-105` 医療タイムライン
 6. `TASK-104` 投薬管理 + カレンダー
 7. `TASK-103` ワクチン・予防歴
-8. `TASK-102` 統合テスト（unit/integration/e2e）
 ### blocked
 （なし）
 
@@ -50,7 +49,8 @@ Development Task List
 14. `TASK-112` 認証/招待ユーザー連携
 15. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
 16. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
-17. `TASK-101` ドキュメント整備
+17. `TASK-102` 統合テスト（unit/integration/e2e）
+18. `TASK-101` ドキュメント整備
 
 ---
 
@@ -213,8 +213,13 @@ Development Task List
 ### 統合テスト（unit/integration/e2e）
 - Task ID: `TASK-102`
 - ブランチ: `test/TASK-102-mvp-test-coverage`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 主要ユーザーフローの自動テスト整備
+- 完了条件:
+  - 招待コード系APIの異常系分岐（入力不正/期限切れ/使用済み）が integration test で検証される
+  - 招待参加画面とペット詳細遷移が e2e test で検証される
+  - 招待コード関連バリデータが unit test で検証される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### ドキュメント整備
 - Task ID: `TASK-101`

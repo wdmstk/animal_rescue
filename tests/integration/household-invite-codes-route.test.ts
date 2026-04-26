@@ -28,6 +28,22 @@ describe("POST /api/households/invite-codes", () => {
     vi.clearAllMocks();
   });
 
+  it("returns 400 when payload is invalid", async () => {
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          householdId: "invalid-household-id",
+          expiresInHours: 0
+        })
+      })
+    );
+
+    expect(response.status).toBe(400);
+    expect(getUserMock).not.toHaveBeenCalled();
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
   it("returns 401 when unauthenticated", async () => {
     getUserMock.mockResolvedValue({ data: { user: null }, error: null });
 
