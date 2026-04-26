@@ -26,8 +26,7 @@ Development Task List
 （なし）
 
 ### todo
-1. `TASK-109` 認証 + 家族招待コード基盤
-2. `TASK-108` スキーマ + RLS実装
+1. `TASK-108` スキーマ + RLS実装
 ### blocked
 （なし）
 
@@ -52,13 +51,14 @@ Development Task List
 18. `TASK-112` 認証/招待ユーザー連携
 19. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
 20. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
-21. `TASK-102` 統合テスト（unit/integration/e2e）
-22. `TASK-101` ドキュメント整備
-23. `TASK-103` ワクチン・予防歴
-24. `TASK-104` 投薬管理 + カレンダー
-25. `TASK-105` 医療タイムライン
-26. `TASK-106` 緊急情報 + QR公開画面
-27. `TASK-107` ペットプロフィール + 写真管理
+21. `TASK-109` 認証 + 家族招待コード基盤
+22. `TASK-102` 統合テスト（unit/integration/e2e）
+23. `TASK-101` ドキュメント整備
+24. `TASK-103` ワクチン・予防歴
+25. `TASK-104` 投薬管理 + カレンダー
+26. `TASK-105` 医療タイムライン
+27. `TASK-106` 緊急情報 + QR公開画面
+28. `TASK-107` ペットプロフィール + 写真管理
 
 ---
 
@@ -223,8 +223,14 @@ Development Task List
 ### 認証 + 家族招待コード基盤
 - Task ID: `TASK-109`
 - ブランチ: `feat/TASK-109-auth-household-invite`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: メールログインと家族共同編集の参加導線を実装
+- Issue: `#78`
+- 完了条件:
+  - `/login` からメール/パスワード認証を実行し、成功時に `/pets` へ遷移できる
+  - `/invite/join` から招待コードで `POST /api/households/join` を実行できる
+  - 招待参加の失敗時に、入力値を保持したままエラーが表示される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### スキーマ + RLS実装
 - Task ID: `TASK-108`

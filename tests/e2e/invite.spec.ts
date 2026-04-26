@@ -7,6 +7,24 @@ test("invite join page renders form", async ({ page }) => {
   await expect(page.getByRole("button", { name: "参加する" })).toBeVisible();
 });
 
+test("invite join keeps input value and shows API error", async ({ page }) => {
+  await page.route("**/api/households/join", async (route) => {
+    await route.fulfill({
+      status: 400,
+      contentType: "application/json",
+      body: JSON.stringify({ error: "招待コードが無効です" })
+    });
+  });
+
+  await page.goto("/invite/join");
+  const inviteCodeInput = page.getByPlaceholder("招待コード");
+  await inviteCodeInput.fill("ABC123");
+  await page.getByRole("button", { name: "参加する" }).click();
+
+  await expect(page.getByText("招待コードが無効です")).toBeVisible();
+  await expect(inviteCodeInput).toHaveValue("ABC123");
+});
+
 test("pets page links to pet detail", async ({ page }) => {
   await page.goto("/pets");
   await page.getByRole("link", { name: "モカ 犬 / トイプードル" }).click();
