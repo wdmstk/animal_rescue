@@ -26,7 +26,6 @@ Development Task List
 2. `TASK-108` スキーマ + RLS実装
 3. `TASK-107` ペットプロフィール + 写真管理
 4. `TASK-106` 緊急情報 + QR公開画面
-5. `TASK-105` 医療タイムライン
 ### blocked
 （なし）
 
@@ -51,6 +50,7 @@ Development Task List
 18. `TASK-101` ドキュメント整備
 19. `TASK-103` ワクチン・予防歴
 20. `TASK-104` 投薬管理 + カレンダー
+21. `TASK-105` 医療タイムライン
 
 ---
 
@@ -195,8 +195,13 @@ Development Task List
 ### 医療タイムライン
 - Task ID: `TASK-105`
 - ブランチ: `feat/TASK-105-medical-timeline`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 診療・手術・検査履歴の時系列管理
+- 完了条件:
+  - `GET/POST /api/pets/[petId]/medical-records` の正常系・異常系が integration test で検証される
+  - 医療タイムライングルーピングロジックが unit test で検証される
+  - ペット詳細画面で医療記録タイムライン表示が e2e test で検証される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 投薬管理 + カレンダー
 - Task ID: `TASK-104`

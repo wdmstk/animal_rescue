@@ -12,4 +12,9 @@ describe("groupTimelineByDate", () => {
     expect(grouped["2026-04-01"]).toHaveLength(2);
     expect(grouped["2026-03-30"]).toHaveLength(1);
   });
+
+  it("returns empty object for empty timeline", () => {
+    const grouped = groupTimelineByDate([]);
+    expect(grouped).toEqual({});
+  });
 });

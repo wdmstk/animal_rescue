@@ -70,6 +70,26 @@ describe("/api/pets/[petId]/medical-records", () => {
     expect(createMock).not.toHaveBeenCalled();
   });
 
+  it("returns 400 on invalid petId for POST", async () => {
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: "2026-04-26",
+          title: "定期診察",
+          description: "異常なし",
+          recordType: "EXAM"
+        })
+      }),
+      { params: Promise.resolve({ petId: "sample-pet" }) }
+    );
+
+    expect(response.status).toBe(400);
+    expect(findPetMock).not.toHaveBeenCalled();
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
   it("returns 404 when pet is missing", async () => {
     findPetMock.mockResolvedValue(null);
 
