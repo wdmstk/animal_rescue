@@ -22,24 +22,23 @@ Development Task List
 （なし）
 
 ### todo
-1. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
-2. `TASK-122` 健康トラッキングのグラフ可視化UI
-3. `TASK-121` 健康トラッキングの入力UI
-4. `TASK-120` 健康トラッキングAPI/スキーマ整備
-5. `TASK-119` 実DB統合テスト + CI記載更新
-6. `TASK-117` 投薬リマインダー実送信
-7. `TASK-115` 写真Storageアップロード接続
-8. `TASK-113` 公開緊急APIのRPC移行
-9. `TASK-112` 認証/招待ユーザー連携
-10. `TASK-109` 認証 + 家族招待コード基盤
-11. `TASK-108` スキーマ + RLS実装
-12. `TASK-107` ペットプロフィール + 写真管理
-13. `TASK-106` 緊急情報 + QR公開画面
-14. `TASK-105` 医療タイムライン
-15. `TASK-104` 投薬管理 + カレンダー
-16. `TASK-103` ワクチン・予防歴
-17. `TASK-102` 統合テスト（unit/integration/e2e）
-18. `TASK-101` ドキュメント整備
+1. `TASK-122` 健康トラッキングのグラフ可視化UI
+2. `TASK-121` 健康トラッキングの入力UI
+3. `TASK-120` 健康トラッキングAPI/スキーマ整備
+4. `TASK-119` 実DB統合テスト + CI記載更新
+5. `TASK-117` 投薬リマインダー実送信
+6. `TASK-115` 写真Storageアップロード接続
+7. `TASK-113` 公開緊急APIのRPC移行
+8. `TASK-112` 認証/招待ユーザー連携
+9. `TASK-109` 認証 + 家族招待コード基盤
+10. `TASK-108` スキーマ + RLS実装
+11. `TASK-107` ペットプロフィール + 写真管理
+12. `TASK-106` 緊急情報 + QR公開画面
+13. `TASK-105` 医療タイムライン
+14. `TASK-104` 投薬管理 + カレンダー
+15. `TASK-103` ワクチン・予防歴
+16. `TASK-102` 統合テスト（unit/integration/e2e）
+17. `TASK-101` ドキュメント整備
 ### blocked
 （なし）
 
@@ -51,6 +50,7 @@ Development Task List
 5. `TASK-114` QRトークン再生成UI連携
 6. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
 7. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+8. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
 
 ---
 
@@ -111,7 +111,7 @@ Development Task List
 ### 健康トラッキングのテスト拡充（unit/integration/e2e）
 - Task ID: `TASK-123`
 - ブランチ: `test/TASK-123-health-metrics-coverage`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: バリデーション、API、主要画面導線を自動テスト化
 
 ### 実DB統合テスト + CI記載更新
