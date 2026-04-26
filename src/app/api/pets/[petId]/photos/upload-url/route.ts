@@ -4,12 +4,21 @@ import { createSupabaseServiceRoleClient } from "@/lib/supabase/service";
 
 const PET_PHOTO_BUCKET = "pet-photos";
 
+const petIdParamSchema = z.object({
+  petId: z.string().uuid()
+});
+
 const uploadRequestSchema = z.object({
   fileName: z.string().min(1).max(255),
   contentType: z.string().regex(/^image\//)
 });
 
 export async function POST(request: Request, { params }: { params: { petId: string } }) {
+  const parsedParams = petIdParamSchema.safeParse(params);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
   const body = await request.json();
   const parsed = uploadRequestSchema.safeParse(body);
 
@@ -18,7 +27,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
   }
 
   const safeFileName = parsed.data.fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const path = `pets/${params.petId}/${Date.now()}-${crypto.randomUUID()}-${safeFileName}`;
+  const path = `pets/${parsedParams.data.petId}/${Date.now()}-${crypto.randomUUID()}-${safeFileName}`;
 
   const supabase = createSupabaseServiceRoleClient();
   const storage = supabase.storage.from(PET_PHOTO_BUCKET);
