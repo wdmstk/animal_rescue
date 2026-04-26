@@ -24,7 +24,6 @@ Development Task List
 ### todo
 1. `TASK-109` 認証 + 家族招待コード基盤
 2. `TASK-108` スキーマ + RLS実装
-3. `TASK-107` ペットプロフィール + 写真管理
 ### blocked
 （なし）
 
@@ -51,6 +50,7 @@ Development Task List
 20. `TASK-104` 投薬管理 + カレンダー
 21. `TASK-105` 医療タイムライン
 22. `TASK-106` 緊急情報 + QR公開画面
+23. `TASK-107` ペットプロフィール + 写真管理
 
 ---
 
@@ -183,8 +183,13 @@ Development Task List
 ### ペットプロフィール + 写真管理
 - Task ID: `TASK-107`
 - ブランチ: `feat/TASK-107-pet-profile-photos`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 基本プロフィール編集と写真アップロード
+- 完了条件:
+  - `GET/POST /api/pets` と `GET /api/pets/[petId]` が integration test で検証される
+  - `GET/POST /api/pets/[petId]/photos` と `POST /api/pets/[petId]/photos/upload-url` の正常系・異常系が integration test で検証される
+  - ペット詳細画面でプロフィール/写真管理セクション表示が e2e test で検証される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 緊急情報 + QR公開画面
 - Task ID: `TASK-106`

@@ -17,6 +17,8 @@ vi.mock("@/lib/supabase/service", () => ({
 import { POST } from "../../src/app/api/pets/[petId]/photos/upload-url/route";
 
 describe("POST /api/pets/[petId]/photos/upload-url", () => {
+  const validPetId = "11111111-1111-4111-8111-111111111111";
+
   beforeEach(() => {
     vi.clearAllMocks();
     fromMock.mockReturnValue({
@@ -32,6 +34,22 @@ describe("POST /api/pets/[petId]/photos/upload-url", () => {
         body: JSON.stringify({
           fileName: "report.pdf",
           contentType: "application/pdf"
+        })
+      }),
+      { params: { petId: validPetId } }
+    );
+
+    expect(response.status).toBe(400);
+    expect(createSignedUploadUrlMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 when petId is invalid", async () => {
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          fileName: "file.jpg",
+          contentType: "image/jpeg"
         })
       }),
       { params: { petId: "pet-1" } }
@@ -58,7 +76,7 @@ describe("POST /api/pets/[petId]/photos/upload-url", () => {
           contentType: "image/jpeg"
         })
       }),
-      { params: { petId: "pet-1" } }
+      { params: { petId: validPetId } }
     );
 
     expect(response.status).toBe(200);
