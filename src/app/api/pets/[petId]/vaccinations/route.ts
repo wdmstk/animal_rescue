@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -22,8 +23,18 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const data = await prisma.petVaccination.findMany({
-    where: { petId: parsedParams.data.petId },
+    where: { petId: access.petId },
     orderBy: { date: "desc" }
   });
 
@@ -36,6 +47,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const body = await request.json();
   const parsed = vaccinationSchema.safeParse(body);
 
@@ -46,7 +67,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const created = await prisma.petVaccination.create({
     data: {
       ...parsed.data,
-      petId: parsedParams.data.petId,
+      petId: access.petId,
       date: new Date(parsed.data.date),
       nextDue: parsed.data.nextDue ? new Date(parsed.data.nextDue) : null
     }
@@ -61,6 +82,16 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const body = await request.json();
   const parsed = vaccinationUpdateSchema.safeParse(body);
 
@@ -71,7 +102,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   const existing = await prisma.petVaccination.findFirst({
     where: {
       id: parsed.data.id,
-      petId: parsedParams.data.petId
+      petId: access.petId
     }
   });
 

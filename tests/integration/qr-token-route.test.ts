@@ -1,7 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NextResponse } from "next/server";
+import { requirePetAccess } from "@/lib/auth/pet-access";
 
-const { findPetMock, findUniqueMock, createMock, upsertMock, updateMock } = vi.hoisted(() => ({
-  findPetMock: vi.fn(),
+const { findUniqueMock, createMock, upsertMock, updateMock } = vi.hoisted(() => ({
   findUniqueMock: vi.fn(),
   createMock: vi.fn(),
   upsertMock: vi.fn(),
@@ -10,9 +11,6 @@ const { findPetMock, findUniqueMock, createMock, upsertMock, updateMock } = vi.h
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    pet: {
-      findUnique: findPetMock
-    },
     petEmergencyToken: {
       findUnique: findUniqueMock,
       create: createMock,
@@ -30,9 +28,14 @@ import { DELETE, GET, POST } from "../../src/app/api/pets/[petId]/qr-token/route
 
 describe("/api/pets/[petId]/qr-token", () => {
   const validPetId = "22222222-2222-4222-8222-222222222222";
+  const requirePetAccessMock = vi.mocked(requirePetAccess);
 
   beforeEach(() => {
     vi.clearAllMocks();
+    requirePetAccessMock.mockResolvedValue({
+      petId: validPetId,
+      householdId: "11111111-1111-4111-8111-111111111111"
+    });
   });
 
   it("returns 400 on invalid petId", async () => {
@@ -45,7 +48,7 @@ describe("/api/pets/[petId]/qr-token", () => {
   });
 
   it("returns 404 when pet does not exist", async () => {
-    findPetMock.mockResolvedValue(null);
+    requirePetAccessMock.mockResolvedValueOnce(NextResponse.json({ error: "Pet not found" }, { status: 404 }));
 
     const response = await POST(new Request("http://localhost", { method: "POST" }), {
       params: Promise.resolve({ petId: validPetId })
@@ -56,7 +59,6 @@ describe("/api/pets/[petId]/qr-token", () => {
   });
 
   it("returns existing token on GET", async () => {
-    findPetMock.mockResolvedValue({ id: validPetId });
     findUniqueMock.mockResolvedValue({
       token: "99999999-9999-4999-8999-999999999999"
     });
@@ -73,7 +75,6 @@ describe("/api/pets/[petId]/qr-token", () => {
   });
 
   it("creates token on GET when missing", async () => {
-    findPetMock.mockResolvedValue({ id: validPetId });
     findUniqueMock.mockResolvedValue(null);
     createMock.mockResolvedValue({
       token: "11111111-1111-4111-8111-111111111111"
@@ -90,7 +91,6 @@ describe("/api/pets/[petId]/qr-token", () => {
   });
 
   it("returns regenerated token on POST", async () => {
-    findPetMock.mockResolvedValue({ id: validPetId });
     upsertMock.mockResolvedValue({
       token: "11111111-1111-4111-8111-111111111111"
     });
@@ -107,7 +107,6 @@ describe("/api/pets/[petId]/qr-token", () => {
   });
 
   it("returns 404 on DELETE when token does not exist", async () => {
-    findPetMock.mockResolvedValue({ id: validPetId });
     findUniqueMock.mockResolvedValue(null);
 
     const response = await DELETE(new Request("http://localhost", { method: "DELETE" }), {
@@ -119,7 +118,6 @@ describe("/api/pets/[petId]/qr-token", () => {
   });
 
   it("deactivates active token on DELETE", async () => {
-    findPetMock.mockResolvedValue({ id: validPetId });
     findUniqueMock.mockResolvedValue({
       token: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
       isActive: true
@@ -142,7 +140,6 @@ describe("/api/pets/[petId]/qr-token", () => {
   });
 
   it("returns existing inactive token on DELETE", async () => {
-    findPetMock.mockResolvedValue({ id: validPetId });
     findUniqueMock.mockResolvedValue({
       token: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
       isActive: false

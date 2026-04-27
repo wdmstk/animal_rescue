@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { healthPetIdParamSchema, labResultEntryInputSchema } from "@/lib/validators/health";
 import type { LabMarkerType } from "@/types/health";
 
@@ -16,9 +17,18 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
-  const { petId } = parsedParams.data;
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const data = await prisma.petLabResultEntry.findMany({
-    where: { petId },
+    where: { petId: access.petId },
     orderBy: { recordedAt: "desc" }
   });
 
@@ -41,7 +51,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
-  const { petId } = parsedParams.data;
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const body = await request.json();
   const parsed = labResultEntryInputSchema.safeParse(body);
 
@@ -51,7 +70,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
 
   const created = await prisma.petLabResultEntry.create({
     data: {
-      petId,
+      petId: access.petId,
       marker: parsed.data.marker,
       value: parsed.data.value,
       unit: parsed.data.unit ?? defaultUnitMap[parsed.data.marker],

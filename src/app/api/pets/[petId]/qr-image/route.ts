@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import QRCode from "qrcode";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { generateEmergencyToken } from "@/lib/security/emergency-token";
 
 const petIdParamSchema = z.object({
@@ -14,16 +15,17 @@ export async function GET(_: Request, { params }: { params: { petId: string } })
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
-  const petId = parsedParams.data.petId;
-  const pet = await prisma.pet.findUnique({
-    where: { id: petId },
-    select: { id: true }
-  });
-
-  if (!pet) {
-    return NextResponse.json({ error: "Pet not found" }, { status: 404 });
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
   }
 
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
+  const petId = access.petId;
   const existingToken = await prisma.petEmergencyToken.findUnique({
     where: { petId }
   });

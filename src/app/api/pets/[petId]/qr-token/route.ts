@@ -1,17 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { generateEmergencyToken } from "@/lib/security/emergency-token";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
 });
-
-const resolvePet = async (petId: string) =>
-  prisma.pet.findUnique({
-    where: { id: petId },
-    select: { id: true }
-  });
 
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
@@ -19,13 +14,17 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
-  const petId = parsedParams.data.petId;
-  const pet = await resolvePet(petId);
-
-  if (!pet) {
-    return NextResponse.json({ error: "Pet not found" }, { status: 404 });
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
   }
 
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
+  const petId = access.petId;
   const existing = await prisma.petEmergencyToken.findUnique({
     where: { petId }
   });
@@ -62,13 +61,17 @@ export async function POST(_: Request, { params }: { params: Promise<{ petId: st
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
-  const petId = parsedParams.data.petId;
-  const pet = await resolvePet(petId);
-
-  if (!pet) {
-    return NextResponse.json({ error: "Pet not found" }, { status: 404 });
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
   }
 
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
+  const petId = access.petId;
   const token = generateEmergencyToken();
   const updated = await prisma.petEmergencyToken.upsert({
     where: { petId },
@@ -98,13 +101,17 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ petId: 
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
-  const petId = parsedParams.data.petId;
-  const pet = await resolvePet(petId);
-
-  if (!pet) {
-    return NextResponse.json({ error: "Pet not found" }, { status: 404 });
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
   }
 
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
+  const petId = access.petId;
   const existing = await prisma.petEmergencyToken.findUnique({
     where: { petId },
     select: { token: true, isActive: true }

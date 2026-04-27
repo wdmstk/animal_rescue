@@ -18,6 +18,15 @@ vi.mock("@/lib/env", () => ({
 import { POST } from "../../src/app/api/pets/[petId]/medication-reminders/route";
 
 describe("POST /api/pets/[petId]/medication-reminders", () => {
+  const petId1 = "11111111-1111-4111-8111-111111111111";
+  const petId2 = "22222222-2222-4222-8222-222222222222";
+  const petId3 = "33333333-3333-4333-8333-333333333333";
+  const petId4 = "44444444-4444-4444-8444-444444444444";
+  const petId5 = "55555555-5555-4555-8555-555555555555";
+  const petId6 = "66666666-6666-4666-8666-666666666666";
+  const petId7 = "77777777-7777-4777-8777-777777777777";
+  const petId8 = "88888888-8888-4888-8888-888888888888";
+
   beforeEach(() => {
     vi.restoreAllMocks();
     envMock.REMINDER_EMAIL_WEBHOOK_URL = "https://provider.example.com/email";
@@ -36,7 +45,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: false
         })
       }),
-      { params: { petId: "pet-1" } }
+      { params: { petId: petId1 } }
     );
 
     expect(response.status).toBe(200);
@@ -58,7 +67,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: "pet-2" } }
+      { params: { petId: petId2 } }
     );
 
     expect(response.status).toBe(200);
@@ -82,7 +91,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: "pet-6" } }
+      { params: { petId: petId6 } }
     );
 
     expect(response.status).toBe(200);
@@ -92,7 +101,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
       expect.objectContaining({
         method: "POST",
         body: JSON.stringify({
-          petId: "pet-6",
+          petId: petId6,
           channel: "email",
           destination: "owner@example.com"
         })
@@ -113,7 +122,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: "pet-3" } }
+      { params: { petId: petId3 } }
     );
 
     expect(response.status).toBe(503);
@@ -135,7 +144,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: "pet-4" } }
+      { params: { petId: petId4 } }
     );
 
     expect(response.status).toBe(502);
@@ -156,7 +165,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: "pet-7" } }
+      { params: { petId: petId7 } }
     );
 
     expect(response.status).toBe(502);
@@ -175,7 +184,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: "pet-5" } }
+      { params: { petId: petId5 } }
     );
 
     expect(response.status).toBe(400);
@@ -193,7 +202,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: "pet-8" } }
+      { params: { petId: petId8 } }
     );
 
     expect(response.status).toBe(400);

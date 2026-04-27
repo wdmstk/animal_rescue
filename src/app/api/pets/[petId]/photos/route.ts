@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -17,17 +18,18 @@ export async function GET(_: Request, { params }: { params: { petId: string } })
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
-  const pet = await prisma.pet.findUnique({
-    where: { id: parsedParams.data.petId },
-    select: { id: true }
-  });
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
 
-  if (!pet) {
-    return NextResponse.json({ error: "Pet not found" }, { status: 404 });
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
   }
 
   const data = await prisma.petPhoto.findMany({
-    where: { petId: parsedParams.data.petId },
+    where: { petId: access.petId },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
   });
 
@@ -40,6 +42,16 @@ export async function POST(request: Request, { params }: { params: { petId: stri
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const body = await request.json();
   const parsed = photoSchema.safeParse(body);
 
@@ -47,18 +59,9 @@ export async function POST(request: Request, { params }: { params: { petId: stri
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
 
-  const pet = await prisma.pet.findUnique({
-    where: { id: parsedParams.data.petId },
-    select: { id: true }
-  });
-
-  if (!pet) {
-    return NextResponse.json({ error: "Pet not found" }, { status: 404 });
-  }
-
   const photo = await prisma.petPhoto.create({
     data: {
-      petId: parsedParams.data.petId,
+      petId: access.petId,
       photoUrl: parsed.data.photoUrl,
       sortOrder: parsed.data.sortOrder
     }
