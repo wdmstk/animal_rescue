@@ -31,39 +31,51 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-129` TASK完了時のIssueクローズ必須化
-2. `TASK-128` TASK作成時のIssue必須化と並行実装向け分割方針の追加
-3. `TASK-127` 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
-4. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
-5. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
-6. `TASK-124` Prisma adapter未設定による500エラー修正
-7. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
-8. `TASK-122` 健康トラッキングのグラフ可視化UI
-9. `TASK-121` 健康トラッキングの入力UI
-10. `TASK-120` 健康トラッキングAPI/スキーマ整備
-11. `TASK-119` 実DB統合テスト + CI記載更新
-12. `TASK-118` ワクチン履歴編集フロー
-13. `TASK-117` 投薬リマインダー実送信
-14. `TASK-116` 医療記録追加フォーム永続化
-15. `TASK-115` 写真Storageアップロード接続
-16. `TASK-114` QRトークン再生成UI連携
-17. `TASK-113` 公開緊急APIのRPC移行
-18. `TASK-112` 認証/招待ユーザー連携
-19. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-20. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
-21. `TASK-109` 認証 + 家族招待コード基盤
-22. `TASK-108` スキーマ + RLS実装
-23. `TASK-107` ペットプロフィール + 写真管理
-24. `TASK-106` 緊急情報 + QR公開画面
-25. `TASK-105` 医療タイムライン
-26. `TASK-104` 投薬管理 + カレンダー
-27. `TASK-103` ワクチン・予防歴
-28. `TASK-102` 統合テスト（unit/integration/e2e）
-29. `TASK-101` ドキュメント整備
+1. `TASK-130` 公開緊急RPC未配置時のフォールバック対応
+2. `TASK-129` TASK完了時のIssueクローズ必須化
+3. `TASK-128` TASK作成時のIssue必須化と並行実装向け分割方針の追加
+4. `TASK-127` 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
+5. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
+6. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
+7. `TASK-124` Prisma adapter未設定による500エラー修正
+8. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
+9. `TASK-122` 健康トラッキングのグラフ可視化UI
+10. `TASK-121` 健康トラッキングの入力UI
+11. `TASK-120` 健康トラッキングAPI/スキーマ整備
+12. `TASK-119` 実DB統合テスト + CI記載更新
+13. `TASK-118` ワクチン履歴編集フロー
+14. `TASK-117` 投薬リマインダー実送信
+15. `TASK-116` 医療記録追加フォーム永続化
+16. `TASK-115` 写真Storageアップロード接続
+17. `TASK-114` QRトークン再生成UI連携
+18. `TASK-113` 公開緊急APIのRPC移行
+19. `TASK-112` 認証/招待ユーザー連携
+20. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+21. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+22. `TASK-109` 認証 + 家族招待コード基盤
+23. `TASK-108` スキーマ + RLS実装
+24. `TASK-107` ペットプロフィール + 写真管理
+25. `TASK-106` 緊急情報 + QR公開画面
+26. `TASK-105` 医療タイムライン
+27. `TASK-104` 投薬管理 + カレンダー
+28. `TASK-103` ワクチン・予防歴
+29. `TASK-102` 統合テスト（unit/integration/e2e）
+30. `TASK-101` ドキュメント整備
 
 ---
 
 ## 正式タスク詳細
+
+### 公開緊急RPC未配置時のフォールバック対応
+- Task ID: `TASK-130`
+- ブランチ: `fix/TASK-130-public-emergency-rpc-fallback`
+- ステータス: `done`
+- 概要: `get_public_emergency_by_token` がSupabase環境で未検出の場合でも公開緊急ページ/APIが500にならないようにする
+- Issue: `#82`
+- 完了条件:
+  - RPC未検出エラー時に公開緊急データ取得がフォールバック経路で継続できる
+  - 通常のRPCエラーは従来どおり例外として扱われる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### TASK完了時のIssueクローズ必須化
 - Task ID: `TASK-129`

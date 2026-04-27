@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { prisma } from "@/lib/prisma";
 import { toPublicEmergencyView } from "@/lib/services/public-emergency";
 import { E2E_PUBLIC_EMERGENCY_TOKEN } from "@/lib/constants/emergency";
 import type { EmergencyViewPayload } from "@/types/domain";
@@ -12,6 +13,57 @@ type PublicEmergencyRpcRow = {
   vet_phone: string | null;
   emergency_contact_name: string | null;
   emergency_contact_phone: string | null;
+};
+
+const isRpcFunctionMissingError = (error: { code?: string; message?: string | null }) => {
+  if (error.code === "PGRST202") {
+    return true;
+  }
+
+  const message = error.message?.toLowerCase() ?? "";
+  return message.includes("could not find the function") && message.includes("get_public_emergency_by_token");
+};
+
+const getPublicEmergencyByTokenFallback = async (token: string): Promise<EmergencyViewPayload | null> => {
+  const tokenRow = await prisma.petEmergencyToken.findFirst({
+    where: {
+      token,
+      isActive: true
+    },
+    select: {
+      pet: {
+        select: {
+          name: true,
+          emergencyInfo: {
+            select: {
+              disease: true,
+              allergy: true,
+              currentMedications: true,
+              vetName: true,
+              vetPhone: true,
+              emergencyContactName: true,
+              emergencyContactPhone: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (!tokenRow?.pet.emergencyInfo) {
+    return null;
+  }
+
+  return toPublicEmergencyView({
+    petName: tokenRow.pet.name,
+    disease: tokenRow.pet.emergencyInfo.disease,
+    allergy: tokenRow.pet.emergencyInfo.allergy,
+    currentMedications: tokenRow.pet.emergencyInfo.currentMedications,
+    vetName: tokenRow.pet.emergencyInfo.vetName,
+    vetPhone: tokenRow.pet.emergencyInfo.vetPhone,
+    emergencyContactName: tokenRow.pet.emergencyInfo.emergencyContactName,
+    emergencyContactPhone: tokenRow.pet.emergencyInfo.emergencyContactPhone
+  });
 };
 
 export const getPublicEmergencyByToken = async (token: string): Promise<EmergencyViewPayload | null> => {
@@ -38,6 +90,10 @@ export const getPublicEmergencyByToken = async (token: string): Promise<Emergenc
   });
 
   if (error) {
+    if (isRpcFunctionMissingError(error)) {
+      return getPublicEmergencyByTokenFallback(token);
+    }
+
     throw new Error(`Failed to load public emergency data: ${error.message}`);
   }
 

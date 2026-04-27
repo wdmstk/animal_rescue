@@ -1,12 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { rpcMock, createSupabaseServerClientMock } = vi.hoisted(() => ({
+const { rpcMock, createSupabaseServerClientMock, findFirstEmergencyTokenMock } = vi.hoisted(() => ({
   rpcMock: vi.fn(),
-  createSupabaseServerClientMock: vi.fn()
+  createSupabaseServerClientMock: vi.fn(),
+  findFirstEmergencyTokenMock: vi.fn()
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: createSupabaseServerClientMock
+}));
+
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    petEmergencyToken: {
+      findFirst: findFirstEmergencyTokenMock
+    }
+  }
 }));
 
 import { GET } from "../../src/app/api/public/emergency/[token]/route";
@@ -122,5 +131,77 @@ describe("GET /api/public/emergency/[token]", () => {
         params: { token: "11111111-1111-4111-8111-111111111111" }
       })
     ).rejects.toThrow("Failed to load public emergency data: db timeout");
+    expect(findFirstEmergencyTokenMock).not.toHaveBeenCalled();
+  });
+
+  it("falls back to prisma query when RPC function is missing in schema cache", async () => {
+    rpcMock.mockResolvedValue({
+      data: null,
+      error: {
+        code: "PGRST202",
+        message: "Could not find the function public.get_public_emergency_by_token(input_token) in the schema cache"
+      }
+    });
+    findFirstEmergencyTokenMock.mockResolvedValue({
+      pet: {
+        name: "Mugi",
+        emergencyInfo: {
+          disease: "CKD",
+          currentMedications: "Renal meds",
+          allergy: "None",
+          vetName: "City Vet",
+          vetPhone: "03-0000-0000",
+          emergencyContactName: "Owner",
+          emergencyContactPhone: "090-0000-0000"
+        }
+      }
+    });
+
+    const response = await GET(new Request("http://localhost"), {
+      params: { token: "11111111-1111-4111-8111-111111111111" }
+    });
+
+    expect(response.status).toBe(200);
+    expect(findFirstEmergencyTokenMock).toHaveBeenCalledWith({
+      where: {
+        token: "11111111-1111-4111-8111-111111111111",
+        isActive: true
+      },
+      select: {
+        pet: {
+          select: {
+            name: true,
+            emergencyInfo: {
+              select: {
+                disease: true,
+                allergy: true,
+                currentMedications: true,
+                vetName: true,
+                vetPhone: true,
+                emergencyContactName: true,
+                emergencyContactPhone: true
+              }
+            }
+          }
+        }
+      }
+    });
+  });
+
+  it("returns 404 when fallback cannot find public emergency record", async () => {
+    rpcMock.mockResolvedValue({
+      data: null,
+      error: {
+        code: "PGRST202",
+        message: "Could not find the function public.get_public_emergency_by_token(input_token) in the schema cache"
+      }
+    });
+    findFirstEmergencyTokenMock.mockResolvedValue(null);
+
+    const response = await GET(new Request("http://localhost"), {
+      params: { token: "11111111-1111-4111-8111-111111111111" }
+    });
+
+    expect(response.status).toBe(404);
   });
 });
