@@ -13,6 +13,7 @@ flowchart TD
   D -->|Yes| E{どのURLか}
 
   C -->|/login| L
+  C -->|/signup| S[/signup]
   C -->|/e/:token| P[/e/:token]
   C -->|/api/public/*| AP[公開API]
 
@@ -22,6 +23,8 @@ flowchart TD
   E -->|/invite/join| I[/invite/join]
 
   L -->|ログイン成功| F
+  L -->|新規登録へ| S
+  S -->|登録後ログインへ| L
   F -->|ペット選択| G
   G -->|ヘッダー操作| F
   G -->|緊急情報を確認| P
@@ -36,5 +39,5 @@ flowchart TD
 - QR公開閲覧: `/e/:token` は匿名アクセス可能。トークンが不正または無効なら 404。
 
 ## 関連ルート
-- 画面: `/login`, `/pets`, `/pets/:petId`, `/invite/join`, `/e/:token`
+- 画面: `/login`, `/signup`, `/pets`, `/pets/:petId`, `/invite/join`, `/e/:token`
 - API: `/api/auth/*`, `/api/pets/*`, `/api/households/*`, `/api/public/emergency/:token`

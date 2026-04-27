@@ -6,7 +6,7 @@
 
 | 機能 | Unit | Integration | E2E |
 |---|---|---|---|
-| ログイン入力/バリデーション | `tests/unit/validators.test.ts` | `tests/integration/household-invite-codes-route.test.ts`（認証関連分岐） | `tests/e2e/login.spec.ts` |
+| ログイン/新規登録入力バリデーション | `tests/unit/validators.test.ts` | `tests/integration/auth-login-route.test.ts`, `tests/integration/auth-signup-route.test.ts` | `tests/e2e/login.spec.ts`, `tests/e2e/signup.spec.ts` |
 | 招待コード参加 | `tests/unit/invite-code.test.ts`, `tests/unit/invite-validators.test.ts` | `tests/integration/household-join-route.test.ts`, `tests/integration/household-invite-codes-route.test.ts` | `tests/e2e/invite.spec.ts` |
 
 ## ペット基本情報・メディア

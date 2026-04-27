@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-131` 新規ユーザー登録導線の追加
 
 ### todo
 （なし）
@@ -65,6 +65,19 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 新規ユーザー登録導線の追加
+- Task ID: `TASK-131`
+- ブランチ: `feat/TASK-131-user-signup-flow`
+- ステータス: `in_progress`
+- 概要: メール/パスワードで新規ユーザー登録できる画面導線と認証APIを追加
+- Issue: `#84`
+- 完了条件:
+  - `/signup` 画面からメール/パスワードで登録リクエストを送信できる
+  - `POST /api/auth/signup` が入力バリデーションとSupabase登録呼び出しを実装する
+  - `/login` と `/signup` 間の遷移リンクが利用できる
+  - 登録成功後に `/login` 上で確認メール送信案内が表示される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 公開緊急RPC未配置時のフォールバック対応
 - Task ID: `TASK-130`
