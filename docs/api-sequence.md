@@ -99,6 +99,6 @@ sequenceDiagram
 ```
 
 ## 補足
-- 認証ガードは `middleware.ts` で実施（`/login`, `/e/*`, `/api/public/*` は公開）。
+- 認証ガードは `middleware.ts` で実施（`/login`, `/signup`, `/e/*`, `/api/public/*` は公開）。
 - 非公開APIのドメイン操作は主に Prisma 経由で実装。
 - 公開緊急情報は Supabase RPC `get_public_emergency_by_token` を経由し、返却項目を最小化。

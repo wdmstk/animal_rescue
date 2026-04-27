@@ -6,3 +6,7 @@ export const loginInputSchema = z.object({
 });
 
 export type LoginInput = z.infer<typeof loginInputSchema>;
+
+export const signupInputSchema = loginInputSchema;
+
+export type SignupInput = z.infer<typeof signupInputSchema>;
