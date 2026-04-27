@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { env } from "@/lib/env";
 import { dispatchMedicationReminder } from "@/lib/services/reminder-delivery";
 
@@ -24,6 +25,21 @@ const reminderSettingSchema = z
   });
 
 export async function POST(request: Request, { params }: { params: { petId: string } }) {
+  const parsedPetId = z.string().uuid().safeParse(params.petId);
+  if (!parsedPetId.success) {
+    return NextResponse.json({ error: parsedPetId.error.flatten() }, { status: 400 });
+  }
+
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedPetId.data);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const body = await request.json();
   const parsed = reminderSettingSchema.safeParse(body);
 
@@ -34,7 +50,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
   if (!parsed.data.enabled) {
     return NextResponse.json({
       data: {
-        petId: params.petId,
+        petId: access.petId,
         channel: parsed.data.channel,
         destination: parsed.data.destination,
         status: "disabled"
@@ -44,7 +60,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
 
   const result = await dispatchMedicationReminder(
     {
-      petId: params.petId,
+      petId: access.petId,
       channel: parsed.data.channel,
       destination: parsed.data.destination
     },
@@ -58,7 +74,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
     return NextResponse.json(
       {
         data: {
-          petId: params.petId,
+          petId: access.petId,
           channel: parsed.data.channel,
           destination: parsed.data.destination,
           status: "provider_not_configured"
@@ -72,7 +88,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
     return NextResponse.json(
       {
         data: {
-          petId: params.petId,
+          petId: access.petId,
           channel: parsed.data.channel,
           destination: parsed.data.destination,
           status: "configured_but_failed",
@@ -85,7 +101,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
 
   return NextResponse.json({
     data: {
-      petId: params.petId,
+      petId: access.petId,
       channel: parsed.data.channel,
       destination: parsed.data.destination,
       status: "delivered"

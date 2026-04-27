@@ -1,16 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NextResponse } from "next/server";
+import { requirePetAccess } from "@/lib/auth/pet-access";
 
-const { findManyMock, findPetMock, createMock } = vi.hoisted(() => ({
+const { findManyMock, createMock } = vi.hoisted(() => ({
   findManyMock: vi.fn(),
-  findPetMock: vi.fn(),
   createMock: vi.fn()
 }));
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    pet: {
-      findUnique: findPetMock
-    },
     petMedicalRecord: {
       findMany: findManyMock,
       create: createMock
@@ -22,9 +20,14 @@ import { GET, POST } from "../../src/app/api/pets/[petId]/medical-records/route"
 
 describe("/api/pets/[petId]/medical-records", () => {
   const validPetId = "11111111-1111-4111-8111-111111111111";
+  const requirePetAccessMock = vi.mocked(requirePetAccess);
 
   beforeEach(() => {
     vi.clearAllMocks();
+    requirePetAccessMock.mockResolvedValue({
+      petId: validPetId,
+      householdId: "11111111-1111-4111-8111-111111111111"
+    });
   });
 
   it("returns 400 on invalid petId", async () => {
@@ -66,7 +69,6 @@ describe("/api/pets/[petId]/medical-records", () => {
     );
 
     expect(response.status).toBe(400);
-    expect(findPetMock).not.toHaveBeenCalled();
     expect(createMock).not.toHaveBeenCalled();
   });
 
@@ -86,12 +88,11 @@ describe("/api/pets/[petId]/medical-records", () => {
     );
 
     expect(response.status).toBe(400);
-    expect(findPetMock).not.toHaveBeenCalled();
     expect(createMock).not.toHaveBeenCalled();
   });
 
   it("returns 404 when pet is missing", async () => {
-    findPetMock.mockResolvedValue(null);
+    requirePetAccessMock.mockResolvedValueOnce(NextResponse.json({ error: "Pet not found" }, { status: 404 }));
 
     const response = await POST(
       new Request("http://localhost", {
@@ -112,7 +113,6 @@ describe("/api/pets/[petId]/medical-records", () => {
   });
 
   it("creates record on valid payload", async () => {
-    findPetMock.mockResolvedValue({ id: validPetId });
     createMock.mockResolvedValue({
       id: "record-1",
       petId: validPetId,

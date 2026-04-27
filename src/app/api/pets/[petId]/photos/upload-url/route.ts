@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service";
 
 const PET_PHOTO_BUCKET = "pet-photos";
@@ -19,6 +20,16 @@ export async function POST(request: Request, { params }: { params: { petId: stri
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const body = await request.json();
   const parsed = uploadRequestSchema.safeParse(body);
 
@@ -27,7 +38,7 @@ export async function POST(request: Request, { params }: { params: { petId: stri
   }
 
   const safeFileName = parsed.data.fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const path = `pets/${parsedParams.data.petId}/${Date.now()}-${crypto.randomUUID()}-${safeFileName}`;
+  const path = `pets/${access.petId}/${Date.now()}-${crypto.randomUUID()}-${safeFileName}`;
 
   const supabase = createSupabaseServiceRoleClient();
   const storage = supabase.storage.from(PET_PHOTO_BUCKET);

@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NextResponse } from "next/server";
+import { requireAuthenticatedUser, requireHouseholdMember } from "@/lib/auth/pet-access";
 
 const { findManyMock, createMock } = vi.hoisted(() => ({
   findManyMock: vi.fn(),
@@ -17,8 +19,24 @@ vi.mock("@/lib/prisma", () => ({
 import { GET, POST } from "../../src/app/api/pets/route";
 
 describe("/api/pets", () => {
+  const requireAuthenticatedUserMock = vi.mocked(requireAuthenticatedUser);
+  const requireHouseholdMemberMock = vi.mocked(requireHouseholdMember);
+
   beforeEach(() => {
     vi.clearAllMocks();
+    requireAuthenticatedUserMock.mockResolvedValue({
+      userId: "22222222-2222-4222-8222-222222222222"
+    });
+    requireHouseholdMemberMock.mockResolvedValue(true);
+  });
+
+  it("returns 401 on unauthenticated GET", async () => {
+    requireAuthenticatedUserMock.mockResolvedValueOnce(NextResponse.json({ error: "認証が必要です" }, { status: 401 }));
+
+    const response = await GET();
+
+    expect(response.status).toBe(401);
+    expect(findManyMock).not.toHaveBeenCalled();
   });
 
   it("returns pets on GET", async () => {
@@ -28,6 +46,13 @@ describe("/api/pets", () => {
 
     expect(response.status).toBe(200);
     expect(findManyMock).toHaveBeenCalledWith({
+      where: {
+        household: {
+          members: {
+            some: { userId: "22222222-2222-4222-8222-222222222222" }
+          }
+        }
+      },
       include: {
         emergencyInfo: true,
         emergencyToken: true,
@@ -85,5 +110,24 @@ describe("/api/pets", () => {
         birthday: new Date("2020-03-10")
       })
     });
+  });
+
+  it("returns 403 when household is not accessible on POST", async () => {
+    requireHouseholdMemberMock.mockResolvedValueOnce(NextResponse.json({ error: "Forbidden" }, { status: 403 }));
+
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          householdId: "11111111-1111-4111-8111-111111111111",
+          name: "モカ",
+          species: "dog",
+          sex: "FEMALE"
+        })
+      })
+    );
+
+    expect(response.status).toBe(403);
+    expect(createMock).not.toHaveBeenCalled();
   });
 });

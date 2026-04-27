@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { coreHealthEntryInputSchema, coreMetricTypeFilterSchema, healthPetIdParamSchema } from "@/lib/validators/health";
 
 export async function GET(request: Request, { params }: { params: Promise<{ petId: string }> }) {
@@ -8,7 +9,16 @@ export async function GET(request: Request, { params }: { params: Promise<{ petI
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
-  const { petId } = parsedParams.data;
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const url = new URL(request.url);
   const parsedFilter = coreMetricTypeFilterSchema.safeParse({
     type: url.searchParams.get("type") ?? undefined
@@ -20,7 +30,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ petI
 
   const data = await prisma.petCoreMetricEntry.findMany({
     where: {
-      petId,
+      petId: access.petId,
       type: parsedFilter.data.type
     },
     orderBy: { recordedAt: "desc" }
@@ -44,7 +54,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
 
-  const { petId } = parsedParams.data;
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
   const body = await request.json();
   const parsed = coreHealthEntryInputSchema.safeParse(body);
 
@@ -54,7 +73,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
 
   const created = await prisma.petCoreMetricEntry.create({
     data: {
-      petId,
+      petId: access.petId,
       type: parsed.data.type,
       value: parsed.data.value,
       recordedAt: parsed.data.recordedAt,

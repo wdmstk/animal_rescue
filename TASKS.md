@@ -23,10 +23,14 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-138` 保護APIの認証・所有境界チェック強化
 
 ### todo
-（なし）
+1. `TASK-137` ペット一覧/詳細の実データ化（モック撤去）
+2. `TASK-136` ペット新規登録導線
+3. `TASK-135` ペット基本情報編集導線
+4. `TASK-134` 緊急情報・投薬の編集導線実装
+5. `TASK-133` 家族招待コード発行・共有導線
 ### blocked
 （なし）
 
@@ -67,6 +71,73 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 保護APIの認証・所有境界チェック強化
+- Task ID: `TASK-138`
+- ブランチ: `fix/TASK-138-pets-api-authz-boundary`
+- ステータス: `in_progress`
+- 概要: `/api/pets*` 全体で `auth.getUser()` 確認と household/pet 所属境界チェックを統一し、保護APIの認可を強化する
+- Issue: `#88`
+- 完了条件:
+  - 未認証アクセスで 401 を返す
+  - 他世帯データアクセスを 403/404 で遮断する
+  - 既存正常系を維持する
+  - 境界系 integration test を追加する
+
+### ペット一覧/詳細の実データ化（モック撤去）
+- Task ID: `TASK-137`
+- ブランチ: `feat/TASK-137-pets-pages-real-data`
+- ステータス: `todo`
+- 概要: `mockPets` と固定 `pet` オブジェクトを撤去し、`/pets` と `/pets/[petId]` を永続データ表示へ切り替える
+- Issue: `#91`
+- 完了条件:
+  - `/pets` が実データ一覧・空状態・エラー状態を表示する
+  - `/pets/[petId]` の初期表示が永続データに一致する
+  - リロードで更新内容が反映される
+
+### ペット新規登録導線
+- Task ID: `TASK-136`
+- ブランチ: `feat/TASK-136-pet-create-flow`
+- ステータス: `todo`
+- 概要: `/pets/new` を追加し、`POST /api/pets` に接続して新規ペット作成導線を提供する
+- Issue: `#92`
+- 完了条件:
+  - 一覧に「ペットを追加」導線がある
+  - 作成成功で詳細または一覧へ遷移する
+  - 入力バリデーションとエラー表示を実装する
+
+### ペット基本情報編集導線
+- Task ID: `TASK-135`
+- ブランチ: `feat/TASK-135-pet-profile-edit`
+- ステータス: `todo`
+- 概要: 基本プロフィール編集UIと `PATCH /api/pets/[petId]` を追加する
+- Issue: `#90`
+- 完了条件:
+  - 詳細画面から編集導線を追加する
+  - `PATCH /api/pets/[petId]` を追加する
+  - 更新後表示が即時反映される
+
+### 緊急情報・投薬の編集導線実装
+- Task ID: `TASK-134`
+- ブランチ: `feat/TASK-134-emergency-medication-edit-flow`
+- ステータス: `todo`
+- 概要: 表示中心の `EmergencyCard` と `MedicationCalendar` を実運用入力に接続する
+- Issue: `#89`
+- 完了条件:
+  - 緊急情報の編集フォームを実装する（既存PUT API利用）
+  - 投薬の追加/編集UIを実装する（必要に応じPATCH API追加）
+  - 初期表示と保存結果が一致する
+
+### 家族招待コード発行・共有導線
+- Task ID: `TASK-133`
+- ブランチ: `feat/TASK-133-household-invite-code-ui`
+- ステータス: `todo`
+- 概要: `POST /api/households/invite-codes` のUI導線を追加し、招待コード発行・共有を可能にする
+- Issue: `#93`
+- 完了条件:
+  - 招待コード発行画面/操作を提供する
+  - 発行後にコピー・共有しやすい表示を提供する
+  - 失敗時のユーザー向けエラーハンドリングを実装する
 
 ### ログイン失敗時のランタイム例外表示修正
 - Task ID: `TASK-132`
@@ -357,4 +428,3 @@ Development Task List
   - `README.md` にセットアップ/設計ドキュメント導線が整理される
   - `docs/development-workflow.md` に PR作成〜CI確認〜マージ〜後片付け手順が明記される
   - `docs/security-policy.md` に運用時のセキュリティ確認手順が明記される
-

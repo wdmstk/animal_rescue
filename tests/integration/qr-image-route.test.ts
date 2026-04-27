@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NextResponse } from "next/server";
+import { requirePetAccess } from "@/lib/auth/pet-access";
 
-const { toDataUrlMock, findPetMock, findTokenMock, createTokenMock } = vi.hoisted(() => ({
+const { toDataUrlMock, findTokenMock, createTokenMock } = vi.hoisted(() => ({
   toDataUrlMock: vi.fn(),
-  findPetMock: vi.fn(),
   findTokenMock: vi.fn(),
   createTokenMock: vi.fn()
 }));
@@ -15,9 +16,6 @@ vi.mock("qrcode", () => ({
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    pet: {
-      findUnique: findPetMock
-    },
     petEmergencyToken: {
       findUnique: findTokenMock,
       create: createTokenMock
@@ -33,11 +31,15 @@ import { GET } from "../../src/app/api/pets/[petId]/qr-image/route";
 
 describe("GET /api/pets/[petId]/qr-image", () => {
   const validPetId = "11111111-1111-4111-8111-111111111111";
+  const requirePetAccessMock = vi.mocked(requirePetAccess);
 
   beforeEach(() => {
     vi.clearAllMocks();
     toDataUrlMock.mockResolvedValue("data:image/png;base64,mock");
-    findPetMock.mockResolvedValue({ id: validPetId });
+    requirePetAccessMock.mockResolvedValue({
+      petId: validPetId,
+      householdId: "11111111-1111-4111-8111-111111111111"
+    });
   });
 
   it("returns 400 on invalid petId", async () => {
@@ -50,7 +52,7 @@ describe("GET /api/pets/[petId]/qr-image", () => {
   });
 
   it("returns 404 when pet does not exist", async () => {
-    findPetMock.mockResolvedValue(null);
+    requirePetAccessMock.mockResolvedValueOnce(NextResponse.json({ error: "Pet not found" }, { status: 404 }));
 
     const response = await GET(new Request("http://localhost"), {
       params: { petId: validPetId }

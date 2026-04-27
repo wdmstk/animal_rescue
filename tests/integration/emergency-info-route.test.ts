@@ -1,15 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NextResponse } from "next/server";
+import { requirePetAccess } from "@/lib/auth/pet-access";
 
-const { findPetMock, upsertMock } = vi.hoisted(() => ({
-  findPetMock: vi.fn(),
+const { upsertMock } = vi.hoisted(() => ({
   upsertMock: vi.fn()
 }));
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    pet: {
-      findUnique: findPetMock
-    },
     petEmergencyInfo: {
       upsert: upsertMock
     }
@@ -20,6 +18,7 @@ import { PUT } from "../../src/app/api/pets/[petId]/emergency-info/route";
 
 describe("PUT /api/pets/[petId]/emergency-info", () => {
   const validPetId = "11111111-1111-4111-8111-111111111111";
+  const requirePetAccessMock = vi.mocked(requirePetAccess);
   const payload = {
     disease: "僧帽弁閉鎖不全症",
     allergy: "鶏肉",
@@ -32,6 +31,10 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    requirePetAccessMock.mockResolvedValue({
+      petId: validPetId,
+      householdId: "11111111-1111-4111-8111-111111111111"
+    });
   });
 
   it("returns 400 on invalid petId", async () => {
@@ -44,7 +47,6 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
     );
 
     expect(response.status).toBe(400);
-    expect(findPetMock).not.toHaveBeenCalled();
     expect(upsertMock).not.toHaveBeenCalled();
   });
 
@@ -61,12 +63,11 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
     );
 
     expect(response.status).toBe(400);
-    expect(findPetMock).not.toHaveBeenCalled();
     expect(upsertMock).not.toHaveBeenCalled();
   });
 
   it("returns 404 when pet does not exist", async () => {
-    findPetMock.mockResolvedValue(null);
+    requirePetAccessMock.mockResolvedValueOnce(NextResponse.json({ error: "Pet not found" }, { status: 404 }));
 
     const response = await PUT(
       new Request("http://localhost", {
@@ -81,7 +82,6 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
   });
 
   it("upserts emergency info", async () => {
-    findPetMock.mockResolvedValue({ id: validPetId });
     upsertMock.mockResolvedValue({
       id: "info-1",
       petId: validPetId,

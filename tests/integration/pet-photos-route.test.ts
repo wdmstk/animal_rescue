@@ -1,16 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { NextResponse } from "next/server";
+import { requirePetAccess } from "@/lib/auth/pet-access";
 
-const { findPetMock, findManyMock, createMock } = vi.hoisted(() => ({
-  findPetMock: vi.fn(),
+const { findManyMock, createMock } = vi.hoisted(() => ({
   findManyMock: vi.fn(),
   createMock: vi.fn()
 }));
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    pet: {
-      findUnique: findPetMock
-    },
     petPhoto: {
       findMany: findManyMock,
       create: createMock
@@ -21,9 +19,14 @@ vi.mock("@/lib/prisma", () => ({
 import { GET, POST } from "../../src/app/api/pets/[petId]/photos/route";
 
 describe("/api/pets/[petId]/photos", () => {
+  const requirePetAccessMock = vi.mocked(requirePetAccess);
+
   beforeEach(() => {
     vi.clearAllMocks();
-    findPetMock.mockResolvedValue({ id: "11111111-1111-4111-8111-111111111111" });
+    requirePetAccessMock.mockResolvedValue({
+      petId: "11111111-1111-4111-8111-111111111111",
+      householdId: "11111111-1111-4111-8111-111111111111"
+    });
   });
 
   it("returns 400 for invalid petId on GET", async () => {
@@ -32,7 +35,6 @@ describe("/api/pets/[petId]/photos", () => {
     });
 
     expect(response.status).toBe(400);
-    expect(findPetMock).not.toHaveBeenCalled();
     expect(findManyMock).not.toHaveBeenCalled();
   });
 
@@ -63,7 +65,6 @@ describe("/api/pets/[petId]/photos", () => {
     );
 
     expect(response.status).toBe(400);
-    expect(findPetMock).not.toHaveBeenCalled();
     expect(createMock).not.toHaveBeenCalled();
   });
 
@@ -79,12 +80,11 @@ describe("/api/pets/[petId]/photos", () => {
     );
 
     expect(response.status).toBe(400);
-    expect(findPetMock).not.toHaveBeenCalled();
     expect(createMock).not.toHaveBeenCalled();
   });
 
   it("returns 404 when pet is missing", async () => {
-    findPetMock.mockResolvedValue(null);
+    requirePetAccessMock.mockResolvedValueOnce(NextResponse.json({ error: "Pet not found" }, { status: 404 }));
 
     const response = await POST(
       new Request("http://localhost", {
