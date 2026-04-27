@@ -1,5 +1,4 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
 import { toPublicEmergencyView } from "@/lib/services/public-emergency";
 import { E2E_PUBLIC_EMERGENCY_TOKEN } from "@/lib/constants/emergency";
 import type { EmergencyViewPayload } from "@/types/domain";
@@ -25,6 +24,7 @@ const isRpcFunctionMissingError = (error: { code?: string; message?: string | nu
 };
 
 const getPublicEmergencyByTokenFallback = async (token: string): Promise<EmergencyViewPayload | null> => {
+  const { prisma } = await import("@/lib/prisma");
   const tokenRow = await prisma.petEmergencyToken.findFirst({
     where: {
       token,
