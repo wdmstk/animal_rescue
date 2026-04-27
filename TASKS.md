@@ -26,7 +26,7 @@ Development Task List
 （なし）
 
 ### todo
-1. `TASK-108` スキーマ + RLS実装
+（なし）
 ### blocked
 （なし）
 
@@ -52,13 +52,14 @@ Development Task List
 19. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
 20. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
 21. `TASK-109` 認証 + 家族招待コード基盤
-22. `TASK-102` 統合テスト（unit/integration/e2e）
-23. `TASK-101` ドキュメント整備
-24. `TASK-103` ワクチン・予防歴
-25. `TASK-104` 投薬管理 + カレンダー
-26. `TASK-105` 医療タイムライン
-27. `TASK-106` 緊急情報 + QR公開画面
-28. `TASK-107` ペットプロフィール + 写真管理
+22. `TASK-108` スキーマ + RLS実装
+23. `TASK-107` ペットプロフィール + 写真管理
+24. `TASK-106` 緊急情報 + QR公開画面
+25. `TASK-105` 医療タイムライン
+26. `TASK-104` 投薬管理 + カレンダー
+27. `TASK-103` ワクチン・予防歴
+28. `TASK-102` 統合テスト（unit/integration/e2e）
+29. `TASK-101` ドキュメント整備
 
 ---
 
@@ -235,8 +236,13 @@ Development Task List
 ### スキーマ + RLS実装
 - Task ID: `TASK-108`
 - ブランチ: `feat/TASK-108-schema-rls-emergency-pet`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 救急手帳向けDB設計とRLSポリシーを適用
+- Issue: `#80`
+- 完了条件:
+  - `prisma/schema.prisma` と Supabase migration の主要テーブル構成が整合している
+  - 世帯境界テーブルと健康系テーブルのRLS有効化/主要ポリシーを実DBで検証できる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### ペットプロフィール + 写真管理
 - Task ID: `TASK-107`

@@ -39,7 +39,7 @@
 |---|---|---|---|
 | 入力/ドメインバリデーション | `tests/unit/health-input-ui-validators.test.ts`, `tests/unit/health-validators.test.ts` | `tests/integration/health-core-metrics-route.test.ts`, `tests/integration/health-lab-results-route.test.ts`, `tests/integration/health-extensions-route.test.ts` | `tests/e2e/health.spec.ts` |
 | 推移集計/表示制御 | `tests/unit/health-trends.test.ts`, `tests/unit/health-series-filter.test.ts`, `tests/unit/health-graph-summary.test.ts` | `tests/integration/health-trends-route.test.ts` | `tests/e2e/health.spec.ts` |
-| 実DB整合（任意実行） | - | `tests/integration/health-db-real-route.test.ts` | - |
+| 実DB整合（任意実行） | - | `tests/integration/health-db-real-route.test.ts`, `tests/integration/schema-rls-db-real.test.ts` | - |
 
 ## ギャップ（現時点）
 - QR画像の表示・読み取り結果（端末カメラ相当）を含むE2Eは未整備。
