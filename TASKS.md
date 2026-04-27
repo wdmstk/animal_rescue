@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-138` 保護APIの認証・所有境界チェック強化
+1. `TASK-139` PR運用チェック項目のタイムライン整備
+2. `TASK-138` 保護APIの認証・所有境界チェック強化
 
 ### todo
 1. `TASK-137` ペット一覧/詳細の実データ化（モック撤去）
@@ -71,6 +72,18 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### PR運用チェック項目のタイムライン整備
+- Task ID: `TASK-139`
+- ブランチ: `docs/TASK-139-pr-checklist-timeline`
+- ステータス: `in_progress`
+- 概要: PR作成前/作成時/CI完了後/マージ後の実施順に合わせて、AGENTS・PRテンプレート・Codex公開スキルの運用チェック項目を整備する
+- Issue: `#95`
+- 完了条件:
+  - 通常PR（Ready for review）をデフォルト運用として明記される
+  - 一次セルフレビュー（PR前）と最終セルフレビュー（CI完了後）が明記される
+  - チェック項目が時系列に沿って整理される
+  - TASK完了時のIssueクローズがマージ後工程として明記される
 
 ### 保護APIの認証・所有境界チェック強化
 - Task ID: `TASK-138`

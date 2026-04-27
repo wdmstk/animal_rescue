@@ -167,16 +167,20 @@ The following flow is mandatory for every implementation/fix task:
      - `npx vitest run`
      - UI/route impact exists: `npm run test:e2e`
      - DB dependent change exists: required DB integration test
-4. PR creation
+4. Self review (initial)
+   - Review the intended diff before opening PR
+   - Ensure no unrelated changes are included
+5. PR creation
    - Open 1 task = 1 PR
+   - Open as a ready-for-review PR by default (use draft only when explicitly requested)
    - Fill PR checklist completely (task/branch/tests/CI/self-review)
-5. CI confirmation
+6. CI confirmation
    - Confirm required checks are green before merge
    - If failed, fix and re-run until green
-6. Self review
-   - Review diff by yourself before merge
+7. Self review (final)
+   - Perform final self review after CI is green
    - Ensure no unrelated changes are included
-7. Merge to `main`
+8. Merge to `main`
    - Merge only after CI is green and self review is done
    - Close corresponding GitHub Issue
    - Delete merged branch and update local `main`
