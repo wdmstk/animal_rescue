@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-131` 新規ユーザー登録導線の追加
+（なし）
 
 ### todo
 （なし）
@@ -31,45 +31,58 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-130` 公開緊急RPC未配置時のフォールバック対応
-2. `TASK-129` TASK完了時のIssueクローズ必須化
-3. `TASK-128` TASK作成時のIssue必須化と並行実装向け分割方針の追加
-4. `TASK-127` 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
-5. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
-6. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
-7. `TASK-124` Prisma adapter未設定による500エラー修正
-8. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
-9. `TASK-122` 健康トラッキングのグラフ可視化UI
-10. `TASK-121` 健康トラッキングの入力UI
-11. `TASK-120` 健康トラッキングAPI/スキーマ整備
-12. `TASK-119` 実DB統合テスト + CI記載更新
-13. `TASK-118` ワクチン履歴編集フロー
-14. `TASK-117` 投薬リマインダー実送信
-15. `TASK-116` 医療記録追加フォーム永続化
-16. `TASK-115` 写真Storageアップロード接続
-17. `TASK-114` QRトークン再生成UI連携
-18. `TASK-113` 公開緊急APIのRPC移行
-19. `TASK-112` 認証/招待ユーザー連携
-20. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-21. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
-22. `TASK-109` 認証 + 家族招待コード基盤
-23. `TASK-108` スキーマ + RLS実装
-24. `TASK-107` ペットプロフィール + 写真管理
-25. `TASK-106` 緊急情報 + QR公開画面
-26. `TASK-105` 医療タイムライン
-27. `TASK-104` 投薬管理 + カレンダー
-28. `TASK-103` ワクチン・予防歴
-29. `TASK-102` 統合テスト（unit/integration/e2e）
-30. `TASK-101` ドキュメント整備
+1. `TASK-132` ログイン失敗時のランタイム例外表示修正
+2. `TASK-131` 新規ユーザー登録導線の追加
+3. `TASK-130` 公開緊急RPC未配置時のフォールバック対応
+4. `TASK-129` TASK完了時のIssueクローズ必須化
+5. `TASK-128` TASK作成時のIssue必須化と並行実装向け分割方針の追加
+6. `TASK-127` 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
+7. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
+8. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
+9. `TASK-124` Prisma adapter未設定による500エラー修正
+10. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
+11. `TASK-122` 健康トラッキングのグラフ可視化UI
+12. `TASK-121` 健康トラッキングの入力UI
+13. `TASK-120` 健康トラッキングAPI/スキーマ整備
+14. `TASK-119` 実DB統合テスト + CI記載更新
+15. `TASK-118` ワクチン履歴編集フロー
+16. `TASK-117` 投薬リマインダー実送信
+17. `TASK-116` 医療記録追加フォーム永続化
+18. `TASK-115` 写真Storageアップロード接続
+19. `TASK-114` QRトークン再生成UI連携
+20. `TASK-113` 公開緊急APIのRPC移行
+21. `TASK-112` 認証/招待ユーザー連携
+22. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+23. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+24. `TASK-109` 認証 + 家族招待コード基盤
+25. `TASK-108` スキーマ + RLS実装
+26. `TASK-107` ペットプロフィール + 写真管理
+27. `TASK-106` 緊急情報 + QR公開画面
+28. `TASK-105` 医療タイムライン
+29. `TASK-104` 投薬管理 + カレンダー
+30. `TASK-103` ワクチン・予防歴
+31. `TASK-102` 統合テスト（unit/integration/e2e）
+32. `TASK-101` ドキュメント整備
 
 ---
 
 ## 正式タスク詳細
 
+### ログイン失敗時のランタイム例外表示修正
+- Task ID: `TASK-132`
+- ブランチ: `fix/TASK-132-login-error-handling`
+- ステータス: `done`
+- 概要: ログイン失敗時にランタイム例外を出さず、ログイン画面でユーザー向けエラーメッセージを表示する
+- Issue: `#86`
+- 完了条件:
+  - 認証失敗時に `throw` せずログイン画面でエラーメッセージが表示される
+  - `/login` 画面からエラー状態を確認できるUIテストが追加される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
 ### 新規ユーザー登録導線の追加
 - Task ID: `TASK-131`
 - ブランチ: `feat/TASK-131-user-signup-flow`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: メール/パスワードで新規ユーザー登録できる画面導線と認証APIを追加
 - Issue: `#84`
 - 完了条件:
@@ -344,5 +357,4 @@ Development Task List
   - `README.md` にセットアップ/設計ドキュメント導線が整理される
   - `docs/development-workflow.md` に PR作成〜CI確認〜マージ〜後片付け手順が明記される
   - `docs/security-policy.md` に運用時のセキュリティ確認手順が明記される
-
 
