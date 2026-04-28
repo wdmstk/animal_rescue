@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-136` ペット新規登録導線
+（なし）
 
 ### todo
 1. `TASK-135` ペット基本情報編集導線
@@ -38,7 +38,8 @@ Development Task List
 2. `TASK-139` PR運用チェック項目のタイムライン整備
 3. `TASK-138` 保護APIの認証・所有境界チェック強化
 4. `TASK-137` ペット一覧/詳細の実データ化（モック撤去）
-5. `TASK-132` ログイン失敗時のランタイム例外表示修正
+5. `TASK-136` ペット新規登録導線
+6. `TASK-132` ログイン失敗時のランタイム例外表示修正
 4. `TASK-131` 新規ユーザー登録導線の追加
 5. `TASK-130` 公開緊急RPC未配置時のフォールバック対応
 6. `TASK-129` TASK完了時のIssueクローズ必須化
@@ -124,7 +125,7 @@ Development Task List
 ### ペット新規登録導線
 - Task ID: `TASK-136`
 - ブランチ: `feat/TASK-136-pet-create-flow`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: `/pets/new` を追加し、`POST /api/pets` に接続して新規ペット作成導線を提供する
 - Issue: `#92`
 - 完了条件:
