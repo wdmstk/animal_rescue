@@ -2,19 +2,21 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextResponse } from "next/server";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 
-const { findUniqueMock } = vi.hoisted(() => ({
-  findUniqueMock: vi.fn()
+const { findUniqueMock, updateMock } = vi.hoisted(() => ({
+  findUniqueMock: vi.fn(),
+  updateMock: vi.fn()
 }));
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     pet: {
-      findUnique: findUniqueMock
+      findUnique: findUniqueMock,
+      update: updateMock
     }
   }
 }));
 
-import { GET } from "../../src/app/api/pets/[petId]/route";
+import { GET, PATCH } from "../../src/app/api/pets/[petId]/route";
 
 describe("GET /api/pets/[petId]", () => {
   const validPetId = "11111111-1111-4111-8111-111111111111";
@@ -94,6 +96,53 @@ describe("GET /api/pets/[petId]", () => {
         emergencyToken: true,
         photos: { orderBy: { sortOrder: "asc" } }
       }
+    });
+  });
+
+  it("returns 400 on invalid payload for PATCH", async () => {
+    const response = await PATCH(
+      new Request("http://localhost", {
+        method: "PATCH",
+        body: JSON.stringify({
+          name: "",
+          weightKg: 0
+        })
+      }),
+      {
+        params: { petId: validPetId }
+      }
+    );
+
+    expect(response.status).toBe(400);
+    expect(updateMock).not.toHaveBeenCalled();
+  });
+
+  it("updates pet on PATCH", async () => {
+    updateMock.mockResolvedValue({
+      id: validPetId,
+      name: "モカ"
+    });
+
+    const response = await PATCH(
+      new Request("http://localhost", {
+        method: "PATCH",
+        body: JSON.stringify({
+          name: "モカ",
+          birthday: "2020-03-10"
+        })
+      }),
+      {
+        params: { petId: validPetId }
+      }
+    );
+
+    expect(response.status).toBe(200);
+    expect(updateMock).toHaveBeenCalledWith({
+      where: { id: validPetId },
+      data: expect.objectContaining({
+        name: "モカ",
+        birthday: new Date("2020-03-10")
+      })
     });
   });
 });

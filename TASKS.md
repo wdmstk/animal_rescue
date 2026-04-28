@@ -23,12 +23,11 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-135` ペット基本情報編集導線
 
 ### todo
-1. `TASK-135` ペット基本情報編集導線
-2. `TASK-134` 緊急情報・投薬の編集導線実装
-3. `TASK-133` 家族招待コード発行・共有導線
+1. `TASK-134` 緊急情報・投薬の編集導線実装
+2. `TASK-133` 家族招待コード発行・共有導線
 
 ### blocked
 （なし）
@@ -149,7 +148,7 @@ Development Task List
 ### ペット基本情報編集導線
 - Task ID: `TASK-135`
 - ブランチ: `feat/TASK-135-pet-profile-edit`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 基本プロフィール編集UIと `PATCH /api/pets/[petId]` を追加する
 - Issue: `#90`
 - 完了条件:
