@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { HouseholdInviteCodeCard } from "@/components/features/pets/household-invite-code-card";
 
 type PetsResponse = {
   data: Array<{
@@ -76,6 +77,8 @@ export default async function PetsPage() {
       </section>
 
       <section className="space-y-3">
+        <HouseholdInviteCodeCard />
+
         {hasError ? (
           <p className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
             ペット一覧の取得に失敗しました。時間をおいて再度お試しください。
