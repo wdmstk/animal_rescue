@@ -1,0 +1,53 @@
+name: Post Merge Guard
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  post-merge-issue-guard:
+    name: Post Merge Issue Guard
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      issues: read
+    steps:
+      - name: Validate post-merge checklist and linked issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || "";
+
+            const checklistPattern = /- \[[xX]\] issue_closed_on_task_done/;
+            if (!checklistPattern.test(body)) {
+              core.setFailed("Checklist item is not checked: issue_closed_on_task_done");
+              return;
+            }
+
+            const issueRefs = Array.from(
+              body.matchAll(/\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\b/gi),
+              (match) => Number(match[1])
+            );
+
+            if (issueRefs.length === 0) {
+              core.warning("No closing issue reference (e.g. Closes #123) found in PR body.");
+              return;
+            }
+
+            const uniqueIssueRefs = [...new Set(issueRefs)];
+            for (const issueNumber of uniqueIssueRefs) {
+              const { data: issue } = await github.rest.issues.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber
+              });
+
+              if (issue.state !== "closed") {
+                core.setFailed(`Linked issue is not closed after merge: #${issueNumber}`);
+                return;
+              }
+            }

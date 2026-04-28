@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-137` ペット一覧/詳細の実データ化（モック撤去）
+1. `TASK-140` PRチェックのマージ前/マージ後CI検証追加
 
 ### todo
 1. `TASK-136` ペット新規登録導線
@@ -37,7 +37,8 @@ Development Task List
 ### done
 1. `TASK-139` PR運用チェック項目のタイムライン整備
 2. `TASK-138` 保護APIの認証・所有境界チェック強化
-3. `TASK-132` ログイン失敗時のランタイム例外表示修正
+3. `TASK-137` ペット一覧/詳細の実データ化（モック撤去）
+4. `TASK-132` ログイン失敗時のランタイム例外表示修正
 4. `TASK-131` 新規ユーザー登録導線の追加
 5. `TASK-130` 公開緊急RPC未配置時のフォールバック対応
 6. `TASK-129` TASK完了時のIssueクローズ必須化
@@ -74,6 +75,17 @@ Development Task List
 
 ## 正式タスク詳細
 
+### PRチェックのマージ前/マージ後CI検証追加
+- Task ID: `TASK-140`
+- ブランチ: `fix/TASK-140-pr-checklist-merge-phase-guard`
+- ステータス: `in_progress`
+- 概要: PRテンプレートの「マージ前（CI完了後）」「マージ後」チェック項目をCIで検証できるようにし、未実施のまま通過しない運用へ揃える
+- Issue: `#98`
+- 完了条件:
+  - PR作成前/作成時チェックに加えて、マージ前チェックをCIで検証できる
+  - マージ後チェック（Issueクローズ）をCIで検知できる
+  - PRテンプレートとCI実装の必須項目が一致する
+
 ### PR運用チェック項目のタイムライン整備
 - Task ID: `TASK-139`
 - ブランチ: `docs/TASK-139-pr-checklist-timeline`
@@ -101,7 +113,7 @@ Development Task List
 ### ペット一覧/詳細の実データ化（モック撤去）
 - Task ID: `TASK-137`
 - ブランチ: `feat/TASK-137-pets-pages-real-data`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: `mockPets` と固定 `pet` オブジェクトを撤去し、`/pets` と `/pets/[petId]` を永続データ表示へ切り替える
 - Issue: `#91`
 - 完了条件:

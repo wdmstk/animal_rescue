@@ -74,6 +74,45 @@ jobs:
             exit 1
           fi
 
+  pr-pre-merge-guard:
+    name: PR Pre-Merge Guard
+    if: github.event_name == 'pull_request'
+    needs:
+      - lint
+      - test
+      - db-integration
+      - e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate pre-merge checklist
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [[ -z "${PR_BODY}" ]]; then
+            echo "PR body is empty. Use pull request template and complete checklist."
+            exit 1
+          fi
+
+          required_items=(
+            "ci_green_confirmed"
+            "self_review_final_done_after_ci_green"
+            "ready_for_main_merge"
+          )
+
+          missing=0
+          for item in "${required_items[@]}"; do
+            if ! printf '%s\n' "${PR_BODY}" | grep -Eiq -- "- \[[xX]\] ${item}"; then
+              echo "Checklist item is not checked: ${item}"
+              missing=1
+            fi
+          done
+
+          if [[ "${missing}" -ne 0 ]]; then
+            echo "Please complete all required pre-merge checklist items in PR body."
+            exit 1
+          fi
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
