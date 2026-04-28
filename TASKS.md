@@ -25,6 +25,7 @@ Development Task List
 ### in_progress
 1. `TASK-135` ペット基本情報編集導線
 2. `TASK-134` 緊急情報・投薬の編集導線実装
+3. `TASK-133` 家族招待コード発行・共有導線
 
 ### todo
 1. `TASK-134` 緊急情報・投薬の編集導線実装
@@ -171,7 +172,7 @@ Development Task List
 ### 家族招待コード発行・共有導線
 - Task ID: `TASK-133`
 - ブランチ: `feat/TASK-133-household-invite-code-ui`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: `POST /api/households/invite-codes` のUI導線を追加し、招待コード発行・共有を可能にする
 - Issue: `#93`
 - 完了条件:

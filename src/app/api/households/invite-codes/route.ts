@@ -6,7 +6,7 @@ import { calculateExpiry, generateInviteCode } from "@/lib/services/invite-code"
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const parsed = createInviteCodeSchema.safeParse(body);
+  const parsed = createInviteCodeSchema.partial({ householdId: true }).safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -22,10 +22,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
   }
 
+  const householdId =
+    parsed.data.householdId ??
+    (
+      await prisma.householdMember.findFirst({
+        where: { userId: user.id },
+        select: { householdId: true },
+        orderBy: { createdAt: "asc" }
+      })
+    )?.householdId;
+
+  if (!householdId) {
+    return NextResponse.json({ error: "所属世帯が見つかりません" }, { status: 400 });
+  }
+
   const code = generateInviteCode();
   const invite = await prisma.householdInviteCode.create({
     data: {
-      householdId: parsed.data.householdId,
+      householdId,
       createdBy: user.id,
       code,
       expiresAt: calculateExpiry(parsed.data.expiresInHours)

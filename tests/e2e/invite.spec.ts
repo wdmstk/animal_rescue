@@ -31,3 +31,24 @@ test("pets page links to pet detail", async ({ page }) => {
   await expect(page).toHaveURL(/\/pets\/sample-pet$/);
   await expect(page.getByRole("heading", { name: "モカ" })).toBeVisible();
 });
+
+test("pets page can issue invite code", async ({ page }) => {
+  await page.route("**/api/households/invite-codes", async (route) => {
+    await route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          code: "ABCDEF",
+          expiresAt: "2026-05-01T00:00:00.000Z"
+        }
+      })
+    });
+  });
+
+  await page.goto("/pets");
+  await page.getByRole("button", { name: "発行" }).click();
+
+  await expect(page.getByText("発行済みコード")).toBeVisible();
+  await expect(page.getByText("ABCDEF", { exact: true })).toBeVisible();
+});
