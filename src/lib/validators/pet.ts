@@ -14,4 +14,6 @@ export const petInputSchema = z.object({
   microchipNumber: z.string().max(64).optional().nullable()
 });
 
+export const petUpdateSchema = petInputSchema.omit({ householdId: true }).partial();
+
 export type PetInput = z.infer<typeof petInputSchema>;

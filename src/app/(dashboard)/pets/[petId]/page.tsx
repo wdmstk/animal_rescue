@@ -4,6 +4,7 @@ import { HealthTrackingPanel } from "@/components/features/pets/health-tracking-
 import { MedicalRecordManager } from "@/components/features/pets/medical-record-manager";
 import { MedicationCalendar } from "@/components/features/pets/medication-calendar";
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
+import { PetProfileEditorCard } from "@/components/features/pets/pet-profile-editor-card";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 import { VaccinationManager } from "@/components/features/pets/vaccination-manager";
 import { headers } from "next/headers";
@@ -38,18 +39,6 @@ type PetDetailResponse = {
     vaccinations: Array<{ id: string; type: "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER"; date: string; nextDue: string | null }>;
     medicalRecords: Array<{ id: string; date: string; title: string; description: string; recordType: "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER" }>;
   };
-};
-
-const speciesLabelMap: Record<"dog" | "cat" | "other", string> = {
-  dog: "犬",
-  cat: "猫",
-  other: "その他"
-};
-
-const sexLabelMap: Record<"MALE" | "FEMALE" | "UNKNOWN", string> = {
-  MALE: "オス",
-  FEMALE: "メス",
-  UNKNOWN: "不明"
 };
 
 const normalizeDate = (value: string) => value.slice(0, 10);
@@ -177,23 +166,8 @@ export default async function PetDetailPage({
 
   const payload = (await response.json()) as PetDetailResponse;
   const pet = payload.data;
-  const firstPhoto = pet.photos[0]?.photoUrl;
-  const profile = {
-    name: pet.name,
-    species: speciesLabelMap[pet.species],
-    breed: pet.breed ?? "未登録",
-    sex: sexLabelMap[pet.sex],
-    age: pet.ageYears !== null ? `${pet.ageYears}歳` : "未登録",
-    weight: pet.weightKg !== null ? `${pet.weightKg}kg` : "未登録",
-    birthday: pet.birthday ? normalizeDate(pet.birthday) : "未登録",
-    personality: pet.notesPersonality ?? "未登録",
-    features: pet.notesFeatures ?? "未登録",
-    photoUrl: pet.mainPhotoUrl ?? firstPhoto ?? "https://images.unsplash.com/photo-1517849845537-4d257902454a"
-  };
-
   const activeToken = pet.emergencyToken?.isActive ? pet.emergencyToken.token : null;
   const emergencyLinkToken = process.env.PLAYWRIGHT_E2E === "1" ? E2E_PUBLIC_EMERGENCY_TOKEN : activeToken;
-
   const emergencyData = pet.emergencyInfo;
   const emergencyDisease = emergencyData?.disease ?? "未登録";
   const emergencyMedications = emergencyData?.currentMedications ?? "未登録";
@@ -218,7 +192,22 @@ export default async function PetDetailPage({
         </a>
       ) : null}
 
-      <PetProfileCard pet={profile} />
+      <PetProfileEditorCard
+        petId={petId}
+        initialPet={{
+          name: pet.name,
+          species: pet.species,
+          breed: pet.breed,
+          sex: pet.sex,
+          ageYears: pet.ageYears,
+          weightKg: pet.weightKg,
+          birthday: pet.birthday,
+          notesPersonality: pet.notesPersonality,
+          notesFeatures: pet.notesFeatures,
+          mainPhotoUrl: pet.mainPhotoUrl,
+          photos: pet.photos
+        }}
+      />
 
       <PetPhotoGallery petId={petId} photos={pet.photos.map((photo) => photo.photoUrl)} />
 
