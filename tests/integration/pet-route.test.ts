@@ -36,7 +36,7 @@ describe("GET /api/pets/[petId]", () => {
 
   it("returns 400 on invalid petId", async () => {
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: "sample-pet" }
+      params: Promise.resolve({ petId: "sample-pet" })
     });
 
     expect(response.status).toBe(400);
@@ -47,7 +47,7 @@ describe("GET /api/pets/[petId]", () => {
     findUniqueMock.mockResolvedValue(null);
 
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: validPetId }
+      params: Promise.resolve({ petId: validPetId })
     });
 
     expect(response.status).toBe(404);
@@ -57,7 +57,7 @@ describe("GET /api/pets/[petId]", () => {
     requireAuthenticatedUserMock.mockResolvedValueOnce(NextResponse.json({ error: "認証が必要です" }, { status: 401 }));
 
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: validPetId }
+      params: Promise.resolve({ petId: validPetId })
     });
 
     expect(response.status).toBe(401);
@@ -68,7 +68,7 @@ describe("GET /api/pets/[petId]", () => {
     requirePetAccessMock.mockResolvedValueOnce(NextResponse.json({ error: "Pet not found" }, { status: 404 }));
 
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: validPetId }
+      params: Promise.resolve({ petId: validPetId })
     });
 
     expect(response.status).toBe(404);
@@ -82,7 +82,7 @@ describe("GET /api/pets/[petId]", () => {
     });
 
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: validPetId }
+      params: Promise.resolve({ petId: validPetId })
     });
 
     expect(response.status).toBe(200);
@@ -109,7 +109,7 @@ describe("GET /api/pets/[petId]", () => {
         })
       }),
       {
-        params: { petId: validPetId }
+        params: Promise.resolve({ petId: validPetId })
       }
     );
 
@@ -132,7 +132,7 @@ describe("GET /api/pets/[petId]", () => {
         })
       }),
       {
-        params: { petId: validPetId }
+        params: Promise.resolve({ petId: validPetId })
       }
     );
 

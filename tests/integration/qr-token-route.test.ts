@@ -60,7 +60,8 @@ describe("/api/pets/[petId]/qr-token", () => {
 
   it("returns existing token on GET", async () => {
     findUniqueMock.mockResolvedValue({
-      token: "99999999-9999-4999-8999-999999999999"
+      token: "99999999-9999-4999-8999-999999999999",
+      isActive: true
     });
 
     const response = await GET(new Request("http://localhost"), {
@@ -71,6 +72,27 @@ describe("/api/pets/[petId]/qr-token", () => {
     const payload = await response.json();
     expect(payload.data.token).toBe("99999999-9999-4999-8999-999999999999");
     expect(payload.data.publicUrl).toBe("/e/99999999-9999-4999-8999-999999999999");
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
+  it("reactivates token on GET when existing token is inactive", async () => {
+    findUniqueMock.mockResolvedValue({
+      token: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      isActive: false
+    });
+    updateMock.mockResolvedValue({
+      token: "11111111-1111-4111-8111-111111111111",
+      isActive: true
+    });
+
+    const response = await GET(new Request("http://localhost"), {
+      params: Promise.resolve({ petId: validPetId })
+    });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data.token).toBe("11111111-1111-4111-8111-111111111111");
+    expect(updateMock).toHaveBeenCalledOnce();
     expect(createMock).not.toHaveBeenCalled();
   });
 

@@ -30,7 +30,7 @@ describe("GET /api/public/emergency/[token]", () => {
 
   it("returns 400 for non-uuid token", async () => {
     const response = await GET(new Request("http://localhost"), {
-      params: { token: "invalid-token" }
+      params: Promise.resolve({ token: "invalid-token" })
     });
 
     expect(response.status).toBe(400);
@@ -41,7 +41,7 @@ describe("GET /api/public/emergency/[token]", () => {
     rpcMock.mockResolvedValue({ data: [], error: null });
 
     const response = await GET(new Request("http://localhost"), {
-      params: { token: "11111111-1111-4111-8111-111111111111" }
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
     });
 
     expect(response.status).toBe(404);
@@ -68,7 +68,7 @@ describe("GET /api/public/emergency/[token]", () => {
     });
 
     const response = await GET(new Request("http://localhost"), {
-      params: { token: "11111111-1111-4111-8111-111111111111" }
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
     });
 
     expect(response.status).toBe(200);
@@ -103,7 +103,7 @@ describe("GET /api/public/emergency/[token]", () => {
     });
 
     const response = await GET(new Request("http://localhost"), {
-      params: { token: "11111111-1111-4111-8111-111111111111" }
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
     });
 
     expect(response.status).toBe(200);
@@ -128,7 +128,7 @@ describe("GET /api/public/emergency/[token]", () => {
 
     await expect(
       GET(new Request("http://localhost"), {
-        params: { token: "11111111-1111-4111-8111-111111111111" }
+        params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
       })
     ).rejects.toThrow("Failed to load public emergency data: db timeout");
     expect(findFirstEmergencyTokenMock).not.toHaveBeenCalled();
@@ -158,7 +158,7 @@ describe("GET /api/public/emergency/[token]", () => {
     });
 
     const response = await GET(new Request("http://localhost"), {
-      params: { token: "11111111-1111-4111-8111-111111111111" }
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
     });
 
     expect(response.status).toBe(200);
@@ -199,9 +199,42 @@ describe("GET /api/public/emergency/[token]", () => {
     findFirstEmergencyTokenMock.mockResolvedValue(null);
 
     const response = await GET(new Request("http://localhost"), {
-      params: { token: "11111111-1111-4111-8111-111111111111" }
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
     });
 
     expect(response.status).toBe(404);
+  });
+
+  it("returns 200 with null fields when fallback finds active token without emergency info", async () => {
+    rpcMock.mockResolvedValue({
+      data: null,
+      error: {
+        code: "PGRST202",
+        message: "Could not find the function public.get_public_emergency_by_token(input_token) in the schema cache"
+      }
+    });
+    findFirstEmergencyTokenMock.mockResolvedValue({
+      pet: {
+        name: "Mugi",
+        emergencyInfo: null
+      }
+    });
+
+    const response = await GET(new Request("http://localhost"), {
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
+    });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data).toEqual({
+      petName: "Mugi",
+      disease: null,
+      medications: null,
+      allergy: null,
+      vetName: null,
+      vetPhone: null,
+      emergencyContactName: null,
+      emergencyContactPhone: null
+    });
   });
 });

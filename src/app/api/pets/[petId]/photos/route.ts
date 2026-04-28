@@ -2,13 +2,16 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
+import { allowedImageHostMessage, isAllowedImageUrl } from "@/lib/validators/image-url";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
 });
 
 const photoSchema = z.object({
-  photoUrl: z.string().url(),
+  photoUrl: z.string().url().refine(isAllowedImageUrl, {
+    message: allowedImageHostMessage
+  }),
   sortOrder: z.number().int().min(0).default(0)
 });
 

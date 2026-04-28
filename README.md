@@ -24,6 +24,22 @@ npx vitest run
 npm run test:e2e
 ```
 
+## テストデータ投入（ローカル/テストDB専用）
+`DATABASE_URL` がローカル/テスト用DBを向いていることを確認してから実行してください。本番DBでは実行しないでください。
+
+```bash
+# 軽量データ（自動テスト向け）
+npm run seed:test:baseline
+
+# 多ケースデータ（手動UI確認向け）
+npm run seed:test:showcase
+
+# seed対象のみ削除してbaselineを再投入
+npm run seed:test:reset
+```
+
+seed処理は `seed:` プレフィックス付きデータのみ削除対象にし、他データは保持します。
+
 ## 主な画面
 - `/pets`: ペット一覧
 - `/pets/[petId]`: プロフィール + 緊急情報 + タイムライン

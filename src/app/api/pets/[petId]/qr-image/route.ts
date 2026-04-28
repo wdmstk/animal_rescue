@@ -9,8 +9,9 @@ const petIdParamSchema = z.object({
   petId: z.string().uuid()
 });
 
-export async function GET(_: Request, { params }: { params: { petId: string } }) {
-  const parsedParams = petIdParamSchema.safeParse(params);
+export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const routeParams = await params;
+  const parsedParams = petIdParamSchema.safeParse(routeParams);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
@@ -30,17 +31,28 @@ export async function GET(_: Request, { params }: { params: { petId: string } })
     where: { petId }
   });
 
-  const token =
-    existingToken?.token ??
-    (
-      await prisma.petEmergencyToken.create({
-        data: {
-          petId,
-          token: generateEmergencyToken(),
-          isActive: true
-        }
-      })
-    ).token;
+  const token = existingToken?.isActive
+    ? existingToken.token
+    : existingToken
+      ? (
+          await prisma.petEmergencyToken.update({
+            where: { petId },
+            data: {
+              token: generateEmergencyToken(),
+              isActive: true,
+              rotatedAt: new Date()
+            }
+          })
+        ).token
+      : (
+          await prisma.petEmergencyToken.create({
+            data: {
+              petId,
+              token: generateEmergencyToken(),
+              isActive: true
+            }
+          })
+        ).token;
 
   const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/e/${token}`;
   const image = await QRCode.toDataURL(publicUrl, {

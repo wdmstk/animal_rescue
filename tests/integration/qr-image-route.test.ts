@@ -2,10 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextResponse } from "next/server";
 import { requirePetAccess } from "@/lib/auth/pet-access";
 
-const { toDataUrlMock, findTokenMock, createTokenMock } = vi.hoisted(() => ({
+const { toDataUrlMock, findTokenMock, createTokenMock, updateTokenMock } = vi.hoisted(() => ({
   toDataUrlMock: vi.fn(),
   findTokenMock: vi.fn(),
-  createTokenMock: vi.fn()
+  createTokenMock: vi.fn(),
+  updateTokenMock: vi.fn()
 }));
 
 vi.mock("qrcode", () => ({
@@ -18,7 +19,8 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     petEmergencyToken: {
       findUnique: findTokenMock,
-      create: createTokenMock
+      create: createTokenMock,
+      update: updateTokenMock
     }
   }
 }));
@@ -44,7 +46,7 @@ describe("GET /api/pets/[petId]/qr-image", () => {
 
   it("returns 400 on invalid petId", async () => {
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: "sample-pet" }
+      params: Promise.resolve({ petId: "sample-pet" })
     });
 
     expect(response.status).toBe(400);
@@ -55,7 +57,7 @@ describe("GET /api/pets/[petId]/qr-image", () => {
     requirePetAccessMock.mockResolvedValueOnce(NextResponse.json({ error: "Pet not found" }, { status: 404 }));
 
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: validPetId }
+      params: Promise.resolve({ petId: validPetId })
     });
 
     expect(response.status).toBe(404);
@@ -64,11 +66,12 @@ describe("GET /api/pets/[petId]/qr-image", () => {
 
   it("returns QR image data with existing token", async () => {
     findTokenMock.mockResolvedValue({
-      token: "99999999-9999-4999-8999-999999999999"
+      token: "99999999-9999-4999-8999-999999999999",
+      isActive: true
     });
 
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: validPetId }
+      params: Promise.resolve({ petId: validPetId })
     });
 
     expect(response.status).toBe(200);
@@ -88,7 +91,7 @@ describe("GET /api/pets/[petId]/qr-image", () => {
     });
 
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: validPetId }
+      params: Promise.resolve({ petId: validPetId })
     });
 
     expect(response.status).toBe(200);
@@ -97,5 +100,25 @@ describe("GET /api/pets/[petId]/qr-image", () => {
     expect(payload.data.image).toBe("data:image/png;base64,mock");
     expect(toDataUrlMock).toHaveBeenCalledOnce();
     expect(createTokenMock).toHaveBeenCalledOnce();
+  });
+
+  it("reactivates token when existing token is inactive", async () => {
+    findTokenMock.mockResolvedValue({
+      token: "99999999-9999-4999-8999-999999999999",
+      isActive: false
+    });
+    updateTokenMock.mockResolvedValue({
+      token: "33333333-3333-4333-8333-333333333333"
+    });
+
+    const response = await GET(new Request("http://localhost"), {
+      params: Promise.resolve({ petId: validPetId })
+    });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data.publicUrl).toContain("/e/33333333-3333-4333-8333-333333333333");
+    expect(updateTokenMock).toHaveBeenCalledOnce();
+    expect(createTokenMock).not.toHaveBeenCalled();
   });
 });
