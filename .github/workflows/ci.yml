@@ -2,6 +2,12 @@ name: CI
 
 on:
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+      - ready_for_review
   push:
     branches:
       - main
@@ -20,7 +26,7 @@ env:
 jobs:
   pr-operational-guard:
     name: PR Operational Guard
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && contains(fromJSON('["opened","synchronize","reopened","edited","ready_for_review"]'), github.event.action)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -76,12 +82,7 @@ jobs:
 
   pr-pre-merge-guard:
     name: PR Pre-Merge Guard
-    if: github.event_name == 'pull_request'
-    needs:
-      - lint
-      - test
-      - db-integration
-      - e2e
+    if: github.event_name == 'pull_request' && contains(fromJSON('["opened","synchronize","reopened","edited","ready_for_review"]'), github.event.action)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -113,8 +114,37 @@ jobs:
             exit 1
           fi
 
+      - name: Validate final self-review notes
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [[ -z "${PR_BODY}" ]]; then
+            echo "PR body is empty. Use pull request template and complete checklist."
+            exit 1
+          fi
+
+          required_self_review_lines=(
+            "- 差分妥当性:"
+            "- 不要変更混入:"
+            "- 残リスク/フォローアップ:"
+          )
+
+          missing=0
+          for line in "${required_self_review_lines[@]}"; do
+            if ! printf '%s\n' "${PR_BODY}" | grep -Fqi -- "${line}"; then
+              echo "Final self-review note is missing: ${line}"
+              missing=1
+            fi
+          done
+
+          if [[ "${missing}" -ne 0 ]]; then
+            echo "Please complete all required final self-review note lines in PR body."
+            exit 1
+          fi
+
   lint:
     name: Lint
+    if: github.event_name != 'pull_request' || contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -135,6 +165,7 @@ jobs:
 
   test:
     name: Unit/Integration (Vitest)
+    if: github.event_name != 'pull_request' || contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -155,6 +186,7 @@ jobs:
 
   db-integration:
     name: DB Integration (Real Postgres)
+    if: github.event_name != 'pull_request' || contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action)
     runs-on: ubuntu-latest
     timeout-minutes: 20
     services:
@@ -198,6 +230,7 @@ jobs:
 
   e2e:
     name: E2E (Playwright)
+    if: github.event_name != 'pull_request' || contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action)
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:

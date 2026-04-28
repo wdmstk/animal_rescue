@@ -36,5 +36,10 @@
 - [ ] self_review_final_done_after_ci_green
 - [ ] ready_for_main_merge
 
+#### 最終セルフレビュー（必須）
+- 差分妥当性:
+- 不要変更混入:
+- 残リスク/フォローアップ:
+
 ### マージ後
 - [ ] issue_closed_on_task_done
