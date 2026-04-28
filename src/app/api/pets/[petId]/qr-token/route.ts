@@ -29,11 +29,30 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     where: { petId }
   });
 
-  if (existing) {
+  if (existing?.isActive) {
     return NextResponse.json({
       data: {
         token: existing.token,
         publicUrl: `/e/${existing.token}`
+      }
+    });
+  }
+
+  if (existing && !existing.isActive) {
+    const reactivatedToken = generateEmergencyToken();
+    const updated = await prisma.petEmergencyToken.update({
+      where: { petId },
+      data: {
+        token: reactivatedToken,
+        isActive: true,
+        rotatedAt: new Date()
+      }
+    });
+
+    return NextResponse.json({
+      data: {
+        token: updated.token,
+        publicUrl: `/e/${updated.token}`
       }
     });
   }

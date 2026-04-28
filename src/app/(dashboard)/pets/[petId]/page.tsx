@@ -7,6 +7,7 @@ import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileEditorCard } from "@/components/features/pets/pet-profile-editor-card";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 import { VaccinationManager } from "@/components/features/pets/vaccination-manager";
+import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { E2E_PUBLIC_EMERGENCY_TOKEN } from "@/lib/constants/emergency";
@@ -71,6 +72,7 @@ export default async function PetDetailPage({
   }
 
   if (!response.ok && process.env.PLAYWRIGHT_E2E === "1" && (petId === "demo-pet" || petId === "sample-pet")) {
+      const e2eToken = E2E_PUBLIC_EMERGENCY_TOKEN;
       const e2ePet = {
         id: petId,
         name: "モカ",
@@ -87,12 +89,12 @@ export default async function PetDetailPage({
 
       return (
         <div className="space-y-4">
-          <a
-            href={`/e/${E2E_PUBLIC_EMERGENCY_TOKEN}`}
+          <Link
+            href={`/e/${e2eToken}`}
             className="sticky top-[68px] z-10 block rounded-xl bg-emergency-500 px-4 py-3 text-center text-sm font-bold text-white shadow"
           >
             緊急情報を確認
-          </a>
+          </Link>
 
           <PetProfileCard pet={e2ePet} />
 
@@ -118,7 +120,7 @@ export default async function PetDetailPage({
             }}
           />
 
-          <EmergencyQrShareCard petId={petId} />
+          <EmergencyQrShareCard petId={petId} initialToken={e2eToken} />
 
           <MedicationManagerCard
             petId={petId}
@@ -181,22 +183,51 @@ export default async function PetDetailPage({
   }
 
   if (!response.ok) {
-    throw new Error("Failed to load pet detail");
+    return (
+      <div className="space-y-4">
+        <p className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+          ペット詳細の取得に失敗しました。時間をおいて再度お試しください。
+        </p>
+        <Link
+          href="/pets"
+          className="inline-flex rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800"
+        >
+          ペット一覧へ戻る
+        </Link>
+      </div>
+    );
   }
 
   const payload = (await response.json()) as PetDetailResponse;
   const pet = payload.data;
-  const activeToken = pet.emergencyToken?.isActive ? pet.emergencyToken.token : null;
+  let activeToken = pet.emergencyToken?.isActive ? pet.emergencyToken.token : null;
+
+  if (!activeToken) {
+    const tokenResponse = await fetch(`${origin}/api/pets/${petId}/qr-token`, {
+      cache: "no-store",
+      headers: cookie ? { cookie } : undefined
+    });
+
+    if (tokenResponse.status === 401) {
+      redirect("/login");
+    }
+
+    if (tokenResponse.ok) {
+      const tokenPayload = (await tokenResponse.json()) as { data: { token: string } };
+      activeToken = tokenPayload.data.token;
+    }
+  }
+
   const emergencyLinkToken = process.env.PLAYWRIGHT_E2E === "1" ? E2E_PUBLIC_EMERGENCY_TOKEN : activeToken;
   return (
     <div className="space-y-4">
       {emergencyLinkToken ? (
-        <a
+        <Link
           href={`/e/${emergencyLinkToken}`}
           className="sticky top-[68px] z-10 block rounded-xl bg-emergency-500 px-4 py-3 text-center text-sm font-bold text-white shadow"
         >
           緊急情報を確認
-        </a>
+        </Link>
       ) : null}
 
       <PetProfileEditorCard
@@ -220,7 +251,7 @@ export default async function PetDetailPage({
 
       <EmergencyEditorCard petId={petId} initialEmergencyInfo={pet.emergencyInfo} />
 
-      <EmergencyQrShareCard petId={petId} />
+      <EmergencyQrShareCard petId={petId} initialToken={activeToken ?? undefined} />
 
       <MedicationManagerCard
         petId={petId}

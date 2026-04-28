@@ -57,7 +57,7 @@ describe("/api/pets/[petId]/photos", () => {
       new Request("http://localhost", {
         method: "POST",
         body: JSON.stringify({
-          photoUrl: "https://example.com/photo.jpg",
+          photoUrl: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
           sortOrder: 0
         })
       }),
@@ -73,7 +73,7 @@ describe("/api/pets/[petId]/photos", () => {
       new Request("http://localhost", {
         method: "POST",
         body: JSON.stringify({
-          photoUrl: "not-url"
+          photoUrl: "https://example.com/photo.jpg"
         })
       }),
       { params: { petId: "pet-1" } }
@@ -90,7 +90,7 @@ describe("/api/pets/[petId]/photos", () => {
       new Request("http://localhost", {
         method: "POST",
         body: JSON.stringify({
-          photoUrl: "https://example.com/photo.jpg",
+          photoUrl: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
           sortOrder: 0
         })
       }),
@@ -105,7 +105,7 @@ describe("/api/pets/[petId]/photos", () => {
     createMock.mockResolvedValue({
       id: "photo-1",
       petId: "pet-1",
-      photoUrl: "https://example.com/photo.jpg",
+      photoUrl: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
       sortOrder: 0
     });
 
@@ -113,7 +113,7 @@ describe("/api/pets/[petId]/photos", () => {
       new Request("http://localhost", {
         method: "POST",
         body: JSON.stringify({
-          photoUrl: "https://example.com/photo.jpg",
+          photoUrl: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
           sortOrder: 0
         })
       }),
@@ -124,7 +124,7 @@ describe("/api/pets/[petId]/photos", () => {
     expect(createMock).toHaveBeenCalledWith({
       data: {
         petId: "11111111-1111-4111-8111-111111111111",
-        photoUrl: "https://example.com/photo.jpg",
+        photoUrl: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
         sortOrder: 0
       }
     });

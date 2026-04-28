@@ -8,8 +8,9 @@ const petIdParamSchema = z.object({
   petId: z.string().uuid()
 });
 
-export async function GET(_: Request, { params }: { params: { petId: string } }) {
-  const parsedParams = petIdParamSchema.safeParse(params);
+export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const routeParams = await params;
+  const parsedParams = petIdParamSchema.safeParse(routeParams);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
@@ -43,8 +44,9 @@ export async function GET(_: Request, { params }: { params: { petId: string } })
   return NextResponse.json({ data: pet });
 }
 
-export async function PATCH(request: Request, { params }: { params: { petId: string } }) {
-  const parsedParams = petIdParamSchema.safeParse(params);
+export async function PATCH(request: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const routeParams = await params;
+  const parsedParams = petIdParamSchema.safeParse(routeParams);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }

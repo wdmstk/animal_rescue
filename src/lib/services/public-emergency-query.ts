@@ -50,19 +50,19 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
     }
   });
 
-  if (!tokenRow?.pet.emergencyInfo) {
+  if (!tokenRow?.pet) {
     return null;
   }
 
   return toPublicEmergencyView({
     petName: tokenRow.pet.name,
-    disease: tokenRow.pet.emergencyInfo.disease,
-    allergy: tokenRow.pet.emergencyInfo.allergy,
-    currentMedications: tokenRow.pet.emergencyInfo.currentMedications,
-    vetName: tokenRow.pet.emergencyInfo.vetName,
-    vetPhone: tokenRow.pet.emergencyInfo.vetPhone,
-    emergencyContactName: tokenRow.pet.emergencyInfo.emergencyContactName,
-    emergencyContactPhone: tokenRow.pet.emergencyInfo.emergencyContactPhone
+    disease: tokenRow.pet.emergencyInfo?.disease ?? null,
+    allergy: tokenRow.pet.emergencyInfo?.allergy ?? null,
+    currentMedications: tokenRow.pet.emergencyInfo?.currentMedications ?? null,
+    vetName: tokenRow.pet.emergencyInfo?.vetName ?? null,
+    vetPhone: tokenRow.pet.emergencyInfo?.vetPhone ?? null,
+    emergencyContactName: tokenRow.pet.emergencyInfo?.emergencyContactName ?? null,
+    emergencyContactPhone: tokenRow.pet.emergencyInfo?.emergencyContactPhone ?? null
   });
 };
 
