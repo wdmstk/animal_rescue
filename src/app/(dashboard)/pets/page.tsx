@@ -61,8 +61,18 @@ export default async function PetsPage() {
   return (
     <div className="space-y-4">
       <section className="rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold">ペットプロフィール</h2>
-        <p className="mt-1 text-sm text-slate-600">家族全員で最新の救急情報を管理できます。</p>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-bold">ペットプロフィール</h2>
+            <p className="mt-1 text-sm text-slate-600">家族全員で最新の救急情報を管理できます。</p>
+          </div>
+          <Link
+            href="/pets/new"
+            className="shrink-0 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white"
+          >
+            ペットを追加
+          </Link>
+        </div>
       </section>
 
       <section className="space-y-3">
