@@ -23,13 +23,10 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-135` ペット基本情報編集導線
-2. `TASK-134` 緊急情報・投薬の編集導線実装
-3. `TASK-133` 家族招待コード発行・共有導線
+（なし）
 
 ### todo
-1. `TASK-134` 緊急情報・投薬の編集導線実装
-2. `TASK-133` 家族招待コード発行・共有導線
+（なし）
 
 ### blocked
 （なし）
@@ -41,38 +38,41 @@ Development Task List
 4. `TASK-138` 保護APIの認証・所有境界チェック強化
 5. `TASK-137` ペット一覧/詳細の実データ化（モック撤去）
 6. `TASK-136` ペット新規登録導線
-7. `TASK-132` ログイン失敗時のランタイム例外表示修正
-4. `TASK-131` 新規ユーザー登録導線の追加
-5. `TASK-130` 公開緊急RPC未配置時のフォールバック対応
-6. `TASK-129` TASK完了時のIssueクローズ必須化
-7. `TASK-128` TASK作成時のIssue必須化と並行実装向け分割方針の追加
-8. `TASK-127` 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
-9. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
-10. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
-11. `TASK-124` Prisma adapter未設定による500エラー修正
-12. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
-13. `TASK-122` 健康トラッキングのグラフ可視化UI
-14. `TASK-121` 健康トラッキングの入力UI
-15. `TASK-120` 健康トラッキングAPI/スキーマ整備
-16. `TASK-119` 実DB統合テスト + CI記載更新
-17. `TASK-118` ワクチン履歴編集フロー
-18. `TASK-117` 投薬リマインダー実送信
-19. `TASK-116` 医療記録追加フォーム永続化
-20. `TASK-115` 写真Storageアップロード接続
-21. `TASK-114` QRトークン再生成UI連携
-22. `TASK-113` 公開緊急APIのRPC移行
-23. `TASK-112` 認証/招待ユーザー連携
-24. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
-25. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
-26. `TASK-109` 認証 + 家族招待コード基盤
-27. `TASK-108` スキーマ + RLS実装
-28. `TASK-107` ペットプロフィール + 写真管理
-29. `TASK-106` 緊急情報 + QR公開画面
-30. `TASK-105` 医療タイムライン
-31. `TASK-104` 投薬管理 + カレンダー
-32. `TASK-103` ワクチン・予防歴
-33. `TASK-102` 統合テスト（unit/integration/e2e）
-34. `TASK-101` ドキュメント整備
+7. `TASK-135` ペット基本情報編集導線
+8. `TASK-134` 緊急情報・投薬の編集導線実装
+9. `TASK-133` 家族招待コード発行・共有導線
+10. `TASK-132` ログイン失敗時のランタイム例外表示修正
+11. `TASK-131` 新規ユーザー登録導線の追加
+12. `TASK-130` 公開緊急RPC未配置時のフォールバック対応
+13. `TASK-129` TASK完了時のIssueクローズ必須化
+14. `TASK-128` TASK作成時のIssue必須化と並行実装向け分割方針の追加
+15. `TASK-127` 公開緊急導線の整合化（QRトークン/ドキュメント/E2E）
+16. `TASK-126` 実装運用の必須ガード（AGENTS/PRテンプレ/CI）
+17. `TASK-125` health APIのpetId UUIDバリデーション強化（500→400）
+18. `TASK-124` Prisma adapter未設定による500エラー修正
+19. `TASK-123` 健康トラッキングのテスト拡充（unit/integration/e2e）
+20. `TASK-122` 健康トラッキングのグラフ可視化UI
+21. `TASK-121` 健康トラッキングの入力UI
+22. `TASK-120` 健康トラッキングAPI/スキーマ整備
+23. `TASK-119` 実DB統合テスト + CI記載更新
+24. `TASK-118` ワクチン履歴編集フロー
+25. `TASK-117` 投薬リマインダー実送信
+26. `TASK-116` 医療記録追加フォーム永続化
+27. `TASK-115` 写真Storageアップロード接続
+28. `TASK-114` QRトークン再生成UI連携
+29. `TASK-113` 公開緊急APIのRPC移行
+30. `TASK-112` 認証/招待ユーザー連携
+31. `TASK-111` 疾患非依存の健康トラッキング + グラフ表示
+32. `TASK-110` 基盤セットアップ（Next.js + Supabase + Prisma）
+33. `TASK-109` 認証 + 家族招待コード基盤
+34. `TASK-108` スキーマ + RLS実装
+35. `TASK-107` ペットプロフィール + 写真管理
+36. `TASK-106` 緊急情報 + QR公開画面
+37. `TASK-105` 医療タイムライン
+38. `TASK-104` 投薬管理 + カレンダー
+39. `TASK-103` ワクチン・予防歴
+40. `TASK-102` 統合テスト（unit/integration/e2e）
+41. `TASK-101` ドキュメント整備
 
 ---
 
@@ -150,7 +150,7 @@ Development Task List
 ### ペット基本情報編集導線
 - Task ID: `TASK-135`
 - ブランチ: `feat/TASK-135-pet-profile-edit`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 基本プロフィール編集UIと `PATCH /api/pets/[petId]` を追加する
 - Issue: `#90`
 - 完了条件:
@@ -161,7 +161,7 @@ Development Task List
 ### 緊急情報・投薬の編集導線実装
 - Task ID: `TASK-134`
 - ブランチ: `feat/TASK-134-emergency-medication-edit-flow`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 表示中心の `EmergencyCard` と `MedicationCalendar` を実運用入力に接続する
 - Issue: `#89`
 - 完了条件:
@@ -172,7 +172,7 @@ Development Task List
 ### 家族招待コード発行・共有導線
 - Task ID: `TASK-133`
 - ブランチ: `feat/TASK-133-household-invite-code-ui`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: `POST /api/households/invite-codes` のUI導線を追加し、招待コード発行・共有を可能にする
 - Issue: `#93`
 - 完了条件:
