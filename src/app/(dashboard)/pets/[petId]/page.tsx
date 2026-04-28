@@ -1,8 +1,8 @@
-import { EmergencyCard } from "@/components/features/pets/emergency-card";
+import { EmergencyEditorCard } from "@/components/features/pets/emergency-editor-card";
 import { EmergencyQrShareCard } from "@/components/features/pets/emergency-qr-share-card";
 import { HealthTrackingPanel } from "@/components/features/pets/health-tracking-panel";
 import { MedicalRecordManager } from "@/components/features/pets/medical-record-manager";
-import { MedicationCalendar } from "@/components/features/pets/medication-calendar";
+import { MedicationManagerCard } from "@/components/features/pets/medication-manager-card";
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileEditorCard } from "@/components/features/pets/pet-profile-editor-card";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
@@ -35,7 +35,7 @@ type PetDetailResponse = {
       emergencyContactName: string | null;
       emergencyContactPhone: string | null;
     } | null;
-    medications: Array<{ name: string; startDate: string; endDate: string | null }>;
+    medications: Array<{ id: string; name: string; dosage: string; frequency: string; startDate: string; endDate: string | null }>;
     vaccinations: Array<{ id: string; type: "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER"; date: string; nextDue: string | null }>;
     medicalRecords: Array<{ id: string; date: string; title: string; description: string; recordType: "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER" }>;
   };
@@ -105,20 +105,40 @@ export default async function PetDetailPage({
             ]}
           />
 
-          <EmergencyCard
-            disease="僧帽弁閉鎖不全症（軽度）"
-            medications="ピモベンダン 1日2回"
-            allergy="鶏肉アレルギー"
-            vet="みなと動物病院 03-1234-5678"
-            contact="山田 花子 090-1234-5678"
+          <EmergencyEditorCard
+            petId={petId}
+            initialEmergencyInfo={{
+              disease: "僧帽弁閉鎖不全症（軽度）",
+              currentMedications: "ピモベンダン 1日2回",
+              allergy: "鶏肉アレルギー",
+              vetName: "みなと動物病院",
+              vetPhone: "03-1234-5678",
+              emergencyContactName: "山田 花子",
+              emergencyContactPhone: "090-1234-5678"
+            }}
           />
 
           <EmergencyQrShareCard petId={petId} />
 
-          <MedicationCalendar
-            periods={[
-              { name: "ピモベンダン", startDate: "2026-01-01", endDate: null },
-              { name: "整腸剤", startDate: "2026-04-20", endDate: "2026-04-25" }
+          <MedicationManagerCard
+            petId={petId}
+            initialItems={[
+              {
+                id: "11111111-1111-4111-8111-111111111111",
+                name: "ピモベンダン",
+                dosage: "1mg",
+                frequency: "1日2回",
+                startDate: "2026-01-01",
+                endDate: null
+              },
+              {
+                id: "22222222-2222-4222-8222-222222222222",
+                name: "整腸剤",
+                dosage: "1包",
+                frequency: "1日1回",
+                startDate: "2026-04-20",
+                endDate: "2026-04-25"
+              }
             ]}
           />
 
@@ -168,19 +188,6 @@ export default async function PetDetailPage({
   const pet = payload.data;
   const activeToken = pet.emergencyToken?.isActive ? pet.emergencyToken.token : null;
   const emergencyLinkToken = process.env.PLAYWRIGHT_E2E === "1" ? E2E_PUBLIC_EMERGENCY_TOKEN : activeToken;
-  const emergencyData = pet.emergencyInfo;
-  const emergencyDisease = emergencyData?.disease ?? "未登録";
-  const emergencyMedications = emergencyData?.currentMedications ?? "未登録";
-  const emergencyAllergy = emergencyData?.allergy ?? "未登録";
-  const emergencyVet =
-    emergencyData?.vetName && emergencyData?.vetPhone
-      ? `${emergencyData.vetName} ${emergencyData.vetPhone}`
-      : emergencyData?.vetName ?? emergencyData?.vetPhone ?? "未登録";
-  const emergencyContact =
-    emergencyData?.emergencyContactName && emergencyData?.emergencyContactPhone
-      ? `${emergencyData.emergencyContactName} ${emergencyData.emergencyContactPhone}`
-      : emergencyData?.emergencyContactName ?? emergencyData?.emergencyContactPhone ?? "未登録";
-
   return (
     <div className="space-y-4">
       {emergencyLinkToken ? (
@@ -211,19 +218,17 @@ export default async function PetDetailPage({
 
       <PetPhotoGallery petId={petId} photos={pet.photos.map((photo) => photo.photoUrl)} />
 
-      <EmergencyCard
-        disease={emergencyDisease}
-        medications={emergencyMedications}
-        allergy={emergencyAllergy}
-        vet={emergencyVet}
-        contact={emergencyContact}
-      />
+      <EmergencyEditorCard petId={petId} initialEmergencyInfo={pet.emergencyInfo} />
 
       <EmergencyQrShareCard petId={petId} />
 
-      <MedicationCalendar
-        periods={pet.medications.map((item) => ({
+      <MedicationManagerCard
+        petId={petId}
+        initialItems={pet.medications.map((item) => ({
+          id: item.id,
           name: item.name,
+          dosage: item.dosage,
+          frequency: item.frequency,
           startDate: normalizeDate(item.startDate),
           endDate: item.endDate ? normalizeDate(item.endDate) : null
         }))}
