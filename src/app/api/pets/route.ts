@@ -30,7 +30,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const parsed = petInputSchema.safeParse(body);
+  const parsed = petInputSchema.partial({ householdId: true }).safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -41,7 +41,21 @@ export async function POST(request: Request) {
     return auth;
   }
 
-  const membership = await requireHouseholdMember(auth.userId, parsed.data.householdId);
+  const householdId =
+    parsed.data.householdId ??
+    (
+      await prisma.householdMember.findFirst({
+        where: { userId: auth.userId },
+        select: { householdId: true },
+        orderBy: { createdAt: "asc" }
+      })
+    )?.householdId;
+
+  if (!householdId) {
+    return NextResponse.json({ error: "所属世帯が見つかりません" }, { status: 400 });
+  }
+
+  const membership = await requireHouseholdMember(auth.userId, householdId);
   if (membership instanceof NextResponse) {
     return membership;
   }
@@ -49,6 +63,7 @@ export async function POST(request: Request) {
   const pet = await prisma.pet.create({
     data: {
       ...parsed.data,
+      householdId,
       birthday: parsed.data.birthday ? new Date(parsed.data.birthday) : null
     }
   });
