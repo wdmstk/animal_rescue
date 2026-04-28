@@ -24,6 +24,7 @@ Development Task List
 
 ### in_progress
 1. `TASK-135` ペット基本情報編集導線
+2. `TASK-134` 緊急情報・投薬の編集導線実装
 
 ### todo
 1. `TASK-134` 緊急情報・投薬の編集導線実装
@@ -159,7 +160,7 @@ Development Task List
 ### 緊急情報・投薬の編集導線実装
 - Task ID: `TASK-134`
 - ブランチ: `feat/TASK-134-emergency-medication-edit-flow`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 表示中心の `EmergencyCard` と `MedicationCalendar` を実運用入力に接続する
 - Issue: `#89`
 - 完了条件:
