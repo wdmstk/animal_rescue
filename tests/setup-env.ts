@@ -4,6 +4,9 @@ process.env.DATABASE_URL ??= "postgresql://postgres:postgres@localhost:5432/anim
 process.env.NEXT_PUBLIC_SUPABASE_URL ??= "http://localhost:54321";
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??= "test-anon-key";
 process.env.SUPABASE_SERVICE_ROLE_KEY ??= "test-service-role-key";
+process.env.STRIPE_SECRET_KEY ??= "sk_test_dummy";
+process.env.STRIPE_WEBHOOK_SECRET ??= "whsec_dummy";
+process.env.STRIPE_PRICE_ID_MONTHLY_500 ??= "price_dummy";
 
 const {
   requireAuthenticatedUserMock,

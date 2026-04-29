@@ -5,6 +5,9 @@ const envPrefix =
   "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321 " +
   "NEXT_PUBLIC_SUPABASE_ANON_KEY=dummy " +
   "SUPABASE_SERVICE_ROLE_KEY=dummy " +
+  "STRIPE_SECRET_KEY=sk_test_dummy " +
+  "STRIPE_WEBHOOK_SECRET=whsec_dummy " +
+  "STRIPE_PRICE_ID_MONTHLY_500=price_dummy " +
   "PLAYWRIGHT_E2E=1 " +
   "NEXT_PUBLIC_APP_URL=http://localhost:3100";
 

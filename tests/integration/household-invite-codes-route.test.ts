@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { createMock, getUserMock, householdMemberFindFirstMock } = vi.hoisted(() => ({
+const { createMock, getUserMock, householdMemberFindFirstMock, userSubscriptionFindUniqueMock } = vi.hoisted(() => ({
   createMock: vi.fn(),
   getUserMock: vi.fn(),
-  householdMemberFindFirstMock: vi.fn()
+  householdMemberFindFirstMock: vi.fn(),
+  userSubscriptionFindUniqueMock: vi.fn()
 }));
 
 vi.mock("@/lib/prisma", () => ({
@@ -13,6 +14,9 @@ vi.mock("@/lib/prisma", () => ({
     },
     householdMember: {
       findFirst: householdMemberFindFirstMock
+    },
+    userSubscription: {
+      findUnique: userSubscriptionFindUniqueMock
     }
   }
 }));
@@ -34,6 +38,7 @@ describe("POST /api/households/invite-codes", () => {
       householdId: "11111111-1111-4111-8111-111111111111",
       role: "OWNER"
     });
+    userSubscriptionFindUniqueMock.mockResolvedValue({ status: "ACTIVE" });
   });
 
   it("returns 400 when payload is invalid", async () => {
@@ -121,6 +126,24 @@ describe("POST /api/households/invite-codes", () => {
     );
 
     expect(response.status).toBe(403);
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 402 when subscription is inactive", async () => {
+    getUserMock.mockResolvedValue({
+      data: { user: { id: "22222222-2222-4222-8222-222222222222" } },
+      error: null
+    });
+    userSubscriptionFindUniqueMock.mockResolvedValueOnce({ status: "INCOMPLETE" });
+
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({ expiresInHours: 24 })
+      })
+    );
+
+    expect(response.status).toBe(402);
     expect(createMock).not.toHaveBeenCalled();
   });
 
