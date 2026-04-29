@@ -31,7 +31,8 @@ describe("POST /api/households/invite-codes", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     householdMemberFindFirstMock.mockResolvedValue({
-      householdId: "11111111-1111-4111-8111-111111111111"
+      householdId: "11111111-1111-4111-8111-111111111111",
+      role: "OWNER"
     });
   });
 
@@ -100,6 +101,29 @@ describe("POST /api/households/invite-codes", () => {
     );
   });
 
+  it("returns 403 when member role is FAMILY", async () => {
+    getUserMock.mockResolvedValue({
+      data: { user: { id: "22222222-2222-4222-8222-222222222222" } },
+      error: null
+    });
+    householdMemberFindFirstMock.mockResolvedValueOnce({
+      householdId: "11111111-1111-4111-8111-111111111111",
+      role: "FAMILY"
+    });
+
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          expiresInHours: 24
+        })
+      })
+    );
+
+    expect(response.status).toBe(403);
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
   it("resolves householdId from membership when omitted", async () => {
     getUserMock.mockResolvedValue({
       data: { user: { id: "22222222-2222-4222-8222-222222222222" } },
@@ -125,7 +149,7 @@ describe("POST /api/households/invite-codes", () => {
     expect(response.status).toBe(201);
     expect(householdMemberFindFirstMock).toHaveBeenCalledWith({
       where: { userId: "22222222-2222-4222-8222-222222222222" },
-      select: { householdId: true },
+      select: { householdId: true, role: true },
       orderBy: { createdAt: "asc" }
     });
     expect(createMock).toHaveBeenCalledWith(

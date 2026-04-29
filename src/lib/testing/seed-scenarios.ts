@@ -1,4 +1,3 @@
-import { CoreMetricType, HealthExtensionKey, LabMarkerType, MedicalRecordType, PetSex, VaccinationType } from "@prisma/client";
 import type { PrismaClient } from "@prisma/client";
 
 export const SEED_PREFIX = "seed:";
@@ -132,7 +131,7 @@ const upsertBaseline = async (prisma: PrismaClient): Promise<void> => {
       householdId: seedIds.households.baseline,
       name: `${SEED_PREFIX} baseline cat`,
       species: "cat",
-      sex: PetSex.FEMALE,
+      sex: "FEMALE",
       ageYears: 7,
       weightKg: 3.9,
       notesPersonality: `${SEED_PREFIX} calm and friendly`
@@ -140,7 +139,7 @@ const upsertBaseline = async (prisma: PrismaClient): Promise<void> => {
     update: {
       name: `${SEED_PREFIX} baseline cat`,
       species: "cat",
-      sex: PetSex.FEMALE,
+      sex: "FEMALE",
       ageYears: 7,
       weightKg: 3.9,
       notesPersonality: `${SEED_PREFIX} calm and friendly`
@@ -211,12 +210,12 @@ const upsertBaseline = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "42000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.baselineCat,
-      type: VaccinationType.CORE,
+      type: "CORE",
       date: minusDays(180),
       nextDue: plusDays(180)
     },
     update: {
-      type: VaccinationType.CORE,
+      type: "CORE",
       date: minusDays(180),
       nextDue: plusDays(180)
     }
@@ -227,13 +226,13 @@ const upsertBaseline = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "43000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.baselineCat,
-      type: CoreMetricType.WEIGHT_KG,
+      type: "WEIGHT_KG",
       value: 3.9,
       recordedAt: minusDays(7),
       note: `${SEED_PREFIX} baseline weight`
     },
     update: {
-      type: CoreMetricType.WEIGHT_KG,
+      type: "WEIGHT_KG",
       value: 3.9,
       recordedAt: minusDays(7),
       note: `${SEED_PREFIX} baseline weight`
@@ -245,14 +244,14 @@ const upsertBaseline = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "44000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.baselineCat,
-      marker: LabMarkerType.CRE,
+      marker: "CRE",
       value: 1.8,
       unit: "mg/dL",
       recordedAt: minusDays(7),
       note: `${SEED_PREFIX} baseline lab`
     },
     update: {
-      marker: LabMarkerType.CRE,
+      marker: "CRE",
       value: 1.8,
       unit: "mg/dL",
       recordedAt: minusDays(7),
@@ -291,7 +290,7 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
       householdId: seedIds.households.showcase,
       name: `${SEED_PREFIX} showcase dog`,
       species: "dog",
-      sex: PetSex.MALE,
+      sex: "MALE",
       ageYears: 12,
       weightKg: 18.3,
       mainPhotoUrl: SEED_IMAGE_URLS.dogMain,
@@ -301,7 +300,7 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     update: {
       name: `${SEED_PREFIX} showcase dog`,
       species: "dog",
-      sex: PetSex.MALE,
+      sex: "MALE",
       ageYears: 12,
       weightKg: 18.3,
       mainPhotoUrl: SEED_IMAGE_URLS.dogMain,
@@ -317,7 +316,7 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
       householdId: seedIds.households.showcase,
       name: `${SEED_PREFIX} showcase rabbit`,
       species: "rabbit",
-      sex: PetSex.UNKNOWN,
+      sex: "UNKNOWN",
       ageYears: 2,
       notesPersonality: `${SEED_PREFIX} timid`,
       notesFeatures: null
@@ -325,7 +324,7 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     update: {
       name: `${SEED_PREFIX} showcase rabbit`,
       species: "rabbit",
-      sex: PetSex.UNKNOWN,
+      sex: "UNKNOWN",
       ageYears: 2,
       notesPersonality: `${SEED_PREFIX} timid`,
       notesFeatures: null
@@ -470,12 +469,12 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "47000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.showcaseDog,
-      type: VaccinationType.RABIES,
+      type: "RABIES",
       date: minusDays(380),
       nextDue: minusDays(15)
     },
     update: {
-      type: VaccinationType.RABIES,
+      type: "RABIES",
       date: minusDays(380),
       nextDue: minusDays(15)
     }
@@ -486,12 +485,12 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "47000000-0000-4000-8000-000000000002",
       petId: seedIds.pets.showcaseDog,
-      type: VaccinationType.HEARTWORM,
+      type: "HEARTWORM",
       date: minusDays(120),
       nextDue: plusDays(30)
     },
     update: {
-      type: VaccinationType.HEARTWORM,
+      type: "HEARTWORM",
       date: minusDays(120),
       nextDue: plusDays(30)
     }
@@ -502,12 +501,12 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "47000000-0000-4000-8000-000000000003",
       petId: seedIds.pets.showcaseRabbit,
-      type: VaccinationType.OTHER,
+      type: "OTHER",
       date: minusDays(45),
       nextDue: null
     },
     update: {
-      type: VaccinationType.OTHER,
+      type: "OTHER",
       date: minusDays(45),
       nextDue: null
     }
@@ -518,13 +517,13 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "48000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.showcaseDog,
-      type: CoreMetricType.WEIGHT_KG,
+      type: "WEIGHT_KG",
       value: 18.7,
       recordedAt: minusDays(21),
       note: `${SEED_PREFIX} trend start`
     },
     update: {
-      type: CoreMetricType.WEIGHT_KG,
+      type: "WEIGHT_KG",
       value: 18.7,
       recordedAt: minusDays(21),
       note: `${SEED_PREFIX} trend start`
@@ -536,13 +535,13 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "48000000-0000-4000-8000-000000000002",
       petId: seedIds.pets.showcaseDog,
-      type: CoreMetricType.WEIGHT_KG,
+      type: "WEIGHT_KG",
       value: 18.1,
       recordedAt: minusDays(7),
       note: `${SEED_PREFIX} trend down`
     },
     update: {
-      type: CoreMetricType.WEIGHT_KG,
+      type: "WEIGHT_KG",
       value: 18.1,
       recordedAt: minusDays(7),
       note: `${SEED_PREFIX} trend down`
@@ -554,13 +553,13 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "48000000-0000-4000-8000-000000000003",
       petId: seedIds.pets.showcaseDog,
-      type: CoreMetricType.WATER_INTAKE_ML,
+      type: "WATER_INTAKE_ML",
       value: 900,
       recordedAt: minusDays(1),
       note: `${SEED_PREFIX} high boundary`
     },
     update: {
-      type: CoreMetricType.WATER_INTAKE_ML,
+      type: "WATER_INTAKE_ML",
       value: 900,
       recordedAt: minusDays(1),
       note: `${SEED_PREFIX} high boundary`
@@ -572,14 +571,14 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "49000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.showcaseDog,
-      marker: LabMarkerType.CRE,
+      marker: "CRE",
       value: 1.5,
       unit: "mg/dL",
       recordedAt: minusDays(21),
       note: `${SEED_PREFIX} lab normal-ish`
     },
     update: {
-      marker: LabMarkerType.CRE,
+      marker: "CRE",
       value: 1.5,
       unit: "mg/dL",
       recordedAt: minusDays(21),
@@ -592,14 +591,14 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "49000000-0000-4000-8000-000000000002",
       petId: seedIds.pets.showcaseDog,
-      marker: LabMarkerType.CRE,
+      marker: "CRE",
       value: 2.4,
       unit: "mg/dL",
       recordedAt: minusDays(2),
       note: `${SEED_PREFIX} lab elevated`
     },
     update: {
-      marker: LabMarkerType.CRE,
+      marker: "CRE",
       value: 2.4,
       unit: "mg/dL",
       recordedAt: minusDays(2),
@@ -612,14 +611,14 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "50000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.showcaseDog,
-      key: HealthExtensionKey.INFUSION_ML,
+      key: "INFUSION_ML",
       value: 120,
       unit: "mL",
       recordedAt: minusDays(3),
       note: `${SEED_PREFIX} extension sample`
     },
     update: {
-      key: HealthExtensionKey.INFUSION_ML,
+      key: "INFUSION_ML",
       value: 120,
       unit: "mL",
       recordedAt: minusDays(3),
@@ -633,13 +632,13 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
       id: "51000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.showcaseDog,
       date: minusDays(30),
-      recordType: MedicalRecordType.EXAM,
+      recordType: "EXAM",
       title: "Routine check",
       description: `${SEED_PREFIX} no major issues`
     },
     update: {
       date: minusDays(30),
-      recordType: MedicalRecordType.EXAM,
+      recordType: "EXAM",
       title: "Routine check",
       description: `${SEED_PREFIX} no major issues`
     }
