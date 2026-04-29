@@ -27,6 +27,12 @@ type AccountPayload = {
   displayName: string | null;
 };
 
+type BillingPayload = {
+  status: "INCOMPLETE" | "TRIALING" | "ACTIVE" | "PAST_DUE" | "CANCELED" | "UNPAID";
+  isActive: boolean;
+  currentPeriodEnd: string | null;
+};
+
 export default function SettingsPage() {
   const router = useRouter();
   const [members, setMembers] = useState<Member[]>([]);
@@ -37,27 +43,35 @@ export default function SettingsPage() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [billing, setBilling] = useState<BillingPayload | null>(null);
+  const [isBillingSubmitting, setIsBillingSubmitting] = useState(false);
 
   const isOwner = currentUserRole === "OWNER";
 
   const loadData = async () => {
     setErrorMessage(null);
 
-    const [membersRes, accountRes] = await Promise.all([fetch("/api/households/members"), fetch("/api/account")]);
+    const [membersRes, accountRes, billingRes] = await Promise.all([
+      fetch("/api/households/members"),
+      fetch("/api/account"),
+      fetch("/api/billing/subscription")
+    ]);
 
-    if (!membersRes.ok || !accountRes.ok) {
+    if (!membersRes.ok || !accountRes.ok || !billingRes.ok) {
       setErrorMessage("設定情報の取得に失敗しました。");
       return;
     }
 
     const membersJson = (await membersRes.json()) as { data: HouseholdPayload };
     const accountJson = (await accountRes.json()) as { data: AccountPayload };
+    const billingJson = (await billingRes.json()) as { data: BillingPayload };
 
     setHouseholdName(membersJson.data.household.name);
     setMembers(membersJson.data.household.members);
     setCurrentUserRole(membersJson.data.currentUserRole);
     setAccount(accountJson.data);
     setDisplayName(accountJson.data.displayName ?? "");
+    setBilling(billingJson.data);
   };
 
   useEffect(() => {
@@ -126,6 +140,22 @@ export default function SettingsPage() {
     router.refresh();
   };
 
+  const handleStartBilling = async () => {
+    setErrorMessage(null);
+    setIsBillingSubmitting(true);
+
+    const response = await fetch("/api/billing/checkout", { method: "POST" });
+    const payload = (await response.json().catch(() => null)) as { data?: { url?: string }; error?: string } | null;
+
+    if (!response.ok || !payload?.data?.url) {
+      setIsBillingSubmitting(false);
+      setErrorMessage(typeof payload?.error === "string" ? payload.error : "課金ページの作成に失敗しました。");
+      return;
+    }
+
+    window.location.href = payload.data.url;
+  };
+
   return (
     <div className="space-y-4">
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -167,6 +197,23 @@ export default function SettingsPage() {
         </div>
       </section>
       {isOwner ? <HouseholdInviteCodeCard /> : null}
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900">課金プラン</h2>
+        <p className="mt-1 text-sm text-slate-600">月額500円（Stripe定期課金）</p>
+        <p className="mt-2 text-xs text-slate-500">契約状態: {billing?.status ?? "INCOMPLETE"}</p>
+        <p className="mt-1 text-xs text-slate-500">
+          有効期限: {billing?.currentPeriodEnd ? new Date(billing.currentPeriodEnd).toLocaleString("ja-JP") : "-"}
+        </p>
+        <button
+          type="button"
+          className="mt-3 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+          onClick={handleStartBilling}
+          disabled={Boolean(billing?.isActive) || isBillingSubmitting}
+        >
+          {billing?.isActive ? "契約中" : isBillingSubmitting ? "遷移中..." : "月額500円で申し込む"}
+        </button>
+      </section>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">ログイン情報</h2>

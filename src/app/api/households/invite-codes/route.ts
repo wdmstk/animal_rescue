@@ -40,6 +40,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "招待コード発行権限がありません" }, { status: 403 });
   }
 
+  const subscription = await prisma.userSubscription.findUnique({
+    where: { userId: user.id },
+    select: { status: true }
+  });
+  const isActive = subscription?.status === "ACTIVE" || subscription?.status === "TRIALING";
+  if (!isActive) {
+    return NextResponse.json({ error: "この機能は有料プランで利用できます" }, { status: 402 });
+  }
+
   const code = generateInviteCode();
   const invite = await prisma.householdInviteCode.create({
     data: {
