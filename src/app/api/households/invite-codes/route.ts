@@ -22,24 +22,28 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
   }
 
-  const householdId =
-    parsed.data.householdId ??
-    (
-      await prisma.householdMember.findFirst({
-        where: { userId: user.id },
-        select: { householdId: true },
-        orderBy: { createdAt: "asc" }
-      })
-    )?.householdId;
+  const membership = await prisma.householdMember.findFirst({
+    where: parsed.data.householdId
+      ? {
+          userId: user.id,
+          householdId: parsed.data.householdId
+        }
+      : { userId: user.id },
+    select: { householdId: true, role: true },
+    orderBy: { createdAt: "asc" }
+  });
 
-  if (!householdId) {
+  if (!membership) {
     return NextResponse.json({ error: "所属世帯が見つかりません" }, { status: 400 });
+  }
+  if (membership.role !== "OWNER") {
+    return NextResponse.json({ error: "招待コード発行権限がありません" }, { status: 403 });
   }
 
   const code = generateInviteCode();
   const invite = await prisma.householdInviteCode.create({
     data: {
-      householdId,
+      householdId: membership.householdId,
       createdBy: user.id,
       code,
       expiresAt: calculateExpiry(parsed.data.expiresInHours)
