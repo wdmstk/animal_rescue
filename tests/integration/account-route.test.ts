@@ -69,4 +69,20 @@ describe("/api/account", () => {
       data: { display_name: "Hanako" }
     });
   });
+
+  it("returns 400 when payload has no updatable fields", async () => {
+    getUserMock.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
+
+    const response = await PATCH(
+      new Request("http://localhost", {
+        method: "PATCH",
+        body: JSON.stringify({})
+      })
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(updateUserMock).not.toHaveBeenCalled();
+    expect(payload.error).toBeDefined();
+  });
 });
