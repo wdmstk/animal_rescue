@@ -26,7 +26,11 @@ Development Task List
 （なし）
 
 ### todo
-（なし）
+1. `TASK-152` 検査カテゴリ基盤再設計（DB/API/型）
+2. `TASK-151` 健康記録UIをカテゴリ分離 + 尿項目段階導入
+3. `TASK-150` ペット単位表示設定のデータモデル/API実装
+4. `TASK-149` 設定画面での表示ON/OFF管理UI
+5. `TASK-148` 緊急公開画面への追加表示（直近サマリー）反映
 
 ### blocked
 （なし）
@@ -83,6 +87,76 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 検査カテゴリ基盤再設計（DB/API/型）
+- Task ID: `TASK-152`
+- ブランチ: `feat/TASK-152-health-lab-category-foundation`
+- ステータス: `todo`
+- 概要: 健康記録の検査データにカテゴリ（BLOOD/URINE/ENDOCRINE）を導入し、API契約とバリデーション、既存データ移行を整備する
+- Issue: `#117`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - Prisma migration でカテゴリ列が追加され、既存データに `BLOOD` が移行される
+  - `/api/pets/[petId]/health/lab-results` が `category` を扱い、category-marker整合性を検証する
+  - 型/バリデーション/テストが新契約に追従する
+  - `npm run lint` / `npx vitest run` が通る
+
+### 健康記録UIをカテゴリ分離 + 尿項目段階導入
+- Task ID: `TASK-151`
+- ブランチ: `feat/TASK-151-health-ui-category-split`
+- ステータス: `todo`
+- 概要: 健康記録UIを血液・尿・内分泌で分離し、尿項目（尿糖/尿ケトン/尿比重/尿蛋白/UPCR）を段階導入する
+- Issue: `#118`
+- 依存関係:
+  - blocked by: `TASK-152`
+- 完了条件:
+  - 健康記録フォームがカテゴリ別に分離される
+  - 尿カテゴリで `URINE_GLUCOSE` / `URINE_KETONE` / `USG` / `URINE_PROTEIN` / `UPCR` を選択できる
+  - 履歴/表示がカテゴリモデルに対応する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### ペット単位表示設定のデータモデル/API実装
+- Task ID: `TASK-150`
+- ブランチ: `feat/TASK-150-pet-display-settings-api`
+- ステータス: `todo`
+- 概要: ペット単位で詳細カード表示・緊急追加表示を制御する設定モデルとAPIを実装する
+- Issue: `#119`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - ペット単位表示設定（詳細4カード+緊急3項目）の永続化モデルが追加される
+  - 設定GET/PATCH API が認可境界を満たして実装される
+  - 未設定時は全ONのデフォルト挙動を満たす
+  - `npm run lint` / `npx vitest run` が通る
+
+### 設定画面での表示ON/OFF管理UI
+- Task ID: `TASK-149`
+- ブランチ: `feat/TASK-149-settings-pet-display-toggles`
+- ステータス: `todo`
+- 概要: 設定画面にペット単位の表示ON/OFFトグルUIを追加し、詳細カード4種と緊急追加表示3種を管理可能にする
+- Issue: `#120`
+- 依存関係:
+  - blocked by: `TASK-150`
+- 完了条件:
+  - 設定画面でペットごとの表示設定を編集できる
+  - 詳細カード（投薬/ワクチン/健康/医療記録）表示トグルが保存される
+  - 緊急追加表示（投薬/ワクチン/医療記録）トグルが保存される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### 緊急公開画面への追加表示（直近サマリー）反映
+- Task ID: `TASK-148`
+- ブランチ: `feat/TASK-148-emergency-public-extra-summary`
+- ステータス: `todo`
+- 概要: 緊急公開画面に投薬・ワクチン・医療記録の直近サマリー表示を設定連動で追加する
+- Issue: `#121`
+- 依存関係:
+  - blocked by: `TASK-150`
+- 完了条件:
+  - 公開緊急データ取得で表示設定を参照し、ON項目のみ返却する
+  - `EmergencyViewPayload` と画面表示が追加セクションに対応する
+  - 各カテゴリは最新3件の要約を表示できる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 設定画面のログイン情報更新失敗を修正
 - Task ID: `TASK-147`
