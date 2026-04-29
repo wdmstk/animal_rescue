@@ -105,11 +105,21 @@ export default function SettingsPage() {
     setErrorMessage(null);
     setMessage(null);
 
-    const payload: { displayName?: string; password?: string } = {};
-    if (displayName.trim().length > 0) {
-      payload.displayName = displayName.trim();
+    const nextDisplayName = displayName.trim();
+    const currentDisplayName = account?.displayName?.trim() ?? "";
+    const hasPassword = password.trim().length > 0;
+    const isDisplayNameChanged = nextDisplayName !== currentDisplayName;
+
+    if (!isDisplayNameChanged && !hasPassword) {
+      setMessage("更新する項目がありません。");
+      return;
     }
-    if (password.trim().length > 0) {
+
+    const payload: { displayName?: string; password?: string } = {};
+    if (isDisplayNameChanged && nextDisplayName.length > 0) {
+      payload.displayName = nextDisplayName;
+    }
+    if (hasPassword) {
       payload.password = password;
     }
 
@@ -118,9 +128,12 @@ export default function SettingsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
     });
+    const responsePayload = (await response.json().catch(() => null)) as { error?: string } | null;
 
     if (!response.ok) {
-      setErrorMessage("アカウント更新に失敗しました。");
+      setErrorMessage(
+        typeof responsePayload?.error === "string" ? responsePayload.error : "アカウント更新に失敗しました。"
+      );
       return;
     }
 

@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-147` 設定画面のログイン情報更新失敗を修正
 
 ### todo
 （なし）
@@ -82,6 +82,20 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 設定画面のログイン情報更新失敗を修正
+- Task ID: `TASK-147`
+- ブランチ: `fix/TASK-147-settings-account-update-failure`
+- ステータス: `in_progress`
+- 概要: 設定画面の「ログイン情報」更新時に失敗する不具合を修正し、再発防止テストを追加する
+- Issue: `#115`
+- 依存関係:
+  - prerequisite: `TASK-145`
+- 完了条件:
+  - 設定画面から表示名またはパスワード更新操作が失敗せず完了できる
+  - 更新不要（変更なし）時にユーザーへ適切な案内を表示できる
+  - account更新API/画面のテストで再発防止を確認できる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 課金機能（Stripe定期課金MVP・月額500円）
 - Task ID: `TASK-146`
