@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
+（なし）
 
 ### todo
 1. `TASK-166` 初回オンボーディング導線
@@ -40,8 +40,9 @@ Development Task List
 
 ### done
 1. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
-2. `TASK-157` 緊急公開画面にワンタップ導線追加
-3. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
+2. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
+3. `TASK-157` 緊急公開画面にワンタップ導線追加
+4. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
 4. `TASK-155` 検査/設定修正 + 拡張項目自由化（複数指定）
 5. `TASK-154` ペット詳細表示時のコンソールエラー修正
 6. `TASK-153` PRマージ前チェックをCI実行結果と連動強制
@@ -160,7 +161,7 @@ Development Task List
 ### 共通フィードバックUI（成功/失敗トースト）導入
 - Task ID: `TASK-160`
 - ブランチ: `feat/TASK-160-shared-feedback-toast`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 主要画面の成功/失敗メッセージを共通トーストコンポーネントへ統一する
 - Issue: `#139`
 - 依存関係:
