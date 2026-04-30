@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 
 type InviteResponse = {
@@ -86,13 +87,7 @@ export function HouseholdInviteCodeCard() {
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
           />
         </label>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isSubmitting ? "発行中..." : "発行"}
-        </button>
+        <SubmitButton isSubmitting={isSubmitting} idleLabel="発行" submittingLabel="保存中..." />
       </form>
 
       {issuedCode ? (

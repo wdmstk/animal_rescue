@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import { VaccinationHistory } from "@/components/features/pets/vaccination-history";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 
 type VaccinationType = "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER";
@@ -185,13 +186,11 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
           />
         )}
         <div className="mt-3 flex items-center gap-2">
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white disabled:opacity-60"
-          >
-            {isSaving ? "保存中..." : editingId ? "変更を保存" : "履歴を保存"}
-          </button>
+          <SubmitButton
+            isSubmitting={isSaving}
+            idleLabel={editingId ? "変更を保存" : "履歴を保存"}
+            className="text-xs"
+          />
           {editingId && (
             <button
               type="button"

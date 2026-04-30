@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 
 type Species = "dog" | "cat" | "other";
@@ -264,13 +265,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
           >
             キャンセル
           </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSubmitting ? "保存中..." : "保存する"}
-          </button>
+          <SubmitButton isSubmitting={isSubmitting} idleLabel="保存する" />
         </div>
       </form>
     </section>

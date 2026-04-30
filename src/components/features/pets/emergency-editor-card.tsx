@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EmergencyCard } from "@/components/features/pets/emergency-card";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 
 type EmergencyInfo = {
@@ -199,13 +200,7 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
           >
             キャンセル
           </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="rounded-lg bg-emergency-600 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSubmitting ? "保存中..." : "保存する"}
-          </button>
+          <SubmitButton isSubmitting={isSubmitting} idleLabel="保存する" className="bg-emergency-600" />
         </div>
       </form>
     </section>
