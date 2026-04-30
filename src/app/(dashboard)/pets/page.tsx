@@ -2,6 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { HouseholdInviteCodeCard } from "@/components/features/pets/household-invite-code-card";
+import { ONBOARDING_TOTAL_STEPS, calculateOnboardingProgress } from "@/lib/onboarding-progress";
 
 type PetsResponse = {
   data: Array<{
@@ -59,10 +60,16 @@ export default async function PetsPage() {
     hasError = false;
   }
 
+  const completedSteps = pets.length > 0 ? 1 : 0;
+  const completionRate = calculateOnboardingProgress(completedSteps, ONBOARDING_TOTAL_STEPS);
+
   return (
     <div className="space-y-4">
       <section className="rounded-2xl border border-sky-200 bg-sky-50 p-4 shadow-sm">
-        <h2 className="text-sm font-bold text-sky-900">はじめての方へ（3ステップ）</h2>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-sm font-bold text-sky-900">はじめての方へ（3ステップ）</h2>
+          <p className="text-xs font-semibold text-sky-900">完了率: {completionRate}%</p>
+        </div>
         <ol className="mt-2 space-y-1 text-xs text-sky-900">
           <li>1. ペット登録: {pets.length > 0 ? "完了" : "未完了"}</li>
           <li>2. 緊急情報入力: {pets.length > 0 ? "ペット詳細で入力" : "ペット登録後に入力"}</li>
