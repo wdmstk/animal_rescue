@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MedicationCalendar } from "@/components/features/pets/medication-calendar";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -26,6 +26,11 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [reminderChannel, setReminderChannel] = useState<"email" | "line" | "webhook">("email");
+  const [reminderDestination, setReminderDestination] = useState("");
+  const [isReminderSaving, setIsReminderSaving] = useState(false);
+  const [reminderMessage, setReminderMessage] = useState<string | null>(null);
 
   const [newName, setNewName] = useState("");
   const [newDosage, setNewDosage] = useState("");
@@ -38,6 +43,38 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
   const [editFrequency, setEditFrequency] = useState("");
   const [editStartDate, setEditStartDate] = useState("");
   const [editEndDate, setEditEndDate] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadReminderSettings = async () => {
+      try {
+        const response = await fetch(`/api/pets/${petId}/medication-reminders`, { cache: "no-store" });
+        if (!response.ok) {
+          return;
+        }
+
+        const payload = (await response.json()) as {
+          data?: { enabled: boolean; channel: "email" | "line" | "webhook"; destination: string };
+        };
+
+        if (!isMounted || !payload.data) {
+          return;
+        }
+
+        setReminderEnabled(payload.data.enabled);
+        setReminderChannel(payload.data.channel);
+        setReminderDestination(payload.data.destination);
+      } catch {
+        // noop
+      }
+    };
+
+    void loadReminderSettings();
+    return () => {
+      isMounted = false;
+    };
+  }, [petId]);
 
   const startEdit = (item: MedicationItem) => {
     setEditingId(item.id);
@@ -131,6 +168,42 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
     }
   };
 
+  const onSaveReminderSettings = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setErrorMessage(null);
+    setReminderMessage(null);
+    setIsReminderSaving(true);
+
+    try {
+      const response = await fetch(`/api/pets/${petId}/medication-reminders`, {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          enabled: reminderEnabled,
+          channel: reminderChannel,
+          destination: reminderDestination
+        })
+      });
+
+      if (response.status === 401) {
+        router.push("/login");
+        return;
+      }
+
+      if (!response.ok) {
+        setErrorMessage("通知設定の保存に失敗しました。入力内容を確認してください。");
+        return;
+      }
+
+      setReminderMessage("通知設定を保存しました。");
+      router.refresh();
+    } catch {
+      setErrorMessage("通信エラーが発生しました。時間をおいて再度お試しください。");
+    } finally {
+      setIsReminderSaving(false);
+    }
+  };
+
   return (
     <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm">
       <MedicationCalendar
@@ -189,6 +262,42 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
           <input type="date" value={newEndDate} onChange={(event) => setNewEndDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
         </div>
         <SubmitButton isSubmitting={isSubmitting} idleLabel="追加する" className="mt-2 w-full" />
+      </form>
+
+      <form className="rounded-lg border border-slate-200 p-3" onSubmit={onSaveReminderSettings}>
+        <h3 className="text-sm font-bold text-slate-900">投薬リマインダー通知設定</h3>
+        <p className="mt-1 text-xs text-slate-600">通知ON/OFFと送信先を保存できます。</p>
+        <div className="mt-2 grid gap-2 md:grid-cols-2">
+          <label className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm md:col-span-2">
+            <span>通知を有効化する</span>
+            <input
+              type="checkbox"
+              checked={reminderEnabled}
+              onChange={(event) => setReminderEnabled(event.target.checked)}
+              disabled={isReminderSaving}
+            />
+          </label>
+          <select
+            value={reminderChannel}
+            onChange={(event) => setReminderChannel(event.target.value as "email" | "line" | "webhook")}
+            disabled={isReminderSaving}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          >
+            <option value="email">email</option>
+            <option value="line">line</option>
+            <option value="webhook">webhook</option>
+          </select>
+          <input
+            required={reminderEnabled}
+            value={reminderDestination}
+            onChange={(event) => setReminderDestination(event.target.value)}
+            placeholder={reminderChannel === "webhook" ? "https://example.com/hooks/reminder" : "送信先ID / メール"}
+            disabled={isReminderSaving}
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          />
+        </div>
+        <SubmitButton isSubmitting={isReminderSaving} idleLabel="通知設定を保存" className="mt-2 w-full" />
+        {reminderMessage ? <p className="mt-2 text-xs text-emerald-700">{reminderMessage}</p> : null}
       </form>
 
       {errorMessage ? <p className="text-sm text-rose-700">{errorMessage}</p> : null}

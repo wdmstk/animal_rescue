@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { envMock } = vi.hoisted(() => ({
+const {
+  envMock,
+  reminderFindUniqueMock,
+  reminderUpsertMock
+} = vi.hoisted(() => ({
   envMock: {
     DATABASE_URL: "https://example.com/db",
     NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
@@ -8,16 +12,27 @@ const { envMock } = vi.hoisted(() => ({
     SUPABASE_SERVICE_ROLE_KEY: "service-role",
     REMINDER_EMAIL_WEBHOOK_URL: "https://provider.example.com/email",
     REMINDER_LINE_WEBHOOK_URL: "https://provider.example.com/line"
-  }
+  },
+  reminderFindUniqueMock: vi.fn(),
+  reminderUpsertMock: vi.fn()
 }));
 
 vi.mock("@/lib/env", () => ({
   env: envMock
 }));
 
-import { POST } from "../../src/app/api/pets/[petId]/medication-reminders/route";
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    petDisplaySettings: {
+      findUnique: reminderFindUniqueMock,
+      upsert: reminderUpsertMock
+    }
+  }
+}));
 
-describe("POST /api/pets/[petId]/medication-reminders", () => {
+import { GET, PATCH, POST } from "../../src/app/api/pets/[petId]/medication-reminders/route";
+
+describe("/api/pets/[petId]/medication-reminders", () => {
   const petId1 = "11111111-1111-4111-8111-111111111111";
   const petId2 = "22222222-2222-4222-8222-222222222222";
   const petId3 = "33333333-3333-4333-8333-333333333333";
@@ -29,8 +44,60 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
+    reminderFindUniqueMock.mockReset();
+    reminderUpsertMock.mockReset();
     envMock.REMINDER_EMAIL_WEBHOOK_URL = "https://provider.example.com/email";
     envMock.REMINDER_LINE_WEBHOOK_URL = "https://provider.example.com/line";
+  });
+
+  it("returns defaults when reminder settings do not exist", async () => {
+    reminderFindUniqueMock.mockResolvedValue(null);
+
+    const response = await GET(new Request("http://localhost"), { params: Promise.resolve({ petId: petId1 }) });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data).toEqual({
+      petId: petId1,
+      enabled: false,
+      channel: "email",
+      destination: ""
+    });
+  });
+
+  it("saves reminder settings on PATCH", async () => {
+    reminderUpsertMock.mockResolvedValue({
+      petId: petId2,
+      medicationReminderEnabled: true,
+      medicationReminderChannel: "line",
+      medicationReminderDestination: "line-user-01"
+    });
+
+    const response = await PATCH(
+      new Request("http://localhost", {
+        method: "PATCH",
+        body: JSON.stringify({ enabled: true, channel: "line", destination: "line-user-01" })
+      }),
+      { params: Promise.resolve({ petId: petId2 }) }
+    );
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data.status).toBe("saved");
+    expect(reminderUpsertMock).toHaveBeenCalledWith({
+      where: { petId: petId2 },
+      update: {
+        medicationReminderEnabled: true,
+        medicationReminderChannel: "line",
+        medicationReminderDestination: "line-user-01"
+      },
+      create: {
+        petId: petId2,
+        medicationReminderEnabled: true,
+        medicationReminderChannel: "line",
+        medicationReminderDestination: "line-user-01"
+      }
+    });
   });
 
   it("returns disabled when reminder is disabled", async () => {
@@ -45,7 +112,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: false
         })
       }),
-      { params: { petId: petId1 } }
+      { params: Promise.resolve({ petId: petId1 }) }
     );
 
     expect(response.status).toBe(200);
@@ -67,7 +134,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: petId2 } }
+      { params: Promise.resolve({ petId: petId2 }) }
     );
 
     expect(response.status).toBe(200);
@@ -91,7 +158,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: petId6 } }
+      { params: Promise.resolve({ petId: petId6 }) }
     );
 
     expect(response.status).toBe(200);
@@ -122,7 +189,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: petId3 } }
+      { params: Promise.resolve({ petId: petId3 }) }
     );
 
     expect(response.status).toBe(503);
@@ -144,7 +211,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: petId4 } }
+      { params: Promise.resolve({ petId: petId4 }) }
     );
 
     expect(response.status).toBe(502);
@@ -165,7 +232,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: petId7 } }
+      { params: Promise.resolve({ petId: petId7 }) }
     );
 
     expect(response.status).toBe(502);
@@ -184,7 +251,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: petId5 } }
+      { params: Promise.resolve({ petId: petId5 }) }
     );
 
     expect(response.status).toBe(400);
@@ -202,7 +269,7 @@ describe("POST /api/pets/[petId]/medication-reminders", () => {
           enabled: true
         })
       }),
-      { params: { petId: petId8 } }
+      { params: Promise.resolve({ petId: petId8 }) }
     );
 
     expect(response.status).toBe(400);
