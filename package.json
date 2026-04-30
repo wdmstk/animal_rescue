@@ -12,6 +12,7 @@
     "seed:test:baseline": "tsx scripts/seed-test-data.ts baseline",
     "seed:test:showcase": "tsx scripts/seed-test-data.ts showcase",
     "seed:test:reset": "tsx scripts/seed-test-data.ts reset",
+    "db:setup": "prisma migrate deploy && prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev && prisma generate"
   },

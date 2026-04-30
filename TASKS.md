@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-154` ペット詳細表示時のコンソールエラー修正
 
 ### todo
 （なし）
@@ -102,6 +102,19 @@ Development Task List
   - `PR Pre-Merge Guard` が `Lint` / `Unit/Integration (Vitest)` / `DB Integration (Real Postgres)` / `E2E (Playwright)` の成功を確認する
   - CI未完了または失敗時に、PR本文で `ci_green_confirmed` をチェックしてもガードが失敗する
   - `npm run lint` / `npx vitest run` が通る
+
+### ペット詳細表示時のコンソールエラー修正
+- Task ID: `TASK-154`
+- ブランチ: `fix/TASK-154-pet-detail-console-error`
+- ステータス: `in_progress`
+- 概要: `/pets/[petId]` 表示時に発生するコンソールエラーを、DBスキーマの正規適用で解消する
+- Issue: `#130`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `PetLabResultEntry.category` を含む最新マイグレーションが適用され、ペット詳細APIで500が発生しない
+  - ローカル初期化手順としてDBスキーマ最新化コマンドが運用ドキュメント化される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 検査カテゴリ基盤再設計（DB/API/型）
 - Task ID: `TASK-152`
