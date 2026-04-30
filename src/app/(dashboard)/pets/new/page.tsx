@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { ToastMessage } from "@/components/ui/toast-message";
 
 type Species = "dog" | "cat" | "other";
 type Sex = "MALE" | "FEMALE" | "UNKNOWN";
@@ -157,7 +158,7 @@ export default function NewPetPage() {
           </label>
         </div>
 
-        {errorMessage ? <p className="text-sm text-rose-700">{errorMessage}</p> : null}
+        <ToastMessage message={errorMessage} type="error" />
 
         <button
           type="submit"

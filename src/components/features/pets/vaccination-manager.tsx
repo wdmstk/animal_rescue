@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import { VaccinationHistory } from "@/components/features/pets/vaccination-history";
+import { ToastMessage } from "@/components/ui/toast-message";
 
 type VaccinationType = "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER";
 
@@ -202,7 +203,9 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
             </button>
           )}
         </div>
-        {error && <p className="mt-2 text-xs text-rose-700">{error}</p>}
+        <div className="mt-2">
+          <ToastMessage message={error} type="error" />
+        </div>
       </form>
     </section>
   );

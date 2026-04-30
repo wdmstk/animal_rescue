@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
+import { ToastMessage } from "@/components/ui/toast-message";
 
 type MedicalRecordType = "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER";
 
@@ -132,7 +133,9 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
         >
           {isSaving ? "保存中..." : "記録を保存"}
         </button>
-        {error && <p className="mt-2 text-xs text-rose-700">{error}</p>}
+        <div className="mt-2">
+          <ToastMessage message={error} type="error" />
+        </div>
       </form>
 
       <MedicalTimeline items={sortedItems} />

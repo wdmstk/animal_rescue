@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { ToastMessage } from "@/components/ui/toast-message";
 
 export default function InviteJoinPage() {
   const router = useRouter();
@@ -59,7 +60,7 @@ export default function InviteJoinPage() {
           className="w-full rounded-lg border border-slate-300 px-3 py-2"
           disabled={isSubmitting}
         />
-        {errorMessage ? <p className="text-sm text-red-600">{errorMessage}</p> : null}
+        <ToastMessage message={errorMessage} type="error" />
         <button
           type="submit"
           className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"

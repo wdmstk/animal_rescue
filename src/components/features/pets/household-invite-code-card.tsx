@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { ToastMessage } from "@/components/ui/toast-message";
 
 type InviteResponse = {
   data: {
@@ -105,11 +106,13 @@ export function HouseholdInviteCodeCard() {
             </button>
             {inviteJoinPath ? <p className="text-xs text-slate-600">参加URL: {inviteJoinPath}</p> : null}
           </div>
-          {copied ? <p className="mt-1 text-xs text-emerald-700">コピーしました。</p> : null}
+          <div className="mt-1">
+            <ToastMessage message={copied ? "コピーしました。" : null} type="success" />
+          </div>
         </div>
       ) : null}
 
-      {errorMessage ? <p className="mt-2 text-sm text-rose-700">{errorMessage}</p> : null}
+      <ToastMessage message={errorMessage} type="error" />
     </section>
   );
 }

@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
+import { ToastMessage } from "@/components/ui/toast-message";
 
 type Species = "dog" | "cat" | "other";
 type Sex = "MALE" | "FEMALE" | "UNKNOWN";
@@ -253,7 +254,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
           />
         </label>
 
-        {errorMessage ? <p className="text-sm text-rose-700">{errorMessage}</p> : null}
+        <ToastMessage message={errorMessage} type="error" />
 
         <div className="grid grid-cols-2 gap-2">
           <button
