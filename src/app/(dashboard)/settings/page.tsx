@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { HouseholdInviteCodeCard } from "@/components/features/pets/household-invite-code-card";
+import { ToastMessage } from "@/components/ui/toast-message";
 
 type Member = {
   id: string;
@@ -347,8 +348,8 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      {message ? <p className="text-sm text-emerald-700">{message}</p> : null}
-      {errorMessage ? <p className="text-sm text-rose-700">{errorMessage}</p> : null}
+      <ToastMessage message={message} type="success" />
+      <ToastMessage message={errorMessage} type="error" />
       <button
         type="button"
         className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700"

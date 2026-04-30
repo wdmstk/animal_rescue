@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
 
 ### todo
 1. `TASK-166` 初回オンボーディング導線
@@ -32,7 +32,6 @@ Development Task List
 4. `TASK-163` 通知設定UI（投薬リマインダー実利用化）
 5. `TASK-162` Empty State改善（次アクション導線つき）
 6. `TASK-161` ローディング/スケルトンの統一
-7. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
 8. `TASK-159` ペット詳細ページの情報密度最適化（セクションナビ）
 9. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
 
@@ -161,7 +160,7 @@ Development Task List
 ### 共通フィードバックUI（成功/失敗トースト）導入
 - Task ID: `TASK-160`
 - ブランチ: `feat/TASK-160-shared-feedback-toast`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 主要画面の成功/失敗メッセージを共通トーストコンポーネントへ統一する
 - Issue: `#139`
 - 依存関係:
