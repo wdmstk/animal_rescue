@@ -12,6 +12,11 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  checks: read
+  pull-requests: read
+
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -141,6 +146,55 @@ jobs:
             echo "Please complete all required final self-review note lines in PR body."
             exit 1
           fi
+
+      - name: Validate required CI checks on head SHA
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const requiredChecks = [
+              "Lint",
+              "Unit/Integration (Vitest)",
+              "DB Integration (Real Postgres)",
+              "E2E (Playwright)"
+            ];
+
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const ref = context.payload.pull_request.head.sha;
+
+            const checksResponse = await github.rest.checks.listForRef({
+              owner,
+              repo,
+              ref,
+              per_page: 100
+            });
+
+            const failures = [];
+            for (const name of requiredChecks) {
+              const sameNameChecks = checksResponse.data.check_runs.filter((check) => check.name === name);
+              if (sameNameChecks.length === 0) {
+                failures.push(`${name}: check run not found`);
+                continue;
+              }
+
+              const hasSuccess = sameNameChecks.some(
+                (check) => check.status === "completed" && check.conclusion === "success"
+              );
+
+              if (!hasSuccess) {
+                const latest = sameNameChecks.sort((a, b) => b.id - a.id)[0];
+                failures.push(`${name}: status=${latest.status}, conclusion=${latest.conclusion}`);
+              }
+            }
+
+            if (failures.length > 0) {
+              core.setFailed(
+                [
+                  "Required CI checks are not all green for this PR head SHA.",
+                  ...failures.map((line) => `- ${line}`)
+                ].join("\n")
+              );
+            }
 
   lint:
     name: Lint
