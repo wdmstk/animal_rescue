@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-161` ローディング/スケルトンの統一
+（なし）
 
 ### todo
 1. `TASK-165` データ共有出力（PDF/印刷向け）
@@ -39,8 +39,9 @@ Development Task List
 ### done
 1. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
 2. `TASK-166` 初回オンボーディング導線
-3. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
-4. `TASK-157` 緊急公開画面にワンタップ導線追加
+3. `TASK-161` ローディング/スケルトンの統一
+4. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
+5. `TASK-157` 緊急公開画面にワンタップ導線追加
 4. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
 4. `TASK-155` 検査/設定修正 + 拡張項目自由化（複数指定）
 5. `TASK-154` ペット詳細表示時のコンソールエラー修正
@@ -173,7 +174,7 @@ Development Task List
 ### ローディング/スケルトンの統一
 - Task ID: `TASK-161`
 - ブランチ: `feat/TASK-161-shared-loading-skeleton`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 主要CRUD画面に初期ロードスケルトンと送信中UIを統一導入する
 - Issue: `#140`
 - 依存関係:
