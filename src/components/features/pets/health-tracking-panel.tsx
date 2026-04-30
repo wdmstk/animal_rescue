@@ -245,6 +245,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
     setIsSubmitting(true);
     try {
       await postJson(`/api/pets/${petId}/health/lab-results`, {
+        category: "BLOOD",
         marker: labMarker,
         value: parsedLabValue,
         unit: labUnit.trim(),

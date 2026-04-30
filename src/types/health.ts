@@ -9,12 +9,21 @@ export const CORE_METRIC_TYPES = [
 ] as const;
 
 export const LAB_MARKER_TYPES = ["CRE", "BUN", "SDMA", "PHOSPHORUS"] as const;
+export const LAB_RESULT_CATEGORIES = ["BLOOD", "URINE", "ENDOCRINE"] as const;
 
 export const HEALTH_EXTENSION_KEYS = ["INFUSION_ML"] as const;
 
 export type CoreMetricType = (typeof CORE_METRIC_TYPES)[number];
 export type LabMarkerType = (typeof LAB_MARKER_TYPES)[number];
+export type LabResultCategory = (typeof LAB_RESULT_CATEGORIES)[number];
 export type HealthExtensionKey = (typeof HEALTH_EXTENSION_KEYS)[number];
+
+export const LAB_MARKER_CATEGORY_MAP: Record<LabMarkerType, LabResultCategory> = {
+  CRE: "BLOOD",
+  BUN: "BLOOD",
+  SDMA: "ENDOCRINE",
+  PHOSPHORUS: "BLOOD"
+};
 
 export type CoreHealthEntry = {
   id: string;
@@ -28,6 +37,7 @@ export type CoreHealthEntry = {
 export type LabResultEntry = {
   id: string;
   petId: string;
+  category: LabResultCategory;
   marker: LabMarkerType;
   value: number;
   unit: string;

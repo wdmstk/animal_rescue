@@ -36,6 +36,7 @@ describe("/api/pets/[petId]/health/lab-results", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          category: "BLOOD",
           marker: "CRE",
           value: -1,
           recordedAt: "2026-04-20"
@@ -52,6 +53,7 @@ describe("/api/pets/[petId]/health/lab-results", () => {
     createMock.mockResolvedValue({
       id: "id-1",
       petId: validPetId,
+      category: "BLOOD",
       marker: "CRE",
       value: 1.8,
       unit: "mg/dL",
@@ -64,6 +66,7 @@ describe("/api/pets/[petId]/health/lab-results", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          category: "BLOOD",
           marker: "CRE",
           value: 1.8,
           recordedAt: "2026-04-20"
@@ -77,6 +80,7 @@ describe("/api/pets/[petId]/health/lab-results", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           petId: validPetId,
+          category: "BLOOD",
           marker: "CRE",
           unit: "mg/dL"
         })
@@ -84,11 +88,31 @@ describe("/api/pets/[petId]/health/lab-results", () => {
     );
   });
 
+  it("returns 400 when marker and category are inconsistent", async () => {
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: "URINE",
+          marker: "CRE",
+          value: 1.8,
+          recordedAt: "2026-04-20"
+        })
+      }),
+      { params: Promise.resolve({ petId: validPetId }) }
+    );
+
+    expect(response.status).toBe(400);
+    expect(createMock).not.toHaveBeenCalled();
+  });
+
   it("returns entries on GET", async () => {
     findManyMock.mockResolvedValue([
       {
         id: "id-1",
         petId: validPetId,
+        category: "BLOOD",
         marker: "CRE",
         value: 1.8,
         unit: "mg/dL",

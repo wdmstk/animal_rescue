@@ -47,6 +47,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     labResults.map((item) => ({
       id: item.id,
       petId: item.petId,
+      category: item.category,
       marker: item.marker,
       value: Number(item.value),
       unit: item.unit,
