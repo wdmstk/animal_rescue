@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
 
 ### todo
 1. `TASK-166` 初回オンボーディング導線
@@ -101,6 +101,21 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### PR作成〜mainマージ運用の段階ガード化（実態厳密）
+- Task ID: `TASK-167`
+- ブランチ: `feat/TASK-167-ci-stage-guard-strict-flow`
+- ステータス: `in_progress`
+- 概要: PR本文チェックとCIガードの評価タイミングを段階化し、運用ルールと実態の時系列不整合を解消する
+- Issue: `#147`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - PR初期イベントで `ci_*` チェックボックス未入力でも `PR Pre-Merge Guard` が失敗しない
+  - `edited` イベント時のみ `ci_green_confirmed` / `self_review_final_done_after_ci_green` / `ready_for_main_merge` を検証する
+  - `push` on `main` 時に `issue_closed_on_task_done` と対応Issueのクローズ状態を検証できる
+  - PRテンプレと運用ドキュメントが段階ガードの時系列に一致する
+  - `npm run lint` / `npx vitest run` が通る
 
 ### 緊急公開画面にワンタップ導線追加
 - Task ID: `TASK-157`

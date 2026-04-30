@@ -45,20 +45,24 @@ gh pr create \
   --body-file .github/pr-body/TASK-xxx.md
 ```
 
-## CI確認とマージ運用
-1. PR作成後にCI完了まで待機
-2. 必須チェックがすべて成功したことを確認
-   - `PR Operational Guard`（ブランチ命名 + PRチェックリスト）を含む
-   - `PR Pre-Merge Guard` はPR本文チェックに加えて、head SHA上の `Lint` / `Unit/Integration (Vitest)` / `DB Integration (Real Postgres)` / `E2E (Playwright)` の成功を検証する
-   - そのため、CI完了前に `ci_green_confirmed` をチェックしてもガードは通過しない
-   - 最終セルフレビューはCIグリーン確認後にPR本文へ3観点を記載する
-     - 差分妥当性:
-     - 不要変更混入:
-     - 残リスク/フォローアップ:
+## CI確認とマージ運用（段階ガード）
+1. PR作成時（初期フェーズ）
+   - PR本文の「PR作成前」「PR作成時」チェックのみ更新する
+   - `PR Operational Guard` がこのフェーズを検証する
+2. CI完了後（マージ前フェーズ）
+   - `Lint` / `Unit/Integration (Vitest)` / `DB Integration (Real Postgres)` / `E2E (Playwright)` の成功を確認する
+   - PR本文を編集し、以下を更新する
+     - `ci_green_confirmed`
+     - `self_review_final_done_after_ci_green`
+     - `ready_for_main_merge`
+     - 最終セルフレビュー3観点
+   - `PR Pre-Merge Guard` は `edited` イベントかつ上記チェック更新時に検証される
 3. `main` へ squash merge
 4. 対応Issueをクローズ
-5. 作業ブランチをローカル/リモートから削除
-6. ローカル `main` を最新化
+5. PR本文の `issue_closed_on_task_done` を更新する
+   - `push on main` の `Post-Merge Issue Guard` で、チェック済みかつ対応Issueが `closed` かを検証する
+6. 作業ブランチをローカル/リモートから削除
+7. ローカル `main` を最新化
 
 ```bash
 gh pr checks --watch

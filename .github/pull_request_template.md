@@ -32,6 +32,7 @@
 - [ ] pr_opened_ready_for_review_or_reason_for_draft
 
 ### マージ前（CI完了後）
+以下は `Lint / Unit/Integration (Vitest) / DB Integration (Real Postgres) / E2E (Playwright)` が green になってからチェックする。
 - [ ] ci_green_confirmed
 - [ ] self_review_final_done_after_ci_green
 - [ ] ready_for_main_merge
@@ -42,4 +43,5 @@
 - 残リスク/フォローアップ:
 
 ### マージ後
+Issueクローズ後にチェックする（`push on main` の Post-Merge Issue Guard で検証）。
 - [ ] issue_closed_on_task_done

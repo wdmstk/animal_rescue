@@ -16,6 +16,7 @@ permissions:
   contents: read
   checks: read
   pull-requests: read
+  issues: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -87,11 +88,29 @@ jobs:
 
   pr-pre-merge-guard:
     name: PR Pre-Merge Guard
-    if: github.event_name == 'pull_request' && contains(fromJSON('["opened","synchronize","reopened","edited","ready_for_review"]'), github.event.action)
+    if: github.event_name == 'pull_request' && github.event.action == 'edited'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Detect pre-merge validation phase
+        id: premerge_phase
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [[ -z "${PR_BODY}" ]]; then
+            echo "should_validate=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if printf '%s\n' "${PR_BODY}" | grep -Eiq -- "- \[[xX]\] (ci_green_confirmed|self_review_final_done_after_ci_green|ready_for_main_merge)"; then
+            echo "should_validate=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Pre-merge checklist is not checked yet. Skip pre-merge guard in this edited event."
+            echo "should_validate=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Validate pre-merge checklist
+        if: steps.premerge_phase.outputs.should_validate == 'true'
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
@@ -120,6 +139,7 @@ jobs:
           fi
 
       - name: Validate final self-review notes
+        if: steps.premerge_phase.outputs.should_validate == 'true'
         env:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
@@ -148,6 +168,7 @@ jobs:
           fi
 
       - name: Validate required CI checks on head SHA
+        if: steps.premerge_phase.outputs.should_validate == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -193,6 +214,60 @@ jobs:
                   "Required CI checks are not all green for this PR head SHA.",
                   ...failures.map((line) => `- ${line}`)
                 ].join("\n")
+              );
+            }
+
+  post-merge-issue-guard:
+    name: Post-Merge Issue Guard
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate merged PR post-merge checklist and linked issue state
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const commitSha = context.sha;
+
+            const associated = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner,
+              repo,
+              commit_sha: commitSha,
+              per_page: 100
+            });
+
+            const mergedPr = associated.data.find((pr) => pr.base?.ref === "main" && pr.merged_at);
+            if (!mergedPr) {
+              core.info("No merged PR associated with this main push commit. Skip post-merge validation.");
+              return;
+            }
+
+            const body = mergedPr.body ?? "";
+            if (!/- \[[xX]\] issue_closed_on_task_done/i.test(body)) {
+              core.setFailed(
+                `Merged PR #${mergedPr.number} is missing checked item: issue_closed_on_task_done`
+              );
+              return;
+            }
+
+            const issueMatch = body.match(/- 対応Issue:\s*#(\d+)/i);
+            if (!issueMatch) {
+              core.setFailed(`Merged PR #${mergedPr.number} is missing 対応Issue in PR body.`);
+              return;
+            }
+
+            const issueNumber = Number(issueMatch[1]);
+            const issue = await github.rest.issues.get({
+              owner,
+              repo,
+              issue_number: issueNumber
+            });
+
+            if (issue.data.state !== "closed") {
+              core.setFailed(
+                `Linked issue #${issueNumber} is not closed after merge (state=${issue.data.state}).`
               );
             }
 
