@@ -18,6 +18,7 @@ describe("toPublicEmergencyView", () => {
     expect(result.disease).toBeNull();
     expect(result.medications).toBeNull();
     expect(result.allergy).toBe("鶏肉");
+    expect(result.recentMedicationSummaries).toBeUndefined();
   });
 });
 
