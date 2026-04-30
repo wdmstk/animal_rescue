@@ -23,12 +23,11 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-151` 健康記録UIをカテゴリ分離 + 尿項目段階導入
 
 ### todo
-1. `TASK-151` 健康記録UIをカテゴリ分離 + 尿項目段階導入
-2. `TASK-149` 設定画面での表示ON/OFF管理UI
-3. `TASK-148` 緊急公開画面への追加表示（直近サマリー）反映
+1. `TASK-149` 設定画面での表示ON/OFF管理UI
+2. `TASK-148` 緊急公開画面への追加表示（直近サマリー）反映
 
 ### blocked
 （なし）
@@ -119,7 +118,7 @@ Development Task List
 ### 健康記録UIをカテゴリ分離 + 尿項目段階導入
 - Task ID: `TASK-151`
 - ブランチ: `feat/TASK-151-health-ui-category-split`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 健康記録UIを血液・尿・内分泌で分離し、尿項目（尿糖/尿ケトン/尿比重/尿蛋白/UPCR）を段階導入する
 - Issue: `#118`
 - 依存関係:

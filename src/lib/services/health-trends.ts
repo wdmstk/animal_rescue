@@ -14,7 +14,12 @@ const labLabelMap: Record<LabResultEntry["marker"], string> = {
   CRE: "Cre",
   BUN: "BUN",
   SDMA: "SDMA",
-  PHOSPHORUS: "リン(P)"
+  PHOSPHORUS: "リン(P)",
+  URINE_GLUCOSE: "尿糖",
+  URINE_KETONE: "尿ケトン",
+  USG: "尿比重",
+  URINE_PROTEIN: "尿蛋白",
+  UPCR: "UPCR"
 };
 
 const extensionLabelMap: Record<HealthExtensionEntry["key"], string> = {

@@ -68,4 +68,16 @@ describe("health validators", () => {
 
     expect(parsed.success).toBe(false);
   });
+
+  it("accepts urine marker with urine category", () => {
+    const parsed = labResultEntryInputSchema.safeParse({
+      category: "URINE",
+      marker: "USG",
+      value: 1.028,
+      unit: "SG",
+      recordedAt: "2026-04-20"
+    });
+
+    expect(parsed.success).toBe(true);
+  });
 });

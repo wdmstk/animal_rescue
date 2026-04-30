@@ -8,7 +8,17 @@ export const CORE_METRIC_TYPES = [
   "BODY_TEMPERATURE_C"
 ] as const;
 
-export const LAB_MARKER_TYPES = ["CRE", "BUN", "SDMA", "PHOSPHORUS"] as const;
+export const LAB_MARKER_TYPES = [
+  "CRE",
+  "BUN",
+  "SDMA",
+  "PHOSPHORUS",
+  "URINE_GLUCOSE",
+  "URINE_KETONE",
+  "USG",
+  "URINE_PROTEIN",
+  "UPCR"
+] as const;
 export const LAB_RESULT_CATEGORIES = ["BLOOD", "URINE", "ENDOCRINE"] as const;
 
 export const HEALTH_EXTENSION_KEYS = ["INFUSION_ML"] as const;
@@ -22,7 +32,12 @@ export const LAB_MARKER_CATEGORY_MAP: Record<LabMarkerType, LabResultCategory> =
   CRE: "BLOOD",
   BUN: "BLOOD",
   SDMA: "ENDOCRINE",
-  PHOSPHORUS: "BLOOD"
+  PHOSPHORUS: "BLOOD",
+  URINE_GLUCOSE: "URINE",
+  URINE_KETONE: "URINE",
+  USG: "URINE",
+  URINE_PROTEIN: "URINE",
+  UPCR: "URINE"
 };
 
 export type CoreHealthEntry = {
