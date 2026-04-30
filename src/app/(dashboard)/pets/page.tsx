@@ -61,6 +61,15 @@ export default async function PetsPage() {
 
   return (
     <div className="space-y-4">
+      <section className="rounded-2xl border border-sky-200 bg-sky-50 p-4 shadow-sm">
+        <h2 className="text-sm font-bold text-sky-900">はじめての方へ（3ステップ）</h2>
+        <ol className="mt-2 space-y-1 text-xs text-sky-900">
+          <li>1. ペット登録: {pets.length > 0 ? "完了" : "未完了"}</li>
+          <li>2. 緊急情報入力: {pets.length > 0 ? "ペット詳細で入力" : "ペット登録後に入力"}</li>
+          <li>3. QR共有: {pets.length > 0 ? "ペット詳細で共有可能" : "ペット登録後に共有可能"}</li>
+        </ol>
+      </section>
+
       <section className="rounded-2xl bg-white p-4 shadow-sm">
         <div className="flex items-center justify-between gap-3">
           <div>
