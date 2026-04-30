@@ -23,11 +23,10 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-149` 設定画面での表示ON/OFF管理UI
 
 ### todo
-1. `TASK-149` 設定画面での表示ON/OFF管理UI
-2. `TASK-148` 緊急公開画面への追加表示（直近サマリー）反映
+1. `TASK-148` 緊急公開画面への追加表示（直近サマリー）反映
 
 ### blocked
 （なし）
@@ -147,7 +146,7 @@ Development Task List
 ### 設定画面での表示ON/OFF管理UI
 - Task ID: `TASK-149`
 - ブランチ: `feat/TASK-149-settings-pet-display-toggles`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 設定画面にペット単位の表示ON/OFFトグルUIを追加し、詳細カード4種と緊急追加表示3種を管理可能にする
 - Issue: `#120`
 - 依存関係:

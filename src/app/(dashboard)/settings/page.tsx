@@ -33,6 +33,22 @@ type BillingPayload = {
   currentPeriodEnd: string | null;
 };
 
+type PetListItem = {
+  id: string;
+  name: string;
+};
+
+type PetDisplaySettings = {
+  petId: string;
+  showMedicationCard: boolean;
+  showVaccinationCard: boolean;
+  showHealthCard: boolean;
+  showMedicalRecordCard: boolean;
+  showEmergencyMedicationSummary: boolean;
+  showEmergencyVaccinationSummary: boolean;
+  showEmergencyMedicalRecordSummary: boolean;
+};
+
 export default function SettingsPage() {
   const router = useRouter();
   const [members, setMembers] = useState<Member[]>([]);
@@ -45,33 +61,59 @@ export default function SettingsPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [billing, setBilling] = useState<BillingPayload | null>(null);
   const [isBillingSubmitting, setIsBillingSubmitting] = useState(false);
+  const [pets, setPets] = useState<PetListItem[]>([]);
+  const [petDisplaySettingsMap, setPetDisplaySettingsMap] = useState<Record<string, PetDisplaySettings>>({});
+  const [isPetSettingsSaving, setIsPetSettingsSaving] = useState<Record<string, boolean>>({});
 
   const isOwner = currentUserRole === "OWNER";
 
   const loadData = async () => {
     setErrorMessage(null);
+    try {
+      const [membersRes, accountRes, billingRes, petsRes] = await Promise.all([
+        fetch("/api/households/members"),
+        fetch("/api/account"),
+        fetch("/api/billing/subscription"),
+        fetch("/api/pets")
+      ]);
 
-    const [membersRes, accountRes, billingRes] = await Promise.all([
-      fetch("/api/households/members"),
-      fetch("/api/account"),
-      fetch("/api/billing/subscription")
-    ]);
+      if (!membersRes.ok || !accountRes.ok || !billingRes.ok || !petsRes.ok) {
+        setErrorMessage("設定情報の取得に失敗しました。");
+        return;
+      }
 
-    if (!membersRes.ok || !accountRes.ok || !billingRes.ok) {
+      const membersJson = (await membersRes.json()) as { data: HouseholdPayload };
+      const accountJson = (await accountRes.json()) as { data: AccountPayload };
+      const billingJson = (await billingRes.json()) as { data: BillingPayload };
+      const petsJson = (await petsRes.json()) as { data: PetListItem[] };
+
+      const displaySettingsResponses = await Promise.all(
+        petsJson.data.map(async (pet) => {
+          const response = await fetch(`/api/pets/${pet.id}/display-settings`);
+          if (!response.ok) {
+            throw new Error("Failed to fetch pet display settings");
+          }
+
+          const payload = (await response.json()) as { data: PetDisplaySettings };
+          return payload.data;
+        })
+      );
+      const nextDisplaySettingsMap = displaySettingsResponses.reduce<Record<string, PetDisplaySettings>>((acc, item) => {
+        acc[item.petId] = item;
+        return acc;
+      }, {});
+
+      setHouseholdName(membersJson.data.household.name);
+      setMembers(membersJson.data.household.members);
+      setCurrentUserRole(membersJson.data.currentUserRole);
+      setAccount(accountJson.data);
+      setDisplayName(accountJson.data.displayName ?? "");
+      setBilling(billingJson.data);
+      setPets(petsJson.data);
+      setPetDisplaySettingsMap(nextDisplaySettingsMap);
+    } catch {
       setErrorMessage("設定情報の取得に失敗しました。");
-      return;
     }
-
-    const membersJson = (await membersRes.json()) as { data: HouseholdPayload };
-    const accountJson = (await accountRes.json()) as { data: AccountPayload };
-    const billingJson = (await billingRes.json()) as { data: BillingPayload };
-
-    setHouseholdName(membersJson.data.household.name);
-    setMembers(membersJson.data.household.members);
-    setCurrentUserRole(membersJson.data.currentUserRole);
-    setAccount(accountJson.data);
-    setDisplayName(accountJson.data.displayName ?? "");
-    setBilling(billingJson.data);
   };
 
   useEffect(() => {
@@ -169,6 +211,36 @@ export default function SettingsPage() {
     window.location.href = payload.data.url;
   };
 
+  const handleTogglePetDisplaySetting = async (
+    petId: string,
+    key: keyof Omit<PetDisplaySettings, "petId">,
+    checked: boolean
+  ) => {
+    setErrorMessage(null);
+    setMessage(null);
+    setIsPetSettingsSaving((current) => ({ ...current, [petId]: true }));
+
+    const response = await fetch(`/api/pets/${petId}/display-settings`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [key]: checked })
+    });
+    const payload = (await response.json().catch(() => null)) as { data?: PetDisplaySettings; error?: string } | null;
+
+    if (!response.ok || !payload?.data) {
+      setErrorMessage("表示設定の更新に失敗しました。");
+      setIsPetSettingsSaving((current) => ({ ...current, [petId]: false }));
+      return;
+    }
+
+    setPetDisplaySettingsMap((current) => ({
+      ...current,
+      [petId]: payload.data as PetDisplaySettings
+    }));
+    setIsPetSettingsSaving((current) => ({ ...current, [petId]: false }));
+    setMessage("表示設定を更新しました。");
+  };
+
   return (
     <div className="space-y-4">
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -256,6 +328,50 @@ export default function SettingsPage() {
             更新する
           </button>
         </form>
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900">ペット表示設定</h2>
+        <p className="mt-1 text-sm text-slate-600">ペットごとに詳細カードと緊急公開の追加表示を切り替えられます。</p>
+        <div className="mt-3 space-y-4">
+          {pets.map((pet) => {
+            const settings = petDisplaySettingsMap[pet.id];
+            const isSaving = Boolean(isPetSettingsSaving[pet.id]);
+            if (!settings) {
+              return null;
+            }
+
+            return (
+              <div key={pet.id} className="rounded-lg border border-slate-200 p-3">
+                <p className="text-sm font-semibold text-slate-900">{pet.name}</p>
+                <div className="mt-2 grid gap-2 md:grid-cols-2">
+                  {(
+                    [
+                      ["showMedicationCard", "詳細: 投薬カード"],
+                      ["showVaccinationCard", "詳細: ワクチンカード"],
+                      ["showHealthCard", "詳細: 健康カード"],
+                      ["showMedicalRecordCard", "詳細: 医療記録カード"],
+                      ["showEmergencyMedicationSummary", "緊急追加: 投薬サマリー"],
+                      ["showEmergencyVaccinationSummary", "緊急追加: ワクチンサマリー"],
+                      ["showEmergencyMedicalRecordSummary", "緊急追加: 医療記録サマリー"]
+                    ] as const
+                  ).map(([key, label]) => (
+                    <label key={key} className="flex items-center justify-between gap-2 rounded border border-slate-200 px-2 py-1 text-xs">
+                      <span>{label}</span>
+                      <input
+                        type="checkbox"
+                        checked={settings[key]}
+                        disabled={isSaving}
+                        onChange={(event) => void handleTogglePetDisplaySetting(pet.id, key, event.target.checked)}
+                      />
+                    </label>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+          {pets.length === 0 ? <p className="text-xs text-slate-500">対象ペットがいません。</p> : null}
+        </div>
       </section>
 
       {message ? <p className="text-sm text-emerald-700">{message}</p> : null}
