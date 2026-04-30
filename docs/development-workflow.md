@@ -48,6 +48,8 @@ gh pr create \
 1. PR作成後にCI完了まで待機
 2. 必須チェックがすべて成功したことを確認
    - `PR Operational Guard`（ブランチ命名 + PRチェックリスト）を含む
+   - `PR Pre-Merge Guard` はPR本文チェックに加えて、head SHA上の `Lint` / `Unit/Integration (Vitest)` / `DB Integration (Real Postgres)` / `E2E (Playwright)` の成功を検証する
+   - そのため、CI完了前に `ci_green_confirmed` をチェックしてもガードは通過しない
    - 最終セルフレビューはCIグリーン確認後にPR本文へ3観点を記載する
      - 差分妥当性:
      - 不要変更混入:
