@@ -14,6 +14,7 @@ describe("health validators", () => {
 
   it("rejects negative lab values", () => {
     const parsed = labResultEntryInputSchema.safeParse({
+      category: "BLOOD",
       marker: "CRE",
       value: -0.1,
       unit: "mg/dL",
@@ -36,6 +37,7 @@ describe("health validators", () => {
 
   it("rejects blank lab unit", () => {
     const parsed = labResultEntryInputSchema.safeParse({
+      category: "BLOOD",
       marker: "CRE",
       value: 1.8,
       unit: "   ",
@@ -50,6 +52,18 @@ describe("health validators", () => {
       type: "WEIGHT_KG",
       value: 4.25,
       recordedAt: "not-a-date"
+    });
+
+    expect(parsed.success).toBe(false);
+  });
+
+  it("rejects inconsistent category and marker", () => {
+    const parsed = labResultEntryInputSchema.safeParse({
+      category: "URINE",
+      marker: "CRE",
+      value: 1.8,
+      unit: "mg/dL",
+      recordedAt: "2026-04-20"
     });
 
     expect(parsed.success).toBe(false);

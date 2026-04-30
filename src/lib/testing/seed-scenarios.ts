@@ -244,6 +244,7 @@ const upsertBaseline = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "44000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.baselineCat,
+      category: "BLOOD",
       marker: "CRE",
       value: 1.8,
       unit: "mg/dL",
@@ -251,6 +252,7 @@ const upsertBaseline = async (prisma: PrismaClient): Promise<void> => {
       note: `${SEED_PREFIX} baseline lab`
     },
     update: {
+      category: "BLOOD",
       marker: "CRE",
       value: 1.8,
       unit: "mg/dL",
@@ -571,6 +573,7 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "49000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.showcaseDog,
+      category: "BLOOD",
       marker: "CRE",
       value: 1.5,
       unit: "mg/dL",
@@ -578,6 +581,7 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
       note: `${SEED_PREFIX} lab normal-ish`
     },
     update: {
+      category: "BLOOD",
       marker: "CRE",
       value: 1.5,
       unit: "mg/dL",
@@ -591,6 +595,7 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "49000000-0000-4000-8000-000000000002",
       petId: seedIds.pets.showcaseDog,
+      category: "BLOOD",
       marker: "CRE",
       value: 2.4,
       unit: "mg/dL",
@@ -598,6 +603,7 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
       note: `${SEED_PREFIX} lab elevated`
     },
     update: {
+      category: "BLOOD",
       marker: "CRE",
       value: 2.4,
       unit: "mg/dL",

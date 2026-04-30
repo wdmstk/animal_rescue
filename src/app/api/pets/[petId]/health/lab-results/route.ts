@@ -36,6 +36,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     data: data.map((item) => ({
       id: item.id,
       petId: item.petId,
+      category: item.category,
       marker: item.marker,
       value: Number(item.value),
       unit: item.unit,
@@ -71,6 +72,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const created = await prisma.petLabResultEntry.create({
     data: {
       petId: access.petId,
+      category: parsed.data.category,
       marker: parsed.data.marker,
       value: parsed.data.value,
       unit: parsed.data.unit ?? defaultUnitMap[parsed.data.marker],
@@ -84,6 +86,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
       data: {
         id: created.id,
         petId: created.petId,
+        category: created.category,
         marker: created.marker,
         value: Number(created.value),
         unit: created.unit,

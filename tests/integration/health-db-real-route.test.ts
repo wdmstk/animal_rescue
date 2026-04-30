@@ -67,6 +67,7 @@ describeDb("health routes (real database)", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          category: "BLOOD",
           marker: "CRE",
           value: 1.2,
           recordedAt: "2026-04-26"
@@ -76,6 +77,7 @@ describeDb("health routes (real database)", () => {
     );
     expect(labResponse.status).toBe(201);
     const labPayload = await labResponse.json();
+    expect(labPayload.data.category).toBe("BLOOD");
     expect(labPayload.data.unit).toBe("mg/dL");
 
     const coreListResponse = await getCoreMetrics(new Request("http://localhost?type=WEIGHT_KG"), { params: { petId } });

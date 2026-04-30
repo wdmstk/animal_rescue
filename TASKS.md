@@ -23,14 +23,13 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-152` 検査カテゴリ基盤再設計（DB/API/型）
 
 ### todo
-1. `TASK-152` 検査カテゴリ基盤再設計（DB/API/型）
-2. `TASK-151` 健康記録UIをカテゴリ分離 + 尿項目段階導入
-3. `TASK-150` ペット単位表示設定のデータモデル/API実装
-4. `TASK-149` 設定画面での表示ON/OFF管理UI
-5. `TASK-148` 緊急公開画面への追加表示（直近サマリー）反映
+1. `TASK-151` 健康記録UIをカテゴリ分離 + 尿項目段階導入
+2. `TASK-150` ペット単位表示設定のデータモデル/API実装
+3. `TASK-149` 設定画面での表示ON/OFF管理UI
+4. `TASK-148` 緊急公開画面への追加表示（直近サマリー）反映
 
 ### blocked
 （なし）
@@ -91,7 +90,7 @@ Development Task List
 ### 検査カテゴリ基盤再設計（DB/API/型）
 - Task ID: `TASK-152`
 - ブランチ: `feat/TASK-152-health-lab-category-foundation`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 健康記録の検査データにカテゴリ（BLOOD/URINE/ENDOCRINE）を導入し、API契約とバリデーション、既存データ移行を整備する
 - Issue: `#117`
 - 依存関係:

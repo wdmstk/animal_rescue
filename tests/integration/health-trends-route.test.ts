@@ -53,6 +53,7 @@ describe("/api/pets/[petId]/health/trends", () => {
       {
         id: "l1",
         petId: validPetId,
+        category: "BLOOD",
         marker: "CRE",
         value: 1.8,
         unit: "mg/dL",

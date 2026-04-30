@@ -26,6 +26,7 @@ describe("buildHealthTrendSeries", () => {
         {
           id: "l1",
           petId: "p1",
+          category: "BLOOD",
           marker: "CRE",
           value: 1.8,
           unit: "mg/dL",

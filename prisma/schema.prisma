@@ -49,6 +49,12 @@ enum LabMarkerType {
   PHOSPHORUS
 }
 
+enum LabResultCategory {
+  BLOOD
+  URINE
+  ENDOCRINE
+}
+
 enum HealthExtensionKey {
   INFUSION_ML
 }
@@ -230,6 +236,7 @@ model PetCoreMetricEntry {
 model PetLabResultEntry {
   id         String        @id @default(uuid()) @db.Uuid
   petId      String        @db.Uuid
+  category   LabResultCategory @default(BLOOD)
   marker     LabMarkerType
   value      Decimal       @db.Decimal(10, 2)
   unit       String
@@ -239,7 +246,7 @@ model PetLabResultEntry {
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 
-  @@index([petId, marker, recordedAt])
+  @@index([petId, category, marker, recordedAt])
 }
 
 model PetHealthExtensionEntry {
