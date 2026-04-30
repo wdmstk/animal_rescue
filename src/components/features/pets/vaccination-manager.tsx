@@ -9,6 +9,7 @@ type VaccinationItem = {
   id: string;
   typeCode: VaccinationType;
   type: string;
+  customTypeName: string | null;
   date: string;
   nextDue: string | null;
 };
@@ -49,6 +50,7 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
       id: item.id ?? `local-${index + 1}`,
       type: item.type,
       typeCode: item.typeCode ?? labelTypeMap[item.type] ?? "OTHER",
+      customTypeName: item.customTypeName ?? null,
       date: item.date,
       nextDue: item.nextDue
     }))
@@ -56,6 +58,7 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
   const [type, setType] = useState<VaccinationType>("CORE");
   const [date, setDate] = useState(today);
   const [nextDue, setNextDue] = useState("");
+  const [customTypeName, setCustomTypeName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -69,6 +72,7 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
     setType("CORE");
     setDate(today);
     setNextDue("");
+    setCustomTypeName("");
     setEditingId(null);
   };
 
@@ -77,11 +81,16 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
     setType(item.typeCode);
     setDate(item.date);
     setNextDue(item.nextDue ?? "");
+    setCustomTypeName(item.customTypeName ?? "");
     setError(null);
   };
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (type === "OTHER" && customTypeName.trim().length === 0) {
+      setError("その他を選択した場合は名称を入力してください");
+      return;
+    }
     setIsSaving(true);
     setError(null);
 
@@ -92,6 +101,7 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
         body: JSON.stringify({
           id: editingId ?? undefined,
           type,
+          customTypeName: type === "OTHER" ? customTypeName.trim() : null,
           date,
           nextDue: nextDue || null
         })
@@ -102,13 +112,14 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
       }
 
       const payload = (await response.json()) as {
-        data: { id: string; type: VaccinationType; date: string; nextDue: string | null };
+        data: { id: string; type: VaccinationType; customTypeName: string | null; date: string; nextDue: string | null };
       };
 
       const normalizedItem: VaccinationItem = {
         id: payload.data.id,
         typeCode: payload.data.type,
-        type: typeLabelMap[payload.data.type],
+        type: payload.data.type === "OTHER" ? payload.data.customTypeName ?? "その他" : typeLabelMap[payload.data.type],
+        customTypeName: payload.data.customTypeName,
         date: normalizeDate(payload.data.date),
         nextDue: payload.data.nextDue ? normalizeDate(payload.data.nextDue) : null
       };
@@ -161,6 +172,17 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
             className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
           />
         </div>
+        <p className="mt-2 text-xs text-slate-600">接種日: 実際に接種した日 / 次回予定: 次回接種日（未定なら空欄可）</p>
+        {type === "OTHER" && (
+          <input
+            type="text"
+            value={customTypeName}
+            onChange={(event) => setCustomTypeName(event.target.value)}
+            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            placeholder="その他ワクチン名"
+            required
+          />
+        )}
         <div className="mt-3 flex items-center gap-2">
           <button
             type="submit"

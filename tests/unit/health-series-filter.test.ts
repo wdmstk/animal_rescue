@@ -17,7 +17,7 @@ const baseSeries: HealthTrendSeries[] = [
     points: [{ x: "2026-04-23", y: 1.1 }]
   },
   {
-    key: "ext:INFUSION_ML",
+    key: "ext:点滴量",
     label: "点滴量 (mL)",
     points: [{ x: "2026-04-10", y: 120 }]
   }

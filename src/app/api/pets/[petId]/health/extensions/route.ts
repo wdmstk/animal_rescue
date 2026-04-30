@@ -28,7 +28,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     data: data.map((item) => ({
       id: item.id,
       petId: item.petId,
-      key: item.key,
+      name: item.name,
       value: Number(item.value),
       unit: item.unit,
       recordedAt: item.recordedAt.toISOString(),
@@ -63,7 +63,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const created = await prisma.petHealthExtensionEntry.create({
     data: {
       petId: access.petId,
-      key: parsed.data.key,
+      name: parsed.data.name,
       value: parsed.data.value,
       unit: parsed.data.unit || null,
       recordedAt: parsed.data.recordedAt,
@@ -76,7 +76,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
       data: {
         id: created.id,
         petId: created.petId,
-        key: created.key,
+        name: created.name,
         value: Number(created.value),
         unit: created.unit,
         recordedAt: created.recordedAt.toISOString(),

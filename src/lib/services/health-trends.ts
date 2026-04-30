@@ -15,18 +15,37 @@ const labLabelMap: Record<LabResultEntry["marker"], string> = {
   BUN: "BUN",
   SDMA: "SDMA",
   PHOSPHORUS: "リン(P)",
+  ALT: "ALT",
+  AST: "AST",
+  ALP: "ALP",
+  GLU: "GLU",
+  WBC: "WBC",
+  HCT: "HCT",
+  TP: "TP",
+  ALB: "ALB",
+  TCHO: "TCHO",
+  TG: "TG",
+  Na: "Na",
+  K: "K",
+  Cl: "Cl",
+  CRP: "CRP",
   URINE_GLUCOSE: "尿糖",
   URINE_KETONE: "尿ケトン",
   USG: "尿比重",
   URINE_PROTEIN: "尿蛋白",
-  UPCR: "UPCR"
-};
-
-const extensionLabelMap: Record<HealthExtensionEntry["key"], string> = {
-  INFUSION_ML: "点滴量 (mL)"
+  UPCR: "UPCR",
+  FRUCTOSAMINE: "フルクトサミン",
+  T4: "T4",
+  FT4: "FT4",
+  TSH: "TSH",
+  CORTISOL: "コルチゾール",
+  INSULIN: "インスリン",
+  ACTH: "ACTH"
 };
 
 const toDay = (value: string) => value.slice(0, 10);
+const toExtensionSeriesKey = (name: string) => `ext:${name.trim().toLowerCase()}`;
+const toExtensionSeriesLabel = (entry: HealthExtensionEntry) => (entry.unit ? `${entry.name} (${entry.unit})` : entry.name);
 
 const sortPoints = (points: { x: string; y: number }[]) =>
   [...points].sort((a, b) => a.x.localeCompare(b.x));
@@ -61,7 +80,7 @@ export function buildHealthTrendSeries(
   }
 
   for (const entry of extensionEntries) {
-    upsert(`ext:${entry.key}`, extensionLabelMap[entry.key], { x: toDay(entry.recordedAt), y: entry.value });
+    upsert(toExtensionSeriesKey(entry.name), toExtensionSeriesLabel(entry), { x: toDay(entry.recordedAt), y: entry.value });
   }
 
   return [...map.values()]

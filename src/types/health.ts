@@ -13,31 +13,70 @@ export const LAB_MARKER_TYPES = [
   "BUN",
   "SDMA",
   "PHOSPHORUS",
+  "ALT",
+  "AST",
+  "ALP",
+  "GLU",
+  "WBC",
+  "HCT",
+  "TP",
+  "ALB",
+  "TCHO",
+  "TG",
+  "Na",
+  "K",
+  "Cl",
+  "CRP",
   "URINE_GLUCOSE",
   "URINE_KETONE",
   "USG",
   "URINE_PROTEIN",
-  "UPCR"
+  "UPCR",
+  "FRUCTOSAMINE",
+  "T4",
+  "FT4",
+  "TSH",
+  "CORTISOL",
+  "INSULIN",
+  "ACTH"
 ] as const;
 export const LAB_RESULT_CATEGORIES = ["BLOOD", "URINE", "ENDOCRINE"] as const;
-
-export const HEALTH_EXTENSION_KEYS = ["INFUSION_ML"] as const;
 
 export type CoreMetricType = (typeof CORE_METRIC_TYPES)[number];
 export type LabMarkerType = (typeof LAB_MARKER_TYPES)[number];
 export type LabResultCategory = (typeof LAB_RESULT_CATEGORIES)[number];
-export type HealthExtensionKey = (typeof HEALTH_EXTENSION_KEYS)[number];
 
 export const LAB_MARKER_CATEGORY_MAP: Record<LabMarkerType, LabResultCategory> = {
   CRE: "BLOOD",
   BUN: "BLOOD",
-  SDMA: "ENDOCRINE",
+  SDMA: "BLOOD",
   PHOSPHORUS: "BLOOD",
+  ALT: "BLOOD",
+  AST: "BLOOD",
+  ALP: "BLOOD",
+  GLU: "BLOOD",
+  WBC: "BLOOD",
+  HCT: "BLOOD",
+  TP: "BLOOD",
+  ALB: "BLOOD",
+  TCHO: "BLOOD",
+  TG: "BLOOD",
+  Na: "BLOOD",
+  K: "BLOOD",
+  Cl: "BLOOD",
+  CRP: "BLOOD",
   URINE_GLUCOSE: "URINE",
   URINE_KETONE: "URINE",
   USG: "URINE",
   URINE_PROTEIN: "URINE",
-  UPCR: "URINE"
+  UPCR: "URINE",
+  FRUCTOSAMINE: "ENDOCRINE",
+  T4: "ENDOCRINE",
+  FT4: "ENDOCRINE",
+  TSH: "ENDOCRINE",
+  CORTISOL: "ENDOCRINE",
+  INSULIN: "ENDOCRINE",
+  ACTH: "ENDOCRINE"
 };
 
 export type CoreHealthEntry = {
@@ -63,7 +102,7 @@ export type LabResultEntry = {
 export type HealthExtensionEntry = {
   id: string;
   petId: string;
-  key: HealthExtensionKey;
+  name: string;
   value: number;
   unit: string | null;
   recordedAt: string;

@@ -65,7 +65,7 @@ describe("/api/pets/[petId]/health/trends", () => {
       {
         id: "e1",
         petId: validPetId,
-        key: "INFUSION_ML",
+        name: "点滴量",
         value: 100,
         unit: "mL",
         recordedAt: new Date("2026-04-03T00:00:00.000Z"),
@@ -81,7 +81,7 @@ describe("/api/pets/[petId]/health/trends", () => {
       expect.arrayContaining([
         expect.objectContaining({ key: "core:WEIGHT_KG", label: "体重 (kg)" }),
         expect.objectContaining({ key: "lab:CRE", label: "Cre" }),
-        expect.objectContaining({ key: "ext:INFUSION_ML", label: "点滴量 (mL)" })
+        expect.objectContaining({ key: "ext:点滴量", label: "点滴量 (mL)" })
       ])
     );
   });

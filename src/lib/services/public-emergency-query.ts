@@ -41,11 +41,14 @@ const withRecentSummaries = async (token: string, base: EmergencyViewPayload): P
     select: {
       pet: {
         select: {
-          displaySettings: {
+          household: {
             select: {
-              showEmergencyMedicationSummary: true,
-              showEmergencyVaccinationSummary: true,
-              showEmergencyMedicalRecordSummary: true
+              members: {
+                where: { role: "OWNER" },
+                orderBy: { createdAt: "asc" },
+                take: 1,
+                select: { userId: true }
+              }
             }
           },
           medications: {
@@ -82,7 +85,19 @@ const withRecentSummaries = async (token: string, base: EmergencyViewPayload): P
     }
   });
 
-  const settings = tokenRow?.pet?.displaySettings ?? DEFAULT_SUMMARY_SETTINGS;
+  const ownerUserId = tokenRow?.pet?.household?.members[0]?.userId ?? null;
+  const ownerSettings = ownerUserId
+    ? await prisma.ownerDisplaySettings.findUnique({
+        where: { ownerUserId },
+        select: {
+          showEmergencyMedicationSummary: true,
+          showEmergencyVaccinationSummary: true,
+          showEmergencyMedicalRecordSummary: true
+        }
+      })
+    : null;
+
+  const settings = ownerSettings ?? DEFAULT_SUMMARY_SETTINGS;
   const payload: EmergencyViewPayload = { ...base };
 
   if (settings.showEmergencyMedicationSummary) {

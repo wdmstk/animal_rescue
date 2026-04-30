@@ -47,11 +47,32 @@ enum LabMarkerType {
   BUN
   SDMA
   PHOSPHORUS
+  ALT
+  AST
+  ALP
+  GLU
+  WBC
+  HCT
+  TP
+  ALB
+  TCHO
+  TG
+  Na
+  K
+  Cl
+  CRP
   URINE_GLUCOSE
   URINE_KETONE
   USG
   URINE_PROTEIN
   UPCR
+  FRUCTOSAMINE
+  T4
+  FT4
+  TSH
+  CORTISOL
+  INSULIN
+  ACTH
 }
 
 enum LabResultCategory {
@@ -205,6 +226,7 @@ model PetVaccination {
   id        String          @id @default(uuid()) @db.Uuid
   petId      String          @db.Uuid
   type       VaccinationType
+  customTypeName String?
   date       DateTime
   nextDue    DateTime?
   createdAt  DateTime        @default(now())
@@ -273,7 +295,7 @@ model PetLabResultEntry {
 model PetHealthExtensionEntry {
   id         String             @id @default(uuid()) @db.Uuid
   petId      String             @db.Uuid
-  key        HealthExtensionKey
+  name       String
   value      Decimal            @db.Decimal(10, 2)
   unit       String?
   recordedAt DateTime
@@ -282,7 +304,7 @@ model PetHealthExtensionEntry {
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 
-  @@index([petId, key, recordedAt])
+  @@index([petId, name, recordedAt])
 }
 
 model UserSubscription {
@@ -294,4 +316,17 @@ model UserSubscription {
   currentPeriodEnd     DateTime?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
+}
+
+model OwnerDisplaySettings {
+  id                                String   @id @default(uuid()) @db.Uuid
+  ownerUserId                       String   @unique @db.Uuid
+  showMedicationCard                Boolean  @default(true)
+  showVaccinationCard               Boolean  @default(true)
+  showHealthCard                    Boolean  @default(true)
+  showMedicalRecordCard             Boolean  @default(true)
+  showEmergencyMedicationSummary    Boolean  @default(true)
+  showEmergencyVaccinationSummary   Boolean  @default(true)
+  showEmergencyMedicalRecordSummary Boolean  @default(true)
+  updatedAt                         DateTime @updatedAt
 }

@@ -37,7 +37,7 @@ type PetDetailResponse = {
       emergencyContactPhone: string | null;
     } | null;
     medications: Array<{ id: string; name: string; dosage: string; frequency: string; startDate: string; endDate: string | null }>;
-    vaccinations: Array<{ id: string; type: "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER"; date: string; nextDue: string | null }>;
+    vaccinations: Array<{ id: string; type: "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER"; customTypeName: string | null; date: string; nextDue: string | null }>;
     medicalRecords: Array<{ id: string; date: string; title: string; description: string; recordType: "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER" }>;
   };
 };
@@ -147,9 +147,9 @@ export default async function PetDetailPage({
           <VaccinationManager
             petId={petId}
             initialItems={[
-              { type: "狂犬病", date: "2026-03-20", nextDue: "2027-03-20" },
-              { type: "混合ワクチン", date: "2025-04-10", nextDue: "2026-04-10" },
-              { type: "フィラリア", date: "2026-04-01", nextDue: "2026-05-01" }
+              { type: "狂犬病", customTypeName: null, date: "2026-03-20", nextDue: "2027-03-20" },
+              { type: "混合ワクチン", customTypeName: null, date: "2025-04-10", nextDue: "2026-04-10" },
+              { type: "フィラリア", customTypeName: null, date: "2026-04-01", nextDue: "2026-05-01" }
             ]}
           />
 
@@ -270,6 +270,7 @@ export default async function PetDetailPage({
         initialItems={pet.vaccinations.map((item) => ({
           id: item.id,
           typeCode: item.type,
+          customTypeName: item.customTypeName,
           date: normalizeDate(item.date),
           nextDue: item.nextDue ? normalizeDate(item.nextDue) : null,
           type:
@@ -281,7 +282,7 @@ export default async function PetDetailPage({
                   ? "フィラリア"
                   : item.type === "FLEA_TICK"
                     ? "ノミ・ダニ"
-                    : "その他"
+                    : item.customTypeName ?? "その他"
         }))}
       />
 

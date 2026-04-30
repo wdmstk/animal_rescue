@@ -36,7 +36,7 @@ describe("/api/pets/[petId]/health/extensions", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          key: "UNKNOWN_KEY",
+          name: "",
           value: 120,
           recordedAt: "2026-04-20"
         })
@@ -52,7 +52,7 @@ describe("/api/pets/[petId]/health/extensions", () => {
     createMock.mockResolvedValue({
       id: "id-1",
       petId: validPetId,
-      key: "INFUSION_ML",
+      name: "点滴量",
       value: 120,
       unit: null,
       recordedAt: new Date("2026-04-20T00:00:00.000Z"),
@@ -64,7 +64,7 @@ describe("/api/pets/[petId]/health/extensions", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          key: "INFUSION_ML",
+          name: "点滴量",
           value: 120,
           unit: null,
           recordedAt: "2026-04-20"
@@ -78,7 +78,7 @@ describe("/api/pets/[petId]/health/extensions", () => {
       expect.objectContaining({
         data: expect.objectContaining({
           petId: validPetId,
-          key: "INFUSION_ML",
+          name: "点滴量",
           unit: null
         })
       })
@@ -90,7 +90,7 @@ describe("/api/pets/[petId]/health/extensions", () => {
       {
         id: "id-1",
         petId: validPetId,
-        key: "INFUSION_ML",
+        name: "点滴量",
         value: 100,
         unit: "mL",
         recordedAt: new Date("2026-04-20T00:00:00.000Z"),
@@ -103,6 +103,6 @@ describe("/api/pets/[petId]/health/extensions", () => {
     expect(response.status).toBe(200);
     const payload = await response.json();
     expect(payload.data).toHaveLength(1);
-    expect(payload.data[0].key).toBe("INFUSION_ML");
+    expect(payload.data[0].name).toBe("点滴量");
   });
 });

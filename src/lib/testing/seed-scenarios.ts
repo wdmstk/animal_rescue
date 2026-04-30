@@ -504,11 +504,13 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
       id: "47000000-0000-4000-8000-000000000003",
       petId: seedIds.pets.showcaseRabbit,
       type: "OTHER",
+      customTypeName: "ウサギ用ワクチン",
       date: minusDays(45),
       nextDue: null
     },
     update: {
       type: "OTHER",
+      customTypeName: "ウサギ用ワクチン",
       date: minusDays(45),
       nextDue: null
     }
@@ -617,14 +619,14 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     create: {
       id: "50000000-0000-4000-8000-000000000001",
       petId: seedIds.pets.showcaseDog,
-      key: "INFUSION_ML",
+      name: "点滴量",
       value: 120,
       unit: "mL",
       recordedAt: minusDays(3),
       note: `${SEED_PREFIX} extension sample`
     },
     update: {
-      key: "INFUSION_ML",
+      name: "点滴量",
       value: 120,
       unit: "mL",
       recordedAt: minusDays(3),

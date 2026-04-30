@@ -9,11 +9,32 @@ const defaultUnitMap: Record<LabMarkerType, string> = {
   BUN: "mg/dL",
   SDMA: "ug/dL",
   PHOSPHORUS: "mg/dL",
+  ALT: "U/L",
+  AST: "U/L",
+  ALP: "U/L",
+  GLU: "mg/dL",
+  WBC: "10^3/uL",
+  HCT: "%",
+  TP: "g/dL",
+  ALB: "g/dL",
+  TCHO: "mg/dL",
+  TG: "mg/dL",
+  Na: "mEq/L",
+  K: "mEq/L",
+  Cl: "mEq/L",
+  CRP: "mg/dL",
   URINE_GLUCOSE: "mg/dL",
   URINE_KETONE: "mg/dL",
   USG: "SG",
   URINE_PROTEIN: "mg/dL",
-  UPCR: "ratio"
+  UPCR: "ratio",
+  FRUCTOSAMINE: "umol/L",
+  T4: "ug/dL",
+  FT4: "ng/dL",
+  TSH: "ng/mL",
+  CORTISOL: "ug/dL",
+  INSULIN: "uIU/mL",
+  ACTH: "pg/mL"
 };
 
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {

@@ -17,6 +17,14 @@ type HealthSnapshot = {
   extensionEntries: HealthExtensionEntry[];
   series: HealthTrendSeries[];
 };
+type ExtensionDraft = {
+  id: string;
+  name: string;
+  value: string;
+  unit: string;
+  recordedAt: string;
+  note: string;
+};
 
 const coreTypeLabelMap: Record<(typeof CORE_METRIC_TYPES)[number], string> = {
   WEIGHT_KG: "体重 (kg)",
@@ -33,11 +41,32 @@ const labMarkerLabelMap: Record<(typeof LAB_MARKER_TYPES)[number], string> = {
   BUN: "BUN",
   SDMA: "SDMA",
   PHOSPHORUS: "リン(P)",
+  ALT: "ALT",
+  AST: "AST",
+  ALP: "ALP",
+  GLU: "GLU",
+  WBC: "WBC",
+  HCT: "HCT",
+  TP: "TP",
+  ALB: "ALB",
+  TCHO: "TCHO",
+  TG: "TG",
+  Na: "Na",
+  K: "K",
+  Cl: "Cl",
+  CRP: "CRP",
   URINE_GLUCOSE: "尿糖",
   URINE_KETONE: "尿ケトン",
   USG: "尿比重",
   URINE_PROTEIN: "尿蛋白",
-  UPCR: "UPCR"
+  UPCR: "UPCR",
+  FRUCTOSAMINE: "フルクトサミン",
+  T4: "T4",
+  FT4: "FT4",
+  TSH: "TSH",
+  CORTISOL: "コルチゾール",
+  INSULIN: "インスリン",
+  ACTH: "ACTH"
 };
 const labCategoryLabelMap: Record<LabResultEntry["category"], string> = {
   BLOOD: "血液検査",
@@ -51,6 +80,14 @@ const labMarkersByCategory: Record<LabResultEntry["category"], Array<(typeof LAB
 };
 
 const today = new Date().toISOString().slice(0, 10);
+const createExtensionDraft = (): ExtensionDraft => ({
+  id: crypto.randomUUID(),
+  name: "",
+  value: "",
+  unit: "",
+  recordedAt: today,
+  note: ""
+});
 const periodOptions: { label: string; value: number | null }[] = [
   { label: "全期間", value: null },
   { label: "90日", value: 90 },
@@ -160,9 +197,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
   const [labDate, setLabDate] = useState(today);
 
   const [enableExtension, setEnableExtension] = useState(false);
-  const [extensionValue, setExtensionValue] = useState("120");
-  const [extensionUnit, setExtensionUnit] = useState("mL");
-  const [extensionDate, setExtensionDate] = useState(today);
+  const [extensionRows, setExtensionRows] = useState<ExtensionDraft[]>([createExtensionDraft()]);
 
   const [selectedSeriesKey, setSelectedSeriesKey] = useState<string>("core:WEIGHT_KG");
   const [seriesCategory, setSeriesCategory] = useState<HealthSeriesCategory>("all");
@@ -224,10 +259,11 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
   const selectedSeriesSummary = useMemo(() => summarizeHealthTrendSeries(selectedSeries), [selectedSeries]);
   const parsedCoreValue = parseNonNegativeNumber(coreValue);
   const parsedLabValue = parseNonNegativeNumber(labValue);
-  const parsedExtensionValue = parseNonNegativeNumber(extensionValue);
   const hasCoreInputError = parsedCoreValue === null || !isValidDateInput(coreDate);
   const hasLabInputError = parsedLabValue === null || !isValidDateInput(labDate) || labUnit.trim().length === 0;
-  const hasExtensionInputError = parsedExtensionValue === null || !isValidDateInput(extensionDate);
+  const hasExtensionInputError = extensionRows.some(
+    (item) => item.name.trim().length === 0 || parseNonNegativeNumber(item.value) === null || !isValidDateInput(item.recordedAt)
+  );
   const availableLabMarkers = useMemo(() => labMarkersByCategory[labCategory], [labCategory]);
 
   const submitCore = async (event: FormEvent<HTMLFormElement>) => {
@@ -278,20 +314,26 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
 
   const submitExtension = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (hasExtensionInputError || parsedExtensionValue === null) {
+    if (hasExtensionInputError) {
       setErrorMessage("拡張項目の入力値または日付が不正です。");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await postJson(`/api/pets/${petId}/health/extensions`, {
-        key: "INFUSION_ML",
-        value: parsedExtensionValue,
-        unit: extensionUnit.trim() || null,
-        recordedAt: extensionDate
-      });
+      await Promise.all(
+        extensionRows.map((item) =>
+          postJson(`/api/pets/${petId}/health/extensions`, {
+            name: item.name.trim(),
+            value: parseNonNegativeNumber(item.value),
+            unit: item.unit.trim() || null,
+            recordedAt: item.recordedAt,
+            note: item.note.trim() || null
+          })
+        )
+      );
       await refreshData();
+      setExtensionRows([createExtensionDraft()]);
     } catch {
       setErrorMessage("拡張項目の保存に失敗しました。");
     } finally {
@@ -412,36 +454,78 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
 
       {enableExtension && (
         <form onSubmit={submitExtension} className="mt-3 space-y-2 rounded-xl border border-teal-100 bg-teal-50 p-3">
-          <p className="text-sm font-semibold text-teal-900">拡張項目: 点滴量</p>
-          <div className="grid gap-2 md:grid-cols-3">
-            <input
-              value={extensionValue}
-              onChange={(event) => setExtensionValue(event.target.value)}
-              type="number"
-              step="0.01"
-              className="rounded border border-teal-300 bg-white px-2 py-1 text-sm"
-              placeholder="点滴量"
-            />
-            <input
-              value={extensionUnit}
-              onChange={(event) => setExtensionUnit(event.target.value)}
-              type="text"
-              className="rounded border border-teal-300 bg-white px-2 py-1 text-sm"
-              placeholder="単位"
-            />
-            <input
-              value={extensionDate}
-              onChange={(event) => setExtensionDate(event.target.value)}
-              type="date"
-              className="rounded border border-teal-300 bg-white px-2 py-1 text-sm"
-            />
-          </div>
+          <p className="text-sm font-semibold text-teal-900">拡張項目（複数可）</p>
+          {extensionRows.map((row) => (
+            <div key={row.id} className="grid gap-2 rounded-lg border border-teal-200 bg-white p-2 md:grid-cols-5">
+              <input
+                value={row.name}
+                onChange={(event) =>
+                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, name: event.target.value } : item)))
+                }
+                type="text"
+                className="rounded border border-teal-300 px-2 py-1 text-sm"
+                placeholder="項目名"
+              />
+              <input
+                value={row.value}
+                onChange={(event) =>
+                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, value: event.target.value } : item)))
+                }
+                type="number"
+                step="0.01"
+                className="rounded border border-teal-300 px-2 py-1 text-sm"
+                placeholder="値"
+              />
+              <input
+                value={row.unit}
+                onChange={(event) =>
+                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, unit: event.target.value } : item)))
+                }
+                type="text"
+                className="rounded border border-teal-300 px-2 py-1 text-sm"
+                placeholder="単位"
+              />
+              <input
+                value={row.recordedAt}
+                onChange={(event) =>
+                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, recordedAt: event.target.value } : item)))
+                }
+                type="date"
+                className="rounded border border-teal-300 px-2 py-1 text-sm"
+              />
+              <input
+                value={row.note}
+                onChange={(event) =>
+                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, note: event.target.value } : item)))
+                }
+                type="text"
+                className="rounded border border-teal-300 px-2 py-1 text-sm"
+                placeholder="メモ"
+              />
+              {extensionRows.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => setExtensionRows((current) => current.filter((item) => item.id !== row.id))}
+                  className="rounded border border-rose-300 px-2 py-1 text-xs font-semibold text-rose-700 md:col-span-5"
+                >
+                  この行を削除
+                </button>
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => setExtensionRows((current) => [...current, createExtensionDraft()])}
+            className="w-full rounded border border-teal-300 bg-white px-3 py-2 text-xs font-semibold text-teal-800"
+          >
+            行を追加
+          </button>
           <button
             type="submit"
             disabled={isSubmitting || hasExtensionInputError}
             className="w-full rounded bg-teal-700 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
           >
-            点滴量を保存
+            拡張項目を保存
           </button>
         </form>
       )}
@@ -600,7 +684,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
           <ul className="mt-2 space-y-1 text-xs text-slate-600">
             {extensionEntries.slice(0, 5).map((item) => (
               <li key={item.id}>
-                {item.recordedAt.slice(0, 10)} / 点滴量: {item.value} {item.unit ?? ""}
+                {item.recordedAt.slice(0, 10)} / {item.name}: {item.value} {item.unit ?? ""}
               </li>
             ))}
             {extensionEntries.length === 0 && <li>記録なし</li>}

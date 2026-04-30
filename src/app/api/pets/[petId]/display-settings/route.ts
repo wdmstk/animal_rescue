@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS = petDisplaySettingsSchema.parse({
 });
 
 function toResponseData(
-  petId: string,
+  ownerUserId: string,
   value: {
     showMedicationCard: boolean;
     showVaccinationCard: boolean;
@@ -30,7 +30,7 @@ function toResponseData(
   }
 ) {
   return {
-    petId,
+    ownerUserId,
     showMedicationCard: value.showMedicationCard,
     showVaccinationCard: value.showVaccinationCard,
     showHealthCard: value.showHealthCard,
@@ -57,11 +57,23 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     return access;
   }
 
-  const settings = await prisma.petDisplaySettings.findUnique({
-    where: { petId: access.petId }
+  const ownerMembership = await prisma.householdMember.findFirst({
+    where: {
+      householdId: access.householdId,
+      role: "OWNER"
+    },
+    select: { userId: true },
+    orderBy: { createdAt: "asc" }
+  });
+  if (!ownerMembership) {
+    return NextResponse.json({ error: "Owner not found" }, { status: 404 });
+  }
+
+  const settings = await prisma.ownerDisplaySettings.findUnique({
+    where: { ownerUserId: ownerMembership.userId }
   });
 
-  return NextResponse.json({ data: toResponseData(access.petId, settings ?? DEFAULT_SETTINGS) });
+  return NextResponse.json({ data: toResponseData(ownerMembership.userId, settings ?? DEFAULT_SETTINGS) });
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ petId: string }> }) {
@@ -86,15 +98,30 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
     return access;
   }
 
-  const updated = await prisma.petDisplaySettings.upsert({
-    where: { petId: access.petId },
+  const ownerMembership = await prisma.householdMember.findFirst({
+    where: {
+      householdId: access.householdId,
+      role: "OWNER"
+    },
+    select: { userId: true },
+    orderBy: { createdAt: "asc" }
+  });
+  if (!ownerMembership) {
+    return NextResponse.json({ error: "Owner not found" }, { status: 404 });
+  }
+  if (ownerMembership.userId !== auth.userId) {
+    return NextResponse.json({ error: "Only owner can update display settings" }, { status: 403 });
+  }
+
+  const updated = await prisma.ownerDisplaySettings.upsert({
+    where: { ownerUserId: ownerMembership.userId },
     update: parsedBody.data,
     create: {
-      petId: access.petId,
+      ownerUserId: ownerMembership.userId,
       ...DEFAULT_SETTINGS,
       ...parsedBody.data
     }
   });
 
-  return NextResponse.json({ data: toResponseData(updated.petId, updated) });
+  return NextResponse.json({ data: toResponseData(updated.ownerUserId, updated) });
 }

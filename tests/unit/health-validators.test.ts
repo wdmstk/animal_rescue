@@ -26,7 +26,7 @@ describe("health validators", () => {
 
   it("accepts optional extension unit", () => {
     const parsed = healthExtensionEntryInputSchema.safeParse({
-      key: "INFUSION_ML",
+      name: "点滴量",
       value: 100,
       recordedAt: "2026-04-20",
       unit: null
