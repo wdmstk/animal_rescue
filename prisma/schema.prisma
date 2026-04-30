@@ -257,6 +257,9 @@ model PetDisplaySettings {
   showEmergencyMedicationSummary  Boolean  @default(true)
   showEmergencyVaccinationSummary Boolean  @default(true)
   showEmergencyMedicalRecordSummary Boolean @default(true)
+  medicationReminderEnabled       Boolean  @default(false)
+  medicationReminderChannel       String   @default("email")
+  medicationReminderDestination   String   @default("")
   updatedAt                       DateTime @updatedAt
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
