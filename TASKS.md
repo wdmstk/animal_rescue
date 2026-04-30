@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-166` 初回オンボーディング導線
+1. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
+2. `TASK-166` 初回オンボーディング導線
 
 ### todo
 1. `TASK-165` データ共有出力（PDF/印刷向け）
@@ -115,6 +116,20 @@ Development Task List
   - `edited` イベント時のみ `ci_green_confirmed` / `self_review_final_done_after_ci_green` / `ready_for_main_merge` を検証する
   - `push` on `main` 時に `issue_closed_on_task_done` と対応Issueのクローズ状態を検証できる
   - PRテンプレと運用ドキュメントが段階ガードの時系列に一致する
+  - `npm run lint` / `npx vitest run` が通る
+
+### Post-Mergeチェック項目のCI強制ガード追加
+- Task ID: `TASK-168`
+- ブランチ: `feat/TASK-168-post-merge-checklist-ci-guard`
+- ステータス: `in_progress`
+- 概要: `issue_closed_on_task_done` チェックを人手依存にせず、チェック実行タイミングとIssueクローズ状態をCIで強制検証する
+- Issue: `#152`
+- 依存関係:
+  - prerequisite: `TASK-167`
+- 完了条件:
+  - PR本文で `issue_closed_on_task_done` が未チェックの場合、該当ガードは評価をスキップする
+  - `issue_closed_on_task_done` がチェックされた場合のみ、PRがmerged済みかつ対応Issueがclosedであることを検証する
+  - 条件未達でチェックされた場合、CIが失敗して漏れを防止できる
   - `npm run lint` / `npx vitest run` が通る
 
 ### 緊急公開画面にワンタップ導線追加

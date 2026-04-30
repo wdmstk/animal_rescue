@@ -217,6 +217,65 @@ jobs:
               );
             }
 
+  pr-post-merge-checklist-guard:
+    name: PR Post-Merge Checklist Guard
+    if: github.event_name == 'pull_request' && github.event.action == 'edited'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Detect post-merge checklist phase
+        id: postmerge_phase
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if [[ -z "${PR_BODY}" ]]; then
+            echo "should_validate=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if printf '%s\n' "${PR_BODY}" | grep -Eiq -- "- \[[xX]\] issue_closed_on_task_done"; then
+            echo "should_validate=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Post-merge checklist is not checked yet. Skip post-merge guard in this edited event."
+            echo "should_validate=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate post-merge checklist state
+        if: steps.postmerge_phase.outputs.should_validate == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const pr = context.payload.pull_request;
+            const body = pr.body ?? "";
+
+            if (!pr.merged_at) {
+              core.setFailed(
+                "issue_closed_on_task_done can be checked only after the PR is merged."
+              );
+              return;
+            }
+
+            const issueMatch = body.match(/- 対応Issue:\s*#(\d+)/i);
+            if (!issueMatch) {
+              core.setFailed("PR body is missing 対応Issue: #<number>.");
+              return;
+            }
+
+            const issueNumber = Number(issueMatch[1]);
+            const issue = await github.rest.issues.get({
+              owner,
+              repo,
+              issue_number: issueNumber
+            });
+
+            if (issue.data.state !== "closed") {
+              core.setFailed(
+                `issue_closed_on_task_done is checked, but linked issue #${issueNumber} is ${issue.data.state}.`
+              );
+            }
+
   post-merge-issue-guard:
     name: Post-Merge Issue Guard
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
