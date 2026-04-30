@@ -1,3 +1,4 @@
+import { ChangeHistoryList } from "@/components/features/pets/change-history-list";
 import { EmergencyEditorCard } from "@/components/features/pets/emergency-editor-card";
 import { EmergencyQrShareCard } from "@/components/features/pets/emergency-qr-share-card";
 import { HealthTrackingPanel } from "@/components/features/pets/health-tracking-panel";
@@ -11,6 +12,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { E2E_PUBLIC_EMERGENCY_TOKEN } from "@/lib/constants/emergency";
+import { buildChangeHistoryItems } from "@/lib/services/change-history";
 
 type PetDetailResponse = {
   data: {
@@ -35,10 +37,11 @@ type PetDetailResponse = {
       vetPhone: string | null;
       emergencyContactName: string | null;
       emergencyContactPhone: string | null;
+      updatedAt: string;
     } | null;
-    medications: Array<{ id: string; name: string; dosage: string; frequency: string; startDate: string; endDate: string | null }>;
-    vaccinations: Array<{ id: string; type: "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER"; customTypeName: string | null; date: string; nextDue: string | null }>;
-    medicalRecords: Array<{ id: string; date: string; title: string; description: string; recordType: "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER" }>;
+    medications: Array<{ id: string; name: string; dosage: string; frequency: string; startDate: string; endDate: string | null; createdAt: string }>;
+    vaccinations: Array<{ id: string; type: "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER"; customTypeName: string | null; date: string; nextDue: string | null; createdAt: string }>;
+    medicalRecords: Array<{ id: string; date: string; title: string; description: string; recordType: "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER"; createdAt: string }>;
   };
 };
 
@@ -174,6 +177,24 @@ export default async function PetDetailPage({
               }
             ]}
           />
+
+          <ChangeHistoryList
+            items={buildChangeHistoryItems({
+              emergencyInfo: { updatedAt: "2026-04-21T10:00:00.000Z" },
+              medications: [
+                { id: "11111111-1111-4111-8111-111111111111", name: "ピモベンダン", createdAt: "2026-04-21T10:10:00.000Z" },
+                { id: "22222222-2222-4222-8222-222222222222", name: "整腸剤", createdAt: "2026-04-21T10:20:00.000Z" }
+              ],
+              vaccinations: [
+                { id: "v1", type: "RABIES", customTypeName: null, createdAt: "2026-04-22T09:00:00.000Z" },
+                { id: "v2", type: "CORE", customTypeName: null, createdAt: "2026-04-22T09:10:00.000Z" }
+              ],
+              medicalRecords: [
+                { id: "1", title: "定期健診", createdAt: "2026-04-22T12:00:00.000Z" },
+                { id: "2", title: "胸部レントゲン", createdAt: "2026-04-22T12:10:00.000Z" }
+              ]
+            })}
+          />
         </div>
       );
   }
@@ -219,6 +240,26 @@ export default async function PetDetailPage({
   }
 
   const emergencyLinkToken = process.env.PLAYWRIGHT_E2E === "1" ? E2E_PUBLIC_EMERGENCY_TOKEN : activeToken;
+  const changeHistoryItems = buildChangeHistoryItems({
+    emergencyInfo: pet.emergencyInfo ? { updatedAt: pet.emergencyInfo.updatedAt } : null,
+    medications: pet.medications.map((item) => ({
+      id: item.id,
+      name: item.name,
+      createdAt: item.createdAt
+    })),
+    vaccinations: pet.vaccinations.map((item) => ({
+      id: item.id,
+      type: item.type,
+      customTypeName: item.customTypeName,
+      createdAt: item.createdAt
+    })),
+    medicalRecords: pet.medicalRecords.map((item) => ({
+      id: item.id,
+      title: item.title,
+      createdAt: item.createdAt
+    }))
+  });
+
   return (
     <div className="space-y-4">
       {emergencyLinkToken ? (
@@ -298,6 +339,8 @@ export default async function PetDetailPage({
           recordType: item.recordType
         }))}
       />
+
+      <ChangeHistoryList items={changeHistoryItems} />
     </div>
   );
 }

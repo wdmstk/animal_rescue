@@ -23,13 +23,12 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-163` 通知設定UI（投薬リマインダー実利用化）
+1. `TASK-164` 変更履歴（監査ログ）表示
 
 ### todo
 1. `TASK-165` データ共有出力（PDF/印刷向け）
-2. `TASK-164` 変更履歴（監査ログ）表示
-3. `TASK-159` ペット詳細ページの情報密度最適化（セクションナビ）
-4. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
+2. `TASK-159` ペット詳細ページの情報密度最適化（セクションナビ）
+3. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
 
 ### blocked
 （なし）
@@ -38,9 +37,10 @@ Development Task List
 1. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
 2. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
 3. `TASK-166` 初回オンボーディング導線
-4. `TASK-162` Empty State改善（次アクション導線つき）
-5. `TASK-161` ローディング/スケルトンの統一
-6. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
+4. `TASK-163` 通知設定UI（投薬リマインダー実利用化）
+5. `TASK-162` Empty State改善（次アクション導線つき）
+6. `TASK-161` ローディング/スケルトンの統一
+7. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
 6. `TASK-157` 緊急公開画面にワンタップ導線追加
 6. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
 4. `TASK-155` 検査/設定修正 + 拡張項目自由化（複数指定）
@@ -200,7 +200,7 @@ Development Task List
 ### 通知設定UI（投薬リマインダー実利用化）
 - Task ID: `TASK-163`
 - ブランチ: `feat/TASK-163-medication-reminder-settings-ui`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 投薬リマインダーに設定UIを追加し、通知のON/OFFや送信先を管理可能にする
 - Issue: `#142`
 - 依存関係:
@@ -213,7 +213,7 @@ Development Task List
 ### 変更履歴（監査ログ）表示
 - Task ID: `TASK-164`
 - ブランチ: `feat/TASK-164-change-history-view`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 緊急情報/投薬/ワクチン/医療記録の更新履歴を表示し共同編集の追跡性を上げる
 - Issue: `#143`
 - 依存関係:
