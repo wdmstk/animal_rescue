@@ -23,13 +23,12 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-150` ペット単位表示設定のデータモデル/API実装
 
 ### todo
 1. `TASK-151` 健康記録UIをカテゴリ分離 + 尿項目段階導入
-2. `TASK-150` ペット単位表示設定のデータモデル/API実装
-3. `TASK-149` 設定画面での表示ON/OFF管理UI
-4. `TASK-148` 緊急公開画面への追加表示（直近サマリー）反映
+2. `TASK-149` 設定画面での表示ON/OFF管理UI
+3. `TASK-148` 緊急公開画面への追加表示（直近サマリー）反映
 
 ### blocked
 （なし）
@@ -119,7 +118,7 @@ Development Task List
 ### ペット単位表示設定のデータモデル/API実装
 - Task ID: `TASK-150`
 - ブランチ: `feat/TASK-150-pet-display-settings-api`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: ペット単位で詳細カード表示・緊急追加表示を制御する設定モデルとAPIを実装する
 - Issue: `#119`
 - 依存関係:

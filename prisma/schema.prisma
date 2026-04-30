@@ -131,6 +131,7 @@ model Pet {
   medications      PetMedication[]
   vaccinations     PetVaccination[]
   emergencyToken   PetEmergencyToken?
+  displaySettings  PetDisplaySettings?
   coreMetrics      PetCoreMetricEntry[]
   labResults       PetLabResultEntry[]
   healthExtensions PetHealthExtensionEntry[]
@@ -215,6 +216,21 @@ model PetEmergencyToken {
   isActive   Boolean  @default(true)
   rotatedAt  DateTime?
   createdAt  DateTime @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model PetDisplaySettings {
+  id                              String   @id @default(uuid()) @db.Uuid
+  petId                           String   @unique @db.Uuid
+  showMedicationCard              Boolean  @default(true)
+  showVaccinationCard             Boolean  @default(true)
+  showHealthCard                  Boolean  @default(true)
+  showMedicalRecordCard           Boolean  @default(true)
+  showEmergencyMedicationSummary  Boolean  @default(true)
+  showEmergencyVaccinationSummary Boolean  @default(true)
+  showEmergencyMedicalRecordSummary Boolean @default(true)
+  updatedAt                       DateTime @updatedAt
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 }
