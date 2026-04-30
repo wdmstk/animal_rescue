@@ -89,7 +89,7 @@ export function PetPhotoGallery({ petId, photos }: PetPhotoGalleryProps) {
     <section className="rounded-2xl bg-white p-4 shadow-sm">
       <h2 className="text-base font-bold text-slate-900">サブ写真</h2>
       <form className="mt-3 space-y-2" onSubmit={handleSubmit}>
-        <input ref={fileInputRef} type="file" accept="image/*" className="block w-full text-sm text-slate-700" />
+        <input id="pet-photo-file-input" ref={fileInputRef} type="file" accept="image/*" className="block w-full text-sm text-slate-700" />
         <button
           type="submit"
           disabled={uploading}
@@ -113,7 +113,17 @@ export function PetPhotoGallery({ petId, photos }: PetPhotoGalleryProps) {
           ))}
         </div>
       ) : (
-        <p className="mt-3 text-sm text-slate-500">写真がまだありません。</p>
+        <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <p className="text-sm text-slate-600">写真がまだありません。</p>
+          <p className="mt-1 text-xs text-slate-500">ファイルを選択して「写真を追加」を押すと登録できます。</p>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.focus()}
+            className="mt-2 inline-flex rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-700"
+          >
+            画像を選択する
+          </button>
+        </div>
       )}
     </section>
   );

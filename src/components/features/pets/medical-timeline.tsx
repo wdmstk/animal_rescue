@@ -19,6 +19,18 @@ export function MedicalTimeline({ items }: { items: TimelineItem[] }) {
     <section className="rounded-2xl bg-white p-4 shadow-sm">
       <h2 className="text-base font-bold text-slate-900">医療記録タイムライン</h2>
       <div className="mt-3 space-y-3">
+        {items.length === 0 ? (
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <p className="text-sm text-slate-600">医療記録はまだありません。</p>
+            <p className="mt-1 text-xs text-slate-500">上のフォームから診察・検査・投薬メモを追加してください。</p>
+            <a
+              href="#medical-record-form"
+              className="mt-2 inline-flex rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-700"
+            >
+              記録入力へ移動
+            </a>
+          </div>
+        ) : null}
         {items.map((item) => (
           <article key={item.id} className="rounded-xl border border-slate-200 p-3">
             <div className="flex items-center justify-between">
