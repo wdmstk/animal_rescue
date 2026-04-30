@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
 
 ### todo
 （なし）
@@ -109,6 +109,20 @@ Development Task List
   - `POST/GET /api/pets/[petId]/health/extensions` が `name` ベース契約へ移行する
   - 既存 `INFUSION_ML` データが `name=点滴量` として互換表示される
   - ワクチン履歴で日付説明が追加され、`OTHER` 選択時に自由記載名が保存される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### 設定表示APIのPrisma delegate未生成時500エラー修正
+- Task ID: `TASK-156`
+- ブランチ: `fix/TASK-156-settings-display-prisma-delegate-guard`
+- ステータス: `in_progress`
+- 概要: `/api/settings/display` で `prisma.ownerDisplaySettings` が未生成な実行環境でも500で落ちないように防御し、再発防止テストを追加する
+- Issue: `#134`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `GET /api/settings/display` で delegate未生成時に500を返さず、既定設定で応答できる
+  - `PATCH /api/settings/display` で delegate未生成時は明示的なエラーを返す
+  - 対象APIのテストで未生成ケースを検証できる
   - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### PRマージ前チェックをCI実行結果と連動強制

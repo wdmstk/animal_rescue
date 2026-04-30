@@ -29,6 +29,23 @@ const toResponseData = (
   ...value
 });
 
+type OwnerDisplaySettingsDelegate = {
+  findUnique: (args: { where: { ownerUserId: string } }) => Promise<(typeof DEFAULT_SETTINGS & { ownerUserId: string }) | null>;
+  upsert: (args: {
+    where: { ownerUserId: string };
+    update: Partial<typeof DEFAULT_SETTINGS>;
+    create: { ownerUserId: string } & typeof DEFAULT_SETTINGS;
+  }) => Promise<{ ownerUserId: string } & typeof DEFAULT_SETTINGS>;
+};
+
+const getOwnerDisplaySettingsDelegate = (): OwnerDisplaySettingsDelegate | null => {
+  const delegate = (prisma as unknown as { ownerDisplaySettings?: OwnerDisplaySettingsDelegate }).ownerDisplaySettings;
+  if (!delegate?.findUnique || !delegate?.upsert) {
+    return null;
+  }
+  return delegate;
+};
+
 const findOwnerUserId = async (userId: string): Promise<string | NextResponse> => {
   const membership = await prisma.householdMember.findFirst({
     where: { userId },
@@ -66,7 +83,12 @@ export async function GET() {
     return ownerUserId;
   }
 
-  const settings = await prisma.ownerDisplaySettings.findUnique({
+  const ownerDisplaySettings = getOwnerDisplaySettingsDelegate();
+  if (!ownerDisplaySettings) {
+    return NextResponse.json({ error: "Display settings model is unavailable. Regenerate Prisma Client." }, { status: 503 });
+  }
+
+  const settings = await ownerDisplaySettings.findUnique({
     where: { ownerUserId }
   });
 
@@ -94,7 +116,12 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Only owner can update display settings" }, { status: 403 });
   }
 
-  const updated = await prisma.ownerDisplaySettings.upsert({
+  const ownerDisplaySettings = getOwnerDisplaySettingsDelegate();
+  if (!ownerDisplaySettings) {
+    return NextResponse.json({ error: "Display settings model is unavailable. Regenerate Prisma Client." }, { status: 503 });
+  }
+
+  const updated = await ownerDisplaySettings.upsert({
     where: { ownerUserId },
     update: parsedBody.data,
     create: {
