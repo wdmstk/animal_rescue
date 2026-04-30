@@ -57,7 +57,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     extensions.map((item) => ({
       id: item.id,
       petId: item.petId,
-      key: item.key,
+      name: item.name,
       value: Number(item.value),
       unit: item.unit,
       recordedAt: item.recordedAt.toISOString(),

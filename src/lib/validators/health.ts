@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CORE_METRIC_TYPES, HEALTH_EXTENSION_KEYS, LAB_MARKER_CATEGORY_MAP, LAB_MARKER_TYPES, LAB_RESULT_CATEGORIES } from "@/types/health";
+import { CORE_METRIC_TYPES, LAB_MARKER_CATEGORY_MAP, LAB_MARKER_TYPES, LAB_RESULT_CATEGORIES } from "@/types/health";
 
 const noteSchema = z.string().trim().max(500).optional().nullable();
 
@@ -29,7 +29,7 @@ export const labResultEntryInputSchema = z.object({
 });
 
 export const healthExtensionEntryInputSchema = z.object({
-  key: z.enum(HEALTH_EXTENSION_KEYS),
+  name: z.string().trim().min(1).max(50),
   value: z.number().finite().nonnegative(),
   unit: z.string().trim().min(1).max(20).optional().nullable(),
   recordedAt: z.coerce.date(),

@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { rpcMock, createSupabaseServerClientMock, findFirstEmergencyTokenMock } = vi.hoisted(() => ({
+const { rpcMock, createSupabaseServerClientMock, findFirstEmergencyTokenMock, findUniqueOwnerDisplaySettingsMock } = vi.hoisted(() => ({
   rpcMock: vi.fn(),
   createSupabaseServerClientMock: vi.fn(),
-  findFirstEmergencyTokenMock: vi.fn()
+  findFirstEmergencyTokenMock: vi.fn(),
+  findUniqueOwnerDisplaySettingsMock: vi.fn()
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -14,6 +15,9 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     petEmergencyToken: {
       findFirst: findFirstEmergencyTokenMock
+    },
+    ownerDisplaySettings: {
+      findUnique: findUniqueOwnerDisplaySettingsMock
     }
   }
 }));
@@ -265,15 +269,18 @@ describe("GET /api/public/emergency/[token]", () => {
     });
     findFirstEmergencyTokenMock.mockResolvedValue({
       pet: {
-        displaySettings: {
-          showEmergencyMedicationSummary: false,
-          showEmergencyVaccinationSummary: false,
-          showEmergencyMedicalRecordSummary: false
+        household: {
+          members: [{ userId: "owner-1" }]
         },
         medications: [],
         vaccinations: [],
         medicalRecords: []
       }
+    });
+    findUniqueOwnerDisplaySettingsMock.mockResolvedValue({
+      showEmergencyMedicationSummary: false,
+      showEmergencyVaccinationSummary: false,
+      showEmergencyMedicalRecordSummary: false
     });
 
     const response = await GET(new Request("http://localhost"), {

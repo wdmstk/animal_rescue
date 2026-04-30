@@ -108,11 +108,29 @@ describe("/api/pets/[petId]/vaccinations", () => {
     expect(createMock).toHaveBeenCalledWith({
       data: {
         type: "CORE",
+        customTypeName: null,
         date: new Date("2026-04-20"),
         nextDue: null,
         petId: validPetId
       }
     });
+  });
+
+  it("returns 400 when OTHER is sent without customTypeName", async () => {
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        body: JSON.stringify({
+          type: "OTHER",
+          date: "2026-04-20",
+          nextDue: null
+        })
+      }),
+      { params: Promise.resolve({ petId: validPetId }) }
+    );
+
+    expect(response.status).toBe(400);
+    expect(createMock).not.toHaveBeenCalled();
   });
 
   it("returns 400 on invalid PATCH payload", async () => {
@@ -208,6 +226,7 @@ describe("/api/pets/[petId]/vaccinations", () => {
       where: { id: validVaccinationId },
       data: {
         type: "RABIES",
+        customTypeName: null,
         date: new Date("2026-04-25"),
         nextDue: new Date("2027-04-25")
       }

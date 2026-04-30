@@ -7,15 +7,28 @@ const petIdParamSchema = z.object({
   petId: z.string().uuid()
 });
 
-const vaccinationSchema = z.object({
+const validateOtherType = (value: { type: "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER"; customTypeName?: string | null }, ctx: z.RefinementCtx) => {
+  if (value.type === "OTHER" && !value.customTypeName) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["customTypeName"],
+      message: "customTypeName is required when type is OTHER"
+    });
+  }
+};
+
+const vaccinationBaseSchema = z.object({
   type: z.enum(["RABIES", "CORE", "HEARTWORM", "FLEA_TICK", "OTHER"]),
+  customTypeName: z.string().trim().min(1).max(50).optional().nullable(),
   date: z.string().date(),
   nextDue: z.string().date().optional().nullable()
 });
 
-const vaccinationUpdateSchema = vaccinationSchema.extend({
+const vaccinationSchema = vaccinationBaseSchema.superRefine(validateOtherType);
+
+const vaccinationUpdateSchema = vaccinationBaseSchema.extend({
   id: z.string().uuid()
-});
+}).superRefine(validateOtherType);
 
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
@@ -68,6 +81,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
     data: {
       ...parsed.data,
       petId: access.petId,
+      customTypeName: parsed.data.type === "OTHER" ? parsed.data.customTypeName ?? null : null,
       date: new Date(parsed.data.date),
       nextDue: parsed.data.nextDue ? new Date(parsed.data.nextDue) : null
     }
@@ -114,6 +128,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
     where: { id: parsed.data.id },
     data: {
       type: parsed.data.type,
+      customTypeName: parsed.data.type === "OTHER" ? parsed.data.customTypeName ?? null : null,
       date: new Date(parsed.data.date),
       nextDue: parsed.data.nextDue ? new Date(parsed.data.nextDue) : null
     }

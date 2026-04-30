@@ -1,15 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { findUniqueMock, upsertMock } = vi.hoisted(() => ({
+const { findUniqueMock, upsertMock, findFirstMock } = vi.hoisted(() => ({
   findUniqueMock: vi.fn(),
-  upsertMock: vi.fn()
+  upsertMock: vi.fn(),
+  findFirstMock: vi.fn()
 }));
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    petDisplaySettings: {
+    ownerDisplaySettings: {
       findUnique: findUniqueMock,
       upsert: upsertMock
+    },
+    householdMember: {
+      findFirst: findFirstMock
     }
   }
 }));
@@ -21,6 +25,7 @@ describe("/api/pets/[petId]/display-settings", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    findFirstMock.mockResolvedValue({ userId: "22222222-2222-4222-8222-222222222222" });
   });
 
   it("returns 400 on invalid petId", async () => {
@@ -42,7 +47,7 @@ describe("/api/pets/[petId]/display-settings", () => {
     expect(response.status).toBe(200);
     const payload = await response.json();
     expect(payload.data).toEqual({
-      petId: validPetId,
+      ownerUserId: "22222222-2222-4222-8222-222222222222",
       showMedicationCard: true,
       showVaccinationCard: true,
       showHealthCard: true,
@@ -55,7 +60,7 @@ describe("/api/pets/[petId]/display-settings", () => {
 
   it("returns persisted settings on GET", async () => {
     findUniqueMock.mockResolvedValue({
-      petId: validPetId,
+      ownerUserId: "22222222-2222-4222-8222-222222222222",
       showMedicationCard: false,
       showVaccinationCard: true,
       showHealthCard: false,
@@ -93,7 +98,7 @@ describe("/api/pets/[petId]/display-settings", () => {
 
   it("upserts partial settings on PATCH", async () => {
     upsertMock.mockResolvedValue({
-      petId: validPetId,
+      ownerUserId: "22222222-2222-4222-8222-222222222222",
       showMedicationCard: false,
       showVaccinationCard: true,
       showHealthCard: true,
@@ -118,10 +123,10 @@ describe("/api/pets/[petId]/display-settings", () => {
 
     expect(response.status).toBe(200);
     expect(upsertMock).toHaveBeenCalledWith({
-      where: { petId: validPetId },
+      where: { ownerUserId: "22222222-2222-4222-8222-222222222222" },
       update: { showMedicationCard: false },
       create: {
-        petId: validPetId,
+        ownerUserId: "22222222-2222-4222-8222-222222222222",
         showMedicationCard: false,
         showVaccinationCard: true,
         showHealthCard: true,

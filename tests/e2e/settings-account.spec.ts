@@ -68,13 +68,13 @@ test("settings account update shows message when nothing changed", async ({ page
     });
   });
 
-  await page.route("**/api/pets/pet-1/display-settings", async (route) => {
+  await page.route("**/api/settings/display", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
         data: {
-          petId: "pet-1",
+          ownerUserId: "u1",
           showMedicationCard: true,
           showVaccinationCard: true,
           showHealthCard: true,
@@ -154,7 +154,7 @@ test("settings can toggle pet display setting", async ({ page }) => {
     });
   });
 
-  await page.route("**/api/pets/pet-1/display-settings", async (route) => {
+  await page.route("**/api/settings/display", async (route) => {
     if (route.request().method() === "PATCH") {
       displayPatchCalled = true;
       await route.fulfill({
@@ -162,7 +162,7 @@ test("settings can toggle pet display setting", async ({ page }) => {
         contentType: "application/json",
         body: JSON.stringify({
           data: {
-            petId: "pet-1",
+            ownerUserId: "u1",
             showMedicationCard: false,
             showVaccinationCard: true,
             showHealthCard: true,
@@ -181,7 +181,7 @@ test("settings can toggle pet display setting", async ({ page }) => {
       contentType: "application/json",
       body: JSON.stringify({
         data: {
-          petId: "pet-1",
+          ownerUserId: "u1",
           showMedicationCard: true,
           showVaccinationCard: true,
           showHealthCard: true,

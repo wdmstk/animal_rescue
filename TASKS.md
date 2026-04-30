@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-155` 検査/設定修正 + 拡張項目自由化（複数指定）
 
 ### todo
 （なし）
@@ -90,6 +90,25 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 検査/設定修正 + 拡張項目自由化（複数指定）
+- Task ID: `TASK-155`
+- ブランチ: `feat/TASK-155-health-settings-extension-multi`
+- ステータス: `in_progress`
+- 概要: 検査カテゴリ分離の未反映修正、表示トグルのオーナー単位化、拡張項目の自由キー化・複数指定対応、ワクチン履歴補完（日付説明/OTHER自由記載）を同時実装する
+- Issue: `#132`
+- 依存関係:
+  - prerequisite: `TASK-152`
+  - prerequisite: `TASK-151`
+  - prerequisite: `TASK-150`
+- 完了条件:
+  - 検査マーカーが `血液18項目 + 尿5項目 + 内分泌7項目` に拡張される
+  - `category-marker` 整合バリデーションとUI選択肢が新マーカーセットに追従する
+  - 拡張項目が自由キー名 + 数値値で複数指定でき、履歴/グラフに反映される
+  - `POST/GET /api/pets/[petId]/health/extensions` が `name` ベース契約へ移行する
+  - 既存 `INFUSION_ML` データが `name=点滴量` として互換表示される
+  - ワクチン履歴で日付説明が追加され、`OTHER` 選択時に自由記載名が保存される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### PRマージ前チェックをCI実行結果と連動強制
 - Task ID: `TASK-153`
