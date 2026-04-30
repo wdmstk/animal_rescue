@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 
 export default function InviteJoinPage() {
@@ -61,13 +62,7 @@ export default function InviteJoinPage() {
           disabled={isSubmitting}
         />
         <ToastMessage message={errorMessage} type="error" />
-        <button
-          type="submit"
-          className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "参加中..." : "参加する"}
-        </button>
+        <SubmitButton isSubmitting={isSubmitting} idleLabel="参加する" className="w-full" />
       </form>
     </div>
   );

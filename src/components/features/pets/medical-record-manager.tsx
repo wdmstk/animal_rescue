@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 
 type MedicalRecordType = "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER";
@@ -126,13 +127,11 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
             required
           />
         </div>
-        <button
-          type="submit"
-          disabled={isSaving}
-          className="mt-3 rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white disabled:opacity-60"
-        >
-          {isSaving ? "保存中..." : "記録を保存"}
-        </button>
+        <SubmitButton
+          isSubmitting={isSaving}
+          idleLabel="記録を保存"
+          className="mt-3 text-xs"
+        />
         <div className="mt-2">
           <ToastMessage message={error} type="error" />
         </div>

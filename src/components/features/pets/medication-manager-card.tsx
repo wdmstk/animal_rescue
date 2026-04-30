@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { MedicationCalendar } from "@/components/features/pets/medication-calendar";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type MedicationItem = {
   id: string;
@@ -173,7 +174,7 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
           </div>
           <div className="mt-2 grid grid-cols-2 gap-2">
             <button type="button" onClick={() => setEditingId(null)} className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800">キャンセル</button>
-            <button type="submit" disabled={isSubmitting} className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">{isSubmitting ? "保存中..." : "更新する"}</button>
+            <SubmitButton isSubmitting={isSubmitting} idleLabel="更新する" />
           </div>
         </form>
       ) : null}
@@ -187,7 +188,7 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
           <input required type="date" value={newStartDate} onChange={(event) => setNewStartDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
           <input type="date" value={newEndDate} onChange={(event) => setNewEndDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
         </div>
-        <button type="submit" disabled={isSubmitting} className="mt-2 w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">{isSubmitting ? "保存中..." : "追加する"}</button>
+        <SubmitButton isSubmitting={isSubmitting} idleLabel="追加する" className="mt-2 w-full" />
       </form>
 
       {errorMessage ? <p className="text-sm text-rose-700">{errorMessage}</p> : null}

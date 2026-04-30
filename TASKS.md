@@ -30,20 +30,19 @@ Development Task List
 2. `TASK-164` 変更履歴（監査ログ）表示
 3. `TASK-163` 通知設定UI（投薬リマインダー実利用化）
 4. `TASK-162` Empty State改善（次アクション導線つき）
-5. `TASK-161` ローディング/スケルトンの統一
-8. `TASK-159` ペット詳細ページの情報密度最適化（セクションナビ）
-9. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
+5. `TASK-159` ペット詳細ページの情報密度最適化（セクションナビ）
+6. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
 
 ### blocked
 （なし）
 
 ### done
 1. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
-2. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
-3. `TASK-166` 初回オンボーディング導線
+2. `TASK-166` 初回オンボーディング導線
+3. `TASK-161` ローディング/スケルトンの統一
 4. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
 5. `TASK-157` 緊急公開画面にワンタップ導線追加
-6. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
+4. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
 4. `TASK-155` 検査/設定修正 + 拡張項目自由化（複数指定）
 5. `TASK-154` ペット詳細表示時のコンソールエラー修正
 6. `TASK-153` PRマージ前チェックをCI実行結果と連動強制
@@ -119,20 +118,6 @@ Development Task List
   - PRテンプレと運用ドキュメントが段階ガードの時系列に一致する
   - `npm run lint` / `npx vitest run` が通る
 
-### Post-Mergeチェック項目のCI強制ガード追加
-- Task ID: `TASK-168`
-- ブランチ: `feat/TASK-168-post-merge-checklist-ci-guard`
-- ステータス: `done`
-- 概要: `issue_closed_on_task_done` チェックを人手依存にせず、チェック実行タイミングとIssueクローズ状態をCIで強制検証する
-- Issue: `#152`
-- 依存関係:
-  - prerequisite: `TASK-167`
-- 完了条件:
-  - PR本文で `issue_closed_on_task_done` が未チェックの場合、該当ガードは評価をスキップする
-  - `issue_closed_on_task_done` がチェックされた場合のみ、PRがmerged済みかつ対応Issueがclosedであることを検証する
-  - 条件未達でチェックされた場合、CIが失敗して漏れを防止できる
-  - `npm run lint` / `npx vitest run` が通る
-
 ### 緊急公開画面にワンタップ導線追加
 - Task ID: `TASK-157`
 - ブランチ: `feat/TASK-157-emergency-public-quick-actions`
@@ -189,7 +174,7 @@ Development Task List
 ### ローディング/スケルトンの統一
 - Task ID: `TASK-161`
 - ブランチ: `feat/TASK-161-shared-loading-skeleton`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 主要CRUD画面に初期ロードスケルトンと送信中UIを統一導入する
 - Issue: `#140`
 - 依存関係:

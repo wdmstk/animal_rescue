@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 
 type Species = "dog" | "cat" | "other";
@@ -160,13 +161,7 @@ export default function NewPetPage() {
 
         <ToastMessage message={errorMessage} type="error" />
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isSubmitting ? "保存中..." : "登録する"}
-        </button>
+        <SubmitButton isSubmitting={isSubmitting} idleLabel="登録する" className="w-full" />
       </form>
     </section>
   );
