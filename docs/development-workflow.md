@@ -10,6 +10,7 @@
    - CodexAppでの並行実装を想定し、Issueは独立実装可能な単位（API/UI/Test/Docs）で分割
    - 依存関係（blocked by / prerequisite）をIssueに明記
 2. `main` を最新化してタスクブランチを作成
+   - 初回セットアップ、または migration 追加後は `npm run db:setup` を実行してDBスキーマを最新化する
 3. 実装後に品質ゲートを実行
    - `npm run lint`
    - `npx vitest run`
