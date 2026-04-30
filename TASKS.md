@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-166` 初回オンボーディング導線
+2. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
 
 ### todo
 1. `TASK-165` データ共有出力（PDF/印刷向け）
@@ -39,10 +40,8 @@ Development Task List
 
 ### done
 1. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
-2. `TASK-166` 初回オンボーディング導線
-3. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
-4. `TASK-157` 緊急公開画面にワンタップ導線追加
-5. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
+2. `TASK-157` 緊急公開画面にワンタップ導線追加
+3. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
 4. `TASK-155` 検査/設定修正 + 拡張項目自由化（複数指定）
 5. `TASK-154` ペット詳細表示時のコンソールエラー修正
 6. `TASK-153` PRマージ前チェックをCI実行結果と連動強制
@@ -161,7 +160,7 @@ Development Task List
 ### 共通フィードバックUI（成功/失敗トースト）導入
 - Task ID: `TASK-160`
 - ブランチ: `feat/TASK-160-shared-feedback-toast`
-- ステータス: `done`
+- ステータス: `in_progress`
 - 概要: 主要画面の成功/失敗メッセージを共通トーストコンポーネントへ統一する
 - Issue: `#139`
 - 依存関係:
@@ -239,7 +238,7 @@ Development Task List
 ### 初回オンボーディング導線
 - Task ID: `TASK-166`
 - ブランチ: `feat/TASK-166-first-time-onboarding-checklist`
-- ステータス: `done`
+- ステータス: `in_progress`
 - 概要: 初回ユーザー向けに3ステップチェックリストを実装し、完了率計測可能な状態を作る
 - Issue: `#145`
 - 依存関係:

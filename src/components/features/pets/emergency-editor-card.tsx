@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EmergencyCard } from "@/components/features/pets/emergency-card";
+import { ToastMessage } from "@/components/ui/toast-message";
 
 type EmergencyInfo = {
   disease: string | null;
@@ -188,7 +189,7 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
           </label>
         </div>
 
-        {errorMessage ? <p className="text-sm text-rose-700">{errorMessage}</p> : null}
+        <ToastMessage message={errorMessage} type="error" />
 
         <div className="grid grid-cols-2 gap-2">
           <button
