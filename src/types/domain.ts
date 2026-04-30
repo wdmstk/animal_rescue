@@ -7,6 +7,9 @@ export type EmergencyViewPayload = {
   vetPhone: string | null;
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
+  recentMedicationSummaries?: string[];
+  recentVaccinationSummaries?: string[];
+  recentMedicalRecordSummaries?: string[];
 };
 
 export type EmergencyInfoInput = {

@@ -81,7 +81,10 @@ describe("GET /api/public/emergency/[token]", () => {
       vetName: "City Vet",
       vetPhone: "03-0000-0000",
       emergencyContactName: "Owner",
-      emergencyContactPhone: "090-0000-0000"
+      emergencyContactPhone: "090-0000-0000",
+      recentMedicationSummaries: [],
+      recentVaccinationSummaries: [],
+      recentMedicalRecordSummaries: []
     });
   });
 
@@ -116,7 +119,10 @@ describe("GET /api/public/emergency/[token]", () => {
       vetName: null,
       vetPhone: null,
       emergencyContactName: "Owner",
-      emergencyContactPhone: "090-0000-0000"
+      emergencyContactPhone: "090-0000-0000",
+      recentMedicationSummaries: [],
+      recentVaccinationSummaries: [],
+      recentMedicalRecordSummaries: []
     });
   });
 
@@ -234,7 +240,50 @@ describe("GET /api/public/emergency/[token]", () => {
       vetName: null,
       vetPhone: null,
       emergencyContactName: null,
-      emergencyContactPhone: null
+      emergencyContactPhone: null,
+      recentMedicationSummaries: [],
+      recentVaccinationSummaries: [],
+      recentMedicalRecordSummaries: []
     });
+  });
+
+  it("omits recent summaries when display settings are off", async () => {
+    rpcMock.mockResolvedValue({
+      data: [
+        {
+          pet_name: "Mugi",
+          disease: "CKD",
+          current_medications: "Renal meds",
+          allergy: "None",
+          vet_name: "City Vet",
+          vet_phone: "03-0000-0000",
+          emergency_contact_name: "Owner",
+          emergency_contact_phone: "090-0000-0000"
+        }
+      ],
+      error: null
+    });
+    findFirstEmergencyTokenMock.mockResolvedValue({
+      pet: {
+        displaySettings: {
+          showEmergencyMedicationSummary: false,
+          showEmergencyVaccinationSummary: false,
+          showEmergencyMedicalRecordSummary: false
+        },
+        medications: [],
+        vaccinations: [],
+        medicalRecords: []
+      }
+    });
+
+    const response = await GET(new Request("http://localhost"), {
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
+    });
+
+    expect(response.status).toBe(200);
+    const payload = await response.json();
+    expect(payload.data.recentMedicationSummaries).toBeUndefined();
+    expect(payload.data.recentVaccinationSummaries).toBeUndefined();
+    expect(payload.data.recentMedicalRecordSummaries).toBeUndefined();
   });
 });

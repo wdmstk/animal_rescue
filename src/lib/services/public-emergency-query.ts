@@ -14,6 +14,90 @@ type PublicEmergencyRpcRow = {
   emergency_contact_phone: string | null;
 };
 
+const DEFAULT_SUMMARY_SETTINGS = {
+  showEmergencyMedicationSummary: true,
+  showEmergencyVaccinationSummary: true,
+  showEmergencyMedicalRecordSummary: true
+} as const;
+
+const formatDate = (value: Date): string => value.toISOString().slice(0, 10);
+
+const toMedicationSummary = (item: { name: string; dosage: string; frequency: string; startDate: Date; endDate: Date | null }): string =>
+  `${item.name} / ${item.dosage} / ${item.frequency} / ${formatDate(item.startDate)}${item.endDate ? `-${formatDate(item.endDate)}` : "-"}`;
+
+const toVaccinationSummary = (item: { type: string; date: Date; nextDue: Date | null }): string =>
+  `${item.type} / 接種:${formatDate(item.date)}${item.nextDue ? ` / 次回:${formatDate(item.nextDue)}` : ""}`;
+
+const toMedicalRecordSummary = (item: { date: Date; title: string; recordType: string }): string =>
+  `${formatDate(item.date)} / ${item.recordType} / ${item.title}`;
+
+const withRecentSummaries = async (token: string, base: EmergencyViewPayload): Promise<EmergencyViewPayload> => {
+  const { prisma } = await import("@/lib/prisma");
+  const tokenRow = await prisma.petEmergencyToken.findFirst({
+    where: {
+      token,
+      isActive: true
+    },
+    select: {
+      pet: {
+        select: {
+          displaySettings: {
+            select: {
+              showEmergencyMedicationSummary: true,
+              showEmergencyVaccinationSummary: true,
+              showEmergencyMedicalRecordSummary: true
+            }
+          },
+          medications: {
+            orderBy: { startDate: "desc" },
+            take: 3,
+            select: {
+              name: true,
+              dosage: true,
+              frequency: true,
+              startDate: true,
+              endDate: true
+            }
+          },
+          vaccinations: {
+            orderBy: { date: "desc" },
+            take: 3,
+            select: {
+              type: true,
+              date: true,
+              nextDue: true
+            }
+          },
+          medicalRecords: {
+            orderBy: { date: "desc" },
+            take: 3,
+            select: {
+              date: true,
+              title: true,
+              recordType: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  const settings = tokenRow?.pet?.displaySettings ?? DEFAULT_SUMMARY_SETTINGS;
+  const payload: EmergencyViewPayload = { ...base };
+
+  if (settings.showEmergencyMedicationSummary) {
+    payload.recentMedicationSummaries = (tokenRow?.pet?.medications ?? []).map(toMedicationSummary);
+  }
+  if (settings.showEmergencyVaccinationSummary) {
+    payload.recentVaccinationSummaries = (tokenRow?.pet?.vaccinations ?? []).map(toVaccinationSummary);
+  }
+  if (settings.showEmergencyMedicalRecordSummary) {
+    payload.recentMedicalRecordSummaries = (tokenRow?.pet?.medicalRecords ?? []).map(toMedicalRecordSummary);
+  }
+
+  return payload;
+};
+
 const isRpcFunctionMissingError = (error: { code?: string; message?: string | null }) => {
   if (error.code === "PGRST202") {
     return true;
@@ -54,7 +138,7 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
     return null;
   }
 
-  return toPublicEmergencyView({
+  const base = toPublicEmergencyView({
     petName: tokenRow.pet.name,
     disease: tokenRow.pet.emergencyInfo?.disease ?? null,
     allergy: tokenRow.pet.emergencyInfo?.allergy ?? null,
@@ -64,6 +148,8 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
     emergencyContactName: tokenRow.pet.emergencyInfo?.emergencyContactName ?? null,
     emergencyContactPhone: tokenRow.pet.emergencyInfo?.emergencyContactPhone ?? null
   });
+
+  return withRecentSummaries(token, base);
 };
 
 export const getPublicEmergencyByToken = async (token: string): Promise<EmergencyViewPayload | null> => {
@@ -80,7 +166,10 @@ export const getPublicEmergencyByToken = async (token: string): Promise<Emergenc
       vetName: "みなと動物病院",
       vetPhone: "03-1234-5678",
       emergencyContactName: "山田 花子",
-      emergencyContactPhone: "090-1234-5678"
+      emergencyContactPhone: "090-1234-5678",
+      recentMedicationSummaries: ["ピモベンダン / 1.25mg / 1日2回 / 2026-01-10-"],
+      recentVaccinationSummaries: ["CORE / 接種:2025-10-01 / 次回:2026-10-01"],
+      recentMedicalRecordSummaries: ["2026-02-20 / EXAM / 定期検診"]
     };
   }
 
@@ -102,7 +191,7 @@ export const getPublicEmergencyByToken = async (token: string): Promise<Emergenc
     return null;
   }
 
-  return toPublicEmergencyView({
+  const base = toPublicEmergencyView({
     petName: row.pet_name,
     disease: row.disease,
     allergy: row.allergy,
@@ -112,4 +201,6 @@ export const getPublicEmergencyByToken = async (token: string): Promise<Emergenc
     emergencyContactName: row.emergency_contact_name,
     emergencyContactPhone: row.emergency_contact_phone
   });
+
+  return withRecentSummaries(token, base);
 };
