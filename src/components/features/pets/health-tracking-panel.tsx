@@ -107,7 +107,12 @@ type TrendLineChartProps = {
 
 function TrendLineChart({ series }: TrendLineChartProps) {
   if (series.points.length === 0) {
-    return <p className="text-sm text-slate-500">データがありません</p>;
+    return (
+      <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
+        <p className="text-sm text-slate-600">データがありません。</p>
+        <p className="mt-1 text-xs text-slate-500">上の健康入力フォームから記録を追加してください。</p>
+      </div>
+    );
   }
 
   if (series.points.length === 1) {
@@ -577,7 +582,9 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
               {item.label}
             </button>
           ))}
-          {displaySeries.length === 0 && <p className="text-xs text-slate-500">選択条件の系列データはありません</p>}
+          {displaySeries.length === 0 && (
+            <p className="text-xs text-slate-500">選択条件の系列データはありません。期間やカテゴリを変えるか、新しい記録を追加してください。</p>
+          )}
         </div>
         <div className="mt-2">
           <select

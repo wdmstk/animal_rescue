@@ -100,9 +100,16 @@ export default async function PetsPage() {
             ペット一覧の取得に失敗しました。時間をおいて再度お試しください。
           </p>
         ) : pets.length === 0 ? (
-          <p className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-600">
-            まだペットが登録されていません。
-          </p>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="text-sm text-slate-700">まだペットが登録されていません。</p>
+            <p className="mt-1 text-xs text-slate-500">まずは1匹登録して、緊急情報や健康記録の管理を始めましょう。</p>
+            <Link
+              href="/pets/new"
+              className="mt-3 inline-flex rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white"
+            >
+              最初のペットを登録
+            </Link>
+          </div>
         ) : (
           pets.map((pet) => (
             <Link

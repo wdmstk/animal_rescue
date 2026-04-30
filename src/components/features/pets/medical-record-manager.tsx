@@ -90,7 +90,7 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
 
   return (
     <section className="space-y-3">
-      <form onSubmit={onSubmit} className="rounded-2xl bg-white p-4 shadow-sm">
+      <form id="medical-record-form" onSubmit={onSubmit} className="rounded-2xl bg-white p-4 shadow-sm">
         <h2 className="text-base font-bold text-slate-900">記録を追加</h2>
         <div className="mt-3 grid gap-2 md:grid-cols-2">
           <input
