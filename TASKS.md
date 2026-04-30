@@ -23,8 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
-2. `TASK-166` 初回オンボーディング導線
+1. `TASK-166` 初回オンボーディング導線
 
 ### todo
 1. `TASK-165` データ共有出力（PDF/印刷向け）
@@ -40,9 +39,10 @@ Development Task List
 
 ### done
 1. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
-2. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
-3. `TASK-157` 緊急公開画面にワンタップ導線追加
-4. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
+2. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
+3. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
+4. `TASK-157` 緊急公開画面にワンタップ導線追加
+5. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
 4. `TASK-155` 検査/設定修正 + 拡張項目自由化（複数指定）
 5. `TASK-154` ペット詳細表示時のコンソールエラー修正
 6. `TASK-153` PRマージ前チェックをCI実行結果と連動強制
@@ -121,7 +121,7 @@ Development Task List
 ### Post-Mergeチェック項目のCI強制ガード追加
 - Task ID: `TASK-168`
 - ブランチ: `feat/TASK-168-post-merge-checklist-ci-guard`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: `issue_closed_on_task_done` チェックを人手依存にせず、チェック実行タイミングとIssueクローズ状態をCIで強制検証する
 - Issue: `#152`
 - 依存関係:
