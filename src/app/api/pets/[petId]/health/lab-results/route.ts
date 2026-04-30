@@ -8,7 +8,12 @@ const defaultUnitMap: Record<LabMarkerType, string> = {
   CRE: "mg/dL",
   BUN: "mg/dL",
   SDMA: "ug/dL",
-  PHOSPHORUS: "mg/dL"
+  PHOSPHORUS: "mg/dL",
+  URINE_GLUCOSE: "mg/dL",
+  URINE_KETONE: "mg/dL",
+  USG: "SG",
+  URINE_PROTEIN: "mg/dL",
+  UPCR: "ratio"
 };
 
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {

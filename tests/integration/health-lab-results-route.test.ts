@@ -88,6 +88,45 @@ describe("/api/pets/[petId]/health/lab-results", () => {
     );
   });
 
+  it("uses urine default unit when unit is omitted", async () => {
+    createMock.mockResolvedValue({
+      id: "id-2",
+      petId: validPetId,
+      category: "URINE",
+      marker: "USG",
+      value: 1.028,
+      unit: "SG",
+      recordedAt: new Date("2026-04-20T00:00:00.000Z"),
+      note: null
+    });
+
+    const response = await POST(
+      new Request("http://localhost", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          category: "URINE",
+          marker: "USG",
+          value: 1.028,
+          recordedAt: "2026-04-20"
+        })
+      }),
+      { params: Promise.resolve({ petId: validPetId }) }
+    );
+
+    expect(response.status).toBe(201);
+    expect(createMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          petId: validPetId,
+          category: "URINE",
+          marker: "USG",
+          unit: "SG"
+        })
+      })
+    );
+  });
+
   it("returns 400 when marker and category are inconsistent", async () => {
     const response = await POST(
       new Request("http://localhost", {

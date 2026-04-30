@@ -47,6 +47,11 @@ enum LabMarkerType {
   BUN
   SDMA
   PHOSPHORUS
+  URINE_GLUCOSE
+  URINE_KETONE
+  USG
+  URINE_PROTEIN
+  UPCR
 }
 
 enum LabResultCategory {

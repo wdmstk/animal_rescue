@@ -29,7 +29,7 @@ test("health graph controls and extension form are interactive", async ({ page }
   const graphSection = page.locator("div", { hasText: "推移グラフ" }).first();
   await expect(graphSection).toBeVisible();
 
-  const labButton = page.getByRole("button", { name: "血液検査" });
+  const labButton = graphSection.getByRole("button", { name: "血液検査" }).first();
   await expect(labButton).toBeVisible();
   await labButton.click();
   await expect(page.getByText("推移グラフ")).toBeVisible();
@@ -39,8 +39,18 @@ test("health panel shows input, history and graph sections", async ({ page }) =>
   await page.goto("/pets/demo-pet");
   await expect(page.getByText("共通コアを記録")).toBeVisible();
   await expect(page.getByText("血液検査を記録")).toBeVisible();
+  await expect(page.getByRole("button", { name: "尿検査" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "内分泌検査" })).toBeVisible();
   await expect(page.getByText("推移グラフ")).toBeVisible();
   await expect(page.getByText("共通コア履歴")).toBeVisible();
+});
+
+test("urine category can select staged urine markers", async ({ page }) => {
+  await page.goto("/pets/demo-pet");
+  await page.getByRole("button", { name: "尿検査" }).click();
+  const markerSelect = page.locator("form").filter({ hasText: "尿検査を記録" }).locator("select").first();
+  await markerSelect.selectOption("UPCR");
+  await expect(markerSelect).toHaveValue("UPCR");
 });
 
 test("extension toggle shows infusion input form", async ({ page }) => {

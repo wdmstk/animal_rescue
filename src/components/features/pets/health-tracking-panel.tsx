@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { filterHealthSeries, pickDisplaySeriesKey, type HealthSeriesCategory } from "@/lib/services/health-series-filter";
 import { summarizeHealthTrendSeries } from "@/lib/services/health-graph-summary";
 import type { CoreHealthEntry, HealthExtensionEntry, HealthTrendSeries, LabResultEntry } from "@/types/health";
-import { CORE_METRIC_TYPES, LAB_MARKER_TYPES } from "@/types/health";
+import { CORE_METRIC_TYPES, LAB_MARKER_CATEGORY_MAP, LAB_MARKER_TYPES } from "@/types/health";
 import { isValidDateInput, parseNonNegativeNumber } from "@/lib/validators/health-input-ui";
 
 type HealthTrackingPanelProps = {
@@ -32,7 +32,22 @@ const labMarkerLabelMap: Record<(typeof LAB_MARKER_TYPES)[number], string> = {
   CRE: "Cre",
   BUN: "BUN",
   SDMA: "SDMA",
-  PHOSPHORUS: "リン(P)"
+  PHOSPHORUS: "リン(P)",
+  URINE_GLUCOSE: "尿糖",
+  URINE_KETONE: "尿ケトン",
+  USG: "尿比重",
+  URINE_PROTEIN: "尿蛋白",
+  UPCR: "UPCR"
+};
+const labCategoryLabelMap: Record<LabResultEntry["category"], string> = {
+  BLOOD: "血液検査",
+  URINE: "尿検査",
+  ENDOCRINE: "内分泌検査"
+};
+const labMarkersByCategory: Record<LabResultEntry["category"], Array<(typeof LAB_MARKER_TYPES)[number]>> = {
+  BLOOD: LAB_MARKER_TYPES.filter((item) => LAB_MARKER_CATEGORY_MAP[item] === "BLOOD"),
+  URINE: LAB_MARKER_TYPES.filter((item) => LAB_MARKER_CATEGORY_MAP[item] === "URINE"),
+  ENDOCRINE: LAB_MARKER_TYPES.filter((item) => LAB_MARKER_CATEGORY_MAP[item] === "ENDOCRINE")
 };
 
 const today = new Date().toISOString().slice(0, 10);
@@ -138,6 +153,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
   const [coreValue, setCoreValue] = useState("4.2");
   const [coreDate, setCoreDate] = useState(today);
 
+  const [labCategory, setLabCategory] = useState<LabResultEntry["category"]>("BLOOD");
   const [labMarker, setLabMarker] = useState<(typeof LAB_MARKER_TYPES)[number]>("CRE");
   const [labValue, setLabValue] = useState("1.8");
   const [labUnit, setLabUnit] = useState("mg/dL");
@@ -212,6 +228,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
   const hasCoreInputError = parsedCoreValue === null || !isValidDateInput(coreDate);
   const hasLabInputError = parsedLabValue === null || !isValidDateInput(labDate) || labUnit.trim().length === 0;
   const hasExtensionInputError = parsedExtensionValue === null || !isValidDateInput(extensionDate);
+  const availableLabMarkers = useMemo(() => labMarkersByCategory[labCategory], [labCategory]);
 
   const submitCore = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -238,14 +255,14 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
   const submitLab = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (hasLabInputError || parsedLabValue === null) {
-      setErrorMessage("血液検査の入力値・単位・日付を確認してください。");
+      setErrorMessage("検査項目の入力値・単位・日付を確認してください。");
       return;
     }
 
     setIsSubmitting(true);
     try {
       await postJson(`/api/pets/${petId}/health/lab-results`, {
-        category: "BLOOD",
+        category: labCategory,
         marker: labMarker,
         value: parsedLabValue,
         unit: labUnit.trim(),
@@ -253,7 +270,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
       });
       await refreshData();
     } catch {
-      setErrorMessage("血液検査の保存に失敗しました。");
+      setErrorMessage("検査項目の保存に失敗しました。");
     } finally {
       setIsSubmitting(false);
     }
@@ -332,13 +349,31 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
         </form>
 
         <form onSubmit={submitLab} className="space-y-2 rounded-xl border border-slate-200 p-3">
-          <p className="text-sm font-semibold text-slate-800">血液検査を記録</p>
+          <p className="text-sm font-semibold text-slate-800">{labCategoryLabelMap[labCategory]}を記録</p>
+          <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1">
+            {(Object.keys(labCategoryLabelMap) as LabResultEntry["category"][]).map((item) => (
+              <button
+                key={item}
+                type="button"
+                onClick={() => {
+                  setLabCategory(item);
+                  const nextDefaultMarker = labMarkersByCategory[item][0];
+                  setLabMarker(nextDefaultMarker);
+                }}
+                className={`rounded px-2 py-1 text-xs ${
+                  labCategory === item ? "bg-white font-semibold text-slate-900 shadow-sm" : "text-slate-600"
+                }`}
+              >
+                {labCategoryLabelMap[item]}
+              </button>
+            ))}
+          </div>
           <select
             value={labMarker}
             onChange={(event) => setLabMarker(event.target.value as (typeof LAB_MARKER_TYPES)[number])}
             className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
           >
-            {LAB_MARKER_TYPES.map((item) => (
+            {availableLabMarkers.map((item) => (
               <option key={item} value={item}>
                 {labMarkerLabelMap[item]}
               </option>
@@ -502,7 +537,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
         )}
       </div>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
+      <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <div className="rounded-xl border border-slate-200 p-3">
           <p className="text-xs font-semibold text-slate-700">共通コア履歴</p>
           <ul className="mt-2 space-y-1 text-xs text-slate-600">
@@ -518,12 +553,45 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
         <div className="rounded-xl border border-slate-200 p-3">
           <p className="text-xs font-semibold text-slate-700">血液検査履歴</p>
           <ul className="mt-2 space-y-1 text-xs text-slate-600">
-            {labEntries.slice(0, 5).map((item) => (
+            {labEntries
+              .filter((item) => item.category === "BLOOD")
+              .slice(0, 5)
+              .map((item) => (
               <li key={item.id}>
                 {item.recordedAt.slice(0, 10)} / {labMarkerLabelMap[item.marker]}: {item.value} {item.unit}
               </li>
             ))}
-            {labEntries.length === 0 && <li>記録なし</li>}
+            {labEntries.filter((item) => item.category === "BLOOD").length === 0 && <li>記録なし</li>}
+          </ul>
+        </div>
+
+        <div className="rounded-xl border border-slate-200 p-3">
+          <p className="text-xs font-semibold text-slate-700">尿検査履歴</p>
+          <ul className="mt-2 space-y-1 text-xs text-slate-600">
+            {labEntries
+              .filter((item) => item.category === "URINE")
+              .slice(0, 5)
+              .map((item) => (
+                <li key={item.id}>
+                  {item.recordedAt.slice(0, 10)} / {labMarkerLabelMap[item.marker]}: {item.value} {item.unit}
+                </li>
+              ))}
+            {labEntries.filter((item) => item.category === "URINE").length === 0 && <li>記録なし</li>}
+          </ul>
+        </div>
+
+        <div className="rounded-xl border border-slate-200 p-3">
+          <p className="text-xs font-semibold text-slate-700">内分泌検査履歴</p>
+          <ul className="mt-2 space-y-1 text-xs text-slate-600">
+            {labEntries
+              .filter((item) => item.category === "ENDOCRINE")
+              .slice(0, 5)
+              .map((item) => (
+                <li key={item.id}>
+                  {item.recordedAt.slice(0, 10)} / {labMarkerLabelMap[item.marker]}: {item.value} {item.unit}
+                </li>
+              ))}
+            {labEntries.filter((item) => item.category === "ENDOCRINE").length === 0 && <li>記録なし</li>}
           </ul>
         </div>
 
