@@ -164,22 +164,21 @@ jobs:
               per_page: 100
             });
 
-            const checksByName = new Map();
-            for (const check of checksResponse.data.check_runs) {
-              if (!checksByName.has(check.name) || check.id > checksByName.get(check.name).id) {
-                checksByName.set(check.name, check);
-              }
-            }
-
             const failures = [];
             for (const name of requiredChecks) {
-              const check = checksByName.get(name);
-              if (!check) {
+              const sameNameChecks = checksResponse.data.check_runs.filter((check) => check.name === name);
+              if (sameNameChecks.length === 0) {
                 failures.push(`${name}: check run not found`);
                 continue;
               }
-              if (check.status !== "completed" || check.conclusion !== "success") {
-                failures.push(`${name}: status=${check.status}, conclusion=${check.conclusion}`);
+
+              const hasSuccess = sameNameChecks.some(
+                (check) => check.status === "completed" && check.conclusion === "success"
+              );
+
+              if (!hasSuccess) {
+                const latest = sameNameChecks.sort((a, b) => b.id - a.id)[0];
+                failures.push(`${name}: status=${latest.status}, conclusion=${latest.conclusion}`);
               }
             }
 
