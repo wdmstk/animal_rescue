@@ -10,6 +10,12 @@ test("pet detail can navigate to public emergency page", async ({ page }) => {
   await expect(page.getByText("直近の投薬")).toBeVisible();
   await expect(page.getByText("直近のワクチン")).toBeVisible();
   await expect(page.getByText("直近の医療記録")).toBeVisible();
+  await expect(page.getByRole("link", { name: "緊急連絡先へ電話" })).toHaveAttribute("href", /tel:/);
+  await expect(page.getByRole("link", { name: "病院へ電話" })).toHaveAttribute("href", /tel:/);
+  await expect(page.getByRole("link", { name: "病院を地図で開く" })).toHaveAttribute(
+    "href",
+    /google\.com\/maps\/search/
+  );
 });
 
 test("public emergency page shows 404 for invalid token", async ({ page }) => {

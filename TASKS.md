@@ -23,10 +23,18 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-157` 緊急公開画面にワンタップ導線追加
 
 ### todo
-（なし）
+1. `TASK-166` 初回オンボーディング導線
+2. `TASK-165` データ共有出力（PDF/印刷向け）
+3. `TASK-164` 変更履歴（監査ログ）表示
+4. `TASK-163` 通知設定UI（投薬リマインダー実利用化）
+5. `TASK-162` Empty State改善（次アクション導線つき）
+6. `TASK-161` ローディング/スケルトンの統一
+7. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
+8. `TASK-159` ペット詳細ページの情報密度最適化（セクションナビ）
+9. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
 
 ### blocked
 （なし）
@@ -92,6 +100,137 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 緊急公開画面にワンタップ導線追加
+- Task ID: `TASK-157`
+- ブランチ: `feat/TASK-157-emergency-public-quick-actions`
+- ステータス: `in_progress`
+- 概要: 緊急公開画面に電話・地図のワンタップ導線を追加し、救急時の即応性を高める
+- Issue: `#136`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `tel:` リンクで緊急連絡先/病院へ1タップ発信できる
+  - 病院名登録時のみ地図リンクを表示する
+  - 未登録項目は安全に非表示で表示崩れがない
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### 緊急公開画面の視認性改善（救急モードUI）
+- Task ID: `TASK-158`
+- ブランチ: `feat/TASK-158-emergency-public-visual-priority`
+- ステータス: `todo`
+- 概要: 薬・アレルギー・連絡先を優先表示する救急モードUIへ再構成する
+- Issue: `#137`
+- 依存関係:
+  - blocked by: `TASK-157`
+- 完了条件:
+  - 重要情報がファーストビューで確認可能
+  - 文字サイズ/余白が救急閲覧向けに最適化される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### ペット詳細ページの情報密度最適化（セクションナビ）
+- Task ID: `TASK-159`
+- ブランチ: `feat/TASK-159-pet-detail-section-navigation`
+- ステータス: `todo`
+- 概要: `/pets/[petId]` にセクションナビを追加し、主要機能へ即時遷移できるようにする
+- Issue: `#138`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 基本/緊急/投薬/健康/記録へのジャンプ導線がある
+  - 初回表示の探索コストが低減する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### 共通フィードバックUI（成功/失敗トースト）導入
+- Task ID: `TASK-160`
+- ブランチ: `feat/TASK-160-shared-feedback-toast`
+- ステータス: `todo`
+- 概要: 主要画面の成功/失敗メッセージを共通トーストコンポーネントへ統一する
+- Issue: `#139`
+- 依存関係:
+  - blocked by: `TASK-159`
+- 完了条件:
+  - settings/invite/new pet/主要編集カードで共通表示になる
+  - 文言/色/表示ルールが統一される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### ローディング/スケルトンの統一
+- Task ID: `TASK-161`
+- ブランチ: `feat/TASK-161-shared-loading-skeleton`
+- ステータス: `todo`
+- 概要: 主要CRUD画面に初期ロードスケルトンと送信中UIを統一導入する
+- Issue: `#140`
+- 依存関係:
+  - blocked by: `TASK-160`
+- 完了条件:
+  - 読み込み中の無反応に見える状態が解消される
+  - 保存中状態が統一される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### Empty State改善（次アクション導線つき）
+- Task ID: `TASK-162`
+- ブランチ: `feat/TASK-162-empty-state-cta`
+- ステータス: `todo`
+- 概要: 空状態にCTAを追加し、初回ユーザーが次アクションを理解できるようにする
+- Issue: `#141`
+- 依存関係:
+  - blocked by: `TASK-161`
+- 完了条件:
+  - pets一覧/健康記録/医療記録/写真の空状態にCTAがある
+  - 次操作が迷わず実行できる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### 通知設定UI（投薬リマインダー実利用化）
+- Task ID: `TASK-163`
+- ブランチ: `feat/TASK-163-medication-reminder-settings-ui`
+- ステータス: `todo`
+- 概要: 投薬リマインダーに設定UIを追加し、通知のON/OFFや送信先を管理可能にする
+- Issue: `#142`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 通知設定の保存と反映ができる
+  - 既存リマインダー基盤と整合する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### 変更履歴（監査ログ）表示
+- Task ID: `TASK-164`
+- ブランチ: `feat/TASK-164-change-history-view`
+- ステータス: `todo`
+- 概要: 緊急情報/投薬/ワクチン/医療記録の更新履歴を表示し共同編集の追跡性を上げる
+- Issue: `#143`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 更新時刻と変更対象の一覧が表示される
+  - 家族運用で変更追跡できる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### データ共有出力（PDF/印刷向け）
+- Task ID: `TASK-165`
+- ブランチ: `feat/TASK-165-care-summary-print-export`
+- ステータス: `todo`
+- 概要: 通院提出用の基本/緊急/投薬サマリーを印刷またはPDF出力可能にする
+- Issue: `#144`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 詳細画面から1クリックで出力導線を実行できる
+  - 出力内容に基本/緊急/投薬が含まれる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### 初回オンボーディング導線
+- Task ID: `TASK-166`
+- ブランチ: `feat/TASK-166-first-time-onboarding-checklist`
+- ステータス: `todo`
+- 概要: 初回ユーザー向けに3ステップチェックリストを実装し、完了率計測可能な状態を作る
+- Issue: `#145`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - ペット登録→緊急情報→QR共有の進行表示がある
+  - 3ステップの完了率計測の土台がある
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 検査/設定修正 + 拡張項目自由化（複数指定）
 - Task ID: `TASK-155`
