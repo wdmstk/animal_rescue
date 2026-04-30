@@ -85,7 +85,7 @@ export async function GET() {
 
   const ownerDisplaySettings = getOwnerDisplaySettingsDelegate();
   if (!ownerDisplaySettings) {
-    return NextResponse.json({ data: toResponseData(ownerUserId, DEFAULT_SETTINGS) });
+    return NextResponse.json({ error: "Display settings model is unavailable. Regenerate Prisma Client." }, { status: 503 });
   }
 
   const settings = await ownerDisplaySettings.findUnique({

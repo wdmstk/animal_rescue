@@ -37,22 +37,14 @@ describe("/api/settings/display", () => {
       .mockResolvedValueOnce({ userId: "11111111-1111-4111-8111-111111111111" });
   });
 
-  it("returns default settings when ownerDisplaySettings delegate is unavailable", async () => {
+  it("returns 503 on GET when ownerDisplaySettings delegate is unavailable", async () => {
     (prismaMock as { ownerDisplaySettings?: unknown }).ownerDisplaySettings = undefined;
 
     const response = await GET();
 
-    expect(response.status).toBe(200);
-    const payload = await response.json();
-    expect(payload.data).toEqual({
-      ownerUserId: "11111111-1111-4111-8111-111111111111",
-      showMedicationCard: true,
-      showVaccinationCard: true,
-      showHealthCard: true,
-      showMedicalRecordCard: true,
-      showEmergencyMedicationSummary: true,
-      showEmergencyVaccinationSummary: true,
-      showEmergencyMedicalRecordSummary: true
+    expect(response.status).toBe(503);
+    await expect(response.json()).resolves.toEqual({
+      error: "Display settings model is unavailable. Regenerate Prisma Client."
     });
   });
 
