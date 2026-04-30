@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-153` PRマージ前チェックをCI実行結果と連動強制
 
 ### todo
 1. `TASK-151` 健康記録UIをカテゴリ分離 + 尿項目段階導入
@@ -87,6 +87,19 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### PRマージ前チェックをCI実行結果と連動強制
+- Task ID: `TASK-153`
+- ブランチ: `feat/TASK-153-pre-merge-guard-ci-linked`
+- ステータス: `in_progress`
+- 概要: PR本文チェックの自己申告だけではなく、head SHAの必須CIチェック結果を参照してマージ前ガードを強制する
+- Issue: `#125`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `PR Pre-Merge Guard` が `Lint` / `Unit/Integration (Vitest)` / `DB Integration (Real Postgres)` / `E2E (Playwright)` の成功を確認する
+  - CI未完了または失敗時に、PR本文で `ci_green_confirmed` をチェックしてもガードが失敗する
+  - `npm run lint` / `npx vitest run` が通る
 
 ### 検査カテゴリ基盤再設計（DB/API/型）
 - Task ID: `TASK-152`
