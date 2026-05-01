@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-180` OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
 
 ### todo
 （なし）
@@ -115,6 +115,22 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
+- Task ID: `TASK-180`
+- ブランチ: `fix/TASK-180-owner-recovery-oldest-guard`
+- ステータス: `in_progress`
+- 概要: OWNERが0人の世帯で、最古メンバー本人のみOWNER復旧できるAPIを追加し、復旧成功時に監査ログをDB保存する。設定画面には条件成立時のみ復旧導線を表示する
+- Issue: `#189`
+- 依存関係:
+  - prerequisite: `TASK-179`
+- 完了条件:
+  - `POST /api/households/recover-owner` を追加し、OWNER不在時のみ最古メンバー本人のOWNER化を許可する
+  - OWNER復旧成功時に監査ログ（householdId/recoveredUserId/triggeredByUserId/reason/createdAt）をDB保存する
+  - 設定画面で `OWNER=0` かつ最古メンバー本人時のみ復旧ボタンを表示し、実行成功後に再取得できる
+  - `tests/integration` に復旧APIの境界ケース（最古成功/非最古403/OWNER既存409）を追加する
+  - `tests/e2e/settings-account.spec.ts` に復旧導線の表示・成功・失敗表示を追加する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### OWNER不在防止（OWNER→FAMILY降格ガード）
 - Task ID: `TASK-179`

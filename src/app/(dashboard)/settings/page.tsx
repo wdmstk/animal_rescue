@@ -149,8 +149,18 @@ export default function SettingsPage() {
   const [pets, setPets] = useState<PetListItem[]>([]);
   const [ownerDisplaySettings, setOwnerDisplaySettings] = useState<OwnerDisplaySettings | null>(null);
   const [isDisplaySettingsSaving, setIsDisplaySettingsSaving] = useState(false);
+  const [isRecoveringOwner, setIsRecoveringOwner] = useState(false);
 
   const isOwner = currentUserRole === "OWNER";
+  const hasOwner = members.some((member) => member.role === "OWNER");
+  const oldestMember = [...members].sort((a, b) => {
+    const createdAtDiff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    if (createdAtDiff !== 0) {
+      return createdAtDiff;
+    }
+    return a.id.localeCompare(b.id);
+  })[0];
+  const canRecoverOwner = !hasOwner && !!account?.userId && oldestMember?.userId === account.userId;
 
   const loadData = async () => {
     setErrorMessage(null);
@@ -329,6 +339,25 @@ export default function SettingsPage() {
     setMessage("表示設定を更新しました。");
   };
 
+  const handleRecoverOwner = async () => {
+    setErrorMessage(null);
+    setMessage(null);
+    setIsRecoveringOwner(true);
+
+    const response = await fetch("/api/households/recover-owner", { method: "POST" });
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+
+    if (!response.ok) {
+      setErrorMessage(typeof payload?.error === "string" ? payload.error : "OWNER復旧に失敗しました。");
+      setIsRecoveringOwner(false);
+      return;
+    }
+
+    setIsRecoveringOwner(false);
+    setMessage("OWNERを復旧しました。");
+    await loadData();
+  };
+
   return (
     <div className="space-y-4">
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -368,6 +397,19 @@ export default function SettingsPage() {
             </div>
           ))}
         </div>
+        {canRecoverOwner ? (
+          <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+            <p className="text-xs text-amber-800">世帯にOWNERがいないため、最古メンバーとして復旧できます。</p>
+            <button
+              type="button"
+              className="mt-2 rounded bg-amber-700 px-3 py-1 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => void handleRecoverOwner()}
+              disabled={isRecoveringOwner}
+            >
+              {isRecoveringOwner ? "復旧中..." : "OWNERを復旧する"}
+            </button>
+          </div>
+        ) : null}
       </section>
       {isOwner ? <HouseholdInviteCodeCard /> : null}
 
