@@ -34,14 +34,14 @@
 - [x] pr_opened_ready_for_review_or_reason_for_draft
 
 ### マージ前（CI完了後）
-- [ ] ci_green_confirmed
-- [ ] self_review_final_done_after_ci_green
-- [ ] ready_for_main_merge
+- [x] ci_green_confirmed
+- [x] self_review_final_done_after_ci_green
+- [x] ready_for_main_merge
 
 #### 最終セルフレビュー（必須）
-- 差分妥当性:
-- 不要変更混入:
-- 残リスク/フォローアップ:
+- 差分妥当性: セクションナビ追加とアンカーラップ、および遷移確認E2Eのみで要件に一致
+- 不要変更混入: なし（`page.tsx` と `health.spec.ts`、PR本文のみ）
+- 残リスク/フォローアップ: ナビの「現在地ハイライト」は未対応（別タスクで拡張可能）
 
 ### マージ後
 - [ ] issue_closed_on_task_done
