@@ -32,13 +32,13 @@ describe("/api/settings/display", () => {
     requireAuthenticatedUserMock.mockResolvedValue({
       userId: "11111111-1111-4111-8111-111111111111"
     });
-    findFirstMock
-      .mockResolvedValueOnce({ householdId: "household-1" })
-      .mockResolvedValueOnce({ userId: "11111111-1111-4111-8111-111111111111" });
   });
 
   it("returns 503 on GET when ownerDisplaySettings delegate is unavailable", async () => {
     (prismaMock as { ownerDisplaySettings?: unknown }).ownerDisplaySettings = undefined;
+    findFirstMock
+      .mockResolvedValueOnce({ householdId: "household-1" })
+      .mockResolvedValueOnce({ userId: "11111111-1111-4111-8111-111111111111" });
 
     const response = await GET();
 
@@ -50,6 +50,9 @@ describe("/api/settings/display", () => {
 
   it("returns 503 on PATCH when ownerDisplaySettings delegate is unavailable", async () => {
     (prismaMock as { ownerDisplaySettings?: unknown }).ownerDisplaySettings = undefined;
+    findFirstMock
+      .mockResolvedValueOnce({ householdId: "household-1" })
+      .mockResolvedValueOnce({ userId: "11111111-1111-4111-8111-111111111111" });
 
     const response = await PATCH(
       new Request("http://localhost", {
@@ -70,6 +73,9 @@ describe("/api/settings/display", () => {
       findUnique: findUniqueMock,
       upsert: upsertMock
     };
+    findFirstMock
+      .mockResolvedValueOnce({ householdId: "household-1" })
+      .mockResolvedValueOnce({ userId: "11111111-1111-4111-8111-111111111111" });
     findUniqueMock.mockResolvedValue({
       ownerUserId: "11111111-1111-4111-8111-111111111111",
       showMedicationCard: false,
@@ -92,6 +98,34 @@ describe("/api/settings/display", () => {
         showHealthCard: true,
         showMedicalRecordCard: true,
         showEmergencyMedicationSummary: false,
+        showEmergencyVaccinationSummary: true,
+        showEmergencyMedicalRecordSummary: true
+      }
+    });
+  });
+
+  it("returns 200 with fallback owner when OWNER role is not found", async () => {
+    prismaMock.ownerDisplaySettings = {
+      findUnique: findUniqueMock,
+      upsert: upsertMock
+    };
+    findFirstMock
+      .mockResolvedValueOnce({ householdId: "household-1" })
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({ userId: "fallback-owner-user-id" });
+    findUniqueMock.mockResolvedValue(null);
+
+    const response = await GET();
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      data: {
+        ownerUserId: "fallback-owner-user-id",
+        showMedicationCard: true,
+        showVaccinationCard: true,
+        showHealthCard: true,
+        showMedicalRecordCard: true,
+        showEmergencyMedicationSummary: true,
         showEmergencyVaccinationSummary: true,
         showEmergencyMedicalRecordSummary: true
       }

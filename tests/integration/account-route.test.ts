@@ -52,6 +52,29 @@ describe("/api/account", () => {
     });
   });
 
+  it("returns null displayName when user_metadata.display_name is missing", async () => {
+    getUserMock.mockResolvedValue({
+      data: {
+        user: {
+          id: "u1",
+          email: "user@example.com",
+          user_metadata: {}
+        }
+      },
+      error: null
+    });
+
+    const response = await GET();
+    const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(payload.data).toEqual({
+      userId: "u1",
+      email: "user@example.com",
+      displayName: null
+    });
+  });
+
   it("updates displayName and password", async () => {
     getUserMock.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
     updateUserMock.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
