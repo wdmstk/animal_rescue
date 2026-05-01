@@ -265,6 +265,18 @@ model PetDisplaySettings {
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 }
 
+model PetMedicationReminderDispatchLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  petId        String   @db.Uuid
+  reminderDate DateTime
+  createdAt    DateTime @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@unique([petId, reminderDate])
+  @@index([reminderDate])
+}
+
 model PetCoreMetricEntry {
   id         String         @id @default(uuid()) @db.Uuid
   petId      String         @db.Uuid
