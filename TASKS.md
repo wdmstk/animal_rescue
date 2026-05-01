@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-181` 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
 
 ### todo
 （なし）
@@ -116,6 +116,22 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
+- Task ID: `TASK-181`
+- ブランチ: `fix/TASK-181-emergency-save-error-handling`
+- ステータス: `in_progress`
+- 概要: 緊急情報編集の保存フローで発生したエラー（Promise params, Zod flatten表示クラッシュ, 全角電話入力失敗）を修正し、失敗時の可観測性を改善する
+- Issue: `#191`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - Prismaエラー対処として既存DBの `updatedAt`/IDデフォルト差異を補正するマイグレーションを反映する
+  - `PUT /api/pets/[petId]/emergency-info` が Promise params 経路でも正しく動作する
+  - 保存失敗時に `ToastMessage` でオブジェクト描画クラッシュが再発しない
+  - 全角電話番号入力が正規化され保存できる
+  - `tests/unit/validators.test.ts` と `tests/integration/emergency-info-route.test.ts` で再発防止を担保する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
 - Task ID: `TASK-180`

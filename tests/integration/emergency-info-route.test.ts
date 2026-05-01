@@ -50,6 +50,29 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
     expect(upsertMock).not.toHaveBeenCalled();
   });
 
+  it("accepts promised params object", async () => {
+    upsertMock.mockResolvedValue({
+      id: "info-1",
+      petId: validPetId,
+      ...payload
+    });
+
+    const response = await PUT(
+      new Request("http://localhost", {
+        method: "PUT",
+        body: JSON.stringify(payload)
+      }),
+      { params: Promise.resolve({ petId: validPetId }) as unknown as { petId: string } }
+    );
+
+    expect(response.status).toBe(200);
+    expect(upsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { petId: validPetId }
+      })
+    );
+  });
+
   it("returns 400 on invalid payload", async () => {
     const response = await PUT(
       new Request("http://localhost", {
@@ -148,6 +171,34 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
         update: expect.objectContaining({
           vetName: "みなと動物病院",
           vetPhone: "03-1234-5678"
+        })
+      })
+    );
+  });
+
+  it("normalizes full-width phone characters before upsert", async () => {
+    upsertMock.mockResolvedValue({
+      id: "info-1",
+      petId: validPetId,
+      ...payload
+    });
+
+    const response = await PUT(
+      new Request("http://localhost", {
+        method: "PUT",
+        body: JSON.stringify({
+          ...payload,
+          emergencyContactPhone: "０９０ー１２３４ー５６７８"
+        })
+      }),
+      { params: { petId: validPetId } }
+    );
+
+    expect(response.status).toBe(200);
+    expect(upsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        update: expect.objectContaining({
+          emergencyContactPhone: "090-1234-5678"
         })
       })
     );
