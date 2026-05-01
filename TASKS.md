@@ -23,12 +23,11 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-171` 緊急公開向け入力品質のバリデーション強化
 
 ### todo
-1. `TASK-171` 緊急公開向け入力品質のバリデーション強化
-2. `TASK-170` 投薬リマインダーの定期送信ジョブ化
-3. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
+1. `TASK-170` 投薬リマインダーの定期送信ジョブ化
+2. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
 
 ### blocked
 （なし）
@@ -127,7 +126,7 @@ Development Task List
 ### 緊急公開向け入力品質のバリデーション強化
 - Task ID: `TASK-171`
 - ブランチ: `fix/TASK-171-emergency-input-validation-hardening`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 緊急公開画面の即時行動導線（tel/地図）の信頼性向上のため、電話番号・病院名など入力品質の検証を強化する
 - Issue: `#165`
 - 依存関係:

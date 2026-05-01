@@ -117,7 +117,8 @@ const toTelHref = (value: string | null): string | null => {
   }
 
   const numeric = value.replace(/[^\d+]/g, "");
-  if (!numeric) {
+  const digitCount = numeric.replace(/\D/g, "").length;
+  if (!numeric || digitCount < 10 || digitCount > 15) {
     return null;
   }
 

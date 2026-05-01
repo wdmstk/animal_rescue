@@ -66,6 +66,22 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
     expect(upsertMock).not.toHaveBeenCalled();
   });
 
+  it("returns 400 when phone contains unsupported characters", async () => {
+    const response = await PUT(
+      new Request("http://localhost", {
+        method: "PUT",
+        body: JSON.stringify({
+          ...payload,
+          emergencyContactPhone: "090-1234-5678#99"
+        })
+      }),
+      { params: { petId: validPetId } }
+    );
+
+    expect(response.status).toBe(400);
+    expect(upsertMock).not.toHaveBeenCalled();
+  });
+
   it("returns 404 when pet does not exist", async () => {
     requirePetAccessMock.mockResolvedValueOnce(NextResponse.json({ error: "Pet not found" }, { status: 404 }));
 
@@ -105,5 +121,35 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
         ...payload
       }
     });
+  });
+
+  it("trims emergency payload before upsert", async () => {
+    upsertMock.mockResolvedValue({
+      id: "info-1",
+      petId: validPetId,
+      ...payload
+    });
+
+    const response = await PUT(
+      new Request("http://localhost", {
+        method: "PUT",
+        body: JSON.stringify({
+          ...payload,
+          vetName: "  みなと動物病院  ",
+          vetPhone: " 03-1234-5678 "
+        })
+      }),
+      { params: { petId: validPetId } }
+    );
+
+    expect(response.status).toBe(200);
+    expect(upsertMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        update: expect.objectContaining({
+          vetName: "みなと動物病院",
+          vetPhone: "03-1234-5678"
+        })
+      })
+    );
   });
 });
