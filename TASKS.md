@@ -26,7 +26,7 @@ Development Task List
 （なし）
 
 ### todo
-1. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
+（なし）
 
 ### blocked
 （なし）
@@ -35,7 +35,8 @@ Development Task List
 1. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
 2. `TASK-171` 緊急公開向け入力品質のバリデーション強化
 3. `TASK-170` 投薬リマインダーの定期送信ジョブ化
-4. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
+4. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
+5. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
 4. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
 4. `TASK-166` 初回オンボーディング導線
 4. `TASK-165` データ共有出力（PDF/印刷向け）
@@ -162,7 +163,7 @@ Development Task List
 ### 変更履歴の時刻精度改善（updatedAt基準化）
 - Task ID: `TASK-169`
 - ブランチ: `feat/TASK-169-change-history-updated-at`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: 変更履歴（監査ログ）で投薬/ワクチン/医療記録が createdAt 基準になっているため、更新追跡の精度を改善する
 - Issue: `#163`
 - 依存関係:
