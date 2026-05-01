@@ -23,8 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-178` 再ログイン後の設定画面取得失敗修正（display設定404回避・表示名方針固定）
-2. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
+1. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
 
 ### todo
 （なし）
@@ -33,10 +32,11 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-177` サブスク課金 UI/UX 刷新（設定画面・転換率最適化）
-2. `TASK-176` 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
-3. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
-4. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
+1. `TASK-178` 再ログイン後の設定画面取得失敗修正（display設定404回避・表示名方針固定）
+2. `TASK-177` サブスク課金 UI/UX 刷新（設定画面・転換率最適化）
+3. `TASK-176` 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
+4. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
+5. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
 5. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
 6. `TASK-171` 緊急公開向け入力品質のバリデーション強化
 7. `TASK-170` 投薬リマインダーの定期送信ジョブ化
@@ -133,7 +133,7 @@ Development Task List
 ### 再ログイン後の設定画面取得失敗修正（display設定404回避・表示名方針固定）
 - Task ID: `TASK-178`
 - ブランチ: `fix/TASK-178-settings-relogin-fetch-failure`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 再ログイン後に `/settings` で「設定情報の取得に失敗しました。」となる不具合を修正し、`/api/settings/display` の owner不在時404を回避する。あわせて表示名は `user_metadata.display_name` 単一運用方針をテストで固定する
 - Issue: `#185`
 - 依存関係:
