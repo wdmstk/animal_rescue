@@ -158,6 +158,7 @@ model Pet {
   vaccinations     PetVaccination[]
   emergencyToken   PetEmergencyToken?
   displaySettings  PetDisplaySettings?
+  reminderDispatchLogs PetMedicationReminderDispatchLog[]
   coreMetrics      PetCoreMetricEntry[]
   labResults       PetLabResultEntry[]
   healthExtensions PetHealthExtensionEntry[]
