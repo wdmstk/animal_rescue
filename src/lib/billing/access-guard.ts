@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { resolveBillingAccessState } from "@/lib/billing/access-policy";
 
 const billingSelect = {
@@ -10,8 +9,35 @@ const billingSelect = {
 } as const;
 
 export const getUserBillingAccessState = async (userId: string) => {
-  const delegate = (prisma as unknown as { userSubscription?: { findUnique?: (args: unknown) => Promise<unknown> } })
-    .userSubscription;
+  let prismaModule: { prisma: { userSubscription?: { findUnique?: (args: unknown) => Promise<unknown> } } } | null = null;
+  try {
+    prismaModule = (await import("@/lib/prisma")) as {
+      prisma: { userSubscription?: { findUnique?: (args: unknown) => Promise<unknown> } };
+    };
+  } catch {
+    return resolveBillingAccessState({
+      status: "ACTIVE",
+      trialEndsAt: null,
+      currentPeriodEnd: null,
+      graceUntil: null
+    });
+  }
+
+  const prisma = prismaModule.prisma as unknown as {
+    userSubscription?: {
+      findUnique?: (args: {
+        where: { userId: string };
+        select: { status: true; trialEndsAt?: true; currentPeriodEnd: true; graceUntil?: true };
+      }) => Promise<{
+        status: "INCOMPLETE" | "TRIALING" | "ACTIVE" | "PAST_DUE" | "CANCELED" | "UNPAID";
+        trialEndsAt?: Date | null;
+        currentPeriodEnd: Date | null;
+        graceUntil?: Date | null;
+      } | null>;
+    };
+  };
+
+  const delegate = prisma.userSubscription;
   if (!delegate?.findUnique) {
     return resolveBillingAccessState({
       status: "ACTIVE",
@@ -22,20 +48,29 @@ export const getUserBillingAccessState = async (userId: string) => {
   }
 
   try {
-    const subscription = (await prisma.userSubscription.findUnique({
+    const subscription = (await delegate.findUnique({
       where: { userId },
       select: billingSelect
     })) as {
       status: "INCOMPLETE" | "TRIALING" | "ACTIVE" | "PAST_DUE" | "CANCELED" | "UNPAID";
-      trialEndsAt: Date | null;
+      trialEndsAt?: Date | null;
       currentPeriodEnd: Date | null;
-      graceUntil: Date | null;
+      graceUntil?: Date | null;
     } | null;
 
-    return resolveBillingAccessState(subscription);
+    return resolveBillingAccessState(
+      subscription
+        ? {
+            status: subscription.status,
+            trialEndsAt: subscription.trialEndsAt ?? null,
+            currentPeriodEnd: subscription.currentPeriodEnd,
+            graceUntil: subscription.graceUntil ?? null
+          }
+        : null
+    );
   } catch {
     try {
-      const legacy = await prisma.userSubscription.findUnique({
+      const legacy = await delegate.findUnique({
         where: { userId },
         select: { status: true, currentPeriodEnd: true }
       });
