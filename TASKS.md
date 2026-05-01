@@ -23,10 +23,10 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
 
 ### todo
-1. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
+（なし）
 
 ### blocked
 （なし）
@@ -162,7 +162,7 @@ Development Task List
 ### 変更履歴の時刻精度改善（updatedAt基準化）
 - Task ID: `TASK-169`
 - ブランチ: `feat/TASK-169-change-history-updated-at`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 変更履歴（監査ログ）で投薬/ワクチン/医療記録が createdAt 基準になっているため、更新追跡の精度を改善する
 - Issue: `#163`
 - 依存関係:

@@ -5,9 +5,9 @@ describe("buildChangeHistoryItems", () => {
   it("builds and sorts change history across emergency/medication/vaccination/medical record", () => {
     const items = buildChangeHistoryItems({
       emergencyInfo: { updatedAt: "2026-04-01T09:00:00.000Z" },
-      medications: [{ id: "m1", name: "ピモベンダン", createdAt: "2026-04-02T09:00:00.000Z" }],
-      vaccinations: [{ id: "v1", type: "RABIES", customTypeName: null, createdAt: "2026-04-03T09:00:00.000Z" }],
-      medicalRecords: [{ id: "r1", title: "定期健診", createdAt: "2026-04-04T09:00:00.000Z" }]
+      medications: [{ id: "m1", name: "ピモベンダン", updatedAt: "2026-04-02T09:00:00.000Z" }],
+      vaccinations: [{ id: "v1", type: "RABIES", customTypeName: null, updatedAt: "2026-04-03T09:00:00.000Z" }],
+      medicalRecords: [{ id: "r1", title: "定期健診", updatedAt: "2026-04-04T09:00:00.000Z" }]
     });
 
     expect(items).toHaveLength(4);
@@ -21,10 +21,24 @@ describe("buildChangeHistoryItems", () => {
     const items = buildChangeHistoryItems({
       emergencyInfo: null,
       medications: [],
-      vaccinations: [{ id: "v1", type: "OTHER", customTypeName: "抗体検査", createdAt: "2026-04-03T09:00:00.000Z" }],
+      vaccinations: [{ id: "v1", type: "OTHER", customTypeName: "抗体検査", updatedAt: "2026-04-03T09:00:00.000Z" }],
       medicalRecords: []
     });
 
     expect(items[0]).toMatchObject({ target: "ワクチン: 抗体検査" });
+  });
+
+  it("falls back to createdAt when updatedAt is unavailable", () => {
+    const items = buildChangeHistoryItems({
+      emergencyInfo: null,
+      medications: [{ id: "m1", name: "ピモベンダン", createdAt: "2026-04-05T09:00:00.000Z" }],
+      vaccinations: [],
+      medicalRecords: []
+    });
+
+    expect(items[0]).toMatchObject({
+      target: "投薬: ピモベンダン",
+      changedAt: "2026-04-05T09:00:00.000Z"
+    });
   });
 });

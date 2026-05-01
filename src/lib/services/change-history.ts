@@ -11,20 +11,23 @@ type EmergencyInfoSource = {
 type MedicationSource = {
   id: string;
   name: string;
-  createdAt: string;
+  updatedAt?: string;
+  createdAt?: string;
 };
 
 type VaccinationSource = {
   id: string;
   type: "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER";
   customTypeName: string | null;
-  createdAt: string;
+  updatedAt?: string;
+  createdAt?: string;
 };
 
 type MedicalRecordSource = {
   id: string;
   title: string;
-  createdAt: string;
+  updatedAt?: string;
+  createdAt?: string;
 };
 
 type ChangeHistorySources = {
@@ -43,6 +46,7 @@ const vaccinationTypeLabelMap: Record<VaccinationSource["type"], string> = {
 };
 
 const buildTimestamp = (value: string) => new Date(value).getTime();
+const resolveChangedAt = (value: { updatedAt?: string; createdAt?: string }) => value.updatedAt ?? value.createdAt ?? new Date(0).toISOString();
 
 export const buildChangeHistoryItems = (sources: ChangeHistorySources): ChangeHistoryItem[] => {
   const items: ChangeHistoryItem[] = [];
@@ -58,7 +62,7 @@ export const buildChangeHistoryItems = (sources: ChangeHistorySources): ChangeHi
   items.push(
     ...sources.medications.map((item) => ({
       id: `medication-${item.id}`,
-      changedAt: item.createdAt,
+      changedAt: resolveChangedAt(item),
       target: `投薬: ${item.name}`
     }))
   );
@@ -66,7 +70,7 @@ export const buildChangeHistoryItems = (sources: ChangeHistorySources): ChangeHi
   items.push(
     ...sources.vaccinations.map((item) => ({
       id: `vaccination-${item.id}`,
-      changedAt: item.createdAt,
+      changedAt: resolveChangedAt(item),
       target: `ワクチン: ${item.type === "OTHER" ? item.customTypeName ?? "その他" : vaccinationTypeLabelMap[item.type]}`
     }))
   );
@@ -74,7 +78,7 @@ export const buildChangeHistoryItems = (sources: ChangeHistorySources): ChangeHi
   items.push(
     ...sources.medicalRecords.map((item) => ({
       id: `medical-record-${item.id}`,
-      changedAt: item.createdAt,
+      changedAt: resolveChangedAt(item),
       target: `医療記録: ${item.title}`
     }))
   );
