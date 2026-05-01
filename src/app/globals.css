@@ -17,3 +17,28 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-care-summary,
+  .print-care-summary * {
+    visibility: visible;
+  }
+
+  .print-care-summary {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .no-print {
+    display: none;
+  }
+}

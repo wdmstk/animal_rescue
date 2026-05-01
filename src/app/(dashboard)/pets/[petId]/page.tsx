@@ -7,6 +7,7 @@ import { MedicationManagerCard } from "@/components/features/pets/medication-man
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileEditorCard } from "@/components/features/pets/pet-profile-editor-card";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
+import { PrintCareSummaryCard } from "@/components/features/pets/print-care-summary-card";
 import { VaccinationManager } from "@/components/features/pets/vaccination-manager";
 import Link from "next/link";
 import { headers } from "next/headers";
@@ -100,6 +101,30 @@ export default async function PetDetailPage({
           </Link>
 
           <PetProfileCard pet={e2ePet} />
+          <PrintCareSummaryCard
+            pet={{
+              name: e2ePet.name,
+              species: e2ePet.species,
+              breed: e2ePet.breed,
+              sex: e2ePet.sex,
+              birthday: e2ePet.birthday,
+              ageYears: 6,
+              weightKg: 4.2
+            }}
+            emergencyInfo={{
+              disease: "僧帽弁閉鎖不全症（軽度）",
+              currentMedications: "ピモベンダン 1日2回",
+              allergy: "鶏肉アレルギー",
+              vetName: "みなと動物病院",
+              vetPhone: "03-1234-5678",
+              emergencyContactName: "山田 花子",
+              emergencyContactPhone: "090-1234-5678"
+            }}
+            medications={[
+              { name: "ピモベンダン", dosage: "1mg", frequency: "1日2回" },
+              { name: "整腸剤", dosage: "1包", frequency: "1日1回" }
+            ]}
+          />
 
           <PetPhotoGallery
             petId={petId}
@@ -286,6 +311,23 @@ export default async function PetDetailPage({
           mainPhotoUrl: pet.mainPhotoUrl,
           photos: pet.photos
         }}
+      />
+      <PrintCareSummaryCard
+        pet={{
+          name: pet.name,
+          species: pet.species,
+          breed: pet.breed,
+          sex: pet.sex,
+          birthday: pet.birthday ? normalizeDate(pet.birthday) : null,
+          ageYears: pet.ageYears,
+          weightKg: pet.weightKg !== null ? Number(pet.weightKg) : null
+        }}
+        emergencyInfo={pet.emergencyInfo}
+        medications={pet.medications.map((item) => ({
+          name: item.name,
+          dosage: item.dosage,
+          frequency: item.frequency
+        }))}
       />
 
       <PetPhotoGallery petId={petId} photos={pet.photos.map((photo) => photo.photoUrl)} />
