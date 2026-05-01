@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-171` 緊急公開向け入力品質のバリデーション強化
+（なし）
 
 ### todo
 1. `TASK-170` 投薬リマインダーの定期送信ジョブ化
@@ -33,9 +33,10 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
-2. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
-3. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
+1. `TASK-171` 緊急公開向け入力品質のバリデーション強化
+2. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
+3. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
+4. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
 4. `TASK-166` 初回オンボーディング導線
 4. `TASK-165` データ共有出力（PDF/印刷向け）
 5. `TASK-164` 変更履歴（監査ログ）表示
@@ -126,7 +127,7 @@ Development Task List
 ### 緊急公開向け入力品質のバリデーション強化
 - Task ID: `TASK-171`
 - ブランチ: `fix/TASK-171-emergency-input-validation-hardening`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 緊急公開画面の即時行動導線（tel/地図）の信頼性向上のため、電話番号・病院名など入力品質の検証を強化する
 - Issue: `#165`
 - 依存関係:
