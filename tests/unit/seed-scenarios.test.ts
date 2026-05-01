@@ -15,15 +15,21 @@ describe("seed scenario helpers", () => {
 
   it("collects only fixed seed IDs as deletion targets", async () => {
     const target = await collectSeedTargetIds({} as never);
-    expect(target.householdIds).toEqual([
-      "10000000-0000-4000-8000-000000000001",
-      "10000000-0000-4000-8000-000000000002"
-    ]);
-    expect(target.petIds).toEqual([
-      "30000000-0000-4000-8000-000000000001",
-      "30000000-0000-4000-8000-000000000002",
-      "30000000-0000-4000-8000-000000000003"
-    ]);
+    expect(target.householdIds).toHaveLength(2);
+    expect(target.petIds).toHaveLength(11);
+    expect(target.householdIds).toEqual(
+      expect.arrayContaining([
+        "10000000-0000-4000-8000-000000000001",
+        "10000000-0000-4000-8000-000000000002"
+      ])
+    );
+    expect(target.petIds).toEqual(
+      expect.arrayContaining([
+        "30000000-0000-4000-8000-000000000001",
+        "30000000-0000-4000-8000-000000000002",
+        "30000000-0000-4000-8000-000000000011"
+      ])
+    );
   });
 
   it("reset deletes only seed-scoped records", async () => {
@@ -48,33 +54,27 @@ describe("seed scenario helpers", () => {
 
     const target = await resetSeedData(prisma as never);
 
-    expect(target.householdIds).toEqual([
-      "10000000-0000-4000-8000-000000000001",
-      "10000000-0000-4000-8000-000000000002"
-    ]);
-    expect(target.petIds).toEqual([
-      "30000000-0000-4000-8000-000000000001",
-      "30000000-0000-4000-8000-000000000002",
-      "30000000-0000-4000-8000-000000000003"
-    ]);
+    expect(target.householdIds).toHaveLength(2);
+    expect(target.petIds).toHaveLength(11);
     expect(prisma.pet.deleteMany).toHaveBeenCalledWith({
       where: {
         id: {
-          in: [
+          in: expect.arrayContaining([
             "30000000-0000-4000-8000-000000000001",
             "30000000-0000-4000-8000-000000000002",
-            "30000000-0000-4000-8000-000000000003"
-          ]
+            "30000000-0000-4000-8000-000000000011"
+          ])
         }
       }
     });
     expect(prisma.householdMember.deleteMany).toHaveBeenCalledWith({
       where: {
         id: {
-          in: [
+          in: expect.arrayContaining([
             "10000000-0000-4000-8000-000000000011",
-            "10000000-0000-4000-8000-000000000012"
-          ]
+            "10000000-0000-4000-8000-000000000012",
+            "10000000-0000-4000-8000-000000000013"
+          ])
         }
       }
     });

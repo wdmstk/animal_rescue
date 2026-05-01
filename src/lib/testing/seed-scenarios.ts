@@ -26,18 +26,20 @@ const seedIds = {
   },
   members: {
     baselineOwner: "10000000-0000-4000-8000-000000000011",
-    showcaseOwner: "10000000-0000-4000-8000-000000000012"
+    showcaseOwner: "10000000-0000-4000-8000-000000000012",
+    showcaseFamily: "10000000-0000-4000-8000-000000000013"
   },
   users: {
     baselineOwner: "20000000-0000-4000-8000-000000000001",
-    showcaseOwner: "20000000-0000-4000-8000-000000000002"
+    showcaseOwner: "20000000-0000-4000-8000-000000000002",
+    showcaseFamily: "20000000-0000-4000-8000-000000000004"
   },
   pets: {
-    baselineCat: "30000000-0000-4000-8000-000000000001",
-    showcaseDog: "30000000-0000-4000-8000-000000000002",
-    showcaseRabbit: "30000000-0000-4000-8000-000000000003"
+    baselineCat: "30000000-0000-4000-8000-000000000001"
   }
 } as const;
+
+const showcasePetIds = Array.from({ length: 10 }, (_, index) => `30000000-0000-4000-8000-${(index + 2).toString().padStart(12, "0")}`);
 
 const baselineInviteCode = "SEEDBASE01";
 const showcaseInviteCodes = {
@@ -48,15 +50,19 @@ const showcaseInviteCodes = {
 
 const seedPetIds = [
   seedIds.pets.baselineCat,
-  seedIds.pets.showcaseDog,
-  seedIds.pets.showcaseRabbit
+  ...showcasePetIds
 ] as const;
 
 const seedHouseholdIds = [seedIds.households.baseline, seedIds.households.showcase] as const;
 
-const seedMemberIds = [seedIds.members.baselineOwner, seedIds.members.showcaseOwner] as const;
+const seedMemberIds = [seedIds.members.baselineOwner, seedIds.members.showcaseOwner, seedIds.members.showcaseFamily] as const;
 
-const seedInviteCodes = [baselineInviteCode, showcaseInviteCodes.active, showcaseInviteCodes.expired, showcaseInviteCodes.used] as const;
+const seedInviteCodes = [
+  baselineInviteCode,
+  showcaseInviteCodes.active,
+  showcaseInviteCodes.expired,
+  showcaseInviteCodes.used
+] as const;
 
 const now = new Date();
 const plusDays = (days: number) => new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
@@ -66,9 +72,24 @@ export const isSeedTagged = (value: string | null | undefined): boolean =>
   typeof value === "string" && value.trim().toLowerCase().startsWith(SEED_PREFIX);
 
 export const collectSeedTargetIds = async (prisma: PrismaClient): Promise<SeedTargetIds> => {
+  const dynamicHouseholds =
+    "household" in prisma && typeof prisma.household.findMany === "function"
+      ? await prisma.household.findMany({
+          where: { name: { startsWith: SEED_PREFIX, mode: "insensitive" } },
+          select: { id: true }
+        })
+      : [];
+  const dynamicPets =
+    "pet" in prisma && typeof prisma.pet.findMany === "function"
+      ? await prisma.pet.findMany({
+          where: { name: { startsWith: SEED_PREFIX, mode: "insensitive" } },
+          select: { id: true }
+        })
+      : [];
+
   return {
-    householdIds: [...seedHouseholdIds],
-    petIds: [...seedPetIds]
+    householdIds: [...new Set([...seedHouseholdIds, ...dynamicHouseholds.map((row) => row.id)])],
+    petIds: [...new Set([...seedPetIds, ...dynamicPets.map((row) => row.id)])]
   };
 };
 
@@ -285,372 +306,161 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
     update: { role: "OWNER" }
   });
 
-  await prisma.pet.upsert({
-    where: { id: seedIds.pets.showcaseDog },
+  await prisma.householdMember.upsert({
+    where: {
+      householdId_userId: {
+        householdId: seedIds.households.showcase,
+        userId: seedIds.users.showcaseFamily
+      }
+    },
     create: {
-      id: seedIds.pets.showcaseDog,
+      id: seedIds.members.showcaseFamily,
       householdId: seedIds.households.showcase,
-      name: `${SEED_PREFIX} showcase dog`,
-      species: "dog",
-      sex: "MALE",
-      ageYears: 12,
-      weightKg: 18.3,
-      mainPhotoUrl: SEED_IMAGE_URLS.dogMain,
-      notesPersonality: `${SEED_PREFIX} active and vocal`,
-      notesFeatures: `${SEED_PREFIX} white patch on chest`
+      userId: seedIds.users.showcaseFamily,
+      role: "FAMILY"
     },
-    update: {
-      name: `${SEED_PREFIX} showcase dog`,
-      species: "dog",
-      sex: "MALE",
-      ageYears: 12,
-      weightKg: 18.3,
-      mainPhotoUrl: SEED_IMAGE_URLS.dogMain,
-      notesPersonality: `${SEED_PREFIX} active and vocal`,
-      notesFeatures: `${SEED_PREFIX} white patch on chest`
-    }
+    update: { role: "FAMILY" }
   });
 
-  await prisma.pet.upsert({
-    where: { id: seedIds.pets.showcaseRabbit },
-    create: {
-      id: seedIds.pets.showcaseRabbit,
-      householdId: seedIds.households.showcase,
-      name: `${SEED_PREFIX} showcase rabbit`,
-      species: "rabbit",
-      sex: "UNKNOWN",
-      ageYears: 2,
-      notesPersonality: `${SEED_PREFIX} timid`,
-      notesFeatures: null
-    },
-    update: {
-      name: `${SEED_PREFIX} showcase rabbit`,
-      species: "rabbit",
-      sex: "UNKNOWN",
-      ageYears: 2,
-      notesPersonality: `${SEED_PREFIX} timid`,
-      notesFeatures: null
-    }
-  });
+  const petProfiles = [
+    { id: showcasePetIds[0], name: `${SEED_PREFIX} senior dog`, species: "dog", sex: "MALE", ageYears: 13, weightKg: 19.1, disease: "arthritis", medication: "joint support", marker: 2.3 },
+    { id: showcasePetIds[1], name: `${SEED_PREFIX} young cat`, species: "cat", sex: "FEMALE", ageYears: 1, weightKg: 2.7, disease: null, medication: null, marker: 1.1 },
+    { id: showcasePetIds[2], name: `${SEED_PREFIX} diabetic cat`, species: "cat", sex: "MALE", ageYears: 9, weightKg: 5.8, disease: "diabetes", medication: "insulin", marker: 2.6 },
+    { id: showcasePetIds[3], name: `${SEED_PREFIX} rabbit check`, species: "rabbit", sex: "UNKNOWN", ageYears: 3, weightKg: 1.9, disease: null, medication: null, marker: 1.0 },
+    { id: showcasePetIds[4], name: `${SEED_PREFIX} post surgery dog`, species: "dog", sex: "FEMALE", ageYears: 7, weightKg: 16.4, disease: "post-op care", medication: "antibiotic", marker: 1.7 },
+    { id: showcasePetIds[5], name: `${SEED_PREFIX} allergy dog`, species: "dog", sex: "MALE", ageYears: 5, weightKg: 14.2, disease: "skin allergy", medication: "antihistamine", marker: 1.4 },
+    { id: showcasePetIds[6], name: `${SEED_PREFIX} rescue kitten`, species: "cat", sex: "FEMALE", ageYears: 0, weightKg: 1.2, disease: "under observation", medication: null, marker: 0.9 },
+    { id: showcasePetIds[7], name: `${SEED_PREFIX} large dog`, species: "dog", sex: "MALE", ageYears: 6, weightKg: 28.4, disease: null, medication: "omega 3", marker: 1.8 },
+    { id: showcasePetIds[8], name: `${SEED_PREFIX} chronic kidney cat`, species: "cat", sex: "FEMALE", ageYears: 11, weightKg: 3.4, disease: "CKD stage 2", medication: "renal support", marker: 2.8 },
+    { id: showcasePetIds[9], name: `${SEED_PREFIX} inactive rabbit`, species: "rabbit", sex: "UNKNOWN", ageYears: 4, weightKg: 2.1, disease: "reduced appetite", medication: "digestive aid", marker: 1.2 }
+  ] as const;
 
-  await prisma.petPhoto.upsert({
-    where: { id: "45000000-0000-4000-8000-000000000001" },
-    create: {
-      id: "45000000-0000-4000-8000-000000000001",
-      petId: seedIds.pets.showcaseDog,
-      photoUrl: SEED_IMAGE_URLS.dogPhoto1,
-      sortOrder: 0
-    },
-    update: {
-      photoUrl: SEED_IMAGE_URLS.dogPhoto1,
-      sortOrder: 0
-    }
-  });
+  for (const [index, profile] of petProfiles.entries()) {
+    await prisma.pet.upsert({
+      where: { id: profile.id },
+      create: {
+        id: profile.id,
+        householdId: seedIds.households.showcase,
+        name: profile.name,
+        species: profile.species,
+        sex: profile.sex,
+        ageYears: profile.ageYears,
+        weightKg: profile.weightKg,
+        mainPhotoUrl: profile.species === "dog" ? SEED_IMAGE_URLS.dogMain : null,
+        notesPersonality: `${SEED_PREFIX} profile case ${index + 1}`,
+        notesFeatures: index % 2 === 0 ? `${SEED_PREFIX} feature tag ${index + 1}` : null
+      },
+      update: {
+        name: profile.name,
+        species: profile.species,
+        sex: profile.sex,
+        ageYears: profile.ageYears,
+        weightKg: profile.weightKg,
+        mainPhotoUrl: profile.species === "dog" ? SEED_IMAGE_URLS.dogMain : null,
+        notesPersonality: `${SEED_PREFIX} profile case ${index + 1}`,
+        notesFeatures: index % 2 === 0 ? `${SEED_PREFIX} feature tag ${index + 1}` : null
+      }
+    });
 
-  await prisma.petPhoto.upsert({
-    where: { id: "45000000-0000-4000-8000-000000000002" },
-    create: {
-      id: "45000000-0000-4000-8000-000000000002",
-      petId: seedIds.pets.showcaseDog,
-      photoUrl: SEED_IMAGE_URLS.dogPhoto2,
-      sortOrder: 1
-    },
-    update: {
-      photoUrl: SEED_IMAGE_URLS.dogPhoto2,
-      sortOrder: 1
-    }
-  });
+    await prisma.petEmergencyInfo.upsert({
+      where: { petId: profile.id },
+      create: {
+        petId: profile.id,
+        disease: profile.disease,
+        allergy: index % 3 === 0 ? "chicken" : null,
+        currentMedications: profile.medication,
+        vetName: `Showcase Vet ${String(index + 1).padStart(2, "0")}`,
+        vetPhone: "03-2222-3333",
+        emergencyContactName: "Showcase Family",
+        emergencyContactPhone: "090-1111-1111"
+      },
+      update: {
+        disease: profile.disease,
+        allergy: index % 3 === 0 ? "chicken" : null,
+        currentMedications: profile.medication,
+        vetName: `Showcase Vet ${String(index + 1).padStart(2, "0")}`,
+        vetPhone: "03-2222-3333",
+        emergencyContactName: "Showcase Family",
+        emergencyContactPhone: "090-1111-1111"
+      }
+    });
 
-  await prisma.petEmergencyInfo.upsert({
-    where: { petId: seedIds.pets.showcaseDog },
-    create: {
-      petId: seedIds.pets.showcaseDog,
-      disease: "arthritis",
-      allergy: null,
-      currentMedications: "pain reliever",
-      vetName: "Showcase Animal Hospital",
-      vetPhone: "03-2222-3333",
-      emergencyContactName: "Showcase Owner",
-      emergencyContactPhone: "090-1111-1111"
-    },
-    update: {
-      disease: "arthritis",
-      allergy: null,
-      currentMedications: "pain reliever",
-      vetName: "Showcase Animal Hospital",
-      vetPhone: "03-2222-3333",
-      emergencyContactName: "Showcase Owner",
-      emergencyContactPhone: "090-1111-1111"
-    }
-  });
+    await prisma.petMedication.upsert({
+      where: { id: `46000000-0000-4000-8000-${(index + 1).toString().padStart(12, "0")}` },
+      create: {
+        id: `46000000-0000-4000-8000-${(index + 1).toString().padStart(12, "0")}`,
+        petId: profile.id,
+        name: profile.medication ?? "observation only",
+        dosage: profile.medication ? "1 dose" : "n/a",
+        frequency: profile.medication ? "daily" : "none",
+        startDate: minusDays(45 - index),
+        endDate: profile.medication && index % 4 === 0 ? plusDays(14) : null
+      },
+      update: {
+        name: profile.medication ?? "observation only",
+        dosage: profile.medication ? "1 dose" : "n/a",
+        frequency: profile.medication ? "daily" : "none",
+        startDate: minusDays(45 - index),
+        endDate: profile.medication && index % 4 === 0 ? plusDays(14) : null
+      }
+    });
 
-  await prisma.petEmergencyInfo.upsert({
-    where: { petId: seedIds.pets.showcaseRabbit },
-    create: {
-      petId: seedIds.pets.showcaseRabbit,
-      disease: null,
-      allergy: null,
-      currentMedications: null,
-      vetName: "Showcase Rabbit Clinic",
-      vetPhone: "03-2222-4444",
-      emergencyContactName: "Showcase Owner",
-      emergencyContactPhone: "090-1111-1111"
-    },
-    update: {
-      disease: null,
-      allergy: null,
-      currentMedications: null,
-      vetName: "Showcase Rabbit Clinic",
-      vetPhone: "03-2222-4444",
-      emergencyContactName: "Showcase Owner",
-      emergencyContactPhone: "090-1111-1111"
-    }
-  });
+    await prisma.petVaccination.upsert({
+      where: { id: `47000000-0000-4000-8000-${(index + 1).toString().padStart(12, "0")}` },
+      create: {
+        id: `47000000-0000-4000-8000-${(index + 1).toString().padStart(12, "0")}`,
+        petId: profile.id,
+        type: index % 2 === 0 ? "RABIES" : "CORE",
+        date: minusDays(120 + index * 10),
+        nextDue: index % 3 === 0 ? minusDays(5) : plusDays(60 - index * 2)
+      },
+      update: {
+        type: index % 2 === 0 ? "RABIES" : "CORE",
+        date: minusDays(120 + index * 10),
+        nextDue: index % 3 === 0 ? minusDays(5) : plusDays(60 - index * 2)
+      }
+    });
 
-  await prisma.petMedication.upsert({
-    where: { id: "46000000-0000-4000-8000-000000000001" },
-    create: {
-      id: "46000000-0000-4000-8000-000000000001",
-      petId: seedIds.pets.showcaseDog,
-      name: "Joint Support A",
-      dosage: "1 tablet",
-      frequency: "morning",
-      startDate: minusDays(40)
-    },
-    update: {
-      name: "Joint Support A",
-      dosage: "1 tablet",
-      frequency: "morning",
-      startDate: minusDays(40),
-      endDate: null
-    }
-  });
+    await prisma.petCoreMetricEntry.upsert({
+      where: { id: `48000000-0000-4000-8000-${(index + 1).toString().padStart(12, "0")}` },
+      create: {
+        id: `48000000-0000-4000-8000-${(index + 1).toString().padStart(12, "0")}`,
+        petId: profile.id,
+        type: "WEIGHT_KG",
+        value: profile.weightKg,
+        recordedAt: minusDays(7 + index),
+        note: `${SEED_PREFIX} weight snapshot ${index + 1}`
+      },
+      update: {
+        type: "WEIGHT_KG",
+        value: profile.weightKg,
+        recordedAt: minusDays(7 + index),
+        note: `${SEED_PREFIX} weight snapshot ${index + 1}`
+      }
+    });
 
-  await prisma.petMedication.upsert({
-    where: { id: "46000000-0000-4000-8000-000000000002" },
-    create: {
-      id: "46000000-0000-4000-8000-000000000002",
-      petId: seedIds.pets.showcaseDog,
-      name: "Joint Support B",
-      dosage: "0.5 tablet",
-      frequency: "morning",
-      startDate: minusDays(10),
-      endDate: plusDays(20)
-    },
-    update: {
-      name: "Joint Support B",
-      dosage: "0.5 tablet",
-      frequency: "morning",
-      startDate: minusDays(10),
-      endDate: plusDays(20)
-    }
-  });
-
-  await prisma.petMedication.upsert({
-    where: { id: "46000000-0000-4000-8000-000000000003" },
-    create: {
-      id: "46000000-0000-4000-8000-000000000003",
-      petId: seedIds.pets.showcaseDog,
-      name: "Old Antibiotic",
-      dosage: "1 capsule",
-      frequency: "night",
-      startDate: minusDays(90),
-      endDate: minusDays(60)
-    },
-    update: {
-      name: "Old Antibiotic",
-      dosage: "1 capsule",
-      frequency: "night",
-      startDate: minusDays(90),
-      endDate: minusDays(60)
-    }
-  });
-
-  await prisma.petVaccination.upsert({
-    where: { id: "47000000-0000-4000-8000-000000000001" },
-    create: {
-      id: "47000000-0000-4000-8000-000000000001",
-      petId: seedIds.pets.showcaseDog,
-      type: "RABIES",
-      date: minusDays(380),
-      nextDue: minusDays(15)
-    },
-    update: {
-      type: "RABIES",
-      date: minusDays(380),
-      nextDue: minusDays(15)
-    }
-  });
-
-  await prisma.petVaccination.upsert({
-    where: { id: "47000000-0000-4000-8000-000000000002" },
-    create: {
-      id: "47000000-0000-4000-8000-000000000002",
-      petId: seedIds.pets.showcaseDog,
-      type: "HEARTWORM",
-      date: minusDays(120),
-      nextDue: plusDays(30)
-    },
-    update: {
-      type: "HEARTWORM",
-      date: minusDays(120),
-      nextDue: plusDays(30)
-    }
-  });
-
-  await prisma.petVaccination.upsert({
-    where: { id: "47000000-0000-4000-8000-000000000003" },
-    create: {
-      id: "47000000-0000-4000-8000-000000000003",
-      petId: seedIds.pets.showcaseRabbit,
-      type: "OTHER",
-      customTypeName: "ウサギ用ワクチン",
-      date: minusDays(45),
-      nextDue: null
-    },
-    update: {
-      type: "OTHER",
-      customTypeName: "ウサギ用ワクチン",
-      date: minusDays(45),
-      nextDue: null
-    }
-  });
-
-  await prisma.petCoreMetricEntry.upsert({
-    where: { id: "48000000-0000-4000-8000-000000000001" },
-    create: {
-      id: "48000000-0000-4000-8000-000000000001",
-      petId: seedIds.pets.showcaseDog,
-      type: "WEIGHT_KG",
-      value: 18.7,
-      recordedAt: minusDays(21),
-      note: `${SEED_PREFIX} trend start`
-    },
-    update: {
-      type: "WEIGHT_KG",
-      value: 18.7,
-      recordedAt: minusDays(21),
-      note: `${SEED_PREFIX} trend start`
-    }
-  });
-
-  await prisma.petCoreMetricEntry.upsert({
-    where: { id: "48000000-0000-4000-8000-000000000002" },
-    create: {
-      id: "48000000-0000-4000-8000-000000000002",
-      petId: seedIds.pets.showcaseDog,
-      type: "WEIGHT_KG",
-      value: 18.1,
-      recordedAt: minusDays(7),
-      note: `${SEED_PREFIX} trend down`
-    },
-    update: {
-      type: "WEIGHT_KG",
-      value: 18.1,
-      recordedAt: minusDays(7),
-      note: `${SEED_PREFIX} trend down`
-    }
-  });
-
-  await prisma.petCoreMetricEntry.upsert({
-    where: { id: "48000000-0000-4000-8000-000000000003" },
-    create: {
-      id: "48000000-0000-4000-8000-000000000003",
-      petId: seedIds.pets.showcaseDog,
-      type: "WATER_INTAKE_ML",
-      value: 900,
-      recordedAt: minusDays(1),
-      note: `${SEED_PREFIX} high boundary`
-    },
-    update: {
-      type: "WATER_INTAKE_ML",
-      value: 900,
-      recordedAt: minusDays(1),
-      note: `${SEED_PREFIX} high boundary`
-    }
-  });
-
-  await prisma.petLabResultEntry.upsert({
-    where: { id: "49000000-0000-4000-8000-000000000001" },
-    create: {
-      id: "49000000-0000-4000-8000-000000000001",
-      petId: seedIds.pets.showcaseDog,
-      category: "BLOOD",
-      marker: "CRE",
-      value: 1.5,
-      unit: "mg/dL",
-      recordedAt: minusDays(21),
-      note: `${SEED_PREFIX} lab normal-ish`
-    },
-    update: {
-      category: "BLOOD",
-      marker: "CRE",
-      value: 1.5,
-      unit: "mg/dL",
-      recordedAt: minusDays(21),
-      note: `${SEED_PREFIX} lab normal-ish`
-    }
-  });
-
-  await prisma.petLabResultEntry.upsert({
-    where: { id: "49000000-0000-4000-8000-000000000002" },
-    create: {
-      id: "49000000-0000-4000-8000-000000000002",
-      petId: seedIds.pets.showcaseDog,
-      category: "BLOOD",
-      marker: "CRE",
-      value: 2.4,
-      unit: "mg/dL",
-      recordedAt: minusDays(2),
-      note: `${SEED_PREFIX} lab elevated`
-    },
-    update: {
-      category: "BLOOD",
-      marker: "CRE",
-      value: 2.4,
-      unit: "mg/dL",
-      recordedAt: minusDays(2),
-      note: `${SEED_PREFIX} lab elevated`
-    }
-  });
-
-  await prisma.petHealthExtensionEntry.upsert({
-    where: { id: "50000000-0000-4000-8000-000000000001" },
-    create: {
-      id: "50000000-0000-4000-8000-000000000001",
-      petId: seedIds.pets.showcaseDog,
-      name: "点滴量",
-      value: 120,
-      unit: "mL",
-      recordedAt: minusDays(3),
-      note: `${SEED_PREFIX} extension sample`
-    },
-    update: {
-      name: "点滴量",
-      value: 120,
-      unit: "mL",
-      recordedAt: minusDays(3),
-      note: `${SEED_PREFIX} extension sample`
-    }
-  });
-
-  await prisma.petMedicalRecord.upsert({
-    where: { id: "51000000-0000-4000-8000-000000000001" },
-    create: {
-      id: "51000000-0000-4000-8000-000000000001",
-      petId: seedIds.pets.showcaseDog,
-      date: minusDays(30),
-      recordType: "EXAM",
-      title: "Routine check",
-      description: `${SEED_PREFIX} no major issues`
-    },
-    update: {
-      date: minusDays(30),
-      recordType: "EXAM",
-      title: "Routine check",
-      description: `${SEED_PREFIX} no major issues`
-    }
-  });
+    await prisma.petLabResultEntry.upsert({
+      where: { id: `49000000-0000-4000-8000-${(index + 1).toString().padStart(12, "0")}` },
+      create: {
+        id: `49000000-0000-4000-8000-${(index + 1).toString().padStart(12, "0")}`,
+        petId: profile.id,
+        category: "BLOOD",
+        marker: "CRE",
+        value: profile.marker,
+        unit: "mg/dL",
+        recordedAt: minusDays(5 + index),
+        note: `${SEED_PREFIX} lab case ${index + 1}`
+      },
+      update: {
+        category: "BLOOD",
+        marker: "CRE",
+        value: profile.marker,
+        unit: "mg/dL",
+        recordedAt: minusDays(5 + index),
+        note: `${SEED_PREFIX} lab case ${index + 1}`
+      }
+    });
+  }
 
   await prisma.householdInviteCode.upsert({
     where: { code: showcaseInviteCodes.active },
@@ -704,14 +514,12 @@ const upsertShowcase = async (prisma: PrismaClient): Promise<void> => {
       createdBy: seedIds.users.showcaseOwner
     }
   });
+
 };
 
 export const seedScenario = async (prisma: PrismaClient, scenario: SeedScenario): Promise<SeedResult> => {
-  await upsertBaseline(prisma);
-
-  if (scenario === "showcase") {
-    await upsertShowcase(prisma);
-  }
+  if (scenario === "baseline") await upsertBaseline(prisma);
+  if (scenario === "showcase") await upsertShowcase(prisma);
 
   const [householdCount, petCount] = await Promise.all([
     prisma.household.count({ where: { name: { startsWith: SEED_PREFIX, mode: "insensitive" } } }),
