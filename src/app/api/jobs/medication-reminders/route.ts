@@ -84,7 +84,8 @@ export async function POST(request: Request) {
         lineWebhookUrl: env.REMINDER_LINE_WEBHOOK_URL
       })
     },
-    new Date()
+    new Date(),
+    env.REMINDER_SCHEDULE_TIMEZONE ?? "UTC"
   );
 
   return NextResponse.json({ data: result });

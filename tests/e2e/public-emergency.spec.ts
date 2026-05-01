@@ -2,7 +2,10 @@ import { expect, test } from "@playwright/test";
 
 test("pet detail can navigate to public emergency page", async ({ page }) => {
   await page.goto("/pets/demo-pet");
-  await page.getByRole("link", { name: "緊急情報を確認" }).click();
+  await Promise.all([
+    page.waitForURL(/\/e\/00000000-0000-4000-8000-000000000001$/),
+    page.getByRole("link", { name: "緊急情報を確認" }).click()
+  ]);
 
   await expect(page).toHaveURL(/\/e\/00000000-0000-4000-8000-000000000001$/);
   await expect(page.getByRole("heading", { name: "モカ（E2E）" })).toBeVisible();

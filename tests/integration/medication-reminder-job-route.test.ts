@@ -17,6 +17,7 @@ const {
     STRIPE_WEBHOOK_SECRET: "whsec_dummy",
     STRIPE_PRICE_ID_MONTHLY_500: "price_dummy",
     MEDICATION_REMINDER_JOB_TOKEN: undefined as string | undefined,
+    REMINDER_SCHEDULE_TIMEZONE: undefined as string | undefined,
     REMINDER_EMAIL_WEBHOOK_URL: "https://provider.example.com/email",
     REMINDER_LINE_WEBHOOK_URL: "https://provider.example.com/line"
   },
@@ -57,6 +58,8 @@ describe("/api/jobs/medication-reminders", () => {
     dispatchLogDeleteManyMock.mockReset();
     dispatchMedicationReminderMock.mockReset();
     envMock.MEDICATION_REMINDER_JOB_TOKEN = undefined;
+    envMock.REMINDER_SCHEDULE_TIMEZONE = undefined;
+    vi.useRealTimers();
   });
 
   it("dispatches reminders for enabled settings with active medications", async () => {
@@ -134,5 +137,31 @@ describe("/api/jobs/medication-reminders", () => {
 
     expect(response.status).toBe(401);
     expect(settingsFindManyMock).not.toHaveBeenCalled();
+  });
+
+  it("uses configured timezone for reminderDate key", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-05-01T23:30:00.000Z"));
+    envMock.REMINDER_SCHEDULE_TIMEZONE = "Asia/Tokyo";
+    settingsFindManyMock.mockResolvedValue([
+      {
+        petId: petId1,
+        medicationReminderChannel: "email",
+        medicationReminderDestination: "owner@example.com"
+      }
+    ]);
+    medicationFindFirstMock.mockResolvedValue({ id: "m1" });
+    dispatchLogCreateMock.mockResolvedValue({ id: "l1" });
+    dispatchMedicationReminderMock.mockResolvedValue({ status: "delivered", provider: "email" });
+
+    const response = await POST(new Request("http://localhost", { method: "POST" }));
+
+    expect(response.status).toBe(200);
+    expect(dispatchLogCreateMock).toHaveBeenCalledWith({
+      data: {
+        petId: petId1,
+        reminderDate: new Date("2026-05-02T00:00:00.000Z")
+      }
+    });
   });
 });
