@@ -8,6 +8,7 @@ const envSchema = z.object({
   STRIPE_SECRET_KEY: z.string().min(1),
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
   STRIPE_PRICE_ID_MONTHLY_500: z.string().min(1),
+  MEDICATION_REMINDER_JOB_TOKEN: z.string().min(1).optional(),
   REMINDER_EMAIL_WEBHOOK_URL: z.string().url().optional(),
   REMINDER_LINE_WEBHOOK_URL: z.string().url().optional()
 });
@@ -20,6 +21,7 @@ const parsed = envSchema.safeParse({
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   STRIPE_PRICE_ID_MONTHLY_500: process.env.STRIPE_PRICE_ID_MONTHLY_500,
+  MEDICATION_REMINDER_JOB_TOKEN: process.env.MEDICATION_REMINDER_JOB_TOKEN,
   REMINDER_EMAIL_WEBHOOK_URL: process.env.REMINDER_EMAIL_WEBHOOK_URL,
   REMINDER_LINE_WEBHOOK_URL: process.env.REMINDER_LINE_WEBHOOK_URL
 });

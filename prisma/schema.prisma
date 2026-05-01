@@ -158,6 +158,7 @@ model Pet {
   vaccinations     PetVaccination[]
   emergencyToken   PetEmergencyToken?
   displaySettings  PetDisplaySettings?
+  reminderDispatchLogs PetMedicationReminderDispatchLog[]
   coreMetrics      PetCoreMetricEntry[]
   labResults       PetLabResultEntry[]
   healthExtensions PetHealthExtensionEntry[]
@@ -263,6 +264,18 @@ model PetDisplaySettings {
   updatedAt                       DateTime @updatedAt
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+}
+
+model PetMedicationReminderDispatchLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  petId        String   @db.Uuid
+  reminderDate DateTime
+  createdAt    DateTime @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@unique([petId, reminderDate])
+  @@index([reminderDate])
 }
 
 model PetCoreMetricEntry {
