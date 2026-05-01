@@ -61,6 +61,78 @@ type OwnerDisplaySettings = {
   showEmergencyMedicalRecordSummary: boolean;
 };
 
+type BillingActionCopy = {
+  badgeLabel: string;
+  statusLabel: string;
+  headline: string;
+  detail: string;
+  ctaLabel: string;
+  ctaAction: "checkout" | "portal";
+};
+
+const BILLING_ACTION_COPY: Record<BillingPayload["subscriptionStatus"], BillingActionCopy> = {
+  INCOMPLETE: {
+    badgeLabel: "未契約",
+    statusLabel: "無料トライアルを開始できます",
+    headline: "30日無料で使い始めましょう",
+    detail: "課金が始まる前に、編集・通知・共有を含む全機能をお試しいただけます。",
+    ctaLabel: "無料トライアルを開始する",
+    ctaAction: "checkout"
+  },
+  TRIALING: {
+    badgeLabel: "トライアル中",
+    statusLabel: "全機能を利用中です",
+    headline: "30日後に月額680円プランへ自動移行します",
+    detail: "移行前でも、契約管理からいつでも支払い方法の更新や解約ができます。",
+    ctaLabel: "契約を管理する",
+    ctaAction: "portal"
+  },
+  ACTIVE: {
+    badgeLabel: "契約中",
+    statusLabel: "全機能を利用中です",
+    headline: "契約は有効です",
+    detail: "契約管理から、いつでも支払い方法の変更や解約ができます。",
+    ctaLabel: "契約を管理する",
+    ctaAction: "portal"
+  },
+  PAST_DUE: {
+    badgeLabel: "要対応",
+    statusLabel: "支払い確認待ちです",
+    headline: "支払い情報を確認してください",
+    detail: "契約管理で支払い情報を更新すると、機能制限の解除につながります。",
+    ctaLabel: "契約を管理する",
+    ctaAction: "portal"
+  },
+  CANCELED: {
+    badgeLabel: "停止中",
+    statusLabel: "契約が終了しています",
+    headline: "再開すると全機能がすぐ戻ります",
+    detail: "停止中でも安全情報は閲覧できます。必要なタイミングでいつでも再開できます。",
+    ctaLabel: "無料トライアルを開始する",
+    ctaAction: "checkout"
+  },
+  UNPAID: {
+    badgeLabel: "停止中",
+    statusLabel: "お支払いが未完了です",
+    headline: "支払い情報の更新で利用を再開できます",
+    detail: "停止中でも安全情報は閲覧できます。再開後に編集・通知・共有が復帰します。",
+    ctaLabel: "契約を管理する",
+    ctaAction: "portal"
+  },
+  GRACE: {
+    badgeLabel: "猶予中",
+    statusLabel: "一部機能が制限されています",
+    headline: "支払い情報の更新で全機能が復帰します",
+    detail: "猶予中でも安全情報は閲覧できます。契約管理からいつでも再開できます。",
+    ctaLabel: "契約を管理する",
+    ctaAction: "portal"
+  }
+};
+
+const DEFAULT_BILLING_COPY: BillingActionCopy = BILLING_ACTION_COPY.INCOMPLETE;
+
+const formatBillingDate = (iso: string | null) => (iso ? new Date(iso).toLocaleString("ja-JP") : "-");
+
 export default function SettingsPage() {
   const router = useRouter();
   const [members, setMembers] = useState<Member[]>([]);
@@ -73,6 +145,7 @@ export default function SettingsPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [billing, setBilling] = useState<BillingPayload | null>(null);
   const [isBillingSubmitting, setIsBillingSubmitting] = useState(false);
+  const [isPortalSubmitting, setIsPortalSubmitting] = useState(false);
   const [pets, setPets] = useState<PetListItem[]>([]);
   const [ownerDisplaySettings, setOwnerDisplaySettings] = useState<OwnerDisplaySettings | null>(null);
   const [isDisplaySettingsSaving, setIsDisplaySettingsSaving] = useState(false);
@@ -209,6 +282,26 @@ export default function SettingsPage() {
     window.location.href = payload.data.url;
   };
 
+  const handleOpenBillingPortal = async () => {
+    setErrorMessage(null);
+    setIsPortalSubmitting(true);
+
+    const response = await fetch("/api/billing/portal", { method: "POST" });
+    const payload = (await response.json().catch(() => null)) as { data?: { url?: string }; error?: string } | null;
+
+    if (!response.ok || !payload?.data?.url) {
+      setIsPortalSubmitting(false);
+      setErrorMessage(
+        typeof payload?.error === "string"
+          ? payload.error
+          : "契約管理ページを開けませんでした。時間をおいて再度お試しください。"
+      );
+      return;
+    }
+
+    window.location.href = payload.data.url;
+  };
+
   const handleToggleDisplaySetting = async (
     key: keyof Omit<OwnerDisplaySettings, "ownerUserId">,
     checked: boolean
@@ -280,24 +373,51 @@ export default function SettingsPage() {
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">課金プラン</h2>
         <p className="mt-1 text-sm text-slate-600">30日無料トライアル、その後月額680円（Stripe定期課金）</p>
-        <p className="mt-2 text-xs text-slate-500">契約状態: {billing?.subscriptionStatus ?? "INCOMPLETE"}</p>
-        <p className="mt-1 text-xs text-slate-500">
-          トライアル終了: {billing?.trialEndsAt ? new Date(billing.trialEndsAt).toLocaleString("ja-JP") : "-"}
-        </p>
-        <p className="mt-1 text-xs text-slate-500">
-          有効期限: {billing?.currentPeriodEnd ? new Date(billing.currentPeriodEnd).toLocaleString("ja-JP") : "-"}
-        </p>
-        <p className="mt-1 text-xs text-slate-500">
-          安全情報は閲覧可能です。再開で全履歴・編集・通知・共有が復帰します。
-        </p>
-        <button
-          type="button"
-          className="mt-3 rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-          onClick={handleStartBilling}
-          disabled={Boolean(billing?.isActive) || isBillingSubmitting}
-        >
-          {billing?.isActive ? "契約中" : isBillingSubmitting ? "遷移中..." : "月額680円で申し込む"}
-        </button>
+        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex rounded-full bg-slate-900 px-2 py-1 text-xs font-semibold text-white">
+              {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).badgeLabel}
+            </span>
+            <p className="text-xs font-medium text-slate-700">
+              {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).statusLabel}
+            </p>
+          </div>
+          <p className="mt-3 text-base font-bold text-slate-900">
+            {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).headline}
+          </p>
+          <p className="mt-1 text-sm text-slate-600">
+            {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).detail}
+          </p>
+          <p className="mt-3 text-xs text-slate-500">失効時も安全情報は閲覧できます。再開で全機能が復帰します。</p>
+          <div className="mt-3">
+            <button
+              type="button"
+              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              onClick={() => {
+                const action = (billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).ctaAction;
+                if (action === "portal") {
+                  void handleOpenBillingPortal();
+                  return;
+                }
+                void handleStartBilling();
+              }}
+              disabled={isBillingSubmitting || isPortalSubmitting}
+            >
+              {isBillingSubmitting || isPortalSubmitting
+                ? "遷移中..."
+                : (billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).ctaLabel}
+            </button>
+          </div>
+        </div>
+        <div className="mt-3 rounded-lg border border-slate-200 p-3">
+          <p className="text-xs text-slate-600">
+            トライアル終了: <span className="font-medium text-slate-800">{formatBillingDate(billing?.trialEndsAt ?? null)}</span>
+          </p>
+          <p className="mt-1 text-xs text-slate-600">
+            次回更新日: <span className="font-medium text-slate-800">{formatBillingDate(billing?.currentPeriodEnd ?? null)}</span>
+          </p>
+          <p className="mt-1 text-xs text-slate-500">システム状態コード: {billing?.subscriptionStatus ?? "INCOMPLETE"}</p>
+        </div>
       </section>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
