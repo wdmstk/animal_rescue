@@ -21,6 +21,43 @@ type EmergencyEditorCardProps = {
   initialEmergencyInfo: EmergencyInfo | null;
 };
 
+const getApiErrorMessage = (payload: unknown): string | null => {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const error = (payload as { error?: unknown }).error;
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (!error || typeof error !== "object") {
+    return null;
+  }
+
+  const formErrors = Array.isArray((error as { formErrors?: unknown }).formErrors)
+    ? ((error as { formErrors?: unknown[] }).formErrors ?? []).filter((item): item is string => typeof item === "string")
+    : [];
+  if (formErrors.length > 0) {
+    return formErrors.join(" ");
+  }
+
+  const fieldErrors = (error as { fieldErrors?: unknown }).fieldErrors;
+  if (fieldErrors && typeof fieldErrors === "object") {
+    for (const value of Object.values(fieldErrors)) {
+      if (!Array.isArray(value)) {
+        continue;
+      }
+      const firstMessage = value.find((item): item is string => typeof item === "string");
+      if (firstMessage) {
+        return firstMessage;
+      }
+    }
+  }
+
+  return null;
+};
+
 const toNullable = (value: string) => {
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : null;
@@ -75,7 +112,8 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
       }
 
       if (!response.ok) {
-        setErrorMessage("保存に失敗しました。入力内容を確認して再度お試しください。");
+        const payload = await response.json().catch(() => null);
+        setErrorMessage(getApiErrorMessage(payload) ?? "保存に失敗しました。入力内容を確認して再度お試しください。");
         return;
       }
 

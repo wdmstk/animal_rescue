@@ -33,4 +33,15 @@ describe("validators", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("normalizes full-width emergency phone characters", () => {
+    const result = emergencyInfoInputSchema.safeParse({
+      emergencyContactPhone: "０９０ー１２３４ー５６７８"
+    });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.emergencyContactPhone).toBe("090-1234-5678");
+    }
+  });
 });

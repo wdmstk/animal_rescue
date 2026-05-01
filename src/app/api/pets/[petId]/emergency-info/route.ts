@@ -10,7 +10,8 @@ const petIdParamSchema = z.object({
 });
 
 export async function PUT(request: Request, { params }: { params: { petId: string } }) {
-  const parsedParams = petIdParamSchema.safeParse(params);
+  const resolvedParams = await Promise.resolve(params);
+  const parsedParams = petIdParamSchema.safeParse(resolvedParams);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
