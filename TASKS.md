@@ -32,14 +32,15 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-176` 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
-2. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
-3. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
-4. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
-5. `TASK-171` 緊急公開向け入力品質のバリデーション強化
-6. `TASK-170` 投薬リマインダーの定期送信ジョブ化
-7. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
-8. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
+1. `TASK-177` サブスク課金 UI/UX 刷新（設定画面・転換率最適化）
+2. `TASK-176` 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
+3. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
+4. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
+5. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
+6. `TASK-171` 緊急公開向け入力品質のバリデーション強化
+7. `TASK-170` 投薬リマインダーの定期送信ジョブ化
+8. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
+9. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
 4. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
 4. `TASK-166` 初回オンボーディング導線
 4. `TASK-165` データ共有出力（PDF/印刷向け）
@@ -111,6 +112,22 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### サブスク課金 UI/UX 刷新（設定画面・転換率最適化）
+- Task ID: `TASK-177`
+- ブランチ: `feat/TASK-177-billing-ux-conversion-refresh`
+- ステータス: `done`
+- 概要: `/settings` の課金セクションを行動中心に再設計し、Checkout遷移率の改善と契約中ユーザーの自己解決導線（管理ポータル）を整備する
+- Issue: `#183`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `POST /api/billing/portal` を追加し、認証ユーザーがStripe管理ポータルへ遷移できる
+  - 課金セクションを状態別アクション中心へ刷新し、非アクティブ時はCheckout、アクティブ時はPortal導線を表示する
+  - 課金文言を定数化し、将来A/Bテストで差し替えしやすい構造にする
+  - `tests/integration/billing-portal-route.test.ts` を追加する
+  - `tests/e2e/settings-account.spec.ts` で状態別CTA表示・押下ハンドリングを検証する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
 - Task ID: `TASK-176`
