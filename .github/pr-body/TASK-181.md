@@ -46,9 +46,9 @@ Closes #191
 
 ### マージ前（CI完了後）
 以下は `Lint / Unit/Integration (Vitest) / DB Integration (Real Postgres) / E2E (Playwright)` が green になってからチェックする。
-- [ ] ci_green_confirmed
-- [ ] self_review_final_done_after_ci_green
-- [ ] ready_for_main_merge
+- [x] ci_green_confirmed
+- [x] self_review_final_done_after_ci_green
+- [x] ready_for_main_merge
 
 #### 最終セルフレビュー（必須）
 - 差分妥当性: 緊急情報保存エラーの根本原因（params Promise・エラー表示型不整合・電話正規化不足）に限定した最小差分で修正
