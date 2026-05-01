@@ -23,8 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
-2. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
+1. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
 
 ### todo
 （なし）
@@ -33,12 +32,13 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
-2. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
-3. `TASK-171` 緊急公開向け入力品質のバリデーション強化
-4. `TASK-170` 投薬リマインダーの定期送信ジョブ化
-5. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
-6. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
+1. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
+2. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
+3. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
+4. `TASK-171` 緊急公開向け入力品質のバリデーション強化
+5. `TASK-170` 投薬リマインダーの定期送信ジョブ化
+6. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
+7. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
 4. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
 4. `TASK-166` 初回オンボーディング導線
 4. `TASK-165` データ共有出力（PDF/印刷向け）
@@ -114,7 +114,7 @@ Development Task List
 ### 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
 - Task ID: `TASK-175`
 - ブランチ: `feat/TASK-175-billing-paywall-trial-30d`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 30日無料トライアル + 月額680円の課金必須化を実装し、トライアル終了後の運用機能停止を徹底する。あわせてsignup後の世帯未作成による400を解消し、seedデータ削除専用コマンドを追加する
 - Issue: `#178`
 - 依存関係:
