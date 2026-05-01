@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
 
 ### todo
 （なし）
@@ -159,6 +159,20 @@ Development Task List
   - 失敗時リトライ/ログ方針を定義する
   - 最小限の統合テストを追加し、重複送信を防止する
   - `npm run lint` / `npx vitest run`（必要なら `npm run test:e2e`）が通る
+
+### 投薬リマインダー日次判定のタイムゾーン基準化
+- Task ID: `TASK-173`
+- ブランチ: `feat/TASK-173-reminder-timezone-basis`
+- ステータス: `in_progress`
+- 概要: 投薬リマインダーの日次重複判定がUTC基準のため、運用タイムゾーン基準で判定できるようにする
+- Issue: `#173`
+- 依存関係:
+  - prerequisite: `TASK-170`
+- 完了条件:
+  - 日次判定の基準タイムゾーンを設定可能にする
+  - 既存挙動との互換（未設定時のデフォルト）を定義する
+  - ユニット/統合テストで日付境界ケースを追加する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 変更履歴の時刻精度改善（updatedAt基準化）
 - Task ID: `TASK-169`

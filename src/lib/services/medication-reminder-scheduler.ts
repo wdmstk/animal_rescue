@@ -26,16 +26,30 @@ export type MedicationReminderSchedulerResult = {
   failed: number;
 };
 
-const toUtcDay = (value: Date): Date => {
-  return new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate()));
+export const toTimezoneDay = (value: Date, timezone = "UTC"): Date => {
+  const formatter = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timezone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  });
+  const parts = formatter.formatToParts(value);
+  const year = parts.find((part) => part.type === "year")?.value;
+  const month = parts.find((part) => part.type === "month")?.value;
+  const day = parts.find((part) => part.type === "day")?.value;
+  if (!year || !month || !day) {
+    return new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate()));
+  }
+  return new Date(`${year}-${month}-${day}T00:00:00.000Z`);
 };
 
 export const runMedicationReminderScheduler = async (
   deps: MedicationReminderSchedulerDeps,
-  now = new Date()
+  now = new Date(),
+  timezone = "UTC"
 ): Promise<MedicationReminderSchedulerResult> => {
   const settings = await deps.findEnabledSettings();
-  const reminderDate = toUtcDay(now);
+  const reminderDate = toTimezoneDay(now, timezone);
 
   let activeTargeted = 0;
   let delivered = 0;
