@@ -7,6 +7,7 @@ const describeDb = shouldRunDbIntegration ? describe : describe.skip;
 describeDb("health routes (real database)", () => {
   const householdId = randomUUID();
   const petId = randomUUID();
+  const authenticatedUserId = "22222222-2222-4222-8222-222222222222";
   let prisma: (typeof import("@/lib/prisma"))["prisma"];
   let postCoreMetrics: (typeof import("../../src/app/api/pets/[petId]/health/core-metrics/route"))["POST"];
   let getCoreMetrics: (typeof import("../../src/app/api/pets/[petId]/health/core-metrics/route"))["GET"];
@@ -40,9 +41,22 @@ describeDb("health routes (real database)", () => {
         species: "cat"
       }
     });
+
+    await prisma.userSubscription.upsert({
+      where: { userId: authenticatedUserId },
+      create: {
+        userId: authenticatedUserId,
+        status: "ACTIVE"
+      },
+      update: {
+        status: "ACTIVE",
+        graceUntil: null
+      }
+    });
   });
 
   afterAll(async () => {
+    await prisma.userSubscription.deleteMany({ where: { userId: authenticatedUserId } });
     await prisma.household.deleteMany({ where: { id: householdId } });
     await prisma.$disconnect();
   });
