@@ -332,7 +332,9 @@ model UserSubscription {
   stripeCustomerId     String?            @unique
   stripeSubscriptionId String?            @unique
   status               SubscriptionStatus @default(INCOMPLETE)
+  trialEndsAt          DateTime?
   currentPeriodEnd     DateTime?
+  graceUntil           DateTime?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
 }

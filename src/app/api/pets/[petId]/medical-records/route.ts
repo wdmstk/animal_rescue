@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
+import { getHistoryWindowStartDate } from "@/lib/billing/access-policy";
+import { getUserBillingAccessState, requireCreateAccess } from "@/lib/billing/access-guard";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -30,9 +32,14 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
   if (access instanceof NextResponse) {
     return access;
   }
+  const billing = await getUserBillingAccessState(auth.userId);
+  const historyWindowStart = getHistoryWindowStartDate(billing.accessPolicy.historyWindowDays);
 
   const data = await prisma.petMedicalRecord.findMany({
-    where: { petId: access.petId },
+    where: {
+      petId: access.petId,
+      date: historyWindowStart ? { gte: historyWindowStart } : undefined
+    },
     orderBy: { date: "desc" }
   });
 
@@ -48,6 +55,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
+  }
+  const createAccess = await requireCreateAccess(auth.userId);
+  if (createAccess instanceof NextResponse) {
+    return createAccess;
   }
 
   const access = await requirePetAccess(auth.userId, parsedParams.data.petId);

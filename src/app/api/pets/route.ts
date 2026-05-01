@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requireHouseholdMember } from "@/lib/auth/pet-access";
+import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { petInputSchema } from "@/lib/validators/pet";
 
 export async function GET() {
@@ -39,6 +40,10 @@ export async function POST(request: Request) {
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
+  }
+  const createAccess = await requireCreateAccess(auth.userId);
+  if (createAccess instanceof NextResponse) {
+    return createAccess;
   }
 
   const householdId =

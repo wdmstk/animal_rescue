@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { requireShareAccess } from "@/lib/billing/access-guard";
 import { householdMemberRoleUpdateSchema } from "@/lib/validators/household-member";
 
 type Params = {
@@ -24,6 +25,10 @@ export async function PATCH(request: Request, { params }: Params) {
 
   if (authError || !user) {
     return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+  }
+  const shareAccess = await requireShareAccess(user.id);
+  if (shareAccess instanceof NextResponse) {
+    return shareAccess;
   }
 
   const actorMembership = await prisma.householdMember.findFirst({

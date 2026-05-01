@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
+import { requireEditAccess } from "@/lib/billing/access-guard";
 import {
   petDisplaySettingsParamSchema,
   petDisplaySettingsPatchSchema,
@@ -50,6 +51,10 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
+  }
+  const editAccess = await requireEditAccess(auth.userId);
+  if (editAccess instanceof NextResponse) {
+    return editAccess;
   }
 
   const access = await requirePetAccess(auth.userId, parsedParams.data.petId);

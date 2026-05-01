@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { requireShareAccess } from "@/lib/billing/access-guard";
 import { createInviteCodeSchema } from "@/lib/validators/invite";
 import { calculateExpiry, generateInviteCode } from "@/lib/services/invite-code";
 
@@ -40,13 +41,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "招待コード発行権限がありません" }, { status: 403 });
   }
 
-  const subscription = await prisma.userSubscription.findUnique({
-    where: { userId: user.id },
-    select: { status: true }
-  });
-  const isActive = subscription?.status === "ACTIVE" || subscription?.status === "TRIALING";
-  if (!isActive) {
-    return NextResponse.json({ error: "この機能は有料プランで利用できます" }, { status: 402 });
+  const shareAccess = await requireShareAccess(user.id);
+  if (shareAccess instanceof NextResponse) {
+    return shareAccess;
   }
 
   const code = generateInviteCode();

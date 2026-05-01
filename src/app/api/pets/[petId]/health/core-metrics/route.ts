@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
+import { getHistoryWindowStartDate } from "@/lib/billing/access-policy";
+import { getUserBillingAccessState, requireCreateAccess } from "@/lib/billing/access-guard";
 import { coreHealthEntryInputSchema, coreMetricTypeFilterSchema, healthPetIdParamSchema } from "@/lib/validators/health";
 
 export async function GET(request: Request, { params }: { params: Promise<{ petId: string }> }) {
@@ -18,6 +20,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ petI
   if (access instanceof NextResponse) {
     return access;
   }
+  const billing = await getUserBillingAccessState(auth.userId);
+  const historyWindowStart = getHistoryWindowStartDate(billing.accessPolicy.historyWindowDays);
 
   const url = new URL(request.url);
   const parsedFilter = coreMetricTypeFilterSchema.safeParse({
@@ -31,7 +35,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ petI
   const data = await prisma.petCoreMetricEntry.findMany({
     where: {
       petId: access.petId,
-      type: parsedFilter.data.type
+      type: parsedFilter.data.type,
+      recordedAt: historyWindowStart ? { gte: historyWindowStart } : undefined
     },
     orderBy: { recordedAt: "desc" }
   });
@@ -57,6 +62,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
+  }
+  const createAccess = await requireCreateAccess(auth.userId);
+  if (createAccess instanceof NextResponse) {
+    return createAccess;
   }
 
   const access = await requirePetAccess(auth.userId, parsedParams.data.petId);

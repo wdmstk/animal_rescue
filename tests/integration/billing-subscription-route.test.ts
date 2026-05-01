@@ -35,14 +35,21 @@ describe("GET /api/billing/subscription", () => {
     const payload = await res.json();
     expect(payload.data.status).toBe("INCOMPLETE");
     expect(payload.data.isActive).toBe(false);
+    expect(payload.data.accessPolicy.canCreate).toBe(false);
   });
 
   it("returns active status", async () => {
     getUserMock.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
-    findUniqueMock.mockResolvedValue({ status: "ACTIVE", currentPeriodEnd: new Date("2026-05-01T00:00:00.000Z") });
+    findUniqueMock.mockResolvedValue({
+      status: "ACTIVE",
+      trialEndsAt: null,
+      currentPeriodEnd: new Date("2026-05-01T00:00:00.000Z"),
+      graceUntil: null
+    });
     const res = await GET();
     const payload = await res.json();
     expect(payload.data.status).toBe("ACTIVE");
     expect(payload.data.isActive).toBe(true);
+    expect(payload.data.accessPolicy.canCreate).toBe(true);
   });
 });

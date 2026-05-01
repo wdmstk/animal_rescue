@@ -15,7 +15,7 @@ const {
     SUPABASE_SERVICE_ROLE_KEY: "service-role",
     STRIPE_SECRET_KEY: "sk_test_dummy",
     STRIPE_WEBHOOK_SECRET: "whsec_dummy",
-    STRIPE_PRICE_ID_MONTHLY_500: "price_dummy",
+    STRIPE_PRICE_ID_MONTHLY_680: "price_dummy",
     MEDICATION_REMINDER_JOB_TOKEN: undefined as string | undefined,
     REMINDER_SCHEDULE_TIMEZONE: undefined as string | undefined,
     REMINDER_EMAIL_WEBHOOK_URL: "https://provider.example.com/email",

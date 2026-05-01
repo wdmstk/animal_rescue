@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { env } from "@/lib/env";
+import { requireEditAccess, requireNotifyAccess } from "@/lib/billing/access-guard";
 import { dispatchMedicationReminder } from "@/lib/services/reminder-delivery";
 
 const reminderSettingSchema = z
@@ -91,7 +92,10 @@ async function parseAndAuthorize(params: Promise<{ petId: string }>) {
     return access;
   }
 
-  return access;
+  return {
+    ...access,
+    userId: auth.userId
+  };
 }
 
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
@@ -121,6 +125,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   const access = await parseAndAuthorize(params);
   if (access instanceof NextResponse) {
     return access;
+  }
+  const editAccess = await requireEditAccess(access.userId);
+  if (editAccess instanceof NextResponse) {
+    return editAccess;
   }
 
   const body = await request.json();
@@ -165,6 +173,10 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const access = await parseAndAuthorize(params);
   if (access instanceof NextResponse) {
     return access;
+  }
+  const notifyAccess = await requireNotifyAccess(access.userId);
+  if (notifyAccess instanceof NextResponse) {
+    return notifyAccess;
   }
 
   const body = await request.json();

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
+import { requireEditAccess } from "@/lib/billing/access-guard";
 
 const paramsSchema = z.object({
   petId: z.string().uuid(),
@@ -25,6 +26,10 @@ export async function PATCH(request: Request, { params }: { params: { petId: str
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
+  }
+  const editAccess = await requireEditAccess(auth.userId);
+  if (editAccess instanceof NextResponse) {
+    return editAccess;
   }
 
   const access = await requirePetAccess(auth.userId, parsedParams.data.petId);

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
+import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service";
 
 const PET_PHOTO_BUCKET = "pet-photos";
@@ -23,6 +24,10 @@ export async function POST(request: Request, { params }: { params: { petId: stri
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
+  }
+  const createAccess = await requireCreateAccess(auth.userId);
+  if (createAccess instanceof NextResponse) {
+    return createAccess;
   }
 
   const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
