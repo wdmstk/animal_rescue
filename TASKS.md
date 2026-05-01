@@ -23,10 +23,13 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
+（なし）
 
 ### todo
-（なし）
+1. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
+2. `TASK-171` 緊急公開向け入力品質のバリデーション強化
+3. `TASK-170` 投薬リマインダーの定期送信ジョブ化
+4. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
 
 ### blocked
 （なし）
@@ -42,6 +45,7 @@ Development Task List
 8. `TASK-161` ローディング/スケルトンの統一
 9. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
 10. `TASK-159` ペット詳細ページの情報密度最適化（セクションナビ）
+11. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
 6. `TASK-157` 緊急公開画面にワンタップ導線追加
 6. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
 4. `TASK-155` 検査/設定修正 + 拡張項目自由化（複数指定）
@@ -104,6 +108,74 @@ Development Task List
 
 ## 正式タスク詳細
 
+### GitHub Actions Nodeランタイム更新（deprecation対応）
+- Task ID: `TASK-172`
+- ブランチ: `chore/TASK-172-actions-node-runtime-upgrade`
+- ステータス: `todo`
+- 概要: GitHub Actions の Node deprecation 警告に対応し、CIワークフローの将来停止リスクを解消する
+- Issue: `#166`
+- 依存関係:
+  - prerequisite: なし
+- 派生元（PR/Issue）:
+  - PR: `#109`
+- 完了条件:
+  - deprecation対象のAction/ランタイムを特定し、サポート対象へ更新する
+  - CI主要ジョブがグリーンであることを確認する
+  - `docs/development-workflow.md` の運用記述を必要に応じて更新する
+  - `npm run lint` / `npx vitest run` が通る
+
+### 緊急公開向け入力品質のバリデーション強化
+- Task ID: `TASK-171`
+- ブランチ: `fix/TASK-171-emergency-input-validation-hardening`
+- ステータス: `todo`
+- 概要: 緊急公開画面の即時行動導線（tel/地図）の信頼性向上のため、電話番号・病院名など入力品質の検証を強化する
+- Issue: `#165`
+- 依存関係:
+  - prerequisite: なし
+- 派生元（PR/Issue）:
+  - PR: `#146`
+  - Issue: `#136`
+- 完了条件:
+  - 緊急情報APIで電話番号・病院名のバリデーション方針を明確化し実装する
+  - UI入力補助（形式ヒント、エラー文言など）を追加する
+  - 公開画面で無効値の安全フォールバックを確認する
+  - 境界値テスト（integration/e2e）を追加する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### 投薬リマインダーの定期送信ジョブ化
+- Task ID: `TASK-170`
+- ブランチ: `feat/TASK-170-medication-reminder-scheduler`
+- ステータス: `todo`
+- 概要: 投薬リマインダー設定UIは実装済みのため、定期送信ジョブを実装して実運用で通知が発火する状態にする
+- Issue: `#164`
+- 依存関係:
+  - prerequisite: なし
+- 派生元（PR/Issue）:
+  - PR: `#157`
+  - Issue: `#142`
+- 完了条件:
+  - 定期実行ジョブ（cron/worker）で有効なリマインダーを走査して送信できる
+  - 失敗時リトライ/ログ方針を定義する
+  - 最小限の統合テストを追加し、重複送信を防止する
+  - `npm run lint` / `npx vitest run`（必要なら `npm run test:e2e`）が通る
+
+### 変更履歴の時刻精度改善（updatedAt基準化）
+- Task ID: `TASK-169`
+- ブランチ: `feat/TASK-169-change-history-updated-at`
+- ステータス: `todo`
+- 概要: 変更履歴（監査ログ）で投薬/ワクチン/医療記録が createdAt 基準になっているため、更新追跡の精度を改善する
+- Issue: `#163`
+- 依存関係:
+  - prerequisite: なし
+- 派生元（PR/Issue）:
+  - PR: `#158`
+  - Issue: `#143`
+- 完了条件:
+  - 投薬/ワクチン/医療記録で更新時刻を保持できる（updatedAtまたは同等）
+  - 変更履歴表示が更新時刻基準で並ぶ
+  - 既存データ互換方針を定義し、回帰テストを追加する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
 ### PR作成〜mainマージ運用の段階ガード化（実態厳密）
 - Task ID: `TASK-167`
 - ブランチ: `feat/TASK-167-ci-stage-guard-strict-flow`
@@ -136,7 +208,7 @@ Development Task List
 ### 緊急公開画面の視認性改善（救急モードUI）
 - Task ID: `TASK-158`
 - ブランチ: `feat/TASK-158-emergency-public-visual-priority`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 薬・アレルギー・連絡先を優先表示する救急モードUIへ再構成する
 - Issue: `#137`
 - 依存関係:
