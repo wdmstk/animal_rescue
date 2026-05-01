@@ -26,18 +26,18 @@ Development Task List
 （なし）
 
 ### todo
-1. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
-2. `TASK-171` 緊急公開向け入力品質のバリデーション強化
-3. `TASK-170` 投薬リマインダーの定期送信ジョブ化
-4. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
+1. `TASK-171` 緊急公開向け入力品質のバリデーション強化
+2. `TASK-170` 投薬リマインダーの定期送信ジョブ化
+3. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
 
 ### blocked
 （なし）
 
 ### done
-1. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
+1. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
 2. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
-3. `TASK-166` 初回オンボーディング導線
+3. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
+4. `TASK-166` 初回オンボーディング導線
 4. `TASK-165` データ共有出力（PDF/印刷向け）
 5. `TASK-164` 変更履歴（監査ログ）表示
 6. `TASK-163` 通知設定UI（投薬リマインダー実利用化）
@@ -111,7 +111,7 @@ Development Task List
 ### GitHub Actions Nodeランタイム更新（deprecation対応）
 - Task ID: `TASK-172`
 - ブランチ: `chore/TASK-172-actions-node-runtime-upgrade`
-- ステータス: `todo`
+- ステータス: `done`
 - 概要: GitHub Actions の Node deprecation 警告に対応し、CIワークフローの将来停止リスクを解消する
 - Issue: `#166`
 - 依存関係:
