@@ -162,9 +162,15 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
             <input
               value={vetPhone}
               onChange={(event) => setVetPhone(event.target.value)}
+              type="tel"
+              inputMode="tel"
+              pattern="[0-9+()\\-\\s]+"
+              title="数字・+・()・-・スペースで入力してください"
+              placeholder="例: 03-1234-5678"
               maxLength={40}
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
+            <p className="mt-1 text-xs font-normal text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
           </label>
         </div>
 
@@ -184,9 +190,15 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
             <input
               value={emergencyContactPhone}
               onChange={(event) => setEmergencyContactPhone(event.target.value)}
+              type="tel"
+              inputMode="tel"
+              pattern="[0-9+()\\-\\s]+"
+              title="数字・+・()・-・スペースで入力してください"
+              placeholder="例: 090-1234-5678"
               maxLength={40}
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
+            <p className="mt-1 text-xs font-normal text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
           </label>
         </div>
 

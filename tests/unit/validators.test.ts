@@ -25,4 +25,12 @@ describe("validators", () => {
 
     expect(result.success).toBe(true);
   });
+
+  it("rejects emergency phone with unsupported characters", () => {
+    const result = emergencyInfoInputSchema.safeParse({
+      emergencyContactPhone: "090-1234-5678#999"
+    });
+
+    expect(result.success).toBe(false);
+  });
 });
