@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-181` 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
+（なし）
 
 ### todo
 （なし）
@@ -32,6 +32,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-181` 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
 1. `TASK-180` OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
 1. `TASK-179` OWNER不在防止（OWNER→FAMILY降格ガード）
 1. `TASK-178` 再ログイン後の設定画面取得失敗修正（display設定404回避・表示名方針固定）
@@ -120,7 +121,7 @@ Development Task List
 ### 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
 - Task ID: `TASK-181`
 - ブランチ: `fix/TASK-181-emergency-save-error-handling`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 緊急情報編集の保存フローで発生したエラー（Promise params, Zod flatten表示クラッシュ, 全角電話入力失敗）を修正し、失敗時の可観測性を改善する
 - Issue: `#191`
 - 依存関係:
