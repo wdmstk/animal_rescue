@@ -23,10 +23,10 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-159` ペット詳細ページの情報密度最適化（セクションナビ）
+1. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
 
 ### todo
-1. `TASK-158` 緊急公開画面の視認性改善（救急モードUI）
+（なし）
 
 ### blocked
 （なし）
@@ -41,6 +41,7 @@ Development Task List
 7. `TASK-162` Empty State改善（次アクション導線つき）
 8. `TASK-161` ローディング/スケルトンの統一
 9. `TASK-160` 共通フィードバックUI（成功/失敗トースト）導入
+10. `TASK-159` ペット詳細ページの情報密度最適化（セクションナビ）
 6. `TASK-157` 緊急公開画面にワンタップ導線追加
 6. `TASK-156` 設定表示APIのPrisma delegate未生成時500エラー修正
 4. `TASK-155` 検査/設定修正 + 拡張項目自由化（複数指定）
@@ -135,7 +136,7 @@ Development Task List
 ### 緊急公開画面の視認性改善（救急モードUI）
 - Task ID: `TASK-158`
 - ブランチ: `feat/TASK-158-emergency-public-visual-priority`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: 薬・アレルギー・連絡先を優先表示する救急モードUIへ再構成する
 - Issue: `#137`
 - 依存関係:
@@ -148,7 +149,7 @@ Development Task List
 ### ペット詳細ページの情報密度最適化（セクションナビ）
 - Task ID: `TASK-159`
 - ブランチ: `feat/TASK-159-pet-detail-section-navigation`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: `/pets/[petId]` にセクションナビを追加し、主要機能へ即時遷移できるようにする
 - Issue: `#138`
 - 依存関係:
