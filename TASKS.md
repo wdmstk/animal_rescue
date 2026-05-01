@@ -23,10 +23,10 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-179` OWNER不在防止（OWNER→FAMILY降格ガード）
 
 ### todo
-1. `TASK-179` OWNER不在防止（OWNER→FAMILY降格ガード）
+（なし）
 
 ### blocked
 （なし）
@@ -118,7 +118,7 @@ Development Task List
 ### OWNER不在防止（OWNER→FAMILY降格ガード）
 - Task ID: `TASK-179`
 - ブランチ: `fix/TASK-179-prevent-owner-zero`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: OWNERをFAMILYへ変更する更新で世帯内OWNERが0人になる不整合を防止するため、APIで最後のOWNER降格を禁止し、設定画面で失敗理由を明確化する
 - Issue: `#187`
 - 依存関係:

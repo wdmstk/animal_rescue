@@ -203,9 +203,10 @@ export default function SettingsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ role: nextRole })
     });
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
 
     if (!response.ok) {
-      setErrorMessage("権限更新に失敗しました。");
+      setErrorMessage(typeof payload?.error === "string" ? payload.error : "権限更新に失敗しました。");
       return;
     }
 
