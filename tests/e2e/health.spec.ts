@@ -7,6 +7,7 @@ test("pet detail shows health tracking section", async ({ page }) => {
 
 test("pet detail shows parallel implementation sections", async ({ page }) => {
   await page.goto("/pets/demo-pet");
+  await expect(page.getByRole("navigation", { name: "詳細セクションナビ" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "モカ" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "通院提出用サマリー（印刷/PDF）" })).toBeVisible();
   await expect(page.getByRole("button", { name: "印刷/PDF出力" })).toBeVisible();
@@ -24,6 +25,13 @@ test("pet detail shows parallel implementation sections", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "記録を追加" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "医療記録タイムライン" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "定期健診" })).toBeVisible();
+});
+
+test("pet detail section nav jumps to target section", async ({ page }) => {
+  await page.goto("/pets/demo-pet");
+  await page.getByRole("link", { name: "健康記録" }).click();
+  await expect(page).toHaveURL(/#health$/);
+  await expect(page.getByRole("heading", { name: "健康記録" })).toBeVisible();
 });
 
 test("health graph controls and extension form are interactive", async ({ page }) => {
