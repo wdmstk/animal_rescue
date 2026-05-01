@@ -4,17 +4,28 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
   const vetPhoneHref = toTelHref(data.vetPhone);
   const emergencyPhoneHref = toTelHref(data.emergencyContactPhone);
   const vetMapHref = buildMapLink(data.vetName);
+  const priorityContact = joinLabel(data.emergencyContactName, data.emergencyContactPhone);
 
   return (
-    <section className="rounded-2xl border border-emergency-100 bg-white p-4 shadow-sm">
-      <p className="text-xs font-semibold text-emergency-700">Emergency Pet Pass</p>
-      <h1 className="mt-1 text-2xl font-black text-slate-900">{data.petName}</h1>
+    <section className="rounded-2xl border border-emergency-100 bg-white p-5 shadow-sm">
+      <p className="inline-flex rounded-full bg-rose-600 px-3 py-1 text-xs font-bold text-white">救急モード</p>
+      <p className="mt-3 text-sm font-semibold text-emergency-700">Emergency Pet Pass</p>
+      <h1 className="mt-1 text-3xl font-black text-slate-900">{data.petName}</h1>
 
-      <div className="mt-3 grid grid-cols-1 gap-2">
+      <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 p-4">
+        <h2 className="text-sm font-bold text-rose-700">最優先情報</h2>
+        <div className="mt-3 space-y-3">
+          <PriorityItem label="薬" value={data.medications} />
+          <PriorityItem label="アレルギー" value={data.allergy} />
+          <PriorityItem label="連絡先" value={priorityContact} />
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 gap-2">
         {emergencyPhoneHref ? (
           <a
             href={emergencyPhoneHref}
-            className="rounded-lg bg-rose-600 px-3 py-3 text-center text-sm font-bold text-white"
+            className="rounded-lg bg-rose-600 px-4 py-4 text-center text-base font-bold text-white"
           >
             緊急連絡先へ電話
           </a>
@@ -22,7 +33,7 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
         {vetPhoneHref ? (
           <a
             href={vetPhoneHref}
-            className="rounded-lg bg-emergency-600 px-3 py-3 text-center text-sm font-bold text-white"
+            className="rounded-lg bg-emergency-600 px-4 py-4 text-center text-base font-bold text-white"
           >
             病院へ電話
           </a>
@@ -32,16 +43,16 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
             href={vetMapHref}
             target="_blank"
             rel="noreferrer"
-            className="rounded-lg border border-emergency-200 bg-emergency-50 px-3 py-3 text-center text-sm font-bold text-emergency-800"
+            className="rounded-lg border border-emergency-200 bg-emergency-50 px-4 py-4 text-center text-base font-bold text-emergency-800"
           >
             病院を地図で開く
           </a>
         ) : null}
       </div>
 
-      <div className="mt-4 space-y-3 text-sm">
+      <div className="mt-5 space-y-3 text-sm">
         <Item label="薬" value={data.medications} />
-        <Item label="連絡先" value={joinLabel(data.emergencyContactName, data.emergencyContactPhone)} />
+        <Item label="連絡先" value={priorityContact} />
         <Item label="アレルギー" value={data.allergy} />
         <Item label="持病" value={data.disease} />
         <Item label="病院" value={joinLabel(data.vetName, data.vetPhone)} />
@@ -54,6 +65,13 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
     </section>
   );
 }
+
+const PriorityItem = ({ label, value }: { label: string; value: string | null }) => (
+  <div className="rounded-lg bg-white p-3">
+    <p className="text-xs font-bold text-rose-700">{label}</p>
+    <p className="mt-1 text-base font-bold text-slate-900">{value ?? "登録なし"}</p>
+  </div>
+);
 
 const Item = ({ label, value }: { label: string; value: string | null }) => (
   <div className="rounded-lg bg-emergency-50 p-3">
