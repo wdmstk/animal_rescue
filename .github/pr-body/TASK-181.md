@@ -42,7 +42,7 @@ Closes #191
 - [x] self_review_initial_done_before_pr
 
 ### PR作成時
-- [ ] pr_opened_ready_for_review_or_reason_for_draft
+- [x] pr_opened_ready_for_review_or_reason_for_draft
 
 ### マージ前（CI完了後）
 以下は `Lint / Unit/Integration (Vitest) / DB Integration (Real Postgres) / E2E (Playwright)` が green になってからチェックする。
