@@ -66,11 +66,21 @@ const findOwnerUserId = async (userId: string): Promise<string | NextResponse> =
     orderBy: { createdAt: "asc" }
   });
 
-  if (!ownerMembership) {
-    return NextResponse.json({ error: "Owner not found" }, { status: 404 });
+  if (ownerMembership) {
+    return ownerMembership.userId;
   }
 
-  return ownerMembership.userId;
+  const oldestMembership = await prisma.householdMember.findFirst({
+    where: { householdId: membership.householdId },
+    select: { userId: true },
+    orderBy: { createdAt: "asc" }
+  });
+
+  if (!oldestMembership) {
+    return NextResponse.json({ error: "Household member not found" }, { status: 404 });
+  }
+
+  return oldestMembership.userId;
 };
 
 export async function GET() {

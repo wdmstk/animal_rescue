@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
+1. `TASK-178` 再ログイン後の設定画面取得失敗修正（display設定404回避・表示名方針固定）
+2. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
 
 ### todo
 （なし）
@@ -128,6 +129,20 @@ Development Task List
   - `tests/integration/billing-portal-route.test.ts` を追加する
   - `tests/e2e/settings-account.spec.ts` で状態別CTA表示・押下ハンドリングを検証する
   - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### 再ログイン後の設定画面取得失敗修正（display設定404回避・表示名方針固定）
+- Task ID: `TASK-178`
+- ブランチ: `fix/TASK-178-settings-relogin-fetch-failure`
+- ステータス: `in_progress`
+- 概要: 再ログイン後に `/settings` で「設定情報の取得に失敗しました。」となる不具合を修正し、`/api/settings/display` の owner不在時404を回避する。あわせて表示名は `user_metadata.display_name` 単一運用方針をテストで固定する
+- Issue: `#185`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `GET /api/settings/display` が OWNERロール不在時でも200で既定設定を返す
+  - 設定画面初期取得で `/api/settings/display` 404起因の全体失敗が再発しない
+  - `/api/account` の表示名仕様（`user_metadata.display_name` 単一・未設定時null）をテストで保証する
+  - `npm run lint` / `npx vitest run` が通る
 
 ### 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
 - Task ID: `TASK-176`
