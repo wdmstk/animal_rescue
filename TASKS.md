@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-179` OWNER不在防止（OWNER→FAMILY降格ガード）
+（なし）
 
 ### todo
 （なし）
@@ -32,6 +32,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-179` OWNER不在防止（OWNER→FAMILY降格ガード）
 1. `TASK-178` 再ログイン後の設定画面取得失敗修正（display設定404回避・表示名方針固定）
 2. `TASK-177` サブスク課金 UI/UX 刷新（設定画面・転換率最適化）
 3. `TASK-176` 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
@@ -118,7 +119,7 @@ Development Task List
 ### OWNER不在防止（OWNER→FAMILY降格ガード）
 - Task ID: `TASK-179`
 - ブランチ: `fix/TASK-179-prevent-owner-zero`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: OWNERをFAMILYへ変更する更新で世帯内OWNERが0人になる不整合を防止するため、APIで最後のOWNER降格を禁止し、設定画面で失敗理由を明確化する
 - Issue: `#187`
 - 依存関係:
