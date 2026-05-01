@@ -50,11 +50,24 @@ export async function PATCH(request: Request, { params }: Params) {
       id: memberId,
       householdId: actorMembership.householdId
     },
-    select: { id: true, userId: true }
+    select: { id: true, userId: true, role: true }
   });
 
   if (!targetMember) {
     return NextResponse.json({ error: "メンバーが見つかりません" }, { status: 404 });
+  }
+
+  if (targetMember.role === "OWNER" && parsed.data.role === "FAMILY") {
+    const ownerCount = await prisma.householdMember.count({
+      where: {
+        householdId: actorMembership.householdId,
+        role: "OWNER"
+      }
+    });
+
+    if (ownerCount <= 1) {
+      return NextResponse.json({ error: "OWNERを0人にはできません" }, { status: 409 });
+    }
   }
 
   const updated = await prisma.householdMember.update({

@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
+（なし）
 
 ### todo
 （なし）
@@ -32,10 +32,12 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-179` OWNER不在防止（OWNER→FAMILY降格ガード）
 1. `TASK-178` 再ログイン後の設定画面取得失敗修正（display設定404回避・表示名方針固定）
 2. `TASK-177` サブスク課金 UI/UX 刷新（設定画面・転換率最適化）
 3. `TASK-176` 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
 4. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
+5. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
 5. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
 5. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
 6. `TASK-171` 緊急公開向け入力品質のバリデーション強化
@@ -113,6 +115,23 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### OWNER不在防止（OWNER→FAMILY降格ガード）
+- Task ID: `TASK-179`
+- ブランチ: `fix/TASK-179-prevent-owner-zero`
+- ステータス: `done`
+- 概要: OWNERをFAMILYへ変更する更新で世帯内OWNERが0人になる不整合を防止するため、APIで最後のOWNER降格を禁止し、設定画面で失敗理由を明確化する
+- Issue: `#187`
+- 依存関係:
+  - prerequisite: `TASK-174`
+  - blocked by: `TASK-174`
+- 完了条件:
+  - `PATCH /api/households/members/[memberId]` で、更新後にOWNERが0人になる変更を `409` で拒否する
+  - エラー文言を「OWNERを0人にはできません」に統一する
+  - 設定画面で権限更新失敗時にAPIエラーメッセージを優先表示する
+  - `tests/integration/household-members-route.test.ts` にOWNER降格制御の境界ケース（OWNER1人で拒否/OWNER複数で許可/FAMILY→OWNER許可）を追加する
+  - `tests/e2e/settings-account.spec.ts` に最後のOWNER降格失敗時の表示確認を追加する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### サブスク課金 UI/UX 刷新（設定画面・転換率最適化）
 - Task ID: `TASK-177`
@@ -241,7 +260,7 @@ Development Task List
 ### Seedデータ再設計（2名・10匹のケース拡充）
 - Task ID: `TASK-174`
 - ブランチ: `test/TASK-174-seed-showcase-2-members-10-pets`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: Seedデータを1世帯2名・10匹へ整理し、ケース多様性と再投入時のクリーン性を両立する
 - Issue: `#176`
 - 依存関係:

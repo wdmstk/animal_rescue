@@ -3,11 +3,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const {
   getUserMock,
   householdMemberFindFirstMock,
+  householdMemberCountMock,
   householdFindUniqueMock,
   householdMemberUpdateMock
 } = vi.hoisted(() => ({
   getUserMock: vi.fn(),
   householdMemberFindFirstMock: vi.fn(),
+  householdMemberCountMock: vi.fn(),
   householdFindUniqueMock: vi.fn(),
   householdMemberUpdateMock: vi.fn()
 }));
@@ -24,6 +26,7 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     householdMember: {
       findFirst: householdMemberFindFirstMock,
+      count: householdMemberCountMock,
       update: householdMemberUpdateMock
     },
     household: {
@@ -89,5 +92,63 @@ describe("/api/households/members", () => {
 
     expect(response.status).toBe(200);
     expect(householdMemberUpdateMock).toHaveBeenCalled();
+  });
+
+  it("rejects demotion when household has only one owner", async () => {
+    getUserMock.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
+    householdMemberFindFirstMock.mockResolvedValueOnce({ householdId: "h1", role: "OWNER" });
+    householdMemberFindFirstMock.mockResolvedValueOnce({ id: "m1", userId: "u1", role: "OWNER" });
+    householdMemberCountMock.mockResolvedValueOnce(1);
+
+    const response = await PATCH(
+      new Request("http://localhost", {
+        method: "PATCH",
+        body: JSON.stringify({ role: "FAMILY" })
+      }),
+      { params: Promise.resolve({ memberId: "m1" }) }
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(409);
+    expect(payload.error).toBe("OWNERを0人にはできません");
+    expect(householdMemberUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("allows demotion when household has multiple owners", async () => {
+    getUserMock.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
+    householdMemberFindFirstMock.mockResolvedValueOnce({ householdId: "h1", role: "OWNER" });
+    householdMemberFindFirstMock.mockResolvedValueOnce({ id: "m2", userId: "u2", role: "OWNER" });
+    householdMemberCountMock.mockResolvedValueOnce(2);
+    householdMemberUpdateMock.mockResolvedValueOnce({ id: "m2", userId: "u2", role: "FAMILY", createdAt: "now" });
+
+    const response = await PATCH(
+      new Request("http://localhost", {
+        method: "PATCH",
+        body: JSON.stringify({ role: "FAMILY" })
+      }),
+      { params: Promise.resolve({ memberId: "m2" }) }
+    );
+
+    expect(response.status).toBe(200);
+    expect(householdMemberUpdateMock).toHaveBeenCalledOnce();
+  });
+
+  it("allows promotion from family to owner", async () => {
+    getUserMock.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
+    householdMemberFindFirstMock.mockResolvedValueOnce({ householdId: "h1", role: "OWNER" });
+    householdMemberFindFirstMock.mockResolvedValueOnce({ id: "m3", userId: "u3", role: "FAMILY" });
+    householdMemberUpdateMock.mockResolvedValueOnce({ id: "m3", userId: "u3", role: "OWNER", createdAt: "now" });
+
+    const response = await PATCH(
+      new Request("http://localhost", {
+        method: "PATCH",
+        body: JSON.stringify({ role: "OWNER" })
+      }),
+      { params: Promise.resolve({ memberId: "m3" }) }
+    );
+
+    expect(response.status).toBe(200);
+    expect(householdMemberCountMock).not.toHaveBeenCalled();
+    expect(householdMemberUpdateMock).toHaveBeenCalledOnce();
   });
 });

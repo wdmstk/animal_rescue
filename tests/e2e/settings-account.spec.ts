@@ -376,3 +376,82 @@ test("settings shows portal CTA for active subscription and calls portal endpoin
   await cta.click();
   expect(portalCalled).toBe(true);
 });
+
+test("settings shows API error when demoting the last owner is rejected", async ({ page }) => {
+  await page.route("**/api/households/members", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          household: {
+            id: "h1",
+            name: "Test Household",
+            members: [{ id: "m1", userId: "u1", role: "OWNER", createdAt: "2026-04-29T00:00:00.000Z" }]
+          },
+          currentUserRole: "OWNER"
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/households/members/*", async (route) => {
+    await route.fulfill({
+      status: 409,
+      contentType: "application/json",
+      body: JSON.stringify({ error: "OWNERを0人にはできません" })
+    });
+  });
+
+  await page.route("**/api/account", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ data: { userId: "u1", email: "user@example.com", displayName: "User" } })
+    });
+  });
+
+  await page.route("**/api/billing/subscription", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          planTier: "free",
+          subscriptionStatus: "INCOMPLETE",
+          status: "INCOMPLETE",
+          isActive: false,
+          trialEndsAt: null,
+          currentPeriodEnd: null
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/pets", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [] }) });
+  });
+
+  await page.route("**/api/settings/display", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          showMedicationCard: true,
+          showVaccinationCard: true,
+          showHealthCard: true,
+          showMedicalRecordCard: true,
+          showEmergencyMedicationSummary: true,
+          showEmergencyVaccinationSummary: true,
+          showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.goto("/settings");
+  await page.getByRole("button", { name: "FAMILY" }).first().click();
+  await expect(page.getByText("OWNERを0人にはできません")).toBeVisible();
+});
