@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
 
 ### todo
 （なし）
@@ -174,6 +174,20 @@ Development Task List
   - 既存挙動との互換（未設定時のデフォルト）を定義する
   - ユニット/統合テストで日付境界ケースを追加する
   - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### Seedデータ再設計（2名・10匹のケース拡充）
+- Task ID: `TASK-174`
+- ブランチ: `test/TASK-174-seed-showcase-2-members-10-pets`
+- ステータス: `in_progress`
+- 概要: Seedデータを1世帯2名・10匹へ整理し、ケース多様性と再投入時のクリーン性を両立する
+- Issue: `#176`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `showcase` シナリオで2名（OWNER/FAMILY）と10匹が作成される
+  - ペットごとに疾患有無・投薬有無・ワクチン期限・検査値差分など複数ケースを持つ
+  - 既存seed残骸が `reset -> seed` で残らない
+  - `npm run lint` / `npx vitest run` が通る
 
 ### 変更履歴の時刻精度改善（updatedAt基準化）
 - Task ID: `TASK-169`
