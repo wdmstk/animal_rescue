@@ -34,9 +34,9 @@
 - [x] pr_opened_ready_for_review_or_reason_for_draft
 
 ### マージ前（CI完了後）
-- [ ] ci_green_confirmed
-- [ ] self_review_final_done_after_ci_green
-- [ ] ready_for_main_merge
+- [x] ci_green_confirmed
+- [x] self_review_final_done_after_ci_green
+- [x] ready_for_main_merge
 
 #### 最終セルフレビュー（必須）
 - 差分妥当性: 緊急公開画面の視認性改善に限定し、情報優先度の要件に一致
