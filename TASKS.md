@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-170` 投薬リマインダーの定期送信ジョブ化
+（なし）
 
 ### todo
 1. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
@@ -32,9 +32,10 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-171` 緊急公開向け入力品質のバリデーション強化
-2. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
-3. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
+1. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
+2. `TASK-171` 緊急公開向け入力品質のバリデーション強化
+3. `TASK-170` 投薬リマインダーの定期送信ジョブ化
+4. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
 4. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
 4. `TASK-166` 初回オンボーディング導線
 4. `TASK-165` データ共有出力（PDF/印刷向け）
@@ -144,7 +145,7 @@ Development Task List
 ### 投薬リマインダーの定期送信ジョブ化
 - Task ID: `TASK-170`
 - ブランチ: `feat/TASK-170-medication-reminder-scheduler`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 投薬リマインダー設定UIは実装済みのため、定期送信ジョブを実装して実運用で通知が発火する状態にする
 - Issue: `#164`
 - 依存関係:
