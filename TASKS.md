@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-180` OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
+（なし）
 
 ### todo
 （なし）
@@ -32,6 +32,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-180` OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
 1. `TASK-179` OWNER不在防止（OWNER→FAMILY降格ガード）
 1. `TASK-178` 再ログイン後の設定画面取得失敗修正（display設定404回避・表示名方針固定）
 2. `TASK-177` サブスク課金 UI/UX 刷新（設定画面・転換率最適化）
@@ -119,7 +120,7 @@ Development Task List
 ### OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
 - Task ID: `TASK-180`
 - ブランチ: `fix/TASK-180-owner-recovery-oldest-guard`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: OWNERが0人の世帯で、最古メンバー本人のみOWNER復旧できるAPIを追加し、復旧成功時に監査ログをDB保存する。設定画面には条件成立時のみ復旧導線を表示する
 - Issue: `#189`
 - 依存関係:
