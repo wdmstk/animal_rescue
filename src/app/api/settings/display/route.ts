@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
+import { requireEditAccess } from "@/lib/billing/access-guard";
 import { petDisplaySettingsPatchSchema, petDisplaySettingsSchema } from "@/lib/validators/pet-display-settings";
 
 const DEFAULT_SETTINGS = petDisplaySettingsSchema.parse({
@@ -105,6 +106,10 @@ export async function PATCH(request: Request) {
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
+  }
+  const editAccess = await requireEditAccess(auth.userId);
+  if (editAccess instanceof NextResponse) {
+    return editAccess;
   }
 
   const ownerUserId = await findOwnerUserId(auth.userId);

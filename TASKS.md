@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
+1. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
+2. `TASK-174` Seedデータ再設計（2名・10匹のケース拡充）
 
 ### todo
 （なし）
@@ -109,6 +110,21 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
+- Task ID: `TASK-175`
+- ブランチ: `feat/TASK-175-billing-paywall-trial-30d`
+- ステータス: `in_progress`
+- 概要: 30日無料トライアル + 月額680円の課金必須化を実装し、トライアル終了後の運用機能停止を徹底する。あわせてsignup後の世帯未作成による400を解消し、seedデータ削除専用コマンドを追加する
+- Issue: `#178`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 課金APIが `planTier` / `subscriptionStatus` / `trialEndsAt` / `accessPolicy` を返す
+  - inactive時に作成/編集/通知/共有/出力が停止し、履歴閲覧は30日に制限される
+  - signup直後ユーザーで `/api/households/members` と `/api/settings/display` が400にならない
+  - `seed:test:clear` コマンドでseedデータを再投入なしに削除できる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### GitHub Actions Nodeランタイム更新（deprecation対応）
 - Task ID: `TASK-172`

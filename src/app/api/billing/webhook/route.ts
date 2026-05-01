@@ -8,6 +8,8 @@ const upsertSubscriptionByStripe = async (input: {
   stripeCustomerId: string;
   status: ReturnType<typeof toSubscriptionStatus>;
   currentPeriodEnd: Date | null;
+  trialEndsAt: Date | null;
+  graceUntil: Date | null;
 }) => {
   const existing = await prisma.userSubscription.findFirst({
     where: { stripeCustomerId: input.stripeCustomerId },
@@ -25,12 +27,16 @@ const upsertSubscriptionByStripe = async (input: {
       stripeCustomerId: input.stripeCustomerId,
       stripeSubscriptionId: input.stripeSubscriptionId,
       status: input.status,
-      currentPeriodEnd: input.currentPeriodEnd
+      currentPeriodEnd: input.currentPeriodEnd,
+      trialEndsAt: input.trialEndsAt,
+      graceUntil: input.graceUntil
     },
     update: {
       stripeSubscriptionId: input.stripeSubscriptionId,
       status: input.status,
-      currentPeriodEnd: input.currentPeriodEnd
+      currentPeriodEnd: input.currentPeriodEnd,
+      trialEndsAt: input.trialEndsAt,
+      graceUntil: input.graceUntil
     }
   });
 };
@@ -58,7 +64,10 @@ export async function POST(request: Request) {
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: session.customer,
         status: toSubscriptionStatus(subscription.status),
-        currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : null
+        currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : null,
+        trialEndsAt: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+        graceUntil:
+          subscription.status === "past_due" ? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) : null
       });
     }
   }
@@ -73,7 +82,9 @@ export async function POST(request: Request) {
       stripeSubscriptionId: subscription.id,
       stripeCustomerId: String(subscription.customer),
       status: toSubscriptionStatus(subscription.status),
-      currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : null
+      currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : null,
+      trialEndsAt: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
+      graceUntil: subscription.status === "past_due" ? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) : null
     });
   }
 

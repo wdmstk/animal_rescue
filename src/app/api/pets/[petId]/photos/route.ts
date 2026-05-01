@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
+import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { allowedImageHostMessage, isAllowedImageUrl } from "@/lib/validators/image-url";
 
 const petIdParamSchema = z.object({
@@ -48,6 +49,10 @@ export async function POST(request: Request, { params }: { params: { petId: stri
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
+  }
+  const createAccess = await requireCreateAccess(auth.userId);
+  if (createAccess instanceof NextResponse) {
+    return createAccess;
   }
 
   const access = await requirePetAccess(auth.userId, parsedParams.data.petId);

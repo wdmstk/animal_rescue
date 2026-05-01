@@ -29,9 +29,20 @@ type AccountPayload = {
 };
 
 type BillingPayload = {
-  status: "INCOMPLETE" | "TRIALING" | "ACTIVE" | "PAST_DUE" | "CANCELED" | "UNPAID";
+  planTier: "trial" | "paid" | "free";
+  subscriptionStatus: "INCOMPLETE" | "TRIALING" | "ACTIVE" | "PAST_DUE" | "CANCELED" | "UNPAID" | "GRACE";
+  status: "INCOMPLETE" | "TRIALING" | "ACTIVE" | "PAST_DUE" | "CANCELED" | "UNPAID" | "GRACE";
   isActive: boolean;
+  trialEndsAt: string | null;
   currentPeriodEnd: string | null;
+  accessPolicy: {
+    canCreate: boolean;
+    canEdit: boolean;
+    canNotify: boolean;
+    canShare: boolean;
+    canExport: boolean;
+    historyWindowDays: number | null;
+  };
 };
 
 type PetListItem = {
@@ -268,10 +279,16 @@ export default function SettingsPage() {
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">課金プラン</h2>
-        <p className="mt-1 text-sm text-slate-600">月額500円（Stripe定期課金）</p>
-        <p className="mt-2 text-xs text-slate-500">契約状態: {billing?.status ?? "INCOMPLETE"}</p>
+        <p className="mt-1 text-sm text-slate-600">30日無料トライアル、その後月額680円（Stripe定期課金）</p>
+        <p className="mt-2 text-xs text-slate-500">契約状態: {billing?.subscriptionStatus ?? "INCOMPLETE"}</p>
+        <p className="mt-1 text-xs text-slate-500">
+          トライアル終了: {billing?.trialEndsAt ? new Date(billing.trialEndsAt).toLocaleString("ja-JP") : "-"}
+        </p>
         <p className="mt-1 text-xs text-slate-500">
           有効期限: {billing?.currentPeriodEnd ? new Date(billing.currentPeriodEnd).toLocaleString("ja-JP") : "-"}
+        </p>
+        <p className="mt-1 text-xs text-slate-500">
+          安全情報は閲覧可能です。再開で全履歴・編集・通知・共有が復帰します。
         </p>
         <button
           type="button"
@@ -279,7 +296,7 @@ export default function SettingsPage() {
           onClick={handleStartBilling}
           disabled={Boolean(billing?.isActive) || isBillingSubmitting}
         >
-          {billing?.isActive ? "契約中" : isBillingSubmitting ? "遷移中..." : "月額500円で申し込む"}
+          {billing?.isActive ? "契約中" : isBillingSubmitting ? "遷移中..." : "月額680円で申し込む"}
         </button>
       </section>
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
+import { requireShareAccess } from "@/lib/billing/access-guard";
 import { generateEmergencyToken } from "@/lib/security/emergency-token";
 
 const petIdParamSchema = z.object({
@@ -84,6 +85,10 @@ export async function POST(_: Request, { params }: { params: Promise<{ petId: st
   if (auth instanceof NextResponse) {
     return auth;
   }
+  const shareAccess = await requireShareAccess(auth.userId);
+  if (shareAccess instanceof NextResponse) {
+    return shareAccess;
+  }
 
   const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
   if (access instanceof NextResponse) {
@@ -123,6 +128,10 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ petId: 
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
+  }
+  const shareAccess = await requireShareAccess(auth.userId);
+  if (shareAccess instanceof NextResponse) {
+    return shareAccess;
   }
 
   const access = await requirePetAccess(auth.userId, parsedParams.data.petId);

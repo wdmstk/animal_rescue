@@ -1,18 +1,18 @@
 import { loadEnvConfig } from "@next/env";
 import { resetSeedData, seedScenario } from "../src/lib/testing/seed-scenarios";
 
-type SeedCommand = "baseline" | "showcase" | "reset";
+type SeedCommand = "baseline" | "showcase" | "reset" | "clear";
 
 const command = (process.argv[2] ?? "baseline") as SeedCommand;
 
 const isValidCommand = (value: string): value is SeedCommand =>
-  value === "baseline" || value === "showcase" || value === "reset";
+  value === "baseline" || value === "showcase" || value === "reset" || value === "clear";
 
 const run = async (): Promise<void> => {
   loadEnvConfig(process.cwd());
 
   if (!isValidCommand(command)) {
-    throw new Error(`Unsupported command: ${command}. Use baseline | showcase | reset.`);
+    throw new Error(`Unsupported command: ${command}. Use baseline | showcase | reset | clear.`);
   }
 
   if (!process.env.DATABASE_URL) {
@@ -26,6 +26,12 @@ const run = async (): Promise<void> => {
       await resetSeedData(prisma);
       const result = await seedScenario(prisma, "baseline");
       console.log(`Seed reset complete (baseline reloaded): households=${result.householdCount}, pets=${result.petCount}`);
+      return;
+    }
+
+    if (command === "clear") {
+      const result = await resetSeedData(prisma);
+      console.log(`Seed data cleared: households=${result.householdIds.length}, pets=${result.petIds.length}`);
       return;
     }
 

@@ -35,7 +35,9 @@ export async function POST() {
     where: { userId: user.id },
     create: {
       userId: user.id,
-      stripeCustomerId: customerId
+      stripeCustomerId: customerId,
+      status: "TRIALING",
+      trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     },
     update: {
       stripeCustomerId: customerId
@@ -45,7 +47,10 @@ export async function POST() {
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
-    line_items: [{ price: env.STRIPE_PRICE_ID_MONTHLY_500, quantity: 1 }],
+    line_items: [{ price: env.STRIPE_PRICE_ID_MONTHLY_680, quantity: 1 }],
+    subscription_data: {
+      trial_period_days: 30
+    },
     success_url: `${env.NEXT_PUBLIC_APP_URL}/settings?billing=success`,
     cancel_url: `${env.NEXT_PUBLIC_APP_URL}/settings?billing=cancel`
   });
