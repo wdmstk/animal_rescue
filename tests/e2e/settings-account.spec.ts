@@ -455,3 +455,240 @@ test("settings shows API error when demoting the last owner is rejected", async 
   await page.getByRole("button", { name: "FAMILY" }).first().click();
   await expect(page.getByText("OWNERを0人にはできません")).toBeVisible();
 });
+
+test("settings can recover owner only for oldest member when owner is missing", async ({ page }) => {
+  let recoverCalled = false;
+
+  await page.route("**/api/households/members", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          household: {
+            id: "h1",
+            name: "Test Household",
+            members: [{ id: "m1", userId: "u1", role: "FAMILY", createdAt: "2026-04-29T00:00:00.000Z" }]
+          },
+          currentUserRole: "FAMILY"
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/households/recover-owner", async (route) => {
+    recoverCalled = true;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: { id: "m1", userId: "u1", role: "OWNER", createdAt: "2026-04-29T00:00:00.000Z" }
+      })
+    });
+  });
+
+  await page.route("**/api/account", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ data: { userId: "u1", email: "user@example.com", displayName: "User" } })
+    });
+  });
+
+  await page.route("**/api/billing/subscription", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          planTier: "free",
+          subscriptionStatus: "INCOMPLETE",
+          status: "INCOMPLETE",
+          isActive: false,
+          trialEndsAt: null,
+          currentPeriodEnd: null
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/pets", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [] }) });
+  });
+
+  await page.route("**/api/settings/display", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          showMedicationCard: true,
+          showVaccinationCard: true,
+          showHealthCard: true,
+          showMedicalRecordCard: true,
+          showEmergencyMedicationSummary: true,
+          showEmergencyVaccinationSummary: true,
+          showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.goto("/settings");
+  await page.getByRole("button", { name: "OWNERを復旧する" }).click();
+  await expect(page.getByText("OWNERを復旧しました。")).toBeVisible();
+  expect(recoverCalled).toBe(true);
+});
+
+test("settings hides owner recovery button for non-oldest member", async ({ page }) => {
+  await page.route("**/api/households/members", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          household: {
+            id: "h1",
+            name: "Test Household",
+            members: [
+              { id: "m1", userId: "u1", role: "FAMILY", createdAt: "2026-04-28T00:00:00.000Z" },
+              { id: "m2", userId: "u2", role: "FAMILY", createdAt: "2026-04-29T00:00:00.000Z" }
+            ]
+          },
+          currentUserRole: "FAMILY"
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/account", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ data: { userId: "u2", email: "user@example.com", displayName: "User" } })
+    });
+  });
+
+  await page.route("**/api/billing/subscription", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          planTier: "free",
+          subscriptionStatus: "INCOMPLETE",
+          status: "INCOMPLETE",
+          isActive: false,
+          trialEndsAt: null,
+          currentPeriodEnd: null
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/pets", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [] }) });
+  });
+
+  await page.route("**/api/settings/display", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          showMedicationCard: true,
+          showVaccinationCard: true,
+          showHealthCard: true,
+          showMedicalRecordCard: true,
+          showEmergencyMedicationSummary: true,
+          showEmergencyVaccinationSummary: true,
+          showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.goto("/settings");
+  await expect(page.getByRole("button", { name: "OWNERを復旧する" })).toHaveCount(0);
+});
+
+test("settings shows API error when owner recovery fails", async ({ page }) => {
+  await page.route("**/api/households/members", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          household: {
+            id: "h1",
+            name: "Test Household",
+            members: [{ id: "m1", userId: "u1", role: "FAMILY", createdAt: "2026-04-29T00:00:00.000Z" }]
+          },
+          currentUserRole: "FAMILY"
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/households/recover-owner", async (route) => {
+    await route.fulfill({
+      status: 403,
+      contentType: "application/json",
+      body: JSON.stringify({ error: "最古メンバーのみ復旧できます" })
+    });
+  });
+
+  await page.route("**/api/account", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ data: { userId: "u1", email: "user@example.com", displayName: "User" } })
+    });
+  });
+
+  await page.route("**/api/billing/subscription", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          planTier: "free",
+          subscriptionStatus: "INCOMPLETE",
+          status: "INCOMPLETE",
+          isActive: false,
+          trialEndsAt: null,
+          currentPeriodEnd: null
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/pets", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [] }) });
+  });
+
+  await page.route("**/api/settings/display", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          showMedicationCard: true,
+          showVaccinationCard: true,
+          showHealthCard: true,
+          showMedicalRecordCard: true,
+          showEmergencyMedicationSummary: true,
+          showEmergencyVaccinationSummary: true,
+          showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.goto("/settings");
+  await page.getByRole("button", { name: "OWNERを復旧する" }).click();
+  await expect(page.getByText("最古メンバーのみ復旧できます")).toBeVisible();
+});

@@ -351,3 +351,15 @@ model OwnerDisplaySettings {
   showEmergencyMedicalRecordSummary Boolean  @default(true)
   updatedAt                         DateTime @updatedAt
 }
+
+model HouseholdRoleRecoveryLog {
+  id                String   @id @default(uuid()) @db.Uuid
+  householdId       String   @db.Uuid
+  recoveredUserId   String   @db.Uuid
+  triggeredByUserId String   @db.Uuid
+  reason            String
+  createdAt         DateTime @default(now())
+
+  @@index([householdId, createdAt])
+  @@index([triggeredByUserId, createdAt])
+}
