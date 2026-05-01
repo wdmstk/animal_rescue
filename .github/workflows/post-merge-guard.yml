@@ -16,7 +16,7 @@ jobs:
       issues: read
     steps:
       - name: Validate post-merge checklist and linked issues
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const pr = context.payload.pull_request;
