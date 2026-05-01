@@ -32,13 +32,14 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
-2. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
-3. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
-4. `TASK-171` 緊急公開向け入力品質のバリデーション強化
-5. `TASK-170` 投薬リマインダーの定期送信ジョブ化
-6. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
-7. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
+1. `TASK-176` 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
+2. `TASK-175` 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
+3. `TASK-173` 投薬リマインダー日次判定のタイムゾーン基準化
+4. `TASK-172` GitHub Actions Nodeランタイム更新（deprecation対応）
+5. `TASK-171` 緊急公開向け入力品質のバリデーション強化
+6. `TASK-170` 投薬リマインダーの定期送信ジョブ化
+7. `TASK-169` 変更履歴の時刻精度改善（updatedAt基準化）
+8. `TASK-168` Post-Mergeチェック項目のCI強制ガード追加
 4. `TASK-167` PR作成〜mainマージ運用の段階ガード化（実態厳密）
 4. `TASK-166` 初回オンボーディング導線
 4. `TASK-165` データ共有出力（PDF/印刷向け）
@@ -110,6 +111,20 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 商用化運用ドキュメント整備（法務/運用/事業/チェックリスト）
+- Task ID: `TASK-176`
+- ブランチ: `docs/TASK-176-commercial-readiness-docs`
+- ステータス: `done`
+- 概要: 商用利用へ向けた法務・運用・事業観点のガイドとローンチチェックリストを追加し、README から参照可能にする
+- Issue: `#181`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `docs/commercial-legal-ja.md` / `docs/commercial-operations-ja.md` / `docs/commercial-business-ja.md` を追加する
+  - `docs/commercial-launch-checklist-ja.md` を追加する
+  - README のドキュメント一覧に商用化ドキュメント導線を追加する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 課金必須化（30日トライアル/680円）と世帯自動作成・seed削除導線整備
 - Task ID: `TASK-175`
