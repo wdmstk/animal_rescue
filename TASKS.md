@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-182` ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
 
 ### todo
 （なし）
@@ -117,6 +117,21 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
+- Task ID: `TASK-182`
+- ブランチ: `feat/TASK-182-pet-profile-owner-qr-fixes`
+- ステータス: `in_progress`
+- 概要: 写真登録不具合を修正し、去勢・避妊（実施日含む）と飼い主情報（住所・メール含む）の登録機能を追加する。あわせてQR共有URLの生成/表示を正しい公開URLへ統一する
+- Issue: `#193`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 写真アップロード保存が成功する
+  - 新規/編集画面で去勢・避妊+実施日を保存できる
+  - 設定画面で飼い主情報（メール含む）を保存/再表示できる
+  - QR表示URLとQR画像の公開URLが正しいドメインになる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
 - Task ID: `TASK-181`

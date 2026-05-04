@@ -60,6 +60,16 @@ type OwnerDisplaySettings = {
   showEmergencyVaccinationSummary: boolean;
   showEmergencyMedicalRecordSummary: boolean;
 };
+type OwnerProfile = {
+  ownerUserId: string;
+  fullName: string | null;
+  phone: string | null;
+  email: string | null;
+  postalCode: string | null;
+  addressLine1: string | null;
+  addressLine2: string | null;
+  note: string | null;
+};
 
 type BillingActionCopy = {
   badgeLabel: string;
@@ -150,6 +160,8 @@ export default function SettingsPage() {
   const [ownerDisplaySettings, setOwnerDisplaySettings] = useState<OwnerDisplaySettings | null>(null);
   const [isDisplaySettingsSaving, setIsDisplaySettingsSaving] = useState(false);
   const [isRecoveringOwner, setIsRecoveringOwner] = useState(false);
+  const [ownerProfile, setOwnerProfile] = useState<OwnerProfile | null>(null);
+  const [isOwnerProfileSaving, setIsOwnerProfileSaving] = useState(false);
 
   const isOwner = currentUserRole === "OWNER";
   const hasOwner = members.some((member) => member.role === "OWNER");
@@ -183,6 +195,10 @@ export default function SettingsPage() {
       const billingJson = (await billingRes.json()) as { data: BillingPayload };
       const petsJson = (await petsRes.json()) as { data: PetListItem[] };
       const ownerSettingsJson = (await ownerSettingsRes.json()) as { data: OwnerDisplaySettings };
+      const ownerProfileRes = await fetch("/api/settings/owner-profile");
+      const ownerProfileJson = ownerProfileRes.ok
+        ? ((await ownerProfileRes.json()) as { data: OwnerProfile })
+        : null;
 
       setHouseholdName(membersJson.data.household.name);
       setMembers(membersJson.data.household.members);
@@ -192,6 +208,7 @@ export default function SettingsPage() {
       setBilling(billingJson.data);
       setPets(petsJson.data);
       setOwnerDisplaySettings(ownerSettingsJson.data);
+      setOwnerProfile(ownerProfileJson?.data ?? null);
     } catch {
       setErrorMessage("設定情報の取得に失敗しました。");
     }
@@ -358,6 +375,42 @@ export default function SettingsPage() {
     await loadData();
   };
 
+  const handleOwnerProfileSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!ownerProfile) {
+      return;
+    }
+
+    setErrorMessage(null);
+    setMessage(null);
+    setIsOwnerProfileSaving(true);
+
+    const response = await fetch("/api/settings/owner-profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fullName: ownerProfile.fullName,
+        phone: ownerProfile.phone,
+        email: ownerProfile.email,
+        postalCode: ownerProfile.postalCode,
+        addressLine1: ownerProfile.addressLine1,
+        addressLine2: ownerProfile.addressLine2,
+        note: ownerProfile.note
+      })
+    });
+    const payload = (await response.json().catch(() => null)) as { data?: OwnerProfile; error?: string } | null;
+
+    if (!response.ok || !payload?.data) {
+      setErrorMessage(typeof payload?.error === "string" ? payload.error : "飼い主情報の更新に失敗しました。");
+      setIsOwnerProfileSaving(false);
+      return;
+    }
+
+    setOwnerProfile(payload.data);
+    setIsOwnerProfileSaving(false);
+    setMessage("飼い主情報を更新しました。");
+  };
+
   return (
     <div className="space-y-4">
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -491,6 +544,82 @@ export default function SettingsPage() {
             更新する
           </button>
         </form>
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900">飼い主情報</h2>
+        <p className="mt-1 text-sm text-slate-600">世帯OWNERの連絡先情報を管理します。</p>
+        {ownerProfile ? (
+          <form className="mt-3 grid gap-3 md:grid-cols-2" onSubmit={handleOwnerProfileSubmit}>
+            <label className="text-xs font-medium text-slate-700">
+              氏名
+              <input
+                value={ownerProfile.fullName ?? ""}
+                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, fullName: event.target.value } : prev))}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </label>
+            <label className="text-xs font-medium text-slate-700">
+              電話
+              <input
+                value={ownerProfile.phone ?? ""}
+                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, phone: event.target.value } : prev))}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </label>
+            <label className="text-xs font-medium text-slate-700">
+              メールアドレス
+              <input
+                type="email"
+                value={ownerProfile.email ?? ""}
+                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, email: event.target.value } : prev))}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </label>
+            <label className="text-xs font-medium text-slate-700">
+              郵便番号
+              <input
+                value={ownerProfile.postalCode ?? ""}
+                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, postalCode: event.target.value } : prev))}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </label>
+            <label className="text-xs font-medium text-slate-700 md:col-span-2">
+              住所1
+              <input
+                value={ownerProfile.addressLine1 ?? ""}
+                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, addressLine1: event.target.value } : prev))}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </label>
+            <label className="text-xs font-medium text-slate-700 md:col-span-2">
+              住所2
+              <input
+                value={ownerProfile.addressLine2 ?? ""}
+                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, addressLine2: event.target.value } : prev))}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </label>
+            <label className="text-xs font-medium text-slate-700 md:col-span-2">
+              メモ
+              <textarea
+                value={ownerProfile.note ?? ""}
+                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, note: event.target.value } : prev))}
+                rows={3}
+                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </label>
+            <button
+              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 md:col-span-2"
+              type="submit"
+              disabled={isOwnerProfileSaving}
+            >
+              {isOwnerProfileSaving ? "保存中..." : "飼い主情報を保存"}
+            </button>
+          </form>
+        ) : (
+          <p className="mt-2 text-xs text-slate-500">飼い主情報を読み込めませんでした。</p>
+        )}
       </section>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">

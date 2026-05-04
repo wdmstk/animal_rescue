@@ -1,5 +1,5 @@
 const ALLOWED_EXACT_HOSTS = new Set(["images.unsplash.com"]);
-const ALLOWED_SUFFIX_HOSTS = [".supabase.co"] as const;
+const ALLOWED_SUFFIX_HOSTS = [".supabase.co", ".supabase.in", ".supabase.net", ".supabase.com"] as const;
 
 export const isAllowedImageUrl = (value: string): boolean => {
   let url: URL;

@@ -54,6 +54,9 @@ export function EmergencyQrShareCard({ petId, initialToken }: EmergencyQrShareCa
   }, [petId, initialToken]);
 
   const resolvedToken = token || initialToken || "";
+  const resolvedPublicUrl = resolvedToken
+    ? (typeof window !== "undefined" ? `${window.location.origin}/e/${resolvedToken}` : `/e/${resolvedToken}`)
+    : "";
 
   const showQr = async () => {
     if (!resolvedToken) {
@@ -110,8 +113,8 @@ export function EmergencyQrShareCard({ petId, initialToken }: EmergencyQrShareCa
     <section className="rounded-2xl border border-emergency-100 bg-white p-4 shadow-sm">
       <h2 className="text-base font-bold text-slate-900">QR共有</h2>
       <p className="mt-2 text-sm text-slate-600">緊急時に必要最小限の情報を公開するURLです。</p>
-      <div className="mt-3 rounded-lg bg-slate-100 p-2 text-xs text-slate-700 break-all">
-        {isLoading ? "読み込み中..." : `/e/${resolvedToken}`}
+      <div className="mt-3 rounded-lg bg-slate-100 p-2 text-xs text-slate-700 break-all" suppressHydrationWarning>
+        {isLoading ? "読み込み中..." : resolvedPublicUrl}
       </div>
       <div className="mt-3 flex flex-wrap gap-2">
         <Link

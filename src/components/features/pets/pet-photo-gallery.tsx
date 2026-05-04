@@ -70,7 +70,14 @@ export function PetPhotoGallery({ petId, photos }: PetPhotoGalleryProps) {
       });
 
       if (!persisted.ok) {
-        throw new Error("写真の保存に失敗しました。");
+        const payload = (await persisted.json().catch(() => null)) as { error?: unknown } | null;
+        const detail =
+          typeof payload?.error === "string"
+            ? payload.error
+            : payload?.error && typeof payload.error === "object"
+              ? JSON.stringify(payload.error)
+              : null;
+        throw new Error(detail ? `写真の保存に失敗しました。(${detail})` : "写真の保存に失敗しました。");
       }
 
       setItems((prev) => [...prev, uploadUrlPayload.data.publicUrl]);

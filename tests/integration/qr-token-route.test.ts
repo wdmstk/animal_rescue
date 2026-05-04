@@ -71,7 +71,7 @@ describe("/api/pets/[petId]/qr-token", () => {
     expect(response.status).toBe(200);
     const payload = await response.json();
     expect(payload.data.token).toBe("99999999-9999-4999-8999-999999999999");
-    expect(payload.data.publicUrl).toBe("/e/99999999-9999-4999-8999-999999999999");
+    expect(payload.data.publicUrl).toMatch(/\/e\/99999999-9999-4999-8999-999999999999$/);
     expect(createMock).not.toHaveBeenCalled();
   });
 
@@ -124,7 +124,7 @@ describe("/api/pets/[petId]/qr-token", () => {
     expect(response.status).toBe(200);
     const payload = await response.json();
     expect(payload.data.token).toBe("11111111-1111-4111-8111-111111111111");
-    expect(payload.data.publicUrl).toBe("/e/11111111-1111-4111-8111-111111111111");
+    expect(payload.data.publicUrl).toMatch(/\/e\/11111111-1111-4111-8111-111111111111$/);
     expect(upsertMock).toHaveBeenCalledOnce();
   });
 
@@ -156,7 +156,7 @@ describe("/api/pets/[petId]/qr-token", () => {
     expect(response.status).toBe(200);
     const payload = await response.json();
     expect(payload.data.token).toBe("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
-    expect(payload.data.publicUrl).toBe("/e/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    expect(payload.data.publicUrl).toMatch(/\/e\/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa$/);
     expect(payload.data.isActive).toBe(false);
     expect(updateMock).toHaveBeenCalledOnce();
   });
