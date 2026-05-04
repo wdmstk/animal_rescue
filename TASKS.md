@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-183` 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
+（なし）
 
 ### todo
 （なし）
@@ -32,6 +32,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-183` 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
 1. `TASK-182` ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
 1. `TASK-181` 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
 1. `TASK-180` OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
@@ -122,7 +123,7 @@ Development Task List
 ### 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
 - Task ID: `TASK-183`
 - ブランチ: `fix/TASK-183-photo-upload-chain-fixes`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 写真アップロード導線で連続発生した不具合（Promise params未await、Storage bucket未作成時の失敗、失敗理由非表示）を修正し、障害時の切り分け可能性を改善する
 - Issue: `#195`
 - 依存関係:
