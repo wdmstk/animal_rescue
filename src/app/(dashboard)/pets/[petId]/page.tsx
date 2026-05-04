@@ -22,6 +22,8 @@ type PetDetailResponse = {
     species: "dog" | "cat" | "other";
     breed: string | null;
     sex: "MALE" | "FEMALE" | "UNKNOWN";
+    reproductiveStatus: "INTACT" | "NEUTERED" | "SPAYED" | "UNKNOWN";
+    sterilizedAt: string | null;
     birthday: string | null;
     ageYears: number | null;
     weightKg: number | null;
@@ -94,6 +96,8 @@ export default async function PetDetailPage({
         species: "犬",
         breed: "トイプードル",
         sex: "メス",
+        reproductive: "避妊済み",
+        sterilizedAt: "2020-08-01",
         age: "6歳",
         weight: "4.2kg",
         birthday: "2020-03-10",
@@ -372,7 +376,9 @@ export default async function PetDetailPage({
             notesPersonality: pet.notesPersonality,
             notesFeatures: pet.notesFeatures,
             mainPhotoUrl: pet.mainPhotoUrl,
-            photos: pet.photos
+            photos: pet.photos,
+            reproductiveStatus: pet.reproductiveStatus,
+            sterilizedAt: pet.sterilizedAt
           }}
         />
       </section>

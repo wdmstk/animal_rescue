@@ -8,6 +8,7 @@ import { ToastMessage } from "@/components/ui/toast-message";
 
 type Species = "dog" | "cat" | "other";
 type Sex = "MALE" | "FEMALE" | "UNKNOWN";
+type ReproductiveStatus = "INTACT" | "NEUTERED" | "SPAYED" | "UNKNOWN";
 
 const speciesOptions: Array<{ value: Species; label: string }> = [
   { value: "dog", label: "犬" },
@@ -19,6 +20,12 @@ const sexOptions: Array<{ value: Sex; label: string }> = [
   { value: "MALE", label: "オス" },
   { value: "FEMALE", label: "メス" },
   { value: "UNKNOWN", label: "不明" }
+];
+const reproductiveOptions: Array<{ value: ReproductiveStatus; label: string }> = [
+  { value: "UNKNOWN", label: "不明" },
+  { value: "INTACT", label: "未実施" },
+  { value: "NEUTERED", label: "去勢済み" },
+  { value: "SPAYED", label: "避妊済み" }
 ];
 
 const toNullable = (value: string) => {
@@ -36,6 +43,8 @@ export default function NewPetPage() {
   const [sex, setSex] = useState<Sex>("UNKNOWN");
   const [breed, setBreed] = useState("");
   const [birthday, setBirthday] = useState("");
+  const [reproductiveStatus, setReproductiveStatus] = useState<ReproductiveStatus>("UNKNOWN");
+  const [sterilizedAt, setSterilizedAt] = useState("");
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -52,7 +61,9 @@ export default function NewPetPage() {
           species,
           sex,
           breed: toNullable(breed),
-          birthday: toNullable(birthday)
+          birthday: toNullable(birthday),
+          reproductiveStatus,
+          sterilizedAt: reproductiveStatus === "NEUTERED" || reproductiveStatus === "SPAYED" ? toNullable(sterilizedAt) : null
         })
       });
 
@@ -155,6 +166,35 @@ export default function NewPetPage() {
               value={birthday}
               onChange={(event) => setBirthday(event.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+          </label>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className="block text-sm font-semibold text-slate-800">
+            去勢・避妊
+            <select
+              name="reproductiveStatus"
+              value={reproductiveStatus}
+              onChange={(event) => setReproductiveStatus(event.target.value as ReproductiveStatus)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            >
+              {reproductiveOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block text-sm font-semibold text-slate-800">
+            実施日
+            <input
+              name="sterilizedAt"
+              type="date"
+              value={sterilizedAt}
+              disabled={reproductiveStatus !== "NEUTERED" && reproductiveStatus !== "SPAYED"}
+              onChange={(event) => setSterilizedAt(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-100"
             />
           </label>
         </div>

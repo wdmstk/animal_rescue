@@ -88,7 +88,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
     where: { id: access.petId },
     data: {
       ...parsedBody.data,
-      birthday: parsedBody.data.birthday ? new Date(parsedBody.data.birthday) : parsedBody.data.birthday
+      birthday: parsedBody.data.birthday ? new Date(parsedBody.data.birthday) : parsedBody.data.birthday,
+      sterilizedAt: parsedBody.data.sterilizedAt ? new Date(parsedBody.data.sterilizedAt) : parsedBody.data.sterilizedAt
     }
   });
 

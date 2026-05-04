@@ -9,7 +9,19 @@ const petIdParamSchema = z.object({
   petId: z.string().uuid()
 });
 
-export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+const resolvePublicBaseUrl = (request: Request) => {
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (configured) {
+    return configured.replace(/\/+$/, "");
+  }
+
+  const requestUrl = new URL(request.url);
+  return requestUrl.origin;
+};
+
+const toPublicUrl = (request: Request, token: string) => `${resolvePublicBaseUrl(request)}/e/${token}`;
+
+export async function GET(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
@@ -34,7 +46,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     return NextResponse.json({
       data: {
         token: existing.token,
-        publicUrl: `/e/${existing.token}`
+        publicUrl: toPublicUrl(request, existing.token)
       }
     });
   }
@@ -53,7 +65,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     return NextResponse.json({
       data: {
         token: updated.token,
-        publicUrl: `/e/${updated.token}`
+        publicUrl: toPublicUrl(request, updated.token)
       }
     });
   }
@@ -70,12 +82,12 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
   return NextResponse.json({
     data: {
       token: created.token,
-      publicUrl: `/e/${created.token}`
+      publicUrl: toPublicUrl(request, created.token)
     }
   });
 }
 
-export async function POST(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
@@ -114,12 +126,12 @@ export async function POST(_: Request, { params }: { params: Promise<{ petId: st
   return NextResponse.json({
     data: {
       token: updated.token,
-      publicUrl: `/e/${updated.token}`
+      publicUrl: toPublicUrl(request, updated.token)
     }
   });
 }
 
-export async function DELETE(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
@@ -153,7 +165,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ petId: 
     return NextResponse.json({
       data: {
         token: existing.token,
-        publicUrl: `/e/${existing.token}`,
+        publicUrl: toPublicUrl(request, existing.token),
         isActive: false
       }
     });
@@ -167,7 +179,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ petId: 
   return NextResponse.json({
     data: {
       token: updated.token,
-      publicUrl: `/e/${updated.token}`,
+      publicUrl: toPublicUrl(request, updated.token),
       isActive: updated.isActive
     }
   });

@@ -17,6 +17,13 @@ enum PetSex {
   UNKNOWN
 }
 
+enum ReproductiveStatus {
+  INTACT
+  NEUTERED
+  SPAYED
+  UNKNOWN
+}
+
 enum MedicalRecordType {
   EXAM
   SURGERY
@@ -140,6 +147,8 @@ model Pet {
   species          String
   breed            String?
   sex              PetSex   @default(UNKNOWN)
+  reproductiveStatus ReproductiveStatus @default(UNKNOWN)
+  sterilizedAt     DateTime?
   birthday         DateTime?
   ageYears         Int?
   weightKg         Decimal? @db.Decimal(4, 1)
@@ -350,6 +359,19 @@ model OwnerDisplaySettings {
   showEmergencyVaccinationSummary   Boolean  @default(true)
   showEmergencyMedicalRecordSummary Boolean  @default(true)
   updatedAt                         DateTime @updatedAt
+}
+
+model OwnerProfile {
+  id          String   @id @default(uuid()) @db.Uuid
+  ownerUserId String   @unique @db.Uuid
+  fullName    String?
+  phone       String?
+  email       String?
+  postalCode  String?
+  addressLine1 String?
+  addressLine2 String?
+  note        String?
+  updatedAt   DateTime @updatedAt
 }
 
 model HouseholdRoleRecoveryLog {

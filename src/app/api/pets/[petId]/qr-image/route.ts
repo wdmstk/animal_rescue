@@ -9,7 +9,16 @@ const petIdParamSchema = z.object({
   petId: z.string().uuid()
 });
 
-export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+const resolvePublicBaseUrl = (request: Request) => {
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (configured) {
+    return configured.replace(/\/+$/, "");
+  }
+
+  return new URL(request.url).origin;
+};
+
+export async function GET(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const routeParams = await params;
   const parsedParams = petIdParamSchema.safeParse(routeParams);
   if (!parsedParams.success) {
@@ -54,7 +63,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
           })
         ).token;
 
-  const publicUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/e/${token}`;
+  const publicUrl = `${resolvePublicBaseUrl(request)}/e/${token}`;
   const image = await QRCode.toDataURL(publicUrl, {
     width: 320,
     margin: 1

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requireHouseholdMember } from "@/lib/auth/pet-access";
 import { requireCreateAccess } from "@/lib/billing/access-guard";
-import { petInputSchema } from "@/lib/validators/pet";
+import { petCreateSchema } from "@/lib/validators/pet";
 
 export async function GET() {
   const auth = await requireAuthenticatedUser();
@@ -31,7 +31,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const parsed = petInputSchema.partial({ householdId: true }).safeParse(body);
+  const parsed = petCreateSchema.safeParse(body);
 
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
@@ -69,7 +69,8 @@ export async function POST(request: Request) {
     data: {
       ...parsed.data,
       householdId,
-      birthday: parsed.data.birthday ? new Date(parsed.data.birthday) : null
+      birthday: parsed.data.birthday ? new Date(parsed.data.birthday) : null,
+      sterilizedAt: parsed.data.sterilizedAt ? new Date(parsed.data.sterilizedAt) : null
     }
   });
 

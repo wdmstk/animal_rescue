@@ -8,6 +8,7 @@ import { ToastMessage } from "@/components/ui/toast-message";
 
 type Species = "dog" | "cat" | "other";
 type Sex = "MALE" | "FEMALE" | "UNKNOWN";
+type ReproductiveStatus = "INTACT" | "NEUTERED" | "SPAYED" | "UNKNOWN";
 
 type PetProfileEditorCardProps = {
   petId: string;
@@ -16,6 +17,8 @@ type PetProfileEditorCardProps = {
     species: Species;
     breed: string | null;
     sex: Sex;
+    reproductiveStatus: ReproductiveStatus;
+    sterilizedAt: string | null;
     ageYears: number | null;
     weightKg: number | null;
     birthday: string | null;
@@ -37,6 +40,12 @@ const sexLabelMap: Record<Sex, string> = {
   FEMALE: "メス",
   UNKNOWN: "不明"
 };
+const reproductiveLabelMap: Record<ReproductiveStatus, string> = {
+  INTACT: "未実施",
+  NEUTERED: "去勢済み",
+  SPAYED: "避妊済み",
+  UNKNOWN: "不明"
+};
 
 const normalizeDate = (value: string) => value.slice(0, 10);
 
@@ -56,6 +65,8 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
   const [sex, setSex] = useState<Sex>(initialPet.sex);
   const [breed, setBreed] = useState(initialPet.breed ?? "");
   const [birthday, setBirthday] = useState(initialPet.birthday ? normalizeDate(initialPet.birthday) : "");
+  const [reproductiveStatus, setReproductiveStatus] = useState<ReproductiveStatus>(initialPet.reproductiveStatus);
+  const [sterilizedAt, setSterilizedAt] = useState(initialPet.sterilizedAt ? normalizeDate(initialPet.sterilizedAt) : "");
   const [ageYears, setAgeYears] = useState(initialPet.ageYears !== null ? String(initialPet.ageYears) : "");
   const [weightKg, setWeightKg] = useState(initialPet.weightKg !== null ? String(initialPet.weightKg) : "");
   const [notesPersonality, setNotesPersonality] = useState(initialPet.notesPersonality ?? "");
@@ -67,6 +78,11 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
     species: speciesLabelMap[species],
     breed: toNullable(breed) ?? "未登録",
     sex: sexLabelMap[sex],
+    reproductive: reproductiveLabelMap[reproductiveStatus],
+    sterilizedAt:
+      (reproductiveStatus === "NEUTERED" || reproductiveStatus === "SPAYED") && toNullable(sterilizedAt)
+        ? sterilizedAt
+        : "未登録",
     age: toNullable(ageYears) ? `${ageYears}歳` : "未登録",
     weight: toNullable(weightKg) ? `${weightKg}kg` : "未登録",
     birthday: toNullable(birthday) ?? "未登録",
@@ -90,6 +106,9 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
           sex,
           breed: toNullable(breed),
           birthday: toNullable(birthday),
+          reproductiveStatus,
+          sterilizedAt:
+            reproductiveStatus === "NEUTERED" || reproductiveStatus === "SPAYED" ? toNullable(sterilizedAt) : null,
           ageYears: toNullable(ageYears) ? Number(ageYears) : null,
           weightKg: toNullable(weightKg) ? Number(weightKg) : null,
           notesPersonality: toNullable(notesPersonality),
@@ -198,6 +217,35 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
               value={birthday}
               onChange={(event) => setBirthday(event.target.value)}
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+          </label>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className="block text-sm font-semibold text-slate-800">
+            去勢・避妊
+            <select
+              name="reproductiveStatus"
+              value={reproductiveStatus}
+              onChange={(event) => setReproductiveStatus(event.target.value as ReproductiveStatus)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            >
+              <option value="UNKNOWN">不明</option>
+              <option value="INTACT">未実施</option>
+              <option value="NEUTERED">去勢済み</option>
+              <option value="SPAYED">避妊済み</option>
+            </select>
+          </label>
+
+          <label className="block text-sm font-semibold text-slate-800">
+            実施日
+            <input
+              name="sterilizedAt"
+              type="date"
+              value={sterilizedAt}
+              disabled={reproductiveStatus !== "NEUTERED" && reproductiveStatus !== "SPAYED"}
+              onChange={(event) => setSterilizedAt(event.target.value)}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-100"
             />
           </label>
         </div>

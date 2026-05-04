@@ -6,6 +6,8 @@ type PetProfileProps = {
     species: string;
     breed: string;
     sex: string;
+    reproductive: string;
+    sterilizedAt: string;
     age: string;
     weight: string;
     birthday: string;
@@ -50,6 +52,14 @@ export function PetProfileCard({ pet }: PetProfileProps) {
         <div className="rounded-lg bg-slate-50 p-2">
           <dt className="text-slate-500">誕生日</dt>
           <dd className="font-semibold">{pet.birthday}</dd>
+        </div>
+        <div className="rounded-lg bg-slate-50 p-2">
+          <dt className="text-slate-500">去勢・避妊</dt>
+          <dd className="font-semibold">{pet.reproductive}</dd>
+        </div>
+        <div className="rounded-lg bg-slate-50 p-2">
+          <dt className="text-slate-500">実施日</dt>
+          <dd className="font-semibold">{pet.sterilizedAt}</dd>
         </div>
       </dl>
 

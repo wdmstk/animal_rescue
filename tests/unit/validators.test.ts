@@ -14,6 +14,32 @@ describe("validators", () => {
     expect(result.success).toBe(false);
   });
 
+  it("rejects sterilizedAt when reproductiveStatus is INTACT", () => {
+    const result = petInputSchema.safeParse({
+      householdId: "c4a5c8b5-2dc0-4a9a-8d95-218f6e0aef54",
+      name: "モカ",
+      species: "dog",
+      sex: "FEMALE",
+      reproductiveStatus: "INTACT",
+      sterilizedAt: "2024-01-01"
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it("accepts sterilizedAt when reproductiveStatus is SPAYED", () => {
+    const result = petInputSchema.safeParse({
+      householdId: "c4a5c8b5-2dc0-4a9a-8d95-218f6e0aef54",
+      name: "モカ",
+      species: "dog",
+      sex: "FEMALE",
+      reproductiveStatus: "SPAYED",
+      sterilizedAt: "2024-01-01"
+    });
+
+    expect(result.success).toBe(true);
+  });
+
   it("accepts emergency info with nullable fields", () => {
     const result = emergencyInfoInputSchema.safeParse({
       disease: null,
