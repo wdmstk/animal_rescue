@@ -44,7 +44,14 @@ export function PetPhotoGallery({ petId, photos }: PetPhotoGalleryProps) {
       });
 
       if (!uploadUrlResponse.ok) {
-        throw new Error("アップロードURLの作成に失敗しました。");
+        const payload = (await uploadUrlResponse.json().catch(() => null)) as { error?: unknown } | null;
+        const detail =
+          typeof payload?.error === "string"
+            ? payload.error
+            : payload?.error && typeof payload.error === "object"
+              ? JSON.stringify(payload.error)
+              : null;
+        throw new Error(detail ? `アップロードURLの作成に失敗しました。(${detail})` : "アップロードURLの作成に失敗しました。");
       }
 
       const uploadUrlPayload = (await uploadUrlResponse.json()) as UploadUrlResponse;

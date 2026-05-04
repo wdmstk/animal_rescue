@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-182` ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
+1. `TASK-183` 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
 
 ### todo
 （なし）
@@ -32,6 +32,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-182` ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
 1. `TASK-181` 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
 1. `TASK-180` OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
 1. `TASK-179` OWNER不在防止（OWNER→FAMILY降格ガード）
@@ -118,10 +119,25 @@ Development Task List
 
 ## 正式タスク詳細
 
+### 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
+- Task ID: `TASK-183`
+- ブランチ: `fix/TASK-183-photo-upload-chain-fixes`
+- ステータス: `in_progress`
+- 概要: 写真アップロード導線で連続発生した不具合（Promise params未await、Storage bucket未作成時の失敗、失敗理由非表示）を修正し、障害時の切り分け可能性を改善する
+- Issue: `#195`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `POST /api/pets/[petId]/photos/upload-url` が Promise params 経路でも動作する
+  - `GET/POST /api/pets/[petId]/photos` が Promise params 経路でも動作する
+  - `pet-photos` bucket 未作成時に自動作成→signed URL 再試行できる
+  - 写真アップロードUIで upload-url/save 失敗時に詳細エラーを表示できる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
 ### ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
 - Task ID: `TASK-182`
 - ブランチ: `feat/TASK-182-pet-profile-owner-qr-fixes`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 写真登録不具合を修正し、去勢・避妊（実施日含む）と飼い主情報（住所・メール含む）の登録機能を追加する。あわせてQR共有URLの生成/表示を正しい公開URLへ統一する
 - Issue: `#193`
 - 依存関係:

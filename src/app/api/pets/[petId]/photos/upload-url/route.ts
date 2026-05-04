@@ -15,8 +15,8 @@ const uploadRequestSchema = z.object({
   contentType: z.string().regex(/^image\//)
 });
 
-export async function POST(request: Request, { params }: { params: { petId: string } }) {
-  const parsedParams = petIdParamSchema.safeParse(params);
+export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
@@ -48,10 +48,32 @@ export async function POST(request: Request, { params }: { params: { petId: stri
   const supabase = createSupabaseServiceRoleClient();
   const storage = supabase.storage.from(PET_PHOTO_BUCKET);
 
-  const { data, error } = await storage.createSignedUploadUrl(path);
+  let { data, error } = await storage.createSignedUploadUrl(path);
+
+  if (error?.message?.toLowerCase().includes("related resource does not exist")) {
+    const { error: createBucketError } = await supabase.storage.createBucket(PET_PHOTO_BUCKET, {
+      public: true
+    });
+
+    // Ignore duplicate-like failures and retry signed URL issuance once.
+    if (!createBucketError || createBucketError.message.toLowerCase().includes("already")) {
+      const retried = await storage.createSignedUploadUrl(path);
+      data = retried.data;
+      error = retried.error;
+    }
+  }
 
   if (error || !data) {
-    return NextResponse.json({ error: "Failed to issue signed upload url" }, { status: 500 });
+    const detail = error?.message ?? "unknown";
+    const hint = detail.toLowerCase().includes("bucket")
+      ? `Storage bucket '${PET_PHOTO_BUCKET}' の存在・権限を確認してください`
+      : "Supabase接続設定（URL/Service Role Key）とネットワーク到達性を確認してください";
+    return NextResponse.json(
+      {
+        error: `Failed to issue signed upload url: ${detail}. ${hint}`
+      },
+      { status: 500 }
+    );
   }
 
   const { data: publicUrlData } = storage.getPublicUrl(path);

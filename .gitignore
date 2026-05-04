@@ -7,3 +7,4 @@ test-results/
 .env.local
 .env
 !.env.example
+memo.txt
