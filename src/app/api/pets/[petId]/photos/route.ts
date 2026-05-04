@@ -16,8 +16,8 @@ const photoSchema = z.object({
   sortOrder: z.number().int().min(0).default(0)
 });
 
-export async function GET(_: Request, { params }: { params: { petId: string } }) {
-  const parsedParams = petIdParamSchema.safeParse(params);
+export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
@@ -40,8 +40,8 @@ export async function GET(_: Request, { params }: { params: { petId: string } })
   return NextResponse.json({ data });
 }
 
-export async function POST(request: Request, { params }: { params: { petId: string } }) {
-  const parsedParams = petIdParamSchema.safeParse(params);
+export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }

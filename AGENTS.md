@@ -6,7 +6,7 @@ AI Agent Instructions for this repository
 
 ## 1. Project Overview
 
-This repository uses Next.js + Supabase.
+This repository uses Next.js + Supabase + Prisma.
 Implementation agents must:
 
 - Read existing code before changes
