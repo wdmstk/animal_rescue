@@ -23,6 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
+1. `TASK-186` Prisma build failure修正（shadow DB設定除外）
 1. `TASK-185` 医療書類写真登録 + OCR抽出MVP
 2. `TASK-184` ペット削除（ハード削除）
 
@@ -33,6 +34,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-185` 医療書類写真登録 + OCR抽出MVP
 1. `TASK-183` 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
 1. `TASK-182` ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
 1. `TASK-181` 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
@@ -124,7 +126,7 @@ Development Task List
 ### 医療書類写真登録 + OCR抽出MVP
 - Task ID: `TASK-185`
 - ブランチ: `feat/TASK-185-medical-doc-photo-ocr-mvp`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 医療書類写真の登録とOCR抽出MVPを追加し、抽出結果を確認したうえで医療記録として保存できるようにする
 - Issue: `#198`
 - 依存関係:
@@ -135,6 +137,19 @@ Development Task List
   - `MedicalRecordManager` で写真選択→アップロード→抽出→編集→記録保存の導線を提供する
   - 境界ケース（UUID不正400、未認証401、権限外404、OCR失敗時ハンドリング）をテストで担保する
   - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### Prisma build failure修正（shadow DB設定除外）
+- Task ID: `TASK-186`
+- ブランチ: `fix/TASK-186-prisma-build-shadowdb`
+- ステータス: `in_progress`
+- 概要: `prisma migrate deploy` が shadow database を main database と誤認して build 失敗する問題を修正する
+- Issue: `#200`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `prisma.config.ts` から build 時に不要な shadow database 設定を外す
+  - `next-env.d.ts` の route type import が production build に一致する
+  - `npm run build` が通る
 
 ### ペット削除（ハード削除）
 - Task ID: `TASK-184`
