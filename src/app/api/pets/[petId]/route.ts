@@ -5,6 +5,7 @@ import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-acces
 import { getHistoryWindowStartDate } from "@/lib/billing/access-policy";
 import { getUserBillingAccessState, requireEditAccess } from "@/lib/billing/access-guard";
 import { petUpdateSchema } from "@/lib/validators/pet";
+import { createSupabaseServiceRoleClient } from "@/lib/supabase/service";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -94,4 +95,50 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   });
 
   return NextResponse.json({ data: pet });
+}
+
+export async function DELETE(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const routeParams = await params;
+  const parsedParams = petIdParamSchema.safeParse(routeParams);
+  if (!parsedParams.success) {
+    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+  }
+
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+  const editAccess = await requireEditAccess(auth.userId);
+  if (editAccess instanceof NextResponse) {
+    return editAccess;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
+  await prisma.pet.delete({
+    where: { id: access.petId }
+  });
+
+  try {
+    const supabase = createSupabaseServiceRoleClient();
+    const { data, error } = await supabase.storage
+      .from("pet-photos")
+      .list(`pets/${access.petId}`, { limit: 1000 });
+    if (error) {
+      console.warn("Failed to list pet photo objects for cleanup", error.message);
+    } else if (data.length > 0) {
+      const paths = data.map((item) => `pets/${access.petId}/${item.name}`);
+      const { error: removeError } = await supabase.storage.from("pet-photos").remove(paths);
+      if (removeError) {
+        console.warn("Failed to remove pet photo objects during cleanup", removeError.message);
+      }
+    }
+  } catch (error) {
+    console.warn("Unexpected error in pet photo cleanup", error);
+  }
+
+  return NextResponse.json({ data: { id: access.petId, deleted: true } });
 }

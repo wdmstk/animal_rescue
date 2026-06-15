@@ -1,6 +1,6 @@
 import { getVaccinationDueStatus } from "@/lib/services/vaccination";
 
-type VaccinationItem = {
+export type VaccinationHistoryItem = {
   id: string;
   typeCode: "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER";
   type: string;
@@ -15,9 +15,9 @@ const labelMap = {
 } as const;
 
 type VaccinationHistoryProps = {
-  items: VaccinationItem[];
+  items: VaccinationHistoryItem[];
   editingId?: string | null;
-  onEdit?: (item: VaccinationItem) => void;
+  onEdit?: (item: VaccinationHistoryItem) => void;
 };
 
 export function VaccinationHistory({ items, editingId, onEdit }: VaccinationHistoryProps) {

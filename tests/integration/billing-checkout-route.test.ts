@@ -28,6 +28,13 @@ vi.mock("@/lib/billing/stripe", () => ({
   }
 }));
 
+vi.mock("@/lib/env", () => ({
+  env: {
+    NEXT_PUBLIC_APP_URL: "https://example.com",
+    STRIPE_PRICE_ID_MONTHLY_680: "price_123"
+  }
+}));
+
 import { POST } from "../../src/app/api/billing/checkout/route";
 
 describe("POST /api/billing/checkout", () => {

@@ -9,9 +9,8 @@ const petIdParamSchema = z.object({
   petId: z.string().uuid()
 });
 
-export async function PUT(request: Request, { params }: { params: { petId: string } }) {
-  const resolvedParams = await Promise.resolve(params);
-  const parsedParams = petIdParamSchema.safeParse(resolvedParams);
+export async function PUT(request: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }

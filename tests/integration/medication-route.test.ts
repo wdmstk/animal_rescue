@@ -35,7 +35,7 @@ describe("PATCH /api/pets/[petId]/medications/[medicationId]", () => {
           startDate: "2026-04-20"
         })
       }),
-      { params: { petId: "invalid", medicationId } }
+      { params: Promise.resolve({ petId: "invalid", medicationId }) }
     );
 
     expect(response.status).toBe(400);
@@ -53,7 +53,7 @@ describe("PATCH /api/pets/[petId]/medications/[medicationId]", () => {
           startDate: "bad"
         })
       }),
-      { params: { petId, medicationId } }
+      { params: Promise.resolve({ petId, medicationId }) }
     );
 
     expect(response.status).toBe(400);
@@ -73,7 +73,7 @@ describe("PATCH /api/pets/[petId]/medications/[medicationId]", () => {
           startDate: "2026-04-20"
         })
       }),
-      { params: { petId, medicationId } }
+      { params: Promise.resolve({ petId, medicationId }) }
     );
 
     expect(response.status).toBe(404);
@@ -95,7 +95,7 @@ describe("PATCH /api/pets/[petId]/medications/[medicationId]", () => {
           endDate: null
         })
       }),
-      { params: { petId, medicationId } }
+      { params: Promise.resolve({ petId, medicationId }) }
     );
 
     expect(response.status).toBe(200);

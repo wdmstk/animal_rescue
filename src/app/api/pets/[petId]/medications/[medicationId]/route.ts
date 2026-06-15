@@ -17,8 +17,9 @@ const medicationUpdateSchema = z.object({
   endDate: z.string().date().optional().nullable()
 });
 
-export async function PATCH(request: Request, { params }: { params: { petId: string; medicationId: string } }) {
-  const parsedParams = paramsSchema.safeParse(params);
+export async function PATCH(request: Request, { params }: { params: Promise<{ petId: string; medicationId: string }> }) {
+  const routeParams = await params;
+  const parsedParams = paramsSchema.safeParse(routeParams);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }

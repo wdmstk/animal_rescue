@@ -72,7 +72,7 @@ describeDb("health routes (real database)", () => {
           recordedAt: "2026-04-26"
         })
       }),
-      { params: { petId } }
+      { params: Promise.resolve({ petId }) }
     );
     expect(coreResponse.status).toBe(201);
 
@@ -87,19 +87,23 @@ describeDb("health routes (real database)", () => {
           recordedAt: "2026-04-26"
         })
       }),
-      { params: { petId } }
+      { params: Promise.resolve({ petId }) }
     );
     expect(labResponse.status).toBe(201);
     const labPayload = await labResponse.json();
     expect(labPayload.data.category).toBe("BLOOD");
     expect(labPayload.data.unit).toBe("mg/dL");
 
-    const coreListResponse = await getCoreMetrics(new Request("http://localhost?type=WEIGHT_KG"), { params: { petId } });
+    const coreListResponse = await getCoreMetrics(new Request("http://localhost?type=WEIGHT_KG"), {
+      params: Promise.resolve({ petId })
+    });
     expect(coreListResponse.status).toBe(200);
     const coreListPayload = await coreListResponse.json();
     expect(coreListPayload.data).toHaveLength(1);
 
-    const trendsResponse = await getTrends(new Request("http://localhost"), { params: { petId } });
+    const trendsResponse = await getTrends(new Request("http://localhost"), {
+      params: Promise.resolve({ petId })
+    });
     expect(trendsResponse.status).toBe(200);
     const trendsPayload = await trendsResponse.json();
     expect(trendsPayload.data.series).toEqual(

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
 import { stripe, toSubscriptionStatus } from "@/lib/billing/stripe";
@@ -41,6 +42,11 @@ const upsertSubscriptionByStripe = async (input: {
   });
 };
 
+const toCurrentPeriodEnd = (subscription: Stripe.Subscription): Date | null => {
+  const currentPeriodEnd = subscription.items?.data?.[0]?.current_period_end;
+  return typeof currentPeriodEnd === "number" ? new Date(currentPeriodEnd * 1000) : null;
+};
+
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
   if (!signature) {
@@ -59,12 +65,12 @@ export async function POST(request: Request) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
     if (typeof session.subscription === "string" && typeof session.customer === "string") {
-      const subscription = await stripe.subscriptions.retrieve(session.subscription);
+      const subscription = (await stripe.subscriptions.retrieve(session.subscription)) as Stripe.Subscription;
       await upsertSubscriptionByStripe({
         stripeSubscriptionId: subscription.id,
         stripeCustomerId: session.customer,
         status: toSubscriptionStatus(subscription.status),
-        currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : null,
+        currentPeriodEnd: toCurrentPeriodEnd(subscription),
         trialEndsAt: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
         graceUntil:
           subscription.status === "past_due" ? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) : null
@@ -77,12 +83,12 @@ export async function POST(request: Request) {
     event.type === "customer.subscription.updated" ||
     event.type === "customer.subscription.deleted"
   ) {
-    const subscription = event.data.object;
+    const subscription = event.data.object as Stripe.Subscription;
     await upsertSubscriptionByStripe({
       stripeSubscriptionId: subscription.id,
       stripeCustomerId: String(subscription.customer),
       status: toSubscriptionStatus(subscription.status),
-      currentPeriodEnd: subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : null,
+      currentPeriodEnd: toCurrentPeriodEnd(subscription),
       trialEndsAt: subscription.trial_end ? new Date(subscription.trial_end * 1000) : null,
       graceUntil: subscription.status === "past_due" ? new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) : null
     });

@@ -31,7 +31,7 @@ describe("/api/pets/[petId]/photos", () => {
 
   it("returns 400 for invalid petId on GET", async () => {
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: "pet-1" }
+      params: Promise.resolve({ petId: "pet-1" })
     });
 
     expect(response.status).toBe(400);
@@ -42,7 +42,7 @@ describe("/api/pets/[petId]/photos", () => {
     findManyMock.mockResolvedValue([{ id: "photo-1" }]);
 
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: "11111111-1111-4111-8111-111111111111" }
+      params: Promise.resolve({ petId: "11111111-1111-4111-8111-111111111111" })
     });
 
     expect(response.status).toBe(200);
@@ -61,7 +61,7 @@ describe("/api/pets/[petId]/photos", () => {
           sortOrder: 0
         })
       }),
-      { params: { petId: "pet-1" } }
+      { params: Promise.resolve({ petId: "pet-1" }) }
     );
 
     expect(response.status).toBe(400);
@@ -76,7 +76,7 @@ describe("/api/pets/[petId]/photos", () => {
           photoUrl: "https://example.com/photo.jpg"
         })
       }),
-      { params: { petId: "pet-1" } }
+      { params: Promise.resolve({ petId: "pet-1" }) }
     );
 
     expect(response.status).toBe(400);
@@ -94,7 +94,7 @@ describe("/api/pets/[petId]/photos", () => {
           sortOrder: 0
         })
       }),
-      { params: { petId: "11111111-1111-4111-8111-111111111111" } }
+      { params: Promise.resolve({ petId: "11111111-1111-4111-8111-111111111111" }) }
     );
 
     expect(response.status).toBe(404);
@@ -117,7 +117,7 @@ describe("/api/pets/[petId]/photos", () => {
           sortOrder: 0
         })
       }),
-      { params: { petId: "11111111-1111-4111-8111-111111111111" } }
+      { params: Promise.resolve({ petId: "11111111-1111-4111-8111-111111111111" }) }
     );
 
     expect(response.status).toBe(201);

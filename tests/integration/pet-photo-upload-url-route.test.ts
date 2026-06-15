@@ -36,7 +36,7 @@ describe("POST /api/pets/[petId]/photos/upload-url", () => {
           contentType: "application/pdf"
         })
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(400);
@@ -52,7 +52,7 @@ describe("POST /api/pets/[petId]/photos/upload-url", () => {
           contentType: "image/jpeg"
         })
       }),
-      { params: { petId: "pet-1" } }
+      { params: Promise.resolve({ petId: "pet-1" }) }
     );
 
     expect(response.status).toBe(400);
@@ -76,7 +76,7 @@ describe("POST /api/pets/[petId]/photos/upload-url", () => {
           contentType: "image/jpeg"
         })
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(200);

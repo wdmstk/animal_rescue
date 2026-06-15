@@ -3,7 +3,7 @@ import { env } from "@/lib/env";
 import { SubscriptionStatus } from "@prisma/client";
 
 export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-03-31.basil"
+  apiVersion: "2026-04-22.dahlia"
 });
 
 export const toSubscriptionStatus = (status: Stripe.Subscription.Status): SubscriptionStatus => {

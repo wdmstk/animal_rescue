@@ -1,11 +1,12 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useRef, useState } from "react";
 import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 
 type MedicalRecordType = "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER";
+type DocumentType = "MEDICATION" | "VACCINATION" | "LAB" | "RECEIPT" | "OTHER";
 
 type TimelineItem = {
   id: string;
@@ -13,6 +14,14 @@ type TimelineItem = {
   title: string;
   description: string;
   recordType: MedicalRecordType;
+};
+
+type ExtractedResult = {
+  examinedOn: string | null;
+  hospitalName: string | null;
+  documentType: DocumentType;
+  summary: string;
+  candidates: Array<{ key: string; value: string }>;
 };
 
 type MedicalRecordManagerProps = {
@@ -24,6 +33,12 @@ const today = new Date().toISOString().slice(0, 10);
 
 const normalizeDate = (value: string) => value.slice(0, 10);
 
+const mapDocumentTypeToRecordType = (value: DocumentType): MedicalRecordType => {
+  if (value === "LAB") return "LAB";
+  if (value === "MEDICATION") return "MEDICATION";
+  return "OTHER";
+};
+
 export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManagerProps) {
   const [items, setItems] = useState<TimelineItem[]>(initialItems);
   const [date, setDate] = useState(today);
@@ -33,10 +48,15 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  const sortedItems = useMemo(
-    () => [...items].sort((a, b) => b.date.localeCompare(a.date)),
-    [items]
-  );
+  const [documentError, setDocumentError] = useState<string | null>(null);
+  const [isUploadingDocument, setIsUploadingDocument] = useState(false);
+  const [isExtractingDocument, setIsExtractingDocument] = useState(false);
+  const [uploadedDocumentId, setUploadedDocumentId] = useState<string | null>(null);
+  const [uploadedDocumentUrl, setUploadedDocumentUrl] = useState<string | null>(null);
+  const [extracted, setExtracted] = useState<ExtractedResult | null>(null);
+  const documentFileInputRef = useRef<HTMLInputElement>(null);
+
+  const sortedItems = useMemo(() => [...items].sort((a, b) => b.date.localeCompare(a.date)), [items]);
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -51,7 +71,8 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
           date,
           title,
           description,
-          recordType
+          recordType,
+          photoUrl: uploadedDocumentUrl
         })
       });
 
@@ -81,10 +102,107 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
       ]);
       setTitle("");
       setDescription("");
+      setUploadedDocumentId(null);
+      setUploadedDocumentUrl(null);
+      setExtracted(null);
+      if (documentFileInputRef.current) {
+        documentFileInputRef.current.value = "";
+      }
     } catch {
       setError("記録追加に失敗しました");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDocumentUpload = async () => {
+    const selectedFile = documentFileInputRef.current?.files?.[0];
+    if (!selectedFile) {
+      setDocumentError("画像ファイルを選択してください。");
+      return;
+    }
+
+    setIsUploadingDocument(true);
+    setDocumentError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const uploadResponse = await fetch(`/api/pets/${petId}/medical-documents/upload`, {
+        method: "POST",
+        body: formData
+      });
+
+      if (!uploadResponse.ok) {
+        const payload = (await uploadResponse.json().catch(() => null)) as { error?: unknown } | null;
+        const message = typeof payload?.error === "string" ? payload.error : "画像アップロードに失敗しました。";
+        throw new Error(message);
+      }
+
+      const uploadPayload = (await uploadResponse.json()) as {
+        data: { publicUrl: string };
+      };
+
+      const persistResponse = await fetch(`/api/pets/${petId}/medical-documents`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          photoUrl: uploadPayload.data.publicUrl,
+          capturedAt: new Date().toISOString()
+        })
+      });
+
+      if (!persistResponse.ok) {
+        throw new Error("書類写真の保存に失敗しました。");
+      }
+
+      const persisted = (await persistResponse.json()) as { data: { id: string; photoUrl: string } };
+      setUploadedDocumentId(persisted.data.id);
+      setUploadedDocumentUrl(persisted.data.photoUrl);
+    } catch (unknownError) {
+      setDocumentError(unknownError instanceof Error ? unknownError.message : "書類写真アップロードに失敗しました。");
+    } finally {
+      setIsUploadingDocument(false);
+    }
+  };
+
+  const handleExtract = async () => {
+    if (!uploadedDocumentId) {
+      setDocumentError("先に書類写真をアップロードしてください。");
+      return;
+    }
+
+    setIsExtractingDocument(true);
+    setDocumentError(null);
+
+    try {
+      const response = await fetch(`/api/pets/${petId}/medical-documents/${uploadedDocumentId}/extract`, {
+        method: "POST"
+      });
+
+      if (!response.ok) {
+        throw new Error("OCR抽出に失敗しました。");
+      }
+
+      const payload = (await response.json()) as { extracted: ExtractedResult };
+      setExtracted(payload.extracted);
+
+      if (payload.extracted.examinedOn) {
+        setDate(payload.extracted.examinedOn);
+      }
+      if (!title) {
+        setTitle(payload.extracted.hospitalName ?? "書類写真から抽出");
+      }
+      if (!description) {
+        const candidatesText = payload.extracted.candidates.map((item) => `${item.key}: ${item.value}`).join("\n");
+        setDescription([payload.extracted.summary, candidatesText].filter(Boolean).join("\n"));
+      }
+      setRecordType(mapDocumentTypeToRecordType(payload.extracted.documentType));
+    } catch (unknownError) {
+      setDocumentError(unknownError instanceof Error ? unknownError.message : "OCR抽出に失敗しました。");
+    } finally {
+      setIsExtractingDocument(false);
     }
   };
 
@@ -127,11 +245,44 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
             required
           />
         </div>
-        <SubmitButton
-          isSubmitting={isSaving}
-          idleLabel="記録を保存"
-          className="mt-3 text-xs"
-        />
+
+        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <p className="text-sm font-semibold text-slate-900">診療書類の写真登録（OCR補助）</p>
+          <div className="mt-2 flex flex-col gap-2 md:flex-row md:items-center">
+            <input ref={documentFileInputRef} type="file" accept="image/*" className="block w-full text-sm text-slate-700" />
+            <button
+              type="button"
+              onClick={handleDocumentUpload}
+              disabled={isUploadingDocument}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 disabled:opacity-50"
+            >
+              {isUploadingDocument ? "アップロード中..." : "写真を登録"}
+            </button>
+            <button
+              type="button"
+              onClick={handleExtract}
+              disabled={isExtractingDocument || !uploadedDocumentId}
+              className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+            >
+              {isExtractingDocument ? "抽出中..." : "内容を抽出"}
+            </button>
+          </div>
+          {uploadedDocumentUrl ? <p className="mt-2 text-xs text-emerald-700">書類写真を登録しました。抽出を実行できます。</p> : null}
+          <div className="mt-1">
+            <ToastMessage message={documentError} type="error" />
+          </div>
+
+          {extracted ? (
+            <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700">
+              <p>抽出日: {extracted.examinedOn ?? "未抽出"}</p>
+              <p>病院名: {extracted.hospitalName ?? "未抽出"}</p>
+              <p>書類種別: {extracted.documentType}</p>
+              <p className="mt-1">要約: {extracted.summary}</p>
+            </div>
+          ) : null}
+        </div>
+
+        <SubmitButton isSubmitting={isSaving} idleLabel="記録を保存" className="mt-3 text-xs" />
         <div className="mt-2">
           <ToastMessage message={error} type="error" />
         </div>
