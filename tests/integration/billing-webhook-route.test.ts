@@ -24,6 +24,13 @@ vi.mock("@/lib/billing/stripe", () => ({
   toSubscriptionStatus: (status: string) => (status === "active" ? "ACTIVE" : "INCOMPLETE")
 }));
 
+vi.mock("@/lib/env", () => ({
+  env: {
+    NEXT_PUBLIC_APP_URL: "https://example.com",
+    STRIPE_WEBHOOK_SECRET: "whsec_test"
+  }
+}));
+
 import { POST } from "../../src/app/api/billing/webhook/route";
 
 describe("POST /api/billing/webhook", () => {

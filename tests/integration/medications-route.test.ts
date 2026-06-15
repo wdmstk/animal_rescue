@@ -25,7 +25,7 @@ describe("/api/pets/[petId]/medications", () => {
 
   it("returns 400 on invalid petId for GET", async () => {
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: "sample-pet" }
+      params: Promise.resolve({ petId: "sample-pet" })
     });
 
     expect(response.status).toBe(400);
@@ -36,7 +36,7 @@ describe("/api/pets/[petId]/medications", () => {
     findManyMock.mockResolvedValue([{ id: "medication-1" }]);
 
     const response = await GET(new Request("http://localhost"), {
-      params: { petId: validPetId }
+      params: Promise.resolve({ petId: validPetId })
     });
 
     expect(response.status).toBe(200);
@@ -57,7 +57,7 @@ describe("/api/pets/[petId]/medications", () => {
           startDate: "2026-04-20"
         })
       }),
-      { params: { petId: "sample-pet" } }
+      { params: Promise.resolve({ petId: "sample-pet" }) }
     );
 
     expect(response.status).toBe(400);
@@ -75,7 +75,7 @@ describe("/api/pets/[petId]/medications", () => {
           startDate: "not-a-date"
         })
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(400);
@@ -104,7 +104,7 @@ describe("/api/pets/[petId]/medications", () => {
           endDate: null
         })
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(201);

@@ -3,6 +3,12 @@ import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { buildReminderDispatchWithProvider, runMedicationReminderScheduler } from "@/lib/services/medication-reminder-scheduler";
 
+type ReminderSetting = {
+  petId: string;
+  medicationReminderChannel: "email" | "line" | "webhook";
+  medicationReminderDestination: string;
+};
+
 type ReminderDispatchLogDelegate = {
   create: (args: { data: { petId: string; reminderDate: Date } }) => Promise<unknown>;
   deleteMany: (args: { where: { petId: string; reminderDate: Date } }) => Promise<unknown>;
@@ -37,7 +43,7 @@ export async function POST(request: Request) {
   const result = await runMedicationReminderScheduler(
     {
       findEnabledSettings: async () =>
-        prisma.petDisplaySettings.findMany({
+        (await prisma.petDisplaySettings.findMany({
           where: {
             medicationReminderEnabled: true,
             medicationReminderDestination: {
@@ -49,7 +55,7 @@ export async function POST(request: Request) {
             medicationReminderChannel: true,
             medicationReminderDestination: true
           }
-        }),
+        })) as ReminderSetting[],
       hasActiveMedication: async (petId, now) => {
         const activeMedication = await prisma.petMedication.findFirst({
           where: {

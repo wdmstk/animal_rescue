@@ -7,11 +7,20 @@ const {
 } = vi.hoisted(() => ({
   envMock: {
     DATABASE_URL: "https://example.com/db",
+    NEXT_PUBLIC_APP_URL: "https://example.com",
     NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
     NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon",
     SUPABASE_SERVICE_ROLE_KEY: "service-role",
     REMINDER_EMAIL_WEBHOOK_URL: "https://provider.example.com/email",
     REMINDER_LINE_WEBHOOK_URL: "https://provider.example.com/line"
+  } as {
+    DATABASE_URL: string;
+    NEXT_PUBLIC_APP_URL: string;
+    NEXT_PUBLIC_SUPABASE_URL: string;
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: string;
+    SUPABASE_SERVICE_ROLE_KEY: string;
+    REMINDER_EMAIL_WEBHOOK_URL?: string;
+    REMINDER_LINE_WEBHOOK_URL?: string;
   },
   reminderFindUniqueMock: vi.fn(),
   reminderUpsertMock: vi.fn()

@@ -163,6 +163,7 @@ model Pet {
   photos         PetPhoto[]
   emergencyInfo  PetEmergencyInfo?
   medicalRecords PetMedicalRecord[]
+  medicalDocuments PetMedicalDocument[]
   medications      PetMedication[]
   vaccinations     PetVaccination[]
   emergencyToken   PetEmergencyToken?
@@ -214,8 +215,27 @@ model PetMedicalRecord {
   updatedAt   DateTime          @updatedAt
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+  documents PetMedicalDocument[]
 
   @@index([petId, date])
+}
+
+model PetMedicalDocument {
+  id                String   @id @default(uuid()) @db.Uuid
+  petId             String   @db.Uuid
+  recordId          String?  @db.Uuid
+  photoUrl          String
+  capturedAt        DateTime?
+  ocrText           String?
+  ocrStructuredJson Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  pet    Pet               @relation(fields: [petId], references: [id], onDelete: Cascade)
+  record PetMedicalRecord? @relation(fields: [recordId], references: [id], onDelete: SetNull)
+
+  @@index([petId, createdAt])
+  @@index([recordId])
 }
 
 model PetMedication {

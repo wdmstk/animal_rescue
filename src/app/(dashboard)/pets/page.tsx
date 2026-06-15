@@ -2,6 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { HouseholdInviteCodeCard } from "@/components/features/pets/household-invite-code-card";
+import { PetListCard } from "@/components/features/pets/pet-list-card";
 import { ONBOARDING_TOTAL_STEPS, calculateOnboardingProgress } from "@/lib/onboarding-progress";
 
 type PetsResponse = {
@@ -11,12 +12,6 @@ type PetsResponse = {
     species: "dog" | "cat" | "other";
     breed: string | null;
   }>;
-};
-
-const speciesLabelMap: Record<"dog" | "cat" | "other", string> = {
-  dog: "犬",
-  cat: "猫",
-  other: "その他"
 };
 
 const resolveOriginAndCookie = async () => {
@@ -112,16 +107,13 @@ export default async function PetsPage() {
           </div>
         ) : (
           pets.map((pet) => (
-            <Link
+            <PetListCard
               key={pet.id}
-              href={`/pets/${pet.id}`}
-              className="block rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-            >
-              <h3 className="text-base font-bold text-slate-900">{pet.name}</h3>
-              <p className="text-sm text-slate-600">
-                {speciesLabelMap[pet.species]} / {pet.breed ?? "未登録"}
-              </p>
-            </Link>
+              id={pet.id}
+              name={pet.name}
+              species={pet.species}
+              breed={pet.breed}
+            />
           ))
         )}
       </section>

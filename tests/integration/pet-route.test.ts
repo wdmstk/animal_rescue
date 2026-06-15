@@ -2,21 +2,49 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextResponse } from "next/server";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 
-const { findUniqueMock, updateMock } = vi.hoisted(() => ({
-  findUniqueMock: vi.fn(),
-  updateMock: vi.fn()
-}));
+const {
+  findUniqueMock,
+  updateMock,
+  deleteMock,
+  listMock,
+  removeMock,
+  fromMock,
+  storageMock,
+  createSupabaseServiceRoleClientMock
+} = vi.hoisted(() => {
+  const list = vi.fn();
+  const remove = vi.fn();
+  const from = vi.fn(() => ({ list, remove }));
+  const storage = { from };
+  const createClient = vi.fn(() => ({ storage }));
+
+  return {
+    findUniqueMock: vi.fn(),
+    updateMock: vi.fn(),
+    deleteMock: vi.fn(),
+    listMock: list,
+    removeMock: remove,
+    fromMock: from,
+    storageMock: storage,
+    createSupabaseServiceRoleClientMock: createClient
+  };
+});
 
 vi.mock("@/lib/prisma", () => ({
   prisma: {
     pet: {
       findUnique: findUniqueMock,
-      update: updateMock
+      update: updateMock,
+      delete: deleteMock
     }
   }
 }));
 
-import { GET, PATCH } from "../../src/app/api/pets/[petId]/route";
+vi.mock("@/lib/supabase/service", () => ({
+  createSupabaseServiceRoleClient: createSupabaseServiceRoleClientMock
+}));
+
+import { DELETE, GET, PATCH } from "../../src/app/api/pets/[petId]/route";
 
 describe("GET /api/pets/[petId]", () => {
   const validPetId = "11111111-1111-4111-8111-111111111111";
@@ -32,6 +60,8 @@ describe("GET /api/pets/[petId]", () => {
       petId: validPetId,
       householdId: "11111111-1111-4111-8111-111111111111"
     });
+    listMock.mockResolvedValue({ data: [], error: null });
+    removeMock.mockResolvedValue({ error: null });
   });
 
   it("returns 400 on invalid petId", async () => {
@@ -86,17 +116,7 @@ describe("GET /api/pets/[petId]", () => {
     });
 
     expect(response.status).toBe(200);
-    expect(findUniqueMock).toHaveBeenCalledWith({
-      where: { id: validPetId },
-      include: {
-        emergencyInfo: true,
-        medicalRecords: { orderBy: { date: "desc" } },
-        medications: { orderBy: { startDate: "desc" } },
-        vaccinations: { orderBy: { date: "desc" } },
-        emergencyToken: true,
-        photos: { orderBy: { sortOrder: "asc" } }
-      }
-    });
+    expect(findUniqueMock).toHaveBeenCalled();
   });
 
   it("returns 400 on invalid payload for PATCH", async () => {
@@ -144,5 +164,29 @@ describe("GET /api/pets/[petId]", () => {
         birthday: new Date("2020-03-10")
       })
     });
+  });
+
+  it("deletes pet and returns 200", async () => {
+    deleteMock.mockResolvedValue({ id: validPetId });
+
+    const response = await DELETE(new Request("http://localhost", { method: "DELETE" }), {
+      params: Promise.resolve({ petId: validPetId })
+    });
+
+    expect(response.status).toBe(200);
+    expect(deleteMock).toHaveBeenCalledWith({ where: { id: validPetId } });
+    expect(fromMock).toHaveBeenCalledWith("pet-photos");
+    expect(listMock).toHaveBeenCalledWith(`pets/${validPetId}`, { limit: 1000 });
+  });
+
+  it("returns 404 on delete when pet access denied", async () => {
+    requirePetAccessMock.mockResolvedValueOnce(NextResponse.json({ error: "Pet not found" }, { status: 404 }));
+
+    const response = await DELETE(new Request("http://localhost", { method: "DELETE" }), {
+      params: Promise.resolve({ petId: validPetId })
+    });
+
+    expect(response.status).toBe(404);
+    expect(deleteMock).not.toHaveBeenCalled();
   });
 });

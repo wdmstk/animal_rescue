@@ -469,6 +469,7 @@ export default async function PetDetailPage({
       <section id="history" className="scroll-mt-44">
         <ChangeHistoryList items={changeHistoryItems} />
       </section>
+
     </div>
   );
 }

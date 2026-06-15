@@ -17,8 +17,8 @@ const medicationSchema = z.object({
   endDate: z.string().date().optional().nullable()
 });
 
-export async function GET(_: Request, { params }: { params: { petId: string } }) {
-  const parsedParams = petIdParamSchema.safeParse(params);
+export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }
@@ -46,8 +46,8 @@ export async function GET(_: Request, { params }: { params: { petId: string } })
   return NextResponse.json({ data });
 }
 
-export async function POST(request: Request, { params }: { params: { petId: string } }) {
-  const parsedParams = petIdParamSchema.safeParse(params);
+export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
+  const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
   }

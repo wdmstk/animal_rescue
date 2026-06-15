@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-185` 医療書類写真登録 + OCR抽出MVP
+2. `TASK-184` ペット削除（ハード削除）
 
 ### todo
 （なし）
@@ -119,6 +120,36 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 医療書類写真登録 + OCR抽出MVP
+- Task ID: `TASK-185`
+- ブランチ: `feat/TASK-185-medical-doc-photo-ocr-mvp`
+- ステータス: `in_progress`
+- 概要: 医療書類写真の登録とOCR抽出MVPを追加し、抽出結果を確認したうえで医療記録として保存できるようにする
+- Issue: `#198`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - Prismaに `PetMedicalDocument` を追加し、pet紐づきで写真メタと抽出結果を保持できる
+  - `POST /api/pets/[petId]/medical-documents/upload-url` / `POST /api/pets/[petId]/medical-documents` / `GET /api/pets/[petId]/medical-documents` / `POST /api/pets/[petId]/medical-documents/[documentId]/extract` を追加する
+  - `MedicalRecordManager` で写真選択→アップロード→抽出→編集→記録保存の導線を提供する
+  - 境界ケース（UUID不正400、未認証401、権限外404、OCR失敗時ハンドリング）をテストで担保する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### ペット削除（ハード削除）
+- Task ID: `TASK-184`
+- ブランチ: `feat/TASK-185-medical-doc-photo-ocr-mvp`
+- ステータス: `in_progress`
+- 概要: ペット削除APIと詳細画面の削除導線を追加し、関連データをCascadeで削除できるようにする
+- Issue: `#197`
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `DELETE /api/pets/[petId]` を追加し、既存認可ガード（認証/編集権限/ペットアクセス）を適用する
+  - DB削除成功後に `pet-photos` バケットの `pets/{petId}/` 配下を後始末し、失敗時はログのみでAPI成功を維持する
+  - ペット詳細画面に確認付きの削除導線を追加し、成功時に `/pets` へ遷移する
+  - `tests/integration/pet-route.test.ts` とE2Eで削除フローを担保する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
 - Task ID: `TASK-183`

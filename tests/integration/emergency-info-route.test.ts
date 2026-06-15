@@ -43,7 +43,7 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
         method: "PUT",
         body: JSON.stringify(payload)
       }),
-      { params: { petId: "sample-pet" } }
+      { params: Promise.resolve({ petId: "sample-pet" }) }
     );
 
     expect(response.status).toBe(400);
@@ -62,7 +62,7 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
         method: "PUT",
         body: JSON.stringify(payload)
       }),
-      { params: Promise.resolve({ petId: validPetId }) as unknown as { petId: string } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(200);
@@ -82,7 +82,7 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
           emergencyContactPhone: "x".repeat(41)
         })
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(400);
@@ -98,7 +98,7 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
           emergencyContactPhone: "090-1234-5678#99"
         })
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(400);
@@ -113,7 +113,7 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
         method: "PUT",
         body: JSON.stringify(payload)
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(404);
@@ -132,7 +132,7 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
         method: "PUT",
         body: JSON.stringify(payload)
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(200);
@@ -162,7 +162,7 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
           vetPhone: " 03-1234-5678 "
         })
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(200);
@@ -191,7 +191,7 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
           emergencyContactPhone: "０９０ー１２３４ー５６７８"
         })
       }),
-      { params: { petId: validPetId } }
+      { params: Promise.resolve({ petId: validPetId }) }
     );
 
     expect(response.status).toBe(200);

@@ -1,19 +1,14 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
-import { VaccinationHistory } from "@/components/features/pets/vaccination-history";
+import { VaccinationHistory, type VaccinationHistoryItem } from "@/components/features/pets/vaccination-history";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 
 type VaccinationType = "RABIES" | "CORE" | "HEARTWORM" | "FLEA_TICK" | "OTHER";
 
-type VaccinationItem = {
-  id: string;
-  typeCode: VaccinationType;
-  type: string;
+type VaccinationItem = VaccinationHistoryItem & {
   customTypeName: string | null;
-  date: string;
-  nextDue: string | null;
 };
 
 type VaccinationManagerProps = {
@@ -78,12 +73,13 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
     setEditingId(null);
   };
 
-  const onEditStart = (item: VaccinationItem) => {
+  const onEditStart = (item: VaccinationHistoryItem) => {
+    const currentItem = items.find((candidate) => candidate.id === item.id);
     setEditingId(item.id);
     setType(item.typeCode);
     setDate(item.date);
     setNextDue(item.nextDue ?? "");
-    setCustomTypeName(item.customTypeName ?? "");
+    setCustomTypeName(currentItem?.customTypeName ?? "");
     setError(null);
   };
 

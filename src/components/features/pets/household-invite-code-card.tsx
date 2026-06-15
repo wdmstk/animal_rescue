@@ -11,6 +11,10 @@ type InviteResponse = {
   };
 };
 
+type InviteErrorResponse = {
+  error?: string;
+};
+
 export function HouseholdInviteCodeCard() {
   const [expiresInHours, setExpiresInHours] = useState("48");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,10 +45,15 @@ export function HouseholdInviteCodeCard() {
         })
       });
 
-      const payload = (await response.json().catch(() => null)) as InviteResponse | { error?: string } | null;
+      const payload = (await response.json().catch(() => null)) as (InviteResponse & InviteErrorResponse) | null;
 
       if (!response.ok) {
         setErrorMessage(typeof payload?.error === "string" ? payload.error : "招待コードの発行に失敗しました。");
+        return;
+      }
+
+      if (!payload?.data) {
+        setErrorMessage("招待コードの発行に失敗しました。");
         return;
       }
 
