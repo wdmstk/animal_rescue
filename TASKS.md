@@ -23,10 +23,9 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-187` APIエラーハンドリング統一化
-2. `TASK-186` Prisma build failure修正（shadow DB設定除外）
-3. `TASK-185` 医療書類写真登録 + OCR抽出MVP
-4. `TASK-184` ペット削除（ハード削除）
+1. `TASK-186` Prisma build failure修正（shadow DB設定除外）
+2. `TASK-185` 医療書類写真登録 + OCR抽出MVP
+3. `TASK-184` ペット削除（ハード削除）
 
 ### todo
 （なし）
@@ -35,6 +34,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-187` APIエラーハンドリング統一化
 1. `TASK-185` 医療書類写真登録 + OCR抽出MVP
 1. `TASK-183` 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
 1. `TASK-182` ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
@@ -127,7 +127,7 @@ Development Task List
 ### APIエラーハンドリング統一化
 - Task ID: `TASK-187`
 - ブランチ: `refactor/TASK-187-api-error-handling-unification`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: APIルートでのエラーハンドリングを集中化し、一貫性と保守性を改善する
 - Issue: 作成失敗（権限不足）
 - 依存関係:
