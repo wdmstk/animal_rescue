@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { joinByInviteSchema } from "@/lib/validators/invite";
+import { badRequest, unauthorized } from "@/lib/api-error";
 
 export async function POST(request: Request) {
   const body = await request.json();
   const parsed = joinByInviteSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const supabase = await createSupabaseServerClient();
@@ -18,13 +19,13 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    return unauthorized();
   }
 
   const invite = await prisma.householdInviteCode.findUnique({ where: { code: parsed.data.code } });
 
   if (!invite || invite.usedAt || invite.expiresAt < new Date()) {
-    return NextResponse.json({ error: "招待コードが無効です" }, { status: 400 });
+    return badRequest("招待コードが無効です");
   }
 
   await prisma.$transaction([

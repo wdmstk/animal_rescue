@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { unauthorized, apiError } from "@/lib/api-error";
 
 export async function POST() {
   const supabase = await createSupabaseServerClient();
@@ -10,7 +11,7 @@ export async function POST() {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    return unauthorized();
   }
 
   const result = await prisma.$transaction(async (tx) => {
@@ -73,7 +74,7 @@ export async function POST() {
   });
 
   if (result.status !== 200) {
-    return NextResponse.json({ error: result.error }, { status: result.status });
+    return apiError(result.error, result.status);
   }
 
   return NextResponse.json({ data: result.data });

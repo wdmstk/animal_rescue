@@ -6,6 +6,7 @@ import { getHistoryWindowStartDate } from "@/lib/billing/access-policy";
 import { getUserBillingAccessState, requireEditAccess } from "@/lib/billing/access-guard";
 import { petUpdateSchema } from "@/lib/validators/pet";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service";
+import { badRequest, notFound } from "@/lib/api-error";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -15,7 +16,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
   const routeParams = await params;
   const parsedParams = petIdParamSchema.safeParse(routeParams);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -52,7 +53,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
   });
 
   if (!pet) {
-    return NextResponse.json({ error: "Pet not found" }, { status: 404 });
+    return notFound("Pet");
   }
 
   return NextResponse.json({ data: pet });
@@ -62,13 +63,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   const routeParams = await params;
   const parsedParams = petIdParamSchema.safeParse(routeParams);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const body = await request.json();
   const parsedBody = petUpdateSchema.safeParse(body);
   if (!parsedBody.success) {
-    return NextResponse.json({ error: parsedBody.error.flatten() }, { status: 400 });
+    return badRequest(parsedBody.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -101,7 +102,7 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ petId: 
   const routeParams = await params;
   const parsedParams = petIdParamSchema.safeParse(routeParams);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();

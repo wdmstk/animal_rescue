@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
 import { ownerProfileUpdateSchema } from "@/lib/validators/owner-profile";
+import { badRequest, notFound, forbidden } from "@/lib/api-error";
 
 const DEFAULT_PROFILE = {
   fullName: null,
@@ -36,7 +37,7 @@ const findOwnerContext = async (userId: string) => {
   });
 
   if (!membership) {
-    return NextResponse.json({ error: "所属世帯が見つかりません" }, { status: 400 });
+    return badRequest("所属世帯が見つかりません");
   }
 
   const ownerMembership = await prisma.householdMember.findFirst({
@@ -48,7 +49,7 @@ const findOwnerContext = async (userId: string) => {
   });
 
   if (!ownerMembership) {
-    return NextResponse.json({ error: "Owner not found" }, { status: 404 });
+    return notFound("Owner");
   }
 
   return { householdId: membership.householdId, ownerUserId: ownerMembership.userId };
@@ -86,14 +87,14 @@ export async function PATCH(request: Request) {
   }
 
   if (auth.userId !== ownerContext.ownerUserId) {
-    return NextResponse.json({ error: "Only owner can update owner profile" }, { status: 403 });
+    return forbidden("Only owner can update owner profile");
   }
 
   const body = await request.json();
   const parsed = ownerProfileUpdateSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const updated = await prisma.ownerProfile.upsert({

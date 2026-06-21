@@ -4,13 +4,14 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireShareAccess } from "@/lib/billing/access-guard";
 import { createInviteCodeSchema } from "@/lib/validators/invite";
 import { calculateExpiry, generateInviteCode } from "@/lib/services/invite-code";
+import { badRequest, unauthorized, forbidden } from "@/lib/api-error";
 
 export async function POST(request: Request) {
   const body = await request.json();
   const parsed = createInviteCodeSchema.partial({ householdId: true }).safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const supabase = await createSupabaseServerClient();
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    return unauthorized();
   }
 
   const membership = await prisma.householdMember.findFirst({
@@ -35,10 +36,10 @@ export async function POST(request: Request) {
   });
 
   if (!membership) {
-    return NextResponse.json({ error: "所属世帯が見つかりません" }, { status: 400 });
+    return badRequest("所属世帯が見つかりません");
   }
   if (membership.role !== "OWNER") {
-    return NextResponse.json({ error: "招待コード発行権限がありません" }, { status: 403 });
+    return forbidden("招待コード発行権限がありません");
   }
 
   const shareAccess = await requireShareAccess(user.id);

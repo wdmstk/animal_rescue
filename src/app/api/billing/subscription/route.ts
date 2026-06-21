@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { resolveBillingAccessState } from "@/lib/billing/access-policy";
+import { unauthorized } from "@/lib/api-error";
 
 export async function GET() {
   const supabase = await createSupabaseServerClient();
@@ -11,7 +12,7 @@ export async function GET() {
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    return unauthorized();
   }
 
   const subscription = await prisma.userSubscription.findUnique({

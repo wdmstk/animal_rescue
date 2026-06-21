@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { requireShareAccess } from "@/lib/billing/access-guard";
 import { householdMemberRoleUpdateSchema } from "@/lib/validators/household-member";
+import { badRequest, unauthorized, forbidden, notFound, apiError } from "@/lib/api-error";
 
 type Params = {
   params: Promise<{ memberId: string }>;
@@ -14,7 +15,7 @@ export async function PATCH(request: Request, { params }: Params) {
   const parsed = householdMemberRoleUpdateSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const supabase = await createSupabaseServerClient();
@@ -24,7 +25,7 @@ export async function PATCH(request: Request, { params }: Params) {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    return unauthorized();
   }
   const shareAccess = await requireShareAccess(user.id);
   if (shareAccess instanceof NextResponse) {
@@ -38,11 +39,11 @@ export async function PATCH(request: Request, { params }: Params) {
   });
 
   if (!actorMembership) {
-    return NextResponse.json({ error: "所属世帯が見つかりません" }, { status: 400 });
+    return badRequest("所属世帯が見つかりません");
   }
 
   if (actorMembership.role !== "OWNER") {
-    return NextResponse.json({ error: "権限がありません" }, { status: 403 });
+    return forbidden();
   }
 
   const targetMember = await prisma.householdMember.findFirst({
@@ -54,7 +55,7 @@ export async function PATCH(request: Request, { params }: Params) {
   });
 
   if (!targetMember) {
-    return NextResponse.json({ error: "メンバーが見つかりません" }, { status: 404 });
+    return notFound("メンバー");
   }
 
   if (targetMember.role === "OWNER" && parsed.data.role === "FAMILY") {
@@ -66,7 +67,7 @@ export async function PATCH(request: Request, { params }: Params) {
     });
 
     if (ownerCount <= 1) {
-      return NextResponse.json({ error: "OWNERを0人にはできません" }, { status: 409 });
+      return apiError("OWNERを0人にはできません", 409);
     }
   }
 

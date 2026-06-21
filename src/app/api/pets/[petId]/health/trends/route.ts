@@ -3,11 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { buildHealthTrendSeries } from "@/lib/services/health-trends";
 import { healthPetIdParamSchema } from "@/lib/validators/health";
+import { badRequest } from "@/lib/api-error";
 
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = healthPetIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();

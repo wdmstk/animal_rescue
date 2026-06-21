@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service";
+import { badRequest, serverError } from "@/lib/api-error";
 
 const PET_PHOTO_BUCKET = "pet-photos";
 
@@ -18,7 +19,7 @@ const uploadRequestSchema = z.object({
 export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -33,7 +34,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const body = await request.json();
   const parsedBody = uploadRequestSchema.safeParse(body);
   if (!parsedBody.success) {
-    return NextResponse.json({ error: parsedBody.error.flatten() }, { status: 400 });
+    return badRequest(parsedBody.error);
   }
 
   const safeFileName = parsedBody.data.fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -44,7 +45,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const { data, error } = await storage.createSignedUploadUrl(path);
 
   if (error || !data) {
-    return NextResponse.json({ error: error?.message ?? "Failed to issue upload url" }, { status: 500 });
+    return serverError(error?.message ?? "Failed to issue upload url");
   }
 
   const { data: publicUrlData } = storage.getPublicUrl(path);

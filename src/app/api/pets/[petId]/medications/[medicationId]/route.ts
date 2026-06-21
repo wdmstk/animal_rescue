@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireEditAccess } from "@/lib/billing/access-guard";
+import { badRequest, notFound } from "@/lib/api-error";
 
 const paramsSchema = z.object({
   petId: z.string().uuid(),
@@ -21,7 +22,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   const routeParams = await params;
   const parsedParams = paramsSchema.safeParse(routeParams);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -42,7 +43,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   const parsedBody = medicationUpdateSchema.safeParse(body);
 
   if (!parsedBody.success) {
-    return NextResponse.json({ error: parsedBody.error.flatten() }, { status: 400 });
+    return badRequest(parsedBody.error);
   }
 
   const existing = await prisma.petMedication.findFirst({
@@ -54,7 +55,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   });
 
   if (!existing) {
-    return NextResponse.json({ error: "Medication not found" }, { status: 404 });
+    return notFound("Medication");
   }
 
   const updated = await prisma.petMedication.update({

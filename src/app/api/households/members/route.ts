@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { unauthorized, badRequest, notFound } from "@/lib/api-error";
 
 export async function GET() {
   const supabase = await createSupabaseServerClient();
@@ -10,7 +11,7 @@ export async function GET() {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    return unauthorized();
   }
 
   const membership = await prisma.householdMember.findFirst({
@@ -20,7 +21,7 @@ export async function GET() {
   });
 
   if (!membership) {
-    return NextResponse.json({ error: "所属世帯が見つかりません" }, { status: 400 });
+    return badRequest("所属世帯が見つかりません");
   }
 
   const household = await prisma.household.findUnique({
@@ -41,7 +42,7 @@ export async function GET() {
   });
 
   if (!household) {
-    return NextResponse.json({ error: "世帯情報が見つかりません" }, { status: 404 });
+    return notFound("世帯情報");
   }
 
   return NextResponse.json({

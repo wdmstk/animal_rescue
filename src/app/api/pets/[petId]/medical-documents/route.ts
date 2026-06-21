@@ -5,6 +5,7 @@ import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-acces
 import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { allowedImageHostMessage, isAllowedImageUrl } from "@/lib/validators/image-url";
 import { isTableMissingError } from "@/lib/prisma-error";
+import { badRequest, serverError } from "@/lib/api-error";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -18,7 +19,7 @@ const documentCreateSchema = z.object({
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -35,10 +36,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     });
   } catch (error) {
     if (isTableMissingError(error)) {
-      return NextResponse.json(
-        { error: "医療書類テーブルが未作成です。`npm run db:setup` または `prisma migrate deploy` を実行してください。" },
-        { status: 503 }
-      );
+      return serverError("医療書類テーブルが未作成です。`npm run db:setup` または `prisma migrate deploy` を実行してください。", 503);
     }
     throw error;
   }
@@ -49,7 +47,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
 export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -63,7 +61,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
 
   const parsedBody = documentCreateSchema.safeParse(await request.json());
   if (!parsedBody.success) {
-    return NextResponse.json({ error: parsedBody.error.flatten() }, { status: 400 });
+    return badRequest(parsedBody.error);
   }
 
   let created: Awaited<ReturnType<typeof prisma.petMedicalDocument.create>>;
@@ -77,10 +75,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
     });
   } catch (error) {
     if (isTableMissingError(error)) {
-      return NextResponse.json(
-        { error: "医療書類テーブルが未作成です。`npm run db:setup` または `prisma migrate deploy` を実行してください。" },
-        { status: 503 }
-      );
+      return serverError("医療書類テーブルが未作成です。`npm run db:setup` または `prisma migrate deploy` を実行してください。", 503);
     }
     throw error;
   }

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { getHistoryWindowStartDate } from "@/lib/billing/access-policy";
 import { getUserBillingAccessState, requireCreateAccess, requireEditAccess } from "@/lib/billing/access-guard";
+import { badRequest, notFound } from "@/lib/api-error";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -35,7 +36,7 @@ const vaccinationUpdateSchema = vaccinationBaseSchema.extend({
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -64,7 +65,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
 export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -85,7 +86,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const parsed = vaccinationSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const created = await prisma.petVaccination.create({
@@ -104,7 +105,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
 export async function PATCH(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -136,7 +137,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   });
 
   if (!existing) {
-    return NextResponse.json({ error: "Vaccination record not found" }, { status: 404 });
+    return notFound("Vaccination record");
   }
 
   const updated = await prisma.petVaccination.update({

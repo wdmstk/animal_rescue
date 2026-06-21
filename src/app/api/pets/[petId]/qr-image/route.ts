@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { generateEmergencyToken } from "@/lib/security/emergency-token";
+import { badRequest } from "@/lib/api-error";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -22,7 +23,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ petI
   const routeParams = await params;
   const parsedParams = petIdParamSchema.safeParse(routeParams);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();

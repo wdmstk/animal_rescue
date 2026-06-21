@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireEditAccess } from "@/lib/billing/access-guard";
 import { emergencyInfoInputSchema } from "@/lib/validators/emergency";
+import { badRequest } from "@/lib/api-error";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -12,7 +13,7 @@ const petIdParamSchema = z.object({
 export async function PUT(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -33,7 +34,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ petI
   const parsed = emergencyInfoInputSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const emergencyInfo = await prisma.petEmergencyInfo.upsert({

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireShareAccess } from "@/lib/billing/access-guard";
 import { generateEmergencyToken } from "@/lib/security/emergency-token";
+import { badRequest, notFound } from "@/lib/api-error";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -24,7 +25,7 @@ const toPublicUrl = (request: Request, token: string) => `${resolvePublicBaseUrl
 export async function GET(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -90,7 +91,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ petI
 export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -134,7 +135,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
 export async function DELETE(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -158,7 +159,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ p
   });
 
   if (!existing) {
-    return NextResponse.json({ error: "Token not found" }, { status: 404 });
+    return notFound("Token");
   }
 
   if (!existing.isActive) {

@@ -4,11 +4,12 @@ import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-acces
 import { getHistoryWindowStartDate } from "@/lib/billing/access-policy";
 import { getUserBillingAccessState, requireCreateAccess } from "@/lib/billing/access-guard";
 import { coreHealthEntryInputSchema, coreMetricTypeFilterSchema, healthPetIdParamSchema } from "@/lib/validators/health";
+import { badRequest } from "@/lib/api-error";
 
 export async function GET(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = healthPetIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -29,7 +30,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ petI
   });
 
   if (!parsedFilter.success) {
-    return NextResponse.json({ error: parsedFilter.error.flatten() }, { status: 400 });
+    return badRequest(parsedFilter.error);
   }
 
   const data = await prisma.petCoreMetricEntry.findMany({
@@ -56,7 +57,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ petI
 export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = healthPetIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -77,7 +78,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const parsed = coreHealthEntryInputSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const created = await prisma.petCoreMetricEntry.create({

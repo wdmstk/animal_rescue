@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service";
+import { badRequest, serverError } from "@/lib/api-error";
 
 const PET_PHOTO_BUCKET = "pet-photos";
 
@@ -13,7 +14,7 @@ const petIdParamSchema = z.object({
 export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -28,11 +29,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const formData = await request.formData();
   const fileValue = formData.get("file");
   if (!(fileValue instanceof File)) {
-    return NextResponse.json({ error: "file is required" }, { status: 400 });
+    return badRequest("file is required");
   }
 
   if (!fileValue.type.startsWith("image/")) {
-    return NextResponse.json({ error: "Only image files are allowed" }, { status: 400 });
+    return badRequest("Only image files are allowed");
   }
 
   const safeFileName = fileValue.name.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -60,7 +61,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   }
 
   if (uploadResult.error) {
-    return NextResponse.json({ error: uploadResult.error.message }, { status: 500 });
+    return serverError(uploadResult.error.message);
   }
 
   const { data: publicUrlData } = storage.getPublicUrl(path);

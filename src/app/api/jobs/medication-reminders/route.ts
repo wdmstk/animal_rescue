@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { buildReminderDispatchWithProvider, runMedicationReminderScheduler } from "@/lib/services/medication-reminder-scheduler";
+import { unauthorized, serverError } from "@/lib/api-error";
 
 type ReminderSetting = {
   petId: string;
@@ -31,13 +32,13 @@ export async function POST(request: Request) {
   if (env.MEDICATION_REMINDER_JOB_TOKEN) {
     const authorization = request.headers.get("authorization");
     if (authorization !== `Bearer ${env.MEDICATION_REMINDER_JOB_TOKEN}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return unauthorized("Unauthorized");
     }
   }
 
   const reminderDispatchLog = getReminderDispatchLogDelegate();
   if (!reminderDispatchLog) {
-    return NextResponse.json({ error: "Reminder dispatch log model is unavailable. Regenerate Prisma Client." }, { status: 503 });
+    return serverError("Reminder dispatch log model is unavailable. Regenerate Prisma Client.", 503);
   }
 
   const result = await runMedicationReminderScheduler(

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
 import { requireEditAccess } from "@/lib/billing/access-guard";
 import { petDisplaySettingsPatchSchema, petDisplaySettingsSchema } from "@/lib/validators/pet-display-settings";
+import { badRequest, unauthorized, notFound, serverError } from "@/lib/api-error";
 
 const DEFAULT_SETTINGS = petDisplaySettingsSchema.parse({
   showMedicationCard: true,
@@ -54,7 +55,7 @@ const findOwnerUserId = async (userId: string): Promise<string | NextResponse> =
     orderBy: { createdAt: "asc" }
   });
   if (!membership) {
-    return NextResponse.json({ error: "所属世帯が見つかりません" }, { status: 400 });
+    return badRequest("所属世帯が見つかりません");
   }
 
   const ownerMembership = await prisma.householdMember.findFirst({
@@ -77,7 +78,7 @@ const findOwnerUserId = async (userId: string): Promise<string | NextResponse> =
   });
 
   if (!oldestMembership) {
-    return NextResponse.json({ error: "Household member not found" }, { status: 404 });
+    return notFound("Household member");
   }
 
   return oldestMembership.userId;
@@ -96,7 +97,7 @@ export async function GET() {
 
   const ownerDisplaySettings = getOwnerDisplaySettingsDelegate();
   if (!ownerDisplaySettings) {
-    return NextResponse.json({ error: "Display settings model is unavailable. Regenerate Prisma Client." }, { status: 503 });
+    return serverError("Display settings model is unavailable. Regenerate Prisma Client.", 503);
   }
 
   const settings = await ownerDisplaySettings.findUnique({
@@ -110,7 +111,7 @@ export async function PATCH(request: Request) {
   const body = await request.json();
   const parsedBody = petDisplaySettingsPatchSchema.safeParse(body);
   if (!parsedBody.success) {
-    return NextResponse.json({ error: parsedBody.error.flatten() }, { status: 400 });
+    return badRequest(parsedBody.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -128,12 +129,12 @@ export async function PATCH(request: Request) {
   }
 
   if (ownerUserId !== auth.userId) {
-    return NextResponse.json({ error: "Only owner can update display settings" }, { status: 403 });
+    return forbidden("Only owner can update display settings");
   }
 
   const ownerDisplaySettings = getOwnerDisplaySettingsDelegate();
   if (!ownerDisplaySettings) {
-    return NextResponse.json({ error: "Display settings model is unavailable. Regenerate Prisma Client." }, { status: 503 });
+    return serverError("Display settings model is unavailable. Regenerate Prisma Client.", 503);
   }
 
   const updated = await ownerDisplaySettings.upsert({
