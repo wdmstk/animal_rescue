@@ -129,7 +129,7 @@ Development Task List
 - ブランチ: `refactor/TASK-187-api-error-handling-unification`
 - ステータス: `done`
 - 概要: APIルートでのエラーハンドリングを集中化し、一貫性と保守性を改善する
-- Issue: 作成失敗（権限不足）
+- Issue: #205
 - 依存関係:
   - prerequisite: なし
 - 完了条件:
