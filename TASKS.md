@@ -23,9 +23,10 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-186` Prisma build failure修正（shadow DB設定除外）
-1. `TASK-185` 医療書類写真登録 + OCR抽出MVP
-2. `TASK-184` ペット削除（ハード削除）
+1. `TASK-187` APIエラーハンドリング統一化
+2. `TASK-186` Prisma build failure修正（shadow DB設定除外）
+3. `TASK-185` 医療書類写真登録 + OCR抽出MVP
+4. `TASK-184` ペット削除（ハード削除）
 
 ### todo
 （なし）
@@ -122,6 +123,20 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### APIエラーハンドリング統一化
+- Task ID: `TASK-187`
+- ブランチ: `refactor/TASK-187-api-error-handling-unification`
+- ステータス: `in_progress`
+- 概要: APIルートでのエラーハンドリングを集中化し、一貫性と保守性を改善する
+- Issue: 作成失敗（権限不足）
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - `src/lib/api-error.ts` による統一的なエラーハンドリング関数を追加する
+  - 全APIルートでエラーハンドリングを統一する（badRequest/unauthorized/forbidden/notFound/paymentRequired/serverError）
+  - ドキュメント（docs/api-error-handling-*.md）と単体テスト（tests/unit/api-error.test.ts）を追加する
+  - `npm run lint` / `npx vitest run` が通る
 
 ### 医療書類写真登録 + OCR抽出MVP
 - Task ID: `TASK-185`
