@@ -5,6 +5,7 @@ import { getHistoryWindowStartDate } from "@/lib/billing/access-policy";
 import { getUserBillingAccessState, requireCreateAccess } from "@/lib/billing/access-guard";
 import { healthPetIdParamSchema, labResultEntryInputSchema } from "@/lib/validators/health";
 import type { LabMarkerType } from "@/types/health";
+import { badRequest, notFound } from "@/lib/api-error";
 
 const defaultUnitMap: Record<LabMarkerType, string> = {
   CRE: "mg/dL",
@@ -42,7 +43,7 @@ const defaultUnitMap: Record<LabMarkerType, string> = {
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = healthPetIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -82,7 +83,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
 export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = healthPetIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -103,7 +104,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const parsed = labResultEntryInputSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const created = await prisma.petLabResultEntry.create({

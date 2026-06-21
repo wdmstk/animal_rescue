@@ -2,20 +2,21 @@ import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { signupInputSchema } from "@/lib/validators/auth";
+import { badRequest, unauthorized } from "@/lib/api-error";
 
 export async function POST(request: Request) {
   const body = await request.json();
   const parsed = signupInputSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signUp(parsed.data);
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 401 });
+    return unauthorized(error.message);
   }
 
   if (data.user?.id) {

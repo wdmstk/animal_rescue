@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { stripe } from "@/lib/billing/stripe";
+import { unauthorized, badRequest } from "@/lib/api-error";
 
 export async function POST() {
   const supabase = await createSupabaseServerClient();
@@ -12,7 +13,7 @@ export async function POST() {
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    return NextResponse.json({ error: "認証が必要です。ログイン後に再度お試しください。" }, { status: 401 });
+    return unauthorized("認証が必要です。ログイン後に再度お試しください。");
   }
 
   const subscription = await prisma.userSubscription.findUnique({
@@ -23,10 +24,7 @@ export async function POST() {
   });
 
   if (!subscription?.stripeCustomerId) {
-    return NextResponse.json(
-      { error: "契約情報が見つかりません。先に無料トライアルを開始してください。" },
-      { status: 400 }
-    );
+    return badRequest("契約情報が見つかりません。先に無料トライアルを開始してください。");
   }
 
   const session = await stripe.billingPortal.sessions.create({

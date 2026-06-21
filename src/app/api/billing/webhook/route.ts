@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { env } from "@/lib/env";
 import { stripe, toSubscriptionStatus } from "@/lib/billing/stripe";
+import { badRequest } from "@/lib/api-error";
 
 const upsertSubscriptionByStripe = async (input: {
   stripeSubscriptionId: string;
@@ -50,7 +51,7 @@ const toCurrentPeriodEnd = (subscription: Stripe.Subscription): Date | null => {
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
   if (!signature) {
-    return NextResponse.json({ error: "Missing stripe-signature" }, { status: 400 });
+    return badRequest("Missing stripe-signature");
   }
 
   const body = await request.text();
@@ -59,7 +60,7 @@ export async function POST(request: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
   } catch {
-    return NextResponse.json({ error: "Invalid webhook signature" }, { status: 400 });
+    return badRequest("Invalid webhook signature");
   }
 
   if (event.type === "checkout.session.completed") {

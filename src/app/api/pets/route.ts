@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requireHouseholdMember } from "@/lib/auth/pet-access";
 import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { petCreateSchema } from "@/lib/validators/pet";
+import { badRequest, notFound } from "@/lib/api-error";
 
 export async function GET() {
   const auth = await requireAuthenticatedUser();
@@ -34,7 +35,7 @@ export async function POST(request: Request) {
   const parsed = petCreateSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -57,7 +58,7 @@ export async function POST(request: Request) {
     )?.householdId;
 
   if (!householdId) {
-    return NextResponse.json({ error: "所属世帯が見つかりません" }, { status: 400 });
+    return badRequest("所属世帯が見つかりません");
   }
 
   const membership = await requireHouseholdMember(auth.userId, householdId);

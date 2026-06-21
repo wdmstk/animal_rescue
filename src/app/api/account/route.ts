@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { accountUpdateSchema } from "@/lib/validators/account";
+import { badRequest, unauthorized } from "@/lib/api-error";
 
 const resolveDisplayName = (metadata: unknown): string | null => {
   if (!metadata || typeof metadata !== "object") {
@@ -19,7 +20,7 @@ export async function GET() {
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    return unauthorized();
   }
 
   return NextResponse.json({
@@ -36,7 +37,7 @@ export async function PATCH(request: Request) {
   const parsed = accountUpdateSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const supabase = await createSupabaseServerClient();
@@ -46,7 +47,7 @@ export async function PATCH(request: Request) {
   } = await supabase.auth.getUser();
 
   if (authError || !user) {
-    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    return unauthorized();
   }
 
   const updatePayload: { password?: string; data?: { display_name?: string } } = {};
@@ -60,7 +61,7 @@ export async function PATCH(request: Request) {
 
   const { error: updateError } = await supabase.auth.updateUser(updatePayload);
   if (updateError) {
-    return NextResponse.json({ error: updateError.message }, { status: 400 });
+    return badRequest(updateError.message);
   }
 
   return NextResponse.json({ ok: true });

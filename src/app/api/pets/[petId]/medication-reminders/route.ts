@@ -5,6 +5,7 @@ import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-acces
 import { env } from "@/lib/env";
 import { requireEditAccess, requireNotifyAccess } from "@/lib/billing/access-guard";
 import { dispatchMedicationReminder } from "@/lib/services/reminder-delivery";
+import { badRequest, serverError } from "@/lib/api-error";
 
 const reminderSettingSchema = z
   .object({
@@ -79,7 +80,7 @@ const getPetDisplaySettingsDelegate = (): PetDisplaySettingsReminderDelegate | n
 async function parseAndAuthorize(params: Promise<{ petId: string }>) {
   const parsedParams = z.object({ petId: z.string().uuid() }).safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -106,7 +107,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
 
   const petDisplaySettings = getPetDisplaySettingsDelegate();
   if (!petDisplaySettings) {
-    return NextResponse.json({ error: "Display settings model is unavailable. Regenerate Prisma Client." }, { status: 503 });
+    return serverError("Display settings model is unavailable. Regenerate Prisma Client.", 503);
   }
 
   const settings = await petDisplaySettings.findUnique({ where: { petId: access.petId } });
@@ -135,12 +136,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
   const parsed = reminderSettingSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const petDisplaySettings = getPetDisplaySettingsDelegate();
   if (!petDisplaySettings) {
-    return NextResponse.json({ error: "Display settings model is unavailable. Regenerate Prisma Client." }, { status: 503 });
+    return serverError("Display settings model is unavailable. Regenerate Prisma Client.", 503);
   }
 
   const saved = await petDisplaySettings.upsert({
@@ -183,7 +184,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const parsed = reminderSettingSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   if (!parsed.data.enabled) {

@@ -7,6 +7,7 @@ import {
   petDisplaySettingsPatchSchema,
   petDisplaySettingsSchema
 } from "@/lib/validators/pet-display-settings";
+import { badRequest, forbidden, serverError } from "@/lib/api-error";
 
 const DEFAULT_SETTINGS = petDisplaySettingsSchema.parse({
   showMedicationCard: true,
@@ -45,7 +46,7 @@ function toResponseData(
 export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petDisplaySettingsParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -71,7 +72,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     orderBy: { createdAt: "asc" }
   });
   if (!ownerMembership) {
-    return NextResponse.json({ error: "Owner not found" }, { status: 404 });
+    return notFound("Owner");
   }
 
   const settings = await prisma.ownerDisplaySettings.findUnique({
@@ -84,13 +85,13 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
 export async function PATCH(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petDisplaySettingsParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const body = await request.json();
   const parsedBody = petDisplaySettingsPatchSchema.safeParse(body);
   if (!parsedBody.success) {
-    return NextResponse.json({ error: parsedBody.error.flatten() }, { status: 400 });
+    return badRequest(parsedBody.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -112,10 +113,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
     orderBy: { createdAt: "asc" }
   });
   if (!ownerMembership) {
-    return NextResponse.json({ error: "Owner not found" }, { status: 404 });
+    return notFound("Owner");
   }
   if (ownerMembership.userId !== auth.userId) {
-    return NextResponse.json({ error: "Only owner can update display settings" }, { status: 403 });
+    return forbidden("Only owner can update display settings");
   }
 
   const updated = await prisma.ownerDisplaySettings.upsert({

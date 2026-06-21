@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { extractMedicalDocument } from "@/lib/services/medical-document-ocr";
+import { badRequest, notFound, serverError } from "@/lib/api-error";
 
 const paramsSchema = z.object({
   petId: z.string().uuid(),
@@ -13,7 +14,7 @@ const paramsSchema = z.object({
 export async function POST(_: Request, { params }: { params: Promise<{ petId: string; documentId: string }> }) {
   const parsedParams = paramsSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -33,7 +34,7 @@ export async function POST(_: Request, { params }: { params: Promise<{ petId: st
   });
 
   if (!document) {
-    return NextResponse.json({ error: "Document not found" }, { status: 404 });
+    return notFound("Document");
   }
 
   try {
@@ -50,6 +51,6 @@ export async function POST(_: Request, { params }: { params: Promise<{ petId: st
     return NextResponse.json({ data: updated, extracted: extracted.result });
   } catch (error) {
     const message = error instanceof Error ? error.message : "OCR extraction failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return serverError(message);
   }
 }

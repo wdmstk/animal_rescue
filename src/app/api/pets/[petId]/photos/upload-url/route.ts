@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service";
+import { badRequest, serverError } from "@/lib/api-error";
 
 const PET_PHOTO_BUCKET = "pet-photos";
 
@@ -18,7 +19,7 @@ const uploadRequestSchema = z.object({
 export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
-    return NextResponse.json({ error: parsedParams.error.flatten() }, { status: 400 });
+    return badRequest(parsedParams.error);
   }
 
   const auth = await requireAuthenticatedUser();
@@ -39,7 +40,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
   const parsed = uploadRequestSchema.safeParse(body);
 
   if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
+    return badRequest(parsed.error);
   }
 
   const safeFileName = parsed.data.fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -68,12 +69,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
     const hint = detail.toLowerCase().includes("bucket")
       ? `Storage bucket '${PET_PHOTO_BUCKET}' の存在・権限を確認してください`
       : "Supabase接続設定（URL/Service Role Key）とネットワーク到達性を確認してください";
-    return NextResponse.json(
-      {
-        error: `Failed to issue signed upload url: ${detail}. ${hint}`
-      },
-      { status: 500 }
-    );
+    return serverError(`Failed to issue signed upload url: ${detail}. ${hint}`);
   }
 
   const { data: publicUrlData } = storage.getPublicUrl(path);

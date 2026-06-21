@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { stripe } from "@/lib/billing/stripe";
+import { unauthorized } from "@/lib/api-error";
 
 export async function POST() {
   const supabase = await createSupabaseServerClient();
@@ -12,7 +13,7 @@ export async function POST() {
   } = await supabase.auth.getUser();
 
   if (error || !user) {
-    return NextResponse.json({ error: "認証が必要です" }, { status: 401 });
+    return unauthorized();
   }
 
   const current = await prisma.userSubscription.findUnique({
