@@ -318,25 +318,25 @@ export default async function PetDetailPage({
 
   const emergencyLinkToken = process.env.PLAYWRIGHT_E2E === "1" ? E2E_PUBLIC_EMERGENCY_TOKEN : activeToken;
   const changeHistoryItems = buildChangeHistoryItems({
-    emergencyInfo: pet.emergencyInfo ? { updatedAt: pet.emergencyInfo.updatedAt } : null,
+    emergencyInfo: pet.emergencyInfo ? { updatedAt: pet.emergencyInfo.updatedAt.toISOString() } : null,
     medications: pet.medications.map((item) => ({
       id: item.id,
       name: item.name,
-      updatedAt: item.updatedAt,
-      createdAt: item.createdAt
+      updatedAt: item.updatedAt.toISOString(),
+      createdAt: item.createdAt.toISOString()
     })),
     vaccinations: pet.vaccinations.map((item) => ({
       id: item.id,
       type: item.type,
       customTypeName: item.customTypeName,
-      updatedAt: item.updatedAt,
-      createdAt: item.createdAt
+      updatedAt: item.updatedAt.toISOString(),
+      createdAt: item.createdAt.toISOString()
     })),
     medicalRecords: pet.medicalRecords.map((item) => ({
       id: item.id,
       title: item.title,
-      updatedAt: item.updatedAt,
-      createdAt: item.createdAt
+      updatedAt: item.updatedAt.toISOString(),
+      createdAt: item.createdAt.toISOString()
     }))
   });
 
