@@ -26,7 +26,14 @@ Development Task List
 （なし）
 
 ### todo
-（なし）
+1. `TASK-195` コンテキストヘルプ追加
+2. `TASK-194` ダークモード対応
+3. `TASK-193` プログレス表示視覚化
+4. `TASK-192` ペット詳細ページ情報整理
+5. `TASK-191` カスタム確認ダイアログ
+6. `TASK-190` フォームバリデーション改善
+7. `TASK-189` モバイルタッチターゲット拡大
+8. `TASK-188` アクセシビリティ改善（WCAG準拠）
 
 ### blocked
 （なし）
@@ -1152,6 +1159,119 @@ Development Task List
   - 招待コード系APIの異常系分岐（入力不正/期限切れ/使用済み）が integration test で検証される
   - 招待参加画面とペット詳細遷移が e2e test で検証される
   - 招待コード関連バリデータが unit test で検証される
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### アクセシビリティ改善（WCAG準拠）
+- Task ID: `TASK-188`
+- ブランチ: `feat/TASK-188-accessibility-wcag-compliance`
+- ステータス: `todo`
+- 概要: WCAG 2.1 AA準拠を目指し、フォームコントロールのラベル付け、フォーカスインジケーター、色コントラスト、スクリーンリーダー対応を改善する
+- Issue: #208
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 全フォーム入力に `aria-label` または `<label>` を追加する
+  - カスタムフォーカススタイルを強化し、フォーカス状態を明確にする
+  - 緊急情報の赤系色のコントラスト比をWCAG AA基準（4.5:1）に適合させる
+  - アイコンボタンに `aria-label` を追加し、スクリーンリーダー対応を改善する
+  - `npm run lint` / `npx vitest run` が通る
+
+### モバイルタッチターゲット拡大
+- Task ID: `TASK-189`
+- ブランチ: `feat/TASK-189-mobile-touch-target-size`
+- ステータス: `todo`
+- 概要: モバイルユーザビリティ向上のため、小さいボタンのタッチターゲットサイズを最小44pxに拡大する
+- Issue: #209
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 小さいボタン（px-2 py-1）を最小44pxのタッチターゲットに拡大する
+  - ペット詳細ページのセクション遷移時のスムーズスクロールを実装する
+  - 横スクロールナビゲーションの改善（スクロール位置の可視化など）
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### フォームバリデーション改善
+- Task ID: `TASK-190`
+- ブランチ: `feat/TASK-190-form-validation-improvement`
+- ステータス: `todo`
+- 概要: リアルタイムバリデーション、具体的なプレースホルダー、フィールドごとのエラー表示を実装し、フォーム体験を改善する
+- Issue: #210
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 送信前に入力フィールドのリアルタイムバリデーションを表示する
+  - 具体的な入力例をプレースホルダーに追加する
+  - フィールドごとのエラー表示を実装する
+  - 成功フィードバックのトースト通知を拡充する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### カスタム確認ダイアログ
+- Task ID: `TASK-191`
+- ブランチ: `feat/TASK-191-custom-confirm-dialog`
+- ステータス: `todo`
+- 概要: `window.confirm` をカスタムモーダルコンポーネントに置換し、一貫性のある確認UIを提供する
+- Issue: #211
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 共通確認ダイアログコンポーネントを作成する
+  - ペット削除の確認ダイアログをカスタム実装に置換する
+  - その他の破壊的操作にも適用する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### ペット詳細ページ情報整理
+- Task ID: `TASK-192`
+- ブランチ: `feat/TASK-192-pet-detail-page-organization`
+- ステータス: `todo`
+- 概要: ペット詳細ページの9つのセクションをグループ化またはタブ化し、情報密度を最適化する
+- Issue: #212
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 関連セクションをグループ化する（基本情報、医療情報、記録など）
+  - またはタブ形式で情報を整理する
+  - 重要度の階層化により、緊急情報をより際立たせる
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### プログレス表示視覚化
+- Task ID: `TASK-193`
+- ブランチ: `feat/TASK-193-progress-visualization`
+- ステータス: `todo`
+- 概要: オンボーディング完了率を視覚的なプログレスバーで表示し、進捗を明確にする
+- Issue: #213
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - オンボーディング完了率をプログレスバーで視覚化する
+  - 空状態の改善（データがない場合のイラストや説明を追加）
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### ダークモード対応
+- Task ID: `TASK-194`
+- ブランチ: `feat/TASK-194-dark-mode-support`
+- ステータス: `todo`
+- 概要: ダークモードを追加し、ユーザーのシステム設定に応じて自動切り替えする
+- Issue: #214
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - テーマ切り替え機能を実装する
+  - ユーザーのシステム設定に応じて自動でダークモードを切り替える
+  - 全コンポーネントでダークモードのスタイルを適用する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### コンテキストヘルプ追加
+- Task ID: `TASK-195`
+- ブランチ: `feat/TASK-195-context-help`
+- ステータス: `todo`
+- 概要: 専門用語のツールチップ、入力ガイド、サンプルデータを追加し、ユーザーの理解を助ける
+- Issue: #215
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 専門用語（「去勢・避妊」など）にツールチップを追加する
+  - 各フォームセクションの説明文を充実させる
+  - 初回登録時に入力例を提示する
   - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### ドキュメント整備

@@ -239,11 +239,16 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
         <form className="rounded-lg border border-slate-200 p-3" onSubmit={onUpdate}>
           <h3 className="text-sm font-bold text-slate-900">投薬を編集</h3>
           <div className="mt-2 grid gap-2 md:grid-cols-2">
-            <input required value={editName} onChange={(event) => setEditName(event.target.value)} placeholder="薬名" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-            <input required value={editDosage} onChange={(event) => setEditDosage(event.target.value)} placeholder="用量" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-            <input required value={editFrequency} onChange={(event) => setEditFrequency(event.target.value)} placeholder="頻度" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-            <input required type="date" value={editStartDate} onChange={(event) => setEditStartDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-            <input type="date" value={editEndDate} onChange={(event) => setEditEndDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+            <label htmlFor="edit-name" className="sr-only">薬名</label>
+            <input id="edit-name" required value={editName} onChange={(event) => setEditName(event.target.value)} placeholder="薬名" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+            <label htmlFor="edit-dosage" className="sr-only">用量</label>
+            <input id="edit-dosage" required value={editDosage} onChange={(event) => setEditDosage(event.target.value)} placeholder="用量" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+            <label htmlFor="edit-frequency" className="sr-only">頻度</label>
+            <input id="edit-frequency" required value={editFrequency} onChange={(event) => setEditFrequency(event.target.value)} placeholder="頻度" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+            <label htmlFor="edit-start-date" className="sr-only">開始日</label>
+            <input id="edit-start-date" required type="date" value={editStartDate} onChange={(event) => setEditStartDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+            <label htmlFor="edit-end-date" className="sr-only">終了日</label>
+            <input id="edit-end-date" type="date" value={editEndDate} onChange={(event) => setEditEndDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent md:col-span-2" />
           </div>
           <div className="mt-2 grid grid-cols-2 gap-2">
             <button type="button" onClick={() => setEditingId(null)} className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800">キャンセル</button>
@@ -255,11 +260,16 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
       <form className="rounded-lg border border-slate-200 p-3" onSubmit={onCreate}>
         <h3 className="text-sm font-bold text-slate-900">投薬を追加</h3>
         <div className="mt-2 grid gap-2 md:grid-cols-2">
-          <input required value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="薬名" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-          <input required value={newDosage} onChange={(event) => setNewDosage(event.target.value)} placeholder="用量" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-          <input required value={newFrequency} onChange={(event) => setNewFrequency(event.target.value)} placeholder="頻度" className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-          <input required type="date" value={newStartDate} onChange={(event) => setNewStartDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm" />
-          <input type="date" value={newEndDate} onChange={(event) => setNewEndDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2" />
+          <label htmlFor="new-name" className="sr-only">薬名</label>
+          <input id="new-name" required value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="薬名" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+          <label htmlFor="new-dosage" className="sr-only">用量</label>
+          <input id="new-dosage" required value={newDosage} onChange={(event) => setNewDosage(event.target.value)} placeholder="用量" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+          <label htmlFor="new-frequency" className="sr-only">頻度</label>
+          <input id="new-frequency" required value={newFrequency} onChange={(event) => setNewFrequency(event.target.value)} placeholder="頻度" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+          <label htmlFor="new-start-date" className="sr-only">開始日</label>
+          <input id="new-start-date" required type="date" value={newStartDate} onChange={(event) => setNewStartDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+          <label htmlFor="new-end-date" className="sr-only">終了日</label>
+          <input id="new-end-date" type="date" value={newEndDate} onChange={(event) => setNewEndDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent md:col-span-2" />
         </div>
         <SubmitButton isSubmitting={isSubmitting} idleLabel="追加する" className="mt-2 w-full" />
       </form>

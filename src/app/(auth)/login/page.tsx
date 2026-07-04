@@ -60,18 +60,22 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             入力内容を確認してください。
           </p>
         ) : null}
+        <label htmlFor="email" className="sr-only">メールアドレス</label>
         <input
+          id="email"
           name="email"
           type="email"
           placeholder="Email"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
           required
         />
+        <label htmlFor="password" className="sr-only">パスワード</label>
         <input
+          id="password"
           name="password"
           type="password"
           placeholder="Password"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
           required
         />
         <button className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white">ログイン</button>

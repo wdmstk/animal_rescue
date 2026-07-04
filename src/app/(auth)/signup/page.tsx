@@ -26,18 +26,22 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <form action={signup} className="w-full max-w-sm space-y-3 rounded-2xl bg-white p-6 shadow-sm">
         <h1 className="text-xl font-bold">新規登録</h1>
+        <label htmlFor="email" className="sr-only">メールアドレス</label>
         <input
+          id="email"
           name="email"
           type="email"
           placeholder="Email"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
           required
         />
+        <label htmlFor="password" className="sr-only">パスワード</label>
         <input
+          id="password"
           name="password"
           type="password"
           placeholder="Password"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
           required
         />
         <button className="w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white">登録する</button>
