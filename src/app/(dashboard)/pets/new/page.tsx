@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type Species = "dog" | "cat" | "other";
 type Sex = "MALE" | "FEMALE" | "UNKNOWN";
@@ -108,13 +109,19 @@ export default function NewPetPage() {
             onChange={(event) => setName(event.target.value)}
             required
             maxLength={64}
+            placeholder="例: モカ"
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
           />
         </label>
 
         <div className="grid gap-3 md:grid-cols-2">
           <label className="block text-sm font-semibold text-slate-800">
-            種類
+            <div className="flex items-center gap-1">
+              種類
+              <Tooltip content="ペットの種類を選択します。犬、猫、またはその他の動物を指定できます。">
+                <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              </Tooltip>
+            </div>
             <select
               name="species"
               value={species}
@@ -154,6 +161,7 @@ export default function NewPetPage() {
               value={breed}
               onChange={(event) => setBreed(event.target.value)}
               maxLength={64}
+              placeholder="例: トイプードル"
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
           </label>
@@ -172,7 +180,12 @@ export default function NewPetPage() {
 
         <div className="grid gap-3 md:grid-cols-2">
           <label className="block text-sm font-semibold text-slate-800">
-            去勢・避妊
+            <div className="flex items-center gap-1">
+              去勢・避妊
+              <Tooltip content="去勢はオスの生殖能力を除去する手術、避妊はメスの生殖能力を除去する手術です。健康上のメリットがあります。">
+                <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              </Tooltip>
+            </div>
             <select
               name="reproductiveStatus"
               value={reproductiveStatus}

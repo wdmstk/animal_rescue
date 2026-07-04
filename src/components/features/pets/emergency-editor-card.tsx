@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { EmergencyCard } from "@/components/features/pets/emergency-card";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type EmergencyInfo = {
   disease: string | null;
@@ -150,36 +151,55 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
   return (
     <section className="rounded-2xl border border-emergency-100 bg-emergency-50 p-4">
       <h2 className="text-base font-bold text-emergency-700">緊急情報を編集</h2>
+      <p className="mt-1 text-sm text-slate-600">緊急時に必要な医療情報と連絡先を登録します。これらの情報はQRコードで共有できます。</p>
       <form className="mt-3 space-y-3" onSubmit={onSubmit}>
         <label className="block text-sm font-semibold text-slate-800">
-          持病
+          <div className="flex items-center gap-1">
+            持病
+            <Tooltip content="現在治療中または管理中の病気を記入します。緊急時の医療対応に重要です。">
+              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+            </Tooltip>
+          </div>
           <textarea
             value={disease}
             onChange={(event) => setDisease(event.target.value)}
             rows={2}
             maxLength={1000}
+            placeholder="例: 僧帽弁閉鎖不全症（軽度）"
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
           />
         </label>
 
         <label className="block text-sm font-semibold text-slate-800">
-          服薬
+          <div className="flex items-center gap-1">
+            服薬
+            <Tooltip content="現在服用中の薬を記入します。薬名、用量、投与頻度を含めると医師が対応しやすくなります。">
+              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+            </Tooltip>
+          </div>
           <textarea
             value={currentMedications}
             onChange={(event) => setCurrentMedications(event.target.value)}
             rows={2}
             maxLength={1000}
+            placeholder="例: ピモベンダン 1日2回"
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
           />
         </label>
 
         <label className="block text-sm font-semibold text-slate-800">
-          アレルギー
+          <div className="flex items-center gap-1">
+            アレルギー
+            <Tooltip content="食物、薬物、環境などのアレルギーを記入します。緊急時のアナフィラキシー対応に重要です。">
+              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+            </Tooltip>
+          </div>
           <textarea
             value={allergy}
             onChange={(event) => setAllergy(event.target.value)}
             rows={2}
             maxLength={1000}
+            placeholder="例: 鶏肉アレルギー"
             className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
           />
         </label>
@@ -191,6 +211,7 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
               value={vetName}
               onChange={(event) => setVetName(event.target.value)}
               maxLength={120}
+              placeholder="例: みなと動物病院"
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
           </label>
@@ -219,6 +240,7 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
               value={emergencyContactName}
               onChange={(event) => setEmergencyContactName(event.target.value)}
               maxLength={120}
+              placeholder="例: 山田 花子"
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
           </label>
