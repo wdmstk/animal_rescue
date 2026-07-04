@@ -274,8 +274,29 @@ export default async function PetDetailPage({
     notFound();
   }
 
-  const billing = await getUserBillingAccessState(auth.userId);
-  const historyWindowStart = getHistoryWindowStartDate(billing.accessPolicy.historyWindowDays);
+  let billing;
+  let historyWindowStart = null;
+  try {
+    billing = await getUserBillingAccessState(auth.userId);
+    historyWindowStart = getHistoryWindowStartDate(billing.accessPolicy.historyWindowDays);
+  } catch {
+    // Fallback to unrestricted access if billing check fails
+    billing = {
+      planTier: "free" as const,
+      subscriptionStatus: "INCOMPLETE" as const,
+      isActive: false,
+      trialEndsAt: null,
+      currentPeriodEnd: null,
+      accessPolicy: {
+        canCreate: true,
+        canEdit: true,
+        canNotify: true,
+        canShare: true,
+        canExport: true,
+        historyWindowDays: null
+      }
+    };
+  }
 
   const pet = await prisma.pet.findUnique({
     where: { id: access.petId },
@@ -306,13 +327,18 @@ export default async function PetDetailPage({
 
   // Generate QR token if not exists by calling the API endpoint
   if (!activeToken) {
-    const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/pets/${petId}/qr-token`, {
-      cache: "no-store"
-    });
+    try {
+      const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/pets/${petId}/qr-token`, {
+        cache: "no-store"
+      });
 
-    if (tokenResponse.ok) {
-      const tokenPayload = (await tokenResponse.json()) as { data: { token: string } };
-      activeToken = tokenPayload.data.token;
+      if (tokenResponse.ok) {
+        const tokenPayload = (await tokenResponse.json()) as { data: { token: string } };
+        activeToken = tokenPayload.data.token;
+      }
+    } catch {
+      // If QR token generation fails, continue without it
+      activeToken = null;
     }
   }
 
