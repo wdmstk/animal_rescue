@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireEditAccess } from "@/lib/billing/access-guard";
@@ -72,7 +73,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
     orderBy: { createdAt: "asc" }
   });
   if (!ownerMembership) {
-    return notFound("Owner");
+    return notFound();
   }
 
   const settings = await prisma.ownerDisplaySettings.findUnique({
@@ -113,7 +114,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
     orderBy: { createdAt: "asc" }
   });
   if (!ownerMembership) {
-    return notFound("Owner");
+    return notFound();
   }
   if (ownerMembership.userId !== auth.userId) {
     return forbidden("Only owner can update display settings");

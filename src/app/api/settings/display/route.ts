@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
 import { requireEditAccess } from "@/lib/billing/access-guard";
 import { petDisplaySettingsPatchSchema, petDisplaySettingsSchema } from "@/lib/validators/pet-display-settings";
-import { badRequest, unauthorized, notFound, serverError } from "@/lib/api-error";
+import { badRequest, forbidden, unauthorized, notFound, serverError } from "@/lib/api-error";
 
 const DEFAULT_SETTINGS = petDisplaySettingsSchema.parse({
   showMedicationCard: true,

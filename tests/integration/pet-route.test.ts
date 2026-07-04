@@ -189,4 +189,39 @@ describe("GET /api/pets/[petId]", () => {
     expect(response.status).toBe(404);
     expect(deleteMock).not.toHaveBeenCalled();
   });
+
+  it("returns 400 on delete with invalid petId", async () => {
+    const response = await DELETE(new Request("http://localhost", { method: "DELETE" }), {
+      params: Promise.resolve({ petId: "invalid-uuid" })
+    });
+
+    expect(response.status).toBe(400);
+    expect(deleteMock).not.toHaveBeenCalled();
+  });
+
+  it("returns 401 on delete when unauthenticated", async () => {
+    requireAuthenticatedUserMock.mockResolvedValueOnce(NextResponse.json({ error: "認証が必要です" }, { status: 401 }));
+
+    const response = await DELETE(new Request("http://localhost", { method: "DELETE" }), {
+      params: Promise.resolve({ petId: validPetId })
+    });
+
+    expect(response.status).toBe(401);
+    expect(deleteMock).not.toHaveBeenCalled();
+  });
+
+  it("cleans up storage even on partial failure", async () => {
+    deleteMock.mockResolvedValue({ id: validPetId });
+    listMock.mockResolvedValue({ data: [{ name: "photo1.jpg" }], error: null });
+    removeMock.mockResolvedValue({ error: { message: "Storage error" } });
+
+    const response = await DELETE(new Request("http://localhost", { method: "DELETE" }), {
+      params: Promise.resolve({ petId: validPetId })
+    });
+
+    expect(response.status).toBe(200);
+    expect(deleteMock).toHaveBeenCalled();
+    expect(fromMock).toHaveBeenCalledWith("pet-photos");
+    expect(listMock).toHaveBeenCalled();
+  });
 });
