@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type Species = "dog" | "cat" | "other";
 type Sex = "MALE" | "FEMALE" | "UNKNOWN";
@@ -153,6 +154,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
   return (
     <section className="rounded-2xl bg-white p-4 shadow-sm">
       <h2 className="text-lg font-bold text-slate-900">基本情報を編集</h2>
+      <p className="mt-1 text-sm text-slate-600">ペットの基本情報を登録します。すべての項目は後で変更できます。</p>
 
       <form className="mt-4 space-y-3" onSubmit={onSubmit}>
         <label className="block text-sm font-semibold text-slate-800">
@@ -169,7 +171,12 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
 
         <div className="grid gap-3 md:grid-cols-2">
           <label className="block text-sm font-semibold text-slate-800">
-            種類
+            <div className="flex items-center gap-1">
+              種類
+              <Tooltip content="ペットの種類を選択します。犬、猫、またはその他の動物を指定できます。">
+                <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              </Tooltip>
+            </div>
             <select
               name="species"
               value={species}
@@ -223,7 +230,12 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
 
         <div className="grid gap-3 md:grid-cols-2">
           <label className="block text-sm font-semibold text-slate-800">
-            去勢・避妊
+            <div className="flex items-center gap-1">
+              去勢・避妊
+              <Tooltip content="去勢はオスの生殖能力を除去する手術、避妊はメスの生殖能力を除去する手術です。健康上のメリットがあります。">
+                <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              </Tooltip>
+            </div>
             <select
               name="reproductiveStatus"
               value={reproductiveStatus}
@@ -280,7 +292,12 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
         </div>
 
         <label className="block text-sm font-semibold text-slate-800">
-          性格・特徴
+          <div className="flex items-center gap-1">
+            性格・特徴
+            <Tooltip content="ペットの性格や行動上の特徴を記入します。例：人懐っこい、雷が苦手、など">
+              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+            </Tooltip>
+          </div>
           <textarea
             name="notesPersonality"
             value={notesPersonality}
@@ -292,7 +309,12 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
         </label>
 
         <label className="block text-sm font-semibold text-slate-800">
-          身体的特徴
+          <div className="flex items-center gap-1">
+            身体的特徴
+            <Tooltip content="ペットの身体的な特徴を記入します。例：左耳の先に白い毛あり、模様、など">
+              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+            </Tooltip>
+          </div>
           <textarea
             name="notesFeatures"
             value={notesFeatures}

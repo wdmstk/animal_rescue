@@ -6,6 +6,7 @@ import { summarizeHealthTrendSeries } from "@/lib/services/health-graph-summary"
 import type { CoreHealthEntry, HealthExtensionEntry, HealthTrendSeries, LabResultEntry } from "@/types/health";
 import { CORE_METRIC_TYPES, LAB_MARKER_CATEGORY_MAP, LAB_MARKER_TYPES } from "@/types/health";
 import { isValidDateInput, parseNonNegativeNumber } from "@/lib/validators/health-input-ui";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type HealthTrackingPanelProps = {
   petId: string;
@@ -360,7 +361,12 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
 
       <div className="mt-4 grid gap-3 md:grid-cols-2">
         <form onSubmit={submitCore} className="space-y-2 rounded-xl border border-slate-200 p-3">
-          <p className="text-sm font-semibold text-slate-800">共通コアを記録</p>
+          <div className="flex items-center gap-1">
+            <p className="text-sm font-semibold text-slate-800">共通コアを記録</p>
+            <Tooltip content="日常的に記録する基本的な健康指標です。体重、飲水量、食欲など。">
+              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+            </Tooltip>
+          </div>
           <select
             value={coreType}
             onChange={(event) => setCoreType(event.target.value as (typeof CORE_METRIC_TYPES)[number])}
@@ -396,7 +402,12 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
         </form>
 
         <form onSubmit={submitLab} className="space-y-2 rounded-xl border border-slate-200 p-3">
-          <p className="text-sm font-semibold text-slate-800">{labCategoryLabelMap[labCategory]}を記録</p>
+          <div className="flex items-center gap-1">
+            <p className="text-sm font-semibold text-slate-800">{labCategoryLabelMap[labCategory]}を記録</p>
+            <Tooltip content="血液・尿・内分泌などの検査項目を記録します。獣医師からの検査結果を入力してください。">
+              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+            </Tooltip>
+          </div>
           <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1">
             {(Object.keys(labCategoryLabelMap) as LabResultEntry["category"][]).map((item) => (
               <button
