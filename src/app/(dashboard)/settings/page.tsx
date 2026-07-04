@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
 import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -71,32 +72,71 @@ const resolveDisplayName = (metadata: unknown): string | null => {
   return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 };
 
-export default async function SettingsPage() {
+export default async function SettingsPage({ searchParams }: { searchParams: Promise<{ e2e?: string }> }) {
   // Server-side authentication
   const auth = await requireAuthenticatedUser();
   if (auth instanceof Response) {
     redirect("/login");
   }
 
-  // Fetch account info
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-    error: userError
-  } = await supabase.auth.getUser();
+  const resolvedSearchParams = await searchParams;
 
-  if (userError || !user) {
-    redirect("/login");
+  // Fetch account info
+  const isE2E = process.env.E2E_TEST_MODE === "true";
+  let account: AccountPayload;
+  if (isE2E) {
+    account = {
+      userId: "test-user-id",
+      email: "test@example.com",
+      displayName: "Test User"
+    };
+  } else {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+      error: userError
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      redirect("/login");
+    }
+
+    account = {
+      userId: user.id,
+      email: user.email ?? null,
+      displayName: resolveDisplayName(user.user_metadata)
+    };
   }
 
-  const account: AccountPayload = {
-    userId: user.id,
-    email: user.email ?? null,
-    displayName: resolveDisplayName(user.user_metadata)
-  };
-
   // Fetch household info
-  const household = await prisma.household.findFirst({
+  const e2eTestType = resolvedSearchParams.e2e;
+  const household = isE2E ? (() => {
+    const baseHousehold = {
+      id: "h1",
+      name: "Test Household",
+      members: [
+        { id: "m1", userId: "test-user-id", role: "OWNER" as const, createdAt: new Date("2026-04-29T00:00:00.000Z") }
+      ]
+    };
+
+    // Customize based on test type
+    if (e2eTestType === "family_member") {
+      baseHousehold.members = [
+        { id: "m1", userId: "test-user-id", role: "FAMILY" as const, createdAt: new Date("2026-04-29T00:00:00.000Z") }
+      ];
+    } else if (e2eTestType === "no_owner") {
+      baseHousehold.members = [
+        { id: "m1", userId: "test-user-id", role: "FAMILY" as const, createdAt: new Date("2026-04-29T00:00:00.000Z") }
+      ];
+    } else if (e2eTestType === "multiple_members") {
+      baseHousehold.members = [
+        { id: "m1", userId: "u1", role: "FAMILY" as const, createdAt: new Date("2026-04-28T00:00:00.000Z") },
+        { id: "m2", userId: "test-user-id", role: "FAMILY" as const, createdAt: new Date("2026-04-29T00:00:00.000Z") }
+      ];
+    }
+
+    return baseHousehold;
+  })() : await prisma.household.findFirst({
     where: {
       members: {
         some: { userId: auth.userId }
@@ -130,7 +170,17 @@ export default async function SettingsPage() {
   const currentUserRole = currentUser?.role ?? "FAMILY";
 
   // Fetch billing info
-  const subscription = currentUser ? await prisma.userSubscription.findUnique({
+  const subscription = isE2E ? (() => {
+    if (e2eTestType === "paid_subscription") {
+      return {
+        status: "ACTIVE" as const,
+        trialEndsAt: null,
+        currentPeriodEnd: new Date("2026-06-01T00:00:00.000Z"),
+        graceUntil: null
+      };
+    }
+    return null;
+  })() : (currentUser ? await prisma.userSubscription.findUnique({
     where: { userId: currentUser.userId },
     select: {
       status: true,
@@ -138,7 +188,7 @@ export default async function SettingsPage() {
       currentPeriodEnd: true,
       graceUntil: true
     }
-  }) : null;
+  }) : null);
 
   const resolved = resolveBillingAccessState(subscription);
 
@@ -153,7 +203,7 @@ export default async function SettingsPage() {
   };
 
   // Fetch pets
-  const pets = await prisma.pet.findMany({
+  const pets = isE2E ? [] : await prisma.pet.findMany({
     where: { householdId: household.id },
     select: {
       id: true,
@@ -164,7 +214,7 @@ export default async function SettingsPage() {
   // Fetch owner display settings
   const ownerMember = members.find((m) => m.role === "OWNER");
   let ownerDisplaySettings: OwnerDisplaySettings | null = null;
-  if (ownerMember) {
+  if (ownerMember && !isE2E) {
     const settings = await prisma.ownerDisplaySettings.findUnique({
       where: { ownerUserId: ownerMember.userId }
     });
@@ -180,11 +230,23 @@ export default async function SettingsPage() {
         showEmergencyMedicalRecordSummary: settings.showEmergencyMedicalRecordSummary
       };
     }
+  } else if (ownerMember && isE2E) {
+    // E2E mode: provide default display settings
+    ownerDisplaySettings = {
+      ownerUserId: ownerMember.userId,
+      showMedicationCard: true,
+      showVaccinationCard: true,
+      showHealthCard: true,
+      showMedicalRecordCard: true,
+      showEmergencyMedicationSummary: true,
+      showEmergencyVaccinationSummary: true,
+      showEmergencyMedicalRecordSummary: true
+    };
   }
 
   // Fetch owner profile
   let ownerProfile: OwnerProfile | null = null;
-  if (ownerMember) {
+  if (ownerMember && !isE2E) {
     const profile = await prisma.ownerProfile.findUnique({
       where: { ownerUserId: ownerMember.userId }
     });
@@ -200,6 +262,18 @@ export default async function SettingsPage() {
         note: profile.note
       };
     }
+  } else if (ownerMember && isE2E) {
+    // E2E mode: provide default owner profile
+    ownerProfile = {
+      ownerUserId: ownerMember.userId,
+      fullName: null,
+      phone: null,
+      email: null,
+      postalCode: null,
+      addressLine1: null,
+      addressLine2: null,
+      note: null
+    };
   }
 
   return (
