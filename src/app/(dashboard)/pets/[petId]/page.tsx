@@ -11,10 +11,14 @@ import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 import { PrintCareSummaryCard } from "@/components/features/pets/print-care-summary-card";
 import { VaccinationManager } from "@/components/features/pets/vaccination-manager";
 import Link from "next/link";
-import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { E2E_PUBLIC_EMERGENCY_TOKEN } from "@/lib/constants/emergency";
 import { buildChangeHistoryItems } from "@/lib/services/change-history";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
+import { prisma } from "@/lib/prisma";
+import { getHistoryWindowStartDate } from "@/lib/billing/access-policy";
+import { getUserBillingAccessState } from "@/lib/billing/access-guard";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type PetDetailResponse = {
   data: {
@@ -63,34 +67,15 @@ const sectionLinks = [
   { id: "delete", label: "削除" }
 ] as const;
 
-const resolveOriginAndCookie = async () => {
-  const requestHeaders = await headers();
-  const protocol = requestHeaders.get("x-forwarded-proto") ?? "http";
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
-
-  return {
-    origin: `${protocol}://${host}`,
-    cookie: requestHeaders.get("cookie") ?? ""
-  };
-};
-
 export default async function PetDetailPage({
   params
 }: {
   params: Promise<{ petId: string }>;
 }) {
   const { petId } = await params;
-  const { origin, cookie } = await resolveOriginAndCookie();
-  const response = await fetch(`${origin}/api/pets/${petId}`, {
-    cache: "no-store",
-    headers: cookie ? { cookie } : undefined
-  });
 
-  if (response.status === 401) {
-    redirect("/login");
-  }
-
-  if (!response.ok && process.env.PLAYWRIGHT_E2E === "1" && (petId === "demo-pet" || petId === "sample-pet")) {
+  // E2E mode fallback
+  if (process.env.PLAYWRIGHT_E2E === "1" && (petId === "demo-pet" || petId === "sample-pet")) {
       const e2eToken = E2E_PUBLIC_EMERGENCY_TOKEN;
       const e2ePet = {
         id: petId,
@@ -278,39 +263,52 @@ export default async function PetDetailPage({
       );
   }
 
-  if (response.status === 404) {
+  // Server-side authentication and data fetching
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof Response) {
+    redirect("/login");
+  }
+
+  const access = await requirePetAccess(auth.userId, petId);
+  if (access instanceof Response) {
     notFound();
   }
 
-  if (!response.ok) {
-    return (
-      <div className="space-y-4">
-        <p className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
-          ペット詳細の取得に失敗しました。時間をおいて再度お試しください。
-        </p>
-        <Link
-          href="/pets"
-          className="inline-flex rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800"
-        >
-          ペット一覧へ戻る
-        </Link>
-      </div>
-    );
+  const billing = await getUserBillingAccessState(auth.userId);
+  const historyWindowStart = getHistoryWindowStartDate(billing.accessPolicy.historyWindowDays);
+
+  const pet = await prisma.pet.findUnique({
+    where: { id: access.petId },
+    include: {
+      emergencyInfo: true,
+      medicalRecords: {
+        where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
+        orderBy: { date: "desc" }
+      },
+      medications: {
+        where: historyWindowStart ? { startDate: { gte: historyWindowStart } } : undefined,
+        orderBy: { startDate: "desc" }
+      },
+      vaccinations: {
+        where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
+        orderBy: { date: "desc" }
+      },
+      emergencyToken: true,
+      photos: { orderBy: { sortOrder: "asc" } }
+    }
+  });
+
+  if (!pet) {
+    notFound();
   }
 
-  const payload = (await response.json()) as PetDetailResponse;
-  const pet = payload.data;
   let activeToken = pet.emergencyToken?.isActive ? pet.emergencyToken.token : null;
 
+  // Generate QR token if not exists by calling the API endpoint
   if (!activeToken) {
-    const tokenResponse = await fetch(`${origin}/api/pets/${petId}/qr-token`, {
-      cache: "no-store",
-      headers: cookie ? { cookie } : undefined
+    const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/pets/${petId}/qr-token`, {
+      cache: "no-store"
     });
-
-    if (tokenResponse.status === 401) {
-      redirect("/login");
-    }
 
     if (tokenResponse.ok) {
       const tokenPayload = (await tokenResponse.json()) as { data: { token: string } };
@@ -320,25 +318,25 @@ export default async function PetDetailPage({
 
   const emergencyLinkToken = process.env.PLAYWRIGHT_E2E === "1" ? E2E_PUBLIC_EMERGENCY_TOKEN : activeToken;
   const changeHistoryItems = buildChangeHistoryItems({
-    emergencyInfo: pet.emergencyInfo ? { updatedAt: pet.emergencyInfo.updatedAt } : null,
+    emergencyInfo: pet.emergencyInfo ? { updatedAt: pet.emergencyInfo.updatedAt.toISOString() } : null,
     medications: pet.medications.map((item) => ({
       id: item.id,
       name: item.name,
-      updatedAt: item.updatedAt,
-      createdAt: item.createdAt
+      updatedAt: item.updatedAt.toISOString(),
+      createdAt: item.createdAt.toISOString()
     })),
     vaccinations: pet.vaccinations.map((item) => ({
       id: item.id,
       type: item.type,
       customTypeName: item.customTypeName,
-      updatedAt: item.updatedAt,
-      createdAt: item.createdAt
+      updatedAt: item.updatedAt.toISOString(),
+      createdAt: item.createdAt.toISOString()
     })),
     medicalRecords: pet.medicalRecords.map((item) => ({
       id: item.id,
       title: item.title,
-      updatedAt: item.updatedAt,
-      createdAt: item.createdAt
+      updatedAt: item.updatedAt.toISOString(),
+      createdAt: item.createdAt.toISOString()
     }))
   });
 
@@ -373,18 +371,18 @@ export default async function PetDetailPage({
           petId={petId}
           initialPet={{
             name: pet.name,
-            species: pet.species,
+            species: pet.species as "dog" | "cat" | "other",
             breed: pet.breed,
             sex: pet.sex,
             ageYears: pet.ageYears,
-            weightKg: pet.weightKg,
-            birthday: pet.birthday,
+            weightKg: pet.weightKg !== null ? Number(pet.weightKg) : null,
+            birthday: pet.birthday ? pet.birthday.toISOString() : null,
             notesPersonality: pet.notesPersonality,
             notesFeatures: pet.notesFeatures,
             mainPhotoUrl: pet.mainPhotoUrl,
             photos: pet.photos,
             reproductiveStatus: pet.reproductiveStatus,
-            sterilizedAt: pet.sterilizedAt
+            sterilizedAt: pet.sterilizedAt ? pet.sterilizedAt.toISOString() : null
           }}
         />
       </section>
@@ -395,7 +393,7 @@ export default async function PetDetailPage({
             species: pet.species,
             breed: pet.breed,
             sex: pet.sex,
-            birthday: pet.birthday ? normalizeDate(pet.birthday) : null,
+            birthday: pet.birthday ? normalizeDate(pet.birthday.toISOString()) : null,
             ageYears: pet.ageYears,
             weightKg: pet.weightKg !== null ? Number(pet.weightKg) : null
           }}
@@ -426,8 +424,8 @@ export default async function PetDetailPage({
             name: item.name,
             dosage: item.dosage,
             frequency: item.frequency,
-            startDate: normalizeDate(item.startDate),
-            endDate: item.endDate ? normalizeDate(item.endDate) : null
+            startDate: normalizeDate(item.startDate.toISOString()),
+            endDate: item.endDate ? normalizeDate(item.endDate.toISOString()) : null
           }))}
         />
       </section>
@@ -439,8 +437,8 @@ export default async function PetDetailPage({
             id: item.id,
             typeCode: item.type,
             customTypeName: item.customTypeName,
-            date: normalizeDate(item.date),
-            nextDue: item.nextDue ? normalizeDate(item.nextDue) : null,
+            date: normalizeDate(item.date.toISOString()),
+            nextDue: item.nextDue ? normalizeDate(item.nextDue.toISOString()) : null,
             type:
               item.type === "RABIES"
                 ? "狂犬病"
@@ -464,7 +462,7 @@ export default async function PetDetailPage({
           petId={petId}
           initialItems={pet.medicalRecords.map((item) => ({
             id: item.id,
-            date: normalizeDate(item.date),
+            date: normalizeDate(item.date.toISOString()),
             title: item.title,
             description: item.description,
             recordType: item.recordType

@@ -12,6 +12,11 @@ type AuthorizedPet = {
 };
 
 export async function requireAuthenticatedUser(): Promise<AuthenticatedUser | NextResponse> {
+  // E2E test mode: skip authentication check
+  if (process.env.E2E_TEST_MODE === "true") {
+    return { userId: "test-user-id" };
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },

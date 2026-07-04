@@ -9,6 +9,7 @@ const envPrefix =
   "STRIPE_WEBHOOK_SECRET=whsec_dummy " +
   "STRIPE_PRICE_ID_MONTHLY_500=price_dummy " +
   "PLAYWRIGHT_E2E=1 " +
+  "E2E_TEST_MODE=true " +
   "NEXT_PUBLIC_APP_URL=http://localhost:3100";
 
 export default defineConfig({

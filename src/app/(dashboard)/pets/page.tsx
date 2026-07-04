@@ -1,57 +1,52 @@
 import Link from "next/link";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { HouseholdInviteCodeCard } from "@/components/features/pets/household-invite-code-card";
 import { PetListCard } from "@/components/features/pets/pet-list-card";
 import { ONBOARDING_TOTAL_STEPS, calculateOnboardingProgress } from "@/lib/onboarding-progress";
+import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
+import { prisma } from "@/lib/prisma";
 
-type PetsResponse = {
-  data: Array<{
+export default async function PetsPage() {
+  // Server-side authentication and data fetching
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof Response) {
+    redirect("/login");
+  }
+
+  let pets: Array<{
     id: string;
     name: string;
     species: "dog" | "cat" | "other";
     breed: string | null;
-  }>;
-};
-
-const resolveOriginAndCookie = async () => {
-  const requestHeaders = await headers();
-  const protocol = requestHeaders.get("x-forwarded-proto") ?? "http";
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
-
-  return {
-    origin: `${protocol}://${host}`,
-    cookie: requestHeaders.get("cookie") ?? ""
-  };
-};
-
-export default async function PetsPage() {
-  const { origin, cookie } = await resolveOriginAndCookie();
-  let pets: PetsResponse["data"] = [];
+  }> = [];
   let hasError = false;
 
   try {
-    const response = await fetch(`${origin}/api/pets`, {
-      cache: "no-store",
-      headers: cookie ? { cookie } : undefined
+    const userPets = await prisma.pet.findMany({
+      where: {
+        household: {
+          members: {
+            some: { userId: auth.userId }
+          }
+        }
+      },
+      select: {
+        id: true,
+        name: true,
+        species: true,
+        breed: true
+      }
     });
-
-    if (response.status === 401) {
-      redirect("/login");
-    }
-
-    if (!response.ok) {
-      hasError = true;
-    } else {
-      const payload = (await response.json()) as PetsResponse;
-      pets = payload.data;
-    }
+    pets = userPets.map(pet => ({
+      ...pet,
+      species: pet.species as "dog" | "cat" | "other"
+    }));
   } catch {
     hasError = true;
   }
 
   if (process.env.PLAYWRIGHT_E2E === "1" && (pets.length === 0 || hasError)) {
-    pets = [{ id: "sample-pet", name: "モカ", species: "dog", breed: "トイプードル" }];
+    pets = [{ id: "sample-pet", name: "モカ", species: "dog" as "dog" | "cat" | "other", breed: "トイプードル" }];
     hasError = false;
   }
 
