@@ -90,6 +90,25 @@ test("settings account update shows message when nothing changed", async ({ page
     });
   });
 
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
+        }
+      })
+    });
+  });
+
   await page.goto("/settings");
   await expect(page.getByRole("heading", { name: "ログイン情報" })).toBeVisible();
 
@@ -200,6 +219,25 @@ test("settings can toggle pet display setting", async ({ page }) => {
     });
   });
 
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
+        }
+      })
+    });
+  });
+
   await page.goto("/settings");
   await expect(page.getByRole("heading", { name: "ペット表示設定" })).toBeVisible();
 
@@ -281,6 +319,25 @@ test("settings shows checkout CTA for inactive subscription and calls checkout e
           showEmergencyMedicationSummary: true,
           showEmergencyVaccinationSummary: true,
           showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
         }
       })
     });
@@ -370,6 +427,25 @@ test("settings shows portal CTA for active subscription and calls portal endpoin
     });
   });
 
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
+        }
+      })
+    });
+  });
+
   await page.goto("/settings");
   const cta = page.getByRole("button", { name: "契約を管理する" });
   await expect(cta).toBeVisible();
@@ -446,6 +522,25 @@ test("settings shows API error when demoting the last owner is rejected", async 
           showEmergencyMedicationSummary: true,
           showEmergencyVaccinationSummary: true,
           showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
         }
       })
     });
@@ -535,6 +630,25 @@ test("settings can recover owner only for oldest member when owner is missing", 
     });
   });
 
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
+        }
+      })
+    });
+  });
+
   await page.goto("/settings");
   await page.getByRole("button", { name: "OWNERを復旧する" }).click();
   await expect(page.getByText("OWNERを復旧しました。")).toBeVisible();
@@ -605,6 +719,25 @@ test("settings hides owner recovery button for non-oldest member", async ({ page
           showEmergencyMedicationSummary: true,
           showEmergencyVaccinationSummary: true,
           showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
         }
       })
     });
@@ -683,6 +816,25 @@ test("settings shows API error when owner recovery fails", async ({ page }) => {
           showEmergencyMedicationSummary: true,
           showEmergencyVaccinationSummary: true,
           showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "u1",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
         }
       })
     });
