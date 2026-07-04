@@ -32,13 +32,13 @@ Development Task List
 4. `TASK-192` ペット詳細ページ情報整理
 5. `TASK-191` カスタム確認ダイアログ
 6. `TASK-190` フォームバリデーション改善
-7. `TASK-189` モバイルタッチターゲット拡大
-8. `TASK-188` アクセシビリティ改善（WCAG準拠）
 
 ### blocked
 （なし）
 
 ### done
+1. `TASK-189` モバイルタッチターゲット拡大
+1. `TASK-188` アクセシビリティ改善（WCAG準拠）
 1. `TASK-187` APIエラーハンドリング統一化
 1. `TASK-186` Prisma build failure修正（shadow DB設定除外）
 1. `TASK-185` 医療書類写真登録 + OCR抽出MVP
