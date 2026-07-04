@@ -23,9 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-186` Prisma build failure修正（shadow DB設定除外）
-2. `TASK-185` 医療書類写真登録 + OCR抽出MVP
-3. `TASK-184` ペット削除（ハード削除）
+（なし）
 
 ### todo
 （なし）
@@ -35,7 +33,9 @@ Development Task List
 
 ### done
 1. `TASK-187` APIエラーハンドリング統一化
+1. `TASK-186` Prisma build failure修正（shadow DB設定除外）
 1. `TASK-185` 医療書類写真登録 + OCR抽出MVP
+1. `TASK-184` ペット削除（ハード削除）
 1. `TASK-183` 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
 1. `TASK-182` ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
 1. `TASK-181` 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
@@ -156,7 +156,7 @@ Development Task List
 ### Prisma build failure修正（shadow DB設定除外）
 - Task ID: `TASK-186`
 - ブランチ: `fix/TASK-186-prisma-build-shadowdb`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: `prisma migrate deploy` が shadow database を main database と誤認して build 失敗する問題を修正する
 - Issue: `#200`
 - 依存関係:
@@ -168,8 +168,8 @@ Development Task List
 
 ### ペット削除（ハード削除）
 - Task ID: `TASK-184`
-- ブランチ: `feat/TASK-185-medical-doc-photo-ocr-mvp`
-- ステータス: `in_progress`
+- ブランチ: `feat/TASK-184-pet-delete-hard`
+- ステータス: `done`
 - 概要: ペット削除APIと詳細画面の削除導線を追加し、関連データをCascadeで削除できるようにする
 - Issue: `#197`
 - 依存関係:
