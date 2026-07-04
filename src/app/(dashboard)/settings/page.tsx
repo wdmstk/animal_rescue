@@ -111,27 +111,31 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   // Fetch household info
   const e2eTestType = resolvedSearchParams.e2e;
   const household = isE2E ? (() => {
-    const baseHousehold = {
+    const baseHousehold: {
+      id: string;
+      name: string;
+      members: Array<{ id: string; userId: string; role: "OWNER" | "FAMILY"; createdAt: string }>;
+    } = {
       id: "h1",
       name: "Test Household",
       members: [
-        { id: "m1", userId: "test-user-id", role: "OWNER" as const, createdAt: new Date("2026-04-29T00:00:00.000Z") }
+        { id: "m1", userId: "test-user-id", role: "OWNER", createdAt: "2026-04-29T00:00:00.000Z" }
       ]
     };
 
     // Customize based on test type
     if (e2eTestType === "family_member") {
       baseHousehold.members = [
-        { id: "m1", userId: "test-user-id", role: "FAMILY" as const, createdAt: new Date("2026-04-29T00:00:00.000Z") }
+        { id: "m1", userId: "test-user-id", role: "FAMILY", createdAt: "2026-04-29T00:00:00.000Z" }
       ];
     } else if (e2eTestType === "no_owner") {
       baseHousehold.members = [
-        { id: "m1", userId: "test-user-id", role: "FAMILY" as const, createdAt: new Date("2026-04-29T00:00:00.000Z") }
+        { id: "m1", userId: "test-user-id", role: "FAMILY", createdAt: "2026-04-29T00:00:00.000Z" }
       ];
     } else if (e2eTestType === "multiple_members") {
       baseHousehold.members = [
-        { id: "m1", userId: "u1", role: "FAMILY" as const, createdAt: new Date("2026-04-28T00:00:00.000Z") },
-        { id: "m2", userId: "test-user-id", role: "FAMILY" as const, createdAt: new Date("2026-04-29T00:00:00.000Z") }
+        { id: "m1", userId: "u1", role: "FAMILY", createdAt: "2026-04-28T00:00:00.000Z" },
+        { id: "m2", userId: "test-user-id", role: "FAMILY", createdAt: "2026-04-29T00:00:00.000Z" }
       ];
     }
 
@@ -162,7 +166,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   // Convert Date to string for members
   const members = household.members.map(member => ({
     ...member,
-    createdAt: member.createdAt.toISOString(),
+    createdAt: typeof member.createdAt === 'string' ? member.createdAt : member.createdAt.toISOString(),
     role: member.role as "OWNER" | "FAMILY"
   }));
 
