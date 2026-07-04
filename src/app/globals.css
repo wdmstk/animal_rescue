@@ -4,13 +4,43 @@
 
 :root {
   color-scheme: light;
+  --background-start: #f8fafc;
+  --background-end: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --input-bg: #f8fafc;
+  --button-primary: #0f172a;
+  --button-primary-text: #ffffff;
+  --button-secondary: #e2e8f0;
+  --button-secondary-text: #475569;
+  --link-color: #0f172a;
+  --focus-outline: #0f172a;
+}
+
+.dark {
+  color-scheme: dark;
+  --background-start: #0f172a;
+  --background-end: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --input-bg: #0f172a;
+  --button-primary: #f8fafc;
+  --button-primary-text: #0f172a;
+  --button-secondary: #334155;
+  --button-secondary-text: #e2e8f0;
+  --link-color: #f8fafc;
+  --focus-outline: #f8fafc;
 }
 
 body {
   margin: 0;
   font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
-  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-  color: #0f172a;
+  background: linear-gradient(180deg, var(--background-start) 0%, var(--background-end) 100%);
+  color: var(--text-primary);
 }
 
 a {
@@ -20,7 +50,7 @@ a {
 
 /* Accessibility: Enhanced focus styles for keyboard navigation */
 *:focus-visible {
-  outline: 2px solid #0f172a;
+  outline: 2px solid var(--focus-outline);
   outline-offset: 2px;
 }
 
@@ -29,7 +59,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #0f172a;
+  outline: 2px solid var(--focus-outline);
   outline-offset: 2px;
 }
 

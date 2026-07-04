@@ -52,10 +52,10 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
       <Link href={`/pets/${id}`} className="block">
-        <h3 className="text-base font-bold text-slate-900">{name}</h3>
-        <p className="text-sm text-slate-600">
+        <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">{name}</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
           {speciesLabelMap[species]} / {breed ?? "未登録"}
         </p>
       </Link>
@@ -65,7 +65,7 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
           onClick={onDelete}
           disabled={isDeleting}
           aria-label={`${name}を削除`}
-          className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent min-h-[44px] min-w-[44px]"
+          className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent min-h-[44px] min-w-[44px] dark:border-rose-700 dark:bg-rose-950 dark:text-rose-400"
         >
           {isDeleting ? "削除中..." : "削除"}
         </button>

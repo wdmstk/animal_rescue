@@ -23,14 +23,13 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-194` ダークモード対応
 
 ### todo
-1. `TASK-194` ダークモード対応
-2. `TASK-193` プログレス表示視覚化
-3. `TASK-192` ペット詳細ページ情報整理
-4. `TASK-191` カスタム確認ダイアログ
-5. `TASK-190` フォームバリデーション改善
+1. `TASK-193` プログレス表示視覚化
+2. `TASK-192` ペット詳細ページ情報整理
+3. `TASK-191` カスタム確認ダイアログ
+4. `TASK-190` フォームバリデーション改善
 
 ### blocked
 （なし）
@@ -1286,7 +1285,7 @@ Development Task List
 ### ダークモード対応
 - Task ID: `TASK-194`
 - ブランチ: `feat/TASK-194-dark-mode-support`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: ダークモードを追加し、ユーザーのシステム設定に応じて自動切り替えする
 - Issue: #214
 - 依存関係:
