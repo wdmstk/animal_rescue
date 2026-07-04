@@ -18,6 +18,26 @@ a {
   text-decoration: none;
 }
 
+/* Accessibility: Enhanced focus styles for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #0f172a;
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #0f172a;
+  outline-offset: 2px;
+}
+
+/* Mobile: Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
 @media print {
   body * {
     visibility: hidden;

@@ -145,10 +145,12 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
           {editingId ? "ワクチン履歴を編集" : "ワクチン履歴を追加"}
         </h3>
         <div className="mt-3 grid gap-2 md:grid-cols-3">
+          <label htmlFor="vaccination-type" className="sr-only">ワクチン種類</label>
           <select
+            id="vaccination-type"
             value={type}
             onChange={(event) => setType(event.target.value as VaccinationType)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
           >
             {Object.entries(typeLabelMap).map(([key, label]) => (
               <option key={key} value={key}>
@@ -156,18 +158,22 @@ export function VaccinationManager({ petId, initialItems }: VaccinationManagerPr
               </option>
             ))}
           </select>
+          <label htmlFor="vaccination-date" className="sr-only">接種日</label>
           <input
+            id="vaccination-date"
             type="date"
             value={date}
             onChange={(event) => setDate(event.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
             required
           />
+          <label htmlFor="vaccination-next-due" className="sr-only">次回予定日</label>
           <input
+            id="vaccination-next-due"
             type="date"
             value={nextDue}
             onChange={(event) => setNextDue(event.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
           />
         </div>
         <p className="mt-2 text-xs text-slate-600">接種日: 実際に接種した日 / 次回予定: 次回接種日（未定なら空欄可）</p>

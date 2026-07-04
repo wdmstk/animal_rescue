@@ -64,7 +64,8 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
           type="button"
           onClick={onDelete}
           disabled={isDeleting}
-          className="rounded-lg border border-rose-300 bg-rose-50 px-2 py-1 text-xs font-semibold text-rose-700 disabled:opacity-50"
+          aria-label={`${name}を削除`}
+          className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent min-h-[44px] min-w-[44px]"
         >
           {isDeleting ? "削除中..." : "削除"}
         </button>
