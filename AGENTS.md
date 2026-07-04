@@ -173,15 +173,14 @@ The following flow is mandatory for every implementation/fix task:
 5. PR creation
    - Open 1 task = 1 PR
    - Open as a ready-for-review PR by default (use draft only when explicitly requested)
-   - Fill PR checklist completely (task/branch/tests/CI/self-review)
+   - Fill PR checklist:
+     - 必須チェック（Lint, Vitest, DB Integration, E2E）が通っている
+     - 関連Issueをクローズした（マージ後）
 6. CI confirmation
    - Confirm required checks are green before merge
    - If failed, fix and re-run until green
-7. Self review (final)
-   - Perform final self review after CI is green
-   - Ensure no unrelated changes are included
-8. Merge to `main`
-   - Merge only after CI is green and self review is done
+7. Merge to `main`
+   - Merge only after CI is green
    - Close corresponding GitHub Issue
    - Delete merged branch and update local `main`
 
