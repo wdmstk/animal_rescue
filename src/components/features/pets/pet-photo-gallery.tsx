@@ -133,7 +133,7 @@ export function PetPhotoGallery({ petId, photos }: PetPhotoGalleryProps) {
           <button
             type="button"
             onClick={() => fileInputRef.current?.focus()}
-            className="mt-2 inline-flex rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-semibold text-slate-700"
+            className="mt-2 inline-flex rounded-md border border-slate-300 bg-white px-4 py-3 text-xs font-semibold text-slate-700 min-h-[44px] min-w-[44px]"
           >
             画像を選択する
           </button>
