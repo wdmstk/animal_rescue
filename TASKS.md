@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-196` ペット詳細取得失敗と設定画面認証遅延の修正
 
 ### todo
 1. `TASK-195` コンテキストヘルプ追加
@@ -130,6 +130,20 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### ペット詳細取得失敗と設定画面認証遅延の修正
+- Task ID: `TASK-196`
+- ブランチ: `fix/TASK-196-pet-detail-fetch-auth-delay`
+- ステータス: `in_progress`
+- 概要: ペット一覧からペットを選択後に「ペット詳細の取得に失敗しました」となる問題と、設定画面遷移直後にログイン情報が表示されず遅延する問題を修正する
+- Issue: #218
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - ペット詳細APIの認証セッション管理を修正し、再選択時に確実に認証状態を維持する
+  - 設定画面の認証情報取得タイミングを修正し、遷移直後に確実に表示する
+  - 原因究明と再発防止テストを追加する
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### APIエラーハンドリング統一化
 - Task ID: `TASK-187`

@@ -1,25 +1,14 @@
-"use client";
-
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { HouseholdInviteCodeCard } from "@/components/features/pets/household-invite-code-card";
-import { ToastMessage } from "@/components/ui/toast-message";
+import { redirect } from "next/navigation";
+import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
+import { prisma } from "@/lib/prisma";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { ClientSettings } from "./_client-settings";
 
 type Member = {
   id: string;
   userId: string;
   role: "OWNER" | "FAMILY";
   createdAt: string;
-};
-
-type HouseholdPayload = {
-  household: {
-    id: string;
-    name: string;
-    members: Member[];
-  };
-  currentUserRole: "OWNER" | "FAMILY";
 };
 
 type AccountPayload = {
@@ -60,6 +49,7 @@ type OwnerDisplaySettings = {
   showEmergencyVaccinationSummary: boolean;
   showEmergencyMedicalRecordSummary: boolean;
 };
+
 type OwnerProfile = {
   ownerUserId: string;
   fullName: string | null;
@@ -71,601 +61,163 @@ type OwnerProfile = {
   note: string | null;
 };
 
-type BillingActionCopy = {
-  badgeLabel: string;
-  statusLabel: string;
-  headline: string;
-  detail: string;
-  ctaLabel: string;
-  ctaAction: "checkout" | "portal";
-};
-
-const BILLING_ACTION_COPY: Record<BillingPayload["subscriptionStatus"], BillingActionCopy> = {
-  INCOMPLETE: {
-    badgeLabel: "未契約",
-    statusLabel: "無料トライアルを開始できます",
-    headline: "30日無料で使い始めましょう",
-    detail: "課金が始まる前に、編集・通知・共有を含む全機能をお試しいただけます。",
-    ctaLabel: "無料トライアルを開始する",
-    ctaAction: "checkout"
-  },
-  TRIALING: {
-    badgeLabel: "トライアル中",
-    statusLabel: "全機能を利用中です",
-    headline: "30日後に月額680円プランへ自動移行します",
-    detail: "移行前でも、契約管理からいつでも支払い方法の更新や解約ができます。",
-    ctaLabel: "契約を管理する",
-    ctaAction: "portal"
-  },
-  ACTIVE: {
-    badgeLabel: "契約中",
-    statusLabel: "全機能を利用中です",
-    headline: "契約は有効です",
-    detail: "契約管理から、いつでも支払い方法の変更や解約ができます。",
-    ctaLabel: "契約を管理する",
-    ctaAction: "portal"
-  },
-  PAST_DUE: {
-    badgeLabel: "要対応",
-    statusLabel: "支払い確認待ちです",
-    headline: "支払い情報を確認してください",
-    detail: "契約管理で支払い情報を更新すると、機能制限の解除につながります。",
-    ctaLabel: "契約を管理する",
-    ctaAction: "portal"
-  },
-  CANCELED: {
-    badgeLabel: "停止中",
-    statusLabel: "契約が終了しています",
-    headline: "再開すると全機能がすぐ戻ります",
-    detail: "停止中でも安全情報は閲覧できます。必要なタイミングでいつでも再開できます。",
-    ctaLabel: "無料トライアルを開始する",
-    ctaAction: "checkout"
-  },
-  UNPAID: {
-    badgeLabel: "停止中",
-    statusLabel: "お支払いが未完了です",
-    headline: "支払い情報の更新で利用を再開できます",
-    detail: "停止中でも安全情報は閲覧できます。再開後に編集・通知・共有が復帰します。",
-    ctaLabel: "契約を管理する",
-    ctaAction: "portal"
-  },
-  GRACE: {
-    badgeLabel: "猶予中",
-    statusLabel: "一部機能が制限されています",
-    headline: "支払い情報の更新で全機能が復帰します",
-    detail: "猶予中でも安全情報は閲覧できます。契約管理からいつでも再開できます。",
-    ctaLabel: "契約を管理する",
-    ctaAction: "portal"
+const resolveDisplayName = (metadata: unknown): string | null => {
+  if (!metadata || typeof metadata !== "object") {
+    return null;
   }
+
+  const value = (metadata as { display_name?: unknown }).display_name;
+  return typeof value === "string" && value.trim().length > 0 ? value.trim() : null;
 };
 
-const DEFAULT_BILLING_COPY: BillingActionCopy = BILLING_ACTION_COPY.INCOMPLETE;
+export default async function SettingsPage() {
+  // Server-side authentication
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof Response) {
+    redirect("/login");
+  }
 
-const formatBillingDate = (iso: string | null) => (iso ? new Date(iso).toLocaleString("ja-JP") : "-");
+  // Fetch account info
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+    error: userError
+  } = await supabase.auth.getUser();
 
-export default function SettingsPage() {
-  const router = useRouter();
-  const [members, setMembers] = useState<Member[]>([]);
-  const [householdName, setHouseholdName] = useState<string>("");
-  const [currentUserRole, setCurrentUserRole] = useState<"OWNER" | "FAMILY">("FAMILY");
-  const [account, setAccount] = useState<AccountPayload | null>(null);
-  const [displayName, setDisplayName] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [billing, setBilling] = useState<BillingPayload | null>(null);
-  const [isBillingSubmitting, setIsBillingSubmitting] = useState(false);
-  const [isPortalSubmitting, setIsPortalSubmitting] = useState(false);
-  const [pets, setPets] = useState<PetListItem[]>([]);
-  const [ownerDisplaySettings, setOwnerDisplaySettings] = useState<OwnerDisplaySettings | null>(null);
-  const [isDisplaySettingsSaving, setIsDisplaySettingsSaving] = useState(false);
-  const [isRecoveringOwner, setIsRecoveringOwner] = useState(false);
-  const [ownerProfile, setOwnerProfile] = useState<OwnerProfile | null>(null);
-  const [isOwnerProfileSaving, setIsOwnerProfileSaving] = useState(false);
+  if (userError || !user) {
+    redirect("/login");
+  }
 
-  const isOwner = currentUserRole === "OWNER";
-  const hasOwner = members.some((member) => member.role === "OWNER");
-  const oldestMember = [...members].sort((a, b) => {
-    const createdAtDiff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-    if (createdAtDiff !== 0) {
-      return createdAtDiff;
-    }
-    return a.id.localeCompare(b.id);
-  })[0];
-  const canRecoverOwner = !hasOwner && !!account?.userId && oldestMember?.userId === account.userId;
+  const account: AccountPayload = {
+    userId: user.id,
+    email: user.email ?? null,
+    displayName: resolveDisplayName(user.user_metadata)
+  };
 
-  const loadData = async () => {
-    setErrorMessage(null);
-    try {
-      const [membersRes, accountRes, billingRes, petsRes, ownerSettingsRes] = await Promise.all([
-        fetch("/api/households/members"),
-        fetch("/api/account"),
-        fetch("/api/billing/subscription"),
-        fetch("/api/pets"),
-        fetch("/api/settings/display")
-      ]);
-
-      if (!membersRes.ok || !accountRes.ok || !billingRes.ok || !petsRes.ok || !ownerSettingsRes.ok) {
-        setErrorMessage("設定情報の取得に失敗しました。");
-        return;
+  // Fetch household info
+  const household = await prisma.household.findFirst({
+    where: {
+      members: {
+        some: { userId: auth.userId }
       }
+    },
+    include: {
+      members: {
+        select: {
+          id: true,
+          userId: true,
+          role: true,
+          createdAt: true
+        },
+        orderBy: { createdAt: "asc" }
+      }
+    }
+  });
 
-      const membersJson = (await membersRes.json()) as { data: HouseholdPayload };
-      const accountJson = (await accountRes.json()) as { data: AccountPayload };
-      const billingJson = (await billingRes.json()) as { data: BillingPayload };
-      const petsJson = (await petsRes.json()) as { data: PetListItem[] };
-      const ownerSettingsJson = (await ownerSettingsRes.json()) as { data: OwnerDisplaySettings };
-      const ownerProfileRes = await fetch("/api/settings/owner-profile");
-      const ownerProfileJson = ownerProfileRes.ok
-        ? ((await ownerProfileRes.json()) as { data: OwnerProfile })
-        : null;
+  if (!household) {
+    redirect("/pets");
+  }
 
-      setHouseholdName(membersJson.data.household.name);
-      setMembers(membersJson.data.household.members);
-      setCurrentUserRole(membersJson.data.currentUserRole);
-      setAccount(accountJson.data);
-      setDisplayName(accountJson.data.displayName ?? "");
-      setBilling(billingJson.data);
-      setPets(petsJson.data);
-      setOwnerDisplaySettings(ownerSettingsJson.data);
-      setOwnerProfile(ownerProfileJson?.data ?? null);
-    } catch {
-      setErrorMessage("設定情報の取得に失敗しました。");
+  const currentUser = household.members.find((m) => m.userId === auth.userId);
+  const currentUserRole = currentUser?.role ?? "FAMILY";
+
+  // Fetch billing info
+  const billing = await prisma.billing.findUnique({
+    where: { householdId: household.id }
+  });
+
+  const billingPayload: BillingPayload = billing ? {
+    planTier: billing.planTier,
+    subscriptionStatus: billing.subscriptionStatus,
+    status: billing.subscriptionStatus,
+    isActive: billing.isActive,
+    trialEndsAt: billing.trialEndsAt?.toISOString() ?? null,
+    currentPeriodEnd: billing.currentPeriodEnd?.toISOString() ?? null,
+    accessPolicy: {
+      canCreate: billing.accessPolicy.canCreate,
+      canEdit: billing.accessPolicy.canEdit,
+      canNotify: billing.accessPolicy.canNotify,
+      canShare: billing.accessPolicy.canShare,
+      canExport: billing.accessPolicy.canExport,
+      historyWindowDays: billing.accessPolicy.historyWindowDays
+    }
+  } : {
+    planTier: "free",
+    subscriptionStatus: "INCOMPLETE",
+    status: "INCOMPLETE",
+    isActive: false,
+    trialEndsAt: null,
+    currentPeriodEnd: null,
+    accessPolicy: {
+      canCreate: false,
+      canEdit: false,
+      canNotify: false,
+      canShare: false,
+      canExport: false,
+      historyWindowDays: null
     }
   };
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void loadData();
-  }, []);
+  // Fetch pets
+  const pets = await prisma.pet.findMany({
+    where: { householdId: household.id },
+    select: {
+      id: true,
+      name: true
+    }
+  });
 
-  const roleLabel = useMemo(() => ({ OWNER: "OWNER", FAMILY: "FAMILY" }), []);
-
-  const handleRoleChange = async (memberId: string, nextRole: "OWNER" | "FAMILY") => {
-    setErrorMessage(null);
-    setMessage(null);
-
-    const response = await fetch(`/api/households/members/${memberId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ role: nextRole })
+  // Fetch owner display settings
+  const ownerMember = household.members.find((m) => m.role === "OWNER");
+  let ownerDisplaySettings: OwnerDisplaySettings | null = null;
+  if (ownerMember) {
+    const settings = await prisma.ownerDisplaySettings.findUnique({
+      where: { ownerUserId: ownerMember.userId }
     });
-    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-
-    if (!response.ok) {
-      setErrorMessage(typeof payload?.error === "string" ? payload.error : "権限更新に失敗しました。");
-      return;
+    if (settings) {
+      ownerDisplaySettings = {
+        ownerUserId: settings.ownerUserId,
+        showMedicationCard: settings.showMedicationCard,
+        showVaccinationCard: settings.showVaccinationCard,
+        showHealthCard: settings.showHealthCard,
+        showMedicalRecordCard: settings.showMedicalRecordCard,
+        showEmergencyMedicationSummary: settings.showEmergencyMedicationSummary,
+        showEmergencyVaccinationSummary: settings.showEmergencyVaccinationSummary,
+        showEmergencyMedicalRecordSummary: settings.showEmergencyMedicalRecordSummary
+      };
     }
+  }
 
-    setMessage("メンバー権限を更新しました。");
-    await loadData();
-  };
-
-  const handleSubmitAccount = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setErrorMessage(null);
-    setMessage(null);
-
-    const nextDisplayName = displayName.trim();
-    const currentDisplayName = account?.displayName?.trim() ?? "";
-    const hasPassword = password.trim().length > 0;
-    const isDisplayNameChanged = nextDisplayName !== currentDisplayName;
-
-    if (!isDisplayNameChanged && !hasPassword) {
-      setMessage("更新する項目がありません。");
-      return;
-    }
-
-    const payload: { displayName?: string; password?: string } = {};
-    if (isDisplayNameChanged && nextDisplayName.length > 0) {
-      payload.displayName = nextDisplayName;
-    }
-    if (hasPassword) {
-      payload.password = password;
-    }
-
-    const response = await fetch("/api/account", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+  // Fetch owner profile
+  let ownerProfile: OwnerProfile | null = null;
+  if (ownerMember) {
+    const profile = await prisma.ownerProfile.findUnique({
+      where: { ownerUserId: ownerMember.userId }
     });
-    const responsePayload = (await response.json().catch(() => null)) as { error?: string } | null;
-
-    if (!response.ok) {
-      setErrorMessage(
-        typeof responsePayload?.error === "string" ? responsePayload.error : "アカウント更新に失敗しました。"
-      );
-      return;
+    if (profile) {
+      ownerProfile = {
+        ownerUserId: profile.ownerUserId,
+        fullName: profile.fullName,
+        phone: profile.phone,
+        email: profile.email,
+        postalCode: profile.postalCode,
+        addressLine1: profile.addressLine1,
+        addressLine2: profile.addressLine2,
+        note: profile.note
+      };
     }
-
-    setPassword("");
-    setMessage("アカウント情報を更新しました。");
-    await loadData();
-  };
-
-  const handleLogout = async () => {
-    setErrorMessage(null);
-    const response = await fetch("/api/auth/logout", { method: "POST" });
-    if (!response.ok) {
-      setErrorMessage("ログアウトに失敗しました。");
-      return;
-    }
-    router.push("/login");
-    router.refresh();
-  };
-
-  const handleStartBilling = async () => {
-    setErrorMessage(null);
-    setIsBillingSubmitting(true);
-
-    const response = await fetch("/api/billing/checkout", { method: "POST" });
-    const payload = (await response.json().catch(() => null)) as { data?: { url?: string }; error?: string } | null;
-
-    if (!response.ok || !payload?.data?.url) {
-      setIsBillingSubmitting(false);
-      setErrorMessage(typeof payload?.error === "string" ? payload.error : "課金ページの作成に失敗しました。");
-      return;
-    }
-
-    window.location.href = payload.data.url;
-  };
-
-  const handleOpenBillingPortal = async () => {
-    setErrorMessage(null);
-    setIsPortalSubmitting(true);
-
-    const response = await fetch("/api/billing/portal", { method: "POST" });
-    const payload = (await response.json().catch(() => null)) as { data?: { url?: string }; error?: string } | null;
-
-    if (!response.ok || !payload?.data?.url) {
-      setIsPortalSubmitting(false);
-      setErrorMessage(
-        typeof payload?.error === "string"
-          ? payload.error
-          : "契約管理ページを開けませんでした。時間をおいて再度お試しください。"
-      );
-      return;
-    }
-
-    window.location.href = payload.data.url;
-  };
-
-  const handleToggleDisplaySetting = async (
-    key: keyof Omit<OwnerDisplaySettings, "ownerUserId">,
-    checked: boolean
-  ) => {
-    setErrorMessage(null);
-    setMessage(null);
-    setIsDisplaySettingsSaving(true);
-
-    const response = await fetch("/api/settings/display", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ [key]: checked })
-    });
-    const payload = (await response.json().catch(() => null)) as { data?: OwnerDisplaySettings; error?: string } | null;
-
-    if (!response.ok || !payload?.data) {
-      setErrorMessage("表示設定の更新に失敗しました。");
-      setIsDisplaySettingsSaving(false);
-      return;
-    }
-
-    setOwnerDisplaySettings(payload.data as OwnerDisplaySettings);
-    setIsDisplaySettingsSaving(false);
-    setMessage("表示設定を更新しました。");
-  };
-
-  const handleRecoverOwner = async () => {
-    setErrorMessage(null);
-    setMessage(null);
-    setIsRecoveringOwner(true);
-
-    const response = await fetch("/api/households/recover-owner", { method: "POST" });
-    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
-
-    if (!response.ok) {
-      setErrorMessage(typeof payload?.error === "string" ? payload.error : "OWNER復旧に失敗しました。");
-      setIsRecoveringOwner(false);
-      return;
-    }
-
-    setIsRecoveringOwner(false);
-    setMessage("OWNERを復旧しました。");
-    await loadData();
-  };
-
-  const handleOwnerProfileSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!ownerProfile) {
-      return;
-    }
-
-    setErrorMessage(null);
-    setMessage(null);
-    setIsOwnerProfileSaving(true);
-
-    const response = await fetch("/api/settings/owner-profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        fullName: ownerProfile.fullName,
-        phone: ownerProfile.phone,
-        email: ownerProfile.email,
-        postalCode: ownerProfile.postalCode,
-        addressLine1: ownerProfile.addressLine1,
-        addressLine2: ownerProfile.addressLine2,
-        note: ownerProfile.note
-      })
-    });
-    const payload = (await response.json().catch(() => null)) as { data?: OwnerProfile; error?: string } | null;
-
-    if (!response.ok || !payload?.data) {
-      setErrorMessage(typeof payload?.error === "string" ? payload.error : "飼い主情報の更新に失敗しました。");
-      setIsOwnerProfileSaving(false);
-      return;
-    }
-
-    setOwnerProfile(payload.data);
-    setIsOwnerProfileSaving(false);
-    setMessage("飼い主情報を更新しました。");
-  };
+  }
 
   return (
-    <div className="space-y-4">
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">家族情報</h2>
-        <p className="mt-1 text-sm text-slate-600">世帯: {householdName || "-"}</p>
-        <p className="mt-1 text-xs text-slate-500">あなたの権限: {roleLabel[currentUserRole]}</p>
-        <div className="mt-2">
-          <Link href="/invite/join" className="text-sm font-semibold text-slate-900 underline">
-            招待コードで家族に参加する
-          </Link>
-        </div>
-        <div className="mt-3 space-y-2">
-          {members.map((member) => (
-            <div key={member.id} className="rounded-lg border border-slate-200 p-3 text-sm">
-              <p className="font-medium text-slate-900">User ID: {member.userId}</p>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="text-slate-600">Role: {member.role}</span>
-                {isOwner ? (
-                  <>
-                    <button
-                      type="button"
-                      className="rounded bg-slate-900 px-2 py-1 text-xs font-semibold text-white"
-                      onClick={() => handleRoleChange(member.id, "OWNER")}
-                    >
-                      OWNER
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-800"
-                      onClick={() => handleRoleChange(member.id, "FAMILY")}
-                    >
-                      FAMILY
-                    </button>
-                  </>
-                ) : null}
-              </div>
-            </div>
-          ))}
-        </div>
-        {canRecoverOwner ? (
-          <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
-            <p className="text-xs text-amber-800">世帯にOWNERがいないため、最古メンバーとして復旧できます。</p>
-            <button
-              type="button"
-              className="mt-2 rounded bg-amber-700 px-3 py-1 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-              onClick={() => void handleRecoverOwner()}
-              disabled={isRecoveringOwner}
-            >
-              {isRecoveringOwner ? "復旧中..." : "OWNERを復旧する"}
-            </button>
-          </div>
-        ) : null}
-      </section>
-      {isOwner ? <HouseholdInviteCodeCard /> : null}
-
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">課金プラン</h2>
-        <p className="mt-1 text-sm text-slate-600">30日無料トライアル、その後月額680円（Stripe定期課金）</p>
-        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex rounded-full bg-slate-900 px-2 py-1 text-xs font-semibold text-white">
-              {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).badgeLabel}
-            </span>
-            <p className="text-xs font-medium text-slate-700">
-              {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).statusLabel}
-            </p>
-          </div>
-          <p className="mt-3 text-base font-bold text-slate-900">
-            {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).headline}
-          </p>
-          <p className="mt-1 text-sm text-slate-600">
-            {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).detail}
-          </p>
-          <p className="mt-3 text-xs text-slate-500">失効時も安全情報は閲覧できます。再開で全機能が復帰します。</p>
-          <div className="mt-3">
-            <button
-              type="button"
-              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
-              onClick={() => {
-                const action = (billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).ctaAction;
-                if (action === "portal") {
-                  void handleOpenBillingPortal();
-                  return;
-                }
-                void handleStartBilling();
-              }}
-              disabled={isBillingSubmitting || isPortalSubmitting}
-            >
-              {isBillingSubmitting || isPortalSubmitting
-                ? "遷移中..."
-                : (billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).ctaLabel}
-            </button>
-          </div>
-        </div>
-        <div className="mt-3 rounded-lg border border-slate-200 p-3">
-          <p className="text-xs text-slate-600">
-            トライアル終了: <span className="font-medium text-slate-800">{formatBillingDate(billing?.trialEndsAt ?? null)}</span>
-          </p>
-          <p className="mt-1 text-xs text-slate-600">
-            次回更新日: <span className="font-medium text-slate-800">{formatBillingDate(billing?.currentPeriodEnd ?? null)}</span>
-          </p>
-          <p className="mt-1 text-xs text-slate-500">システム状態コード: {billing?.subscriptionStatus ?? "INCOMPLETE"}</p>
-        </div>
-      </section>
-
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">ログイン情報</h2>
-        <p className="mt-1 text-sm text-slate-600">メール: {account?.email ?? "-"}</p>
-
-        <form className="mt-3 space-y-3" onSubmit={handleSubmitAccount}>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-slate-700">表示名</label>
-            <input
-              value={displayName}
-              onChange={(event) => setDisplayName(event.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2"
-              placeholder="表示名"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-slate-700">新しいパスワード</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2"
-              placeholder="8文字以上"
-            />
-          </div>
-          <button className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white" type="submit">
-            更新する
-          </button>
-        </form>
-      </section>
-
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">飼い主情報</h2>
-        <p className="mt-1 text-sm text-slate-600">世帯OWNERの連絡先情報を管理します。</p>
-        {ownerProfile ? (
-          <form className="mt-3 grid gap-3 md:grid-cols-2" onSubmit={handleOwnerProfileSubmit}>
-            <label className="text-xs font-medium text-slate-700">
-              氏名
-              <input
-                value={ownerProfile.fullName ?? ""}
-                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, fullName: event.target.value } : prev))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-              />
-            </label>
-            <label className="text-xs font-medium text-slate-700">
-              電話
-              <input
-                value={ownerProfile.phone ?? ""}
-                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, phone: event.target.value } : prev))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-              />
-            </label>
-            <label className="text-xs font-medium text-slate-700">
-              メールアドレス
-              <input
-                type="email"
-                value={ownerProfile.email ?? ""}
-                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, email: event.target.value } : prev))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-              />
-            </label>
-            <label className="text-xs font-medium text-slate-700">
-              郵便番号
-              <input
-                value={ownerProfile.postalCode ?? ""}
-                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, postalCode: event.target.value } : prev))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-              />
-            </label>
-            <label className="text-xs font-medium text-slate-700 md:col-span-2">
-              住所1
-              <input
-                value={ownerProfile.addressLine1 ?? ""}
-                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, addressLine1: event.target.value } : prev))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-              />
-            </label>
-            <label className="text-xs font-medium text-slate-700 md:col-span-2">
-              住所2
-              <input
-                value={ownerProfile.addressLine2 ?? ""}
-                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, addressLine2: event.target.value } : prev))}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-              />
-            </label>
-            <label className="text-xs font-medium text-slate-700 md:col-span-2">
-              メモ
-              <textarea
-                value={ownerProfile.note ?? ""}
-                onChange={(event) => setOwnerProfile((prev) => (prev ? { ...prev, note: event.target.value } : prev))}
-                rows={3}
-                className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-              />
-            </label>
-            <button
-              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 md:col-span-2"
-              type="submit"
-              disabled={isOwnerProfileSaving}
-            >
-              {isOwnerProfileSaving ? "保存中..." : "飼い主情報を保存"}
-            </button>
-          </form>
-        ) : (
-          <p className="mt-2 text-xs text-slate-500">飼い主情報を読み込めませんでした。</p>
-        )}
-      </section>
-
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">ペット表示設定</h2>
-        <p className="mt-1 text-sm text-slate-600">オーナー設定として、世帯内で共通の表示ON/OFFを切り替えられます。</p>
-        <div className="mt-3 space-y-4">
-          {ownerDisplaySettings ? (
-            <div className="rounded-lg border border-slate-200 p-3">
-              <div className="mt-2 grid gap-2 md:grid-cols-2">
-                {(
-                  [
-                    ["showMedicationCard", "詳細: 投薬カード"],
-                    ["showVaccinationCard", "詳細: ワクチンカード"],
-                    ["showHealthCard", "詳細: 健康カード"],
-                    ["showMedicalRecordCard", "詳細: 医療記録カード"],
-                    ["showEmergencyMedicationSummary", "緊急追加: 投薬サマリー"],
-                    ["showEmergencyVaccinationSummary", "緊急追加: ワクチンサマリー"],
-                    ["showEmergencyMedicalRecordSummary", "緊急追加: 医療記録サマリー"]
-                  ] as const
-                ).map(([key, label]) => (
-                  <label key={key} className="flex items-center justify-between gap-2 rounded border border-slate-200 px-2 py-1 text-xs">
-                    <span>{label}</span>
-                    <input
-                      type="checkbox"
-                      checked={ownerDisplaySettings[key]}
-                      disabled={isDisplaySettingsSaving}
-                      onChange={(event) => void handleToggleDisplaySetting(key, event.target.checked)}
-                    />
-                  </label>
-                ))}
-              </div>
-            </div>
-          ) : null}
-          {pets.length === 0 ? <p className="text-xs text-slate-500">対象ペットがいません。</p> : null}
-        </div>
-      </section>
-
-      <ToastMessage message={message} type="success" />
-      <ToastMessage message={errorMessage} type="error" />
-      <button
-        type="button"
-        className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700"
-        onClick={handleLogout}
-      >
-        ログアウト
-      </button>
-    </div>
+    <ClientSettings
+      initialHouseholdName={household.name}
+      initialMembers={household.members}
+      initialCurrentUserRole={currentUserRole}
+      initialAccount={account}
+      initialBilling={billingPayload}
+      initialPets={pets}
+      initialOwnerDisplaySettings={ownerDisplaySettings}
+      initialOwnerProfile={ownerProfile}
+    />
   );
 }
