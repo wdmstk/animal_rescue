@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-195` コンテキストヘルプ追加
+（なし）
 
 ### todo
 1. `TASK-194` ダークモード対応
@@ -36,16 +36,17 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-197` ペット詳細ページのサーバーエラー修正
-1. `TASK-196` ペット詳細取得失敗と設定画面認証遅延の修正
-1. `TASK-189` モバイルタッチターゲット拡大
-1. `TASK-188` アクセシビリティ改善（WCAG準拠）
-1. `TASK-187` APIエラーハンドリング統一化
-1. `TASK-186` Prisma build failure修正（shadow DB設定除外）
-1. `TASK-185` 医療書類写真登録 + OCR抽出MVP
-1. `TASK-184` ペット削除（ハード削除）
-1. `TASK-183` 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
-1. `TASK-182` ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
+1. `TASK-195` コンテキストヘルプ追加
+2. `TASK-197` ペット詳細ページのサーバーエラー修正
+3. `TASK-196` ペット詳細取得失敗と設定画面認証遅延の修正
+4. `TASK-189` モバイルタッチターゲット拡大
+5. `TASK-188` アクセシビリティ改善（WCAG準拠）
+6. `TASK-187` APIエラーハンドリング統一化
+7. `TASK-186` Prisma build failure修正（shadow DB設定除外）
+8. `TASK-185` 医療書類写真登録 + OCR抽出MVP
+9. `TASK-184` ペット削除（ハード削除）
+10. `TASK-183` 写真アップロード連鎖不具合修正（Promise params / bucket自動作成 / エラー可視化）
+11. `TASK-182` ペット情報拡張とQR/写真不具合修正（去勢・飼い主情報・QR URL）
 1. `TASK-181` 緊急情報保存エラー修正（Promise params / バリデーション表示 / 電話正規化）
 1. `TASK-180` OWNER不在復旧（最古メンバー限定）+ 監査ログDB保存
 1. `TASK-179` OWNER不在防止（OWNER→FAMILY降格ガード）
@@ -1299,9 +1300,9 @@ Development Task List
 ### コンテキストヘルプ追加
 - Task ID: `TASK-195`
 - ブランチ: `feat/TASK-195-context-help`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: 専門用語のツールチップ、入力ガイド、サンプルデータを追加し、ユーザーの理解を助ける
-- Issue: #215
+- Issue: #215 (closed)
 - 依存関係:
   - prerequisite: なし
 - 完了条件:
