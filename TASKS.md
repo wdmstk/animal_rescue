@@ -37,6 +37,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-197` ペット詳細ページのサーバーエラー修正
 1. `TASK-196` ペット詳細取得失敗と設定画面認証遅延の修正
 1. `TASK-189` モバイルタッチターゲット拡大
 1. `TASK-188` アクセシビリティ改善（WCAG準拠）
@@ -131,6 +132,20 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### ペット詳細ページのサーバーエラー修正
+- Task ID: `TASK-197`
+- ブランチ: `fix/TASK-196-pet-detail-fetch-auth-delay`
+- ステータス: `done`
+- 概要: ペット詳細ページで「This page couldn’t load」サーバーエラーが頻発する問題を修正する
+- Issue: 
+- 依存関係:
+  - prerequisite: `TASK-196`
+- 完了条件:
+  - ペット詳細ページの課金状態チェック失敗時のエラーハンドリングを追加する
+  - QRトークン生成失敗時のエラーハンドリングを追加する
+  - 課金チェックまたはQRトークン生成が失敗してもページが表示されるようにする
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
 
 ### ペット詳細取得失敗と設定画面認証遅延の修正
 - Task ID: `TASK-196`
