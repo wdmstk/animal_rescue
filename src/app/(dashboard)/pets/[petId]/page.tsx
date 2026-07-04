@@ -371,18 +371,18 @@ export default async function PetDetailPage({
           petId={petId}
           initialPet={{
             name: pet.name,
-            species: pet.species,
+            species: pet.species as "dog" | "cat" | "other",
             breed: pet.breed,
             sex: pet.sex,
             ageYears: pet.ageYears,
-            weightKg: pet.weightKg,
-            birthday: pet.birthday,
+            weightKg: pet.weightKg !== null ? Number(pet.weightKg) : null,
+            birthday: pet.birthday ? pet.birthday.toISOString() : null,
             notesPersonality: pet.notesPersonality,
             notesFeatures: pet.notesFeatures,
             mainPhotoUrl: pet.mainPhotoUrl,
             photos: pet.photos,
             reproductiveStatus: pet.reproductiveStatus,
-            sterilizedAt: pet.sterilizedAt
+            sterilizedAt: pet.sterilizedAt ? pet.sterilizedAt.toISOString() : null
           }}
         />
       </section>
@@ -393,7 +393,7 @@ export default async function PetDetailPage({
             species: pet.species,
             breed: pet.breed,
             sex: pet.sex,
-            birthday: pet.birthday ? normalizeDate(pet.birthday) : null,
+            birthday: pet.birthday ? normalizeDate(pet.birthday.toISOString()) : null,
             ageYears: pet.ageYears,
             weightKg: pet.weightKg !== null ? Number(pet.weightKg) : null
           }}
@@ -424,8 +424,8 @@ export default async function PetDetailPage({
             name: item.name,
             dosage: item.dosage,
             frequency: item.frequency,
-            startDate: normalizeDate(item.startDate),
-            endDate: item.endDate ? normalizeDate(item.endDate) : null
+            startDate: normalizeDate(item.startDate.toISOString()),
+            endDate: item.endDate ? normalizeDate(item.endDate.toISOString()) : null
           }))}
         />
       </section>
@@ -437,8 +437,8 @@ export default async function PetDetailPage({
             id: item.id,
             typeCode: item.type,
             customTypeName: item.customTypeName,
-            date: normalizeDate(item.date),
-            nextDue: item.nextDue ? normalizeDate(item.nextDue) : null,
+            date: normalizeDate(item.date.toISOString()),
+            nextDue: item.nextDue ? normalizeDate(item.nextDue.toISOString()) : null,
             type:
               item.type === "RABIES"
                 ? "狂犬病"
@@ -462,7 +462,7 @@ export default async function PetDetailPage({
           petId={petId}
           initialItems={pet.medicalRecords.map((item) => ({
             id: item.id,
-            date: normalizeDate(item.date),
+            date: normalizeDate(item.date.toISOString()),
             title: item.title,
             description: item.description,
             recordType: item.recordType

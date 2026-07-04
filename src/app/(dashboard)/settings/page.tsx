@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
 import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { resolveBillingAccessState } from "@/lib/billing/access-policy";
 import { ClientSettings } from "./_client-settings";
 
 type Member = {
@@ -118,44 +119,37 @@ export default async function SettingsPage() {
     redirect("/pets");
   }
 
-  const currentUser = household.members.find((m) => m.userId === auth.userId);
+  // Convert Date to string for members
+  const members = household.members.map(member => ({
+    ...member,
+    createdAt: member.createdAt.toISOString(),
+    role: member.role as "OWNER" | "FAMILY"
+  }));
+
+  const currentUser = members.find((m) => m.userId === auth.userId);
   const currentUserRole = currentUser?.role ?? "FAMILY";
 
   // Fetch billing info
-  const billing = await prisma.billing.findUnique({
-    where: { householdId: household.id }
-  });
+  const subscription = currentUser ? await prisma.userSubscription.findUnique({
+    where: { userId: currentUser.userId },
+    select: {
+      status: true,
+      trialEndsAt: true,
+      currentPeriodEnd: true,
+      graceUntil: true
+    }
+  }) : null;
 
-  const billingPayload: BillingPayload = billing ? {
-    planTier: billing.planTier,
-    subscriptionStatus: billing.subscriptionStatus,
-    status: billing.subscriptionStatus,
-    isActive: billing.isActive,
-    trialEndsAt: billing.trialEndsAt?.toISOString() ?? null,
-    currentPeriodEnd: billing.currentPeriodEnd?.toISOString() ?? null,
-    accessPolicy: {
-      canCreate: billing.accessPolicy.canCreate,
-      canEdit: billing.accessPolicy.canEdit,
-      canNotify: billing.accessPolicy.canNotify,
-      canShare: billing.accessPolicy.canShare,
-      canExport: billing.accessPolicy.canExport,
-      historyWindowDays: billing.accessPolicy.historyWindowDays
-    }
-  } : {
-    planTier: "free",
-    subscriptionStatus: "INCOMPLETE",
-    status: "INCOMPLETE",
-    isActive: false,
-    trialEndsAt: null,
-    currentPeriodEnd: null,
-    accessPolicy: {
-      canCreate: false,
-      canEdit: false,
-      canNotify: false,
-      canShare: false,
-      canExport: false,
-      historyWindowDays: null
-    }
+  const resolved = resolveBillingAccessState(subscription);
+
+  const billingPayload: BillingPayload = {
+    planTier: resolved.planTier,
+    subscriptionStatus: resolved.subscriptionStatus,
+    status: resolved.subscriptionStatus,
+    isActive: resolved.isActive,
+    trialEndsAt: resolved.trialEndsAt,
+    currentPeriodEnd: resolved.currentPeriodEnd,
+    accessPolicy: resolved.accessPolicy
   };
 
   // Fetch pets
@@ -168,7 +162,7 @@ export default async function SettingsPage() {
   });
 
   // Fetch owner display settings
-  const ownerMember = household.members.find((m) => m.role === "OWNER");
+  const ownerMember = members.find((m) => m.role === "OWNER");
   let ownerDisplaySettings: OwnerDisplaySettings | null = null;
   if (ownerMember) {
     const settings = await prisma.ownerDisplaySettings.findUnique({
@@ -211,7 +205,7 @@ export default async function SettingsPage() {
   return (
     <ClientSettings
       initialHouseholdName={household.name}
-      initialMembers={household.members}
+      initialMembers={members}
       initialCurrentUserRole={currentUserRole}
       initialAccount={account}
       initialBilling={billingPayload}

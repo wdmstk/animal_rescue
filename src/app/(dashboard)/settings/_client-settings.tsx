@@ -420,8 +420,8 @@ export function ClientSettings({
 
   return (
     <div className="space-y-4">
-      {message && <ToastMessage message={message} type="success" onClose={() => setMessage(null)} />}
-      {errorMessage && <ToastMessage message={errorMessage} type="error" onClose={() => setErrorMessage(null)} />}
+      {message && <ToastMessage message={message} type="success" />}
+      {errorMessage && <ToastMessage message={errorMessage} type="error" />}
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">家族情報</h2>

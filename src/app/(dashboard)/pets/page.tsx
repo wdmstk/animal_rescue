@@ -37,13 +37,16 @@ export default async function PetsPage() {
         breed: true
       }
     });
-    pets = userPets;
+    pets = userPets.map(pet => ({
+      ...pet,
+      species: pet.species as "dog" | "cat" | "other"
+    }));
   } catch {
     hasError = true;
   }
 
   if (process.env.PLAYWRIGHT_E2E === "1" && (pets.length === 0 || hasError)) {
-    pets = [{ id: "sample-pet", name: "モカ", species: "dog", breed: "トイプードル" }];
+    pets = [{ id: "sample-pet", name: "モカ", species: "dog" as "dog" | "cat" | "other", breed: "トイプードル" }];
     hasError = false;
   }
 
