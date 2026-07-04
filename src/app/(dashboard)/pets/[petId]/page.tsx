@@ -4,6 +4,7 @@ import { EmergencyQrShareCard } from "@/components/features/pets/emergency-qr-sh
 import { HealthTrackingPanel } from "@/components/features/pets/health-tracking-panel";
 import { MedicalRecordManager } from "@/components/features/pets/medical-record-manager";
 import { MedicationManagerCard } from "@/components/features/pets/medication-manager-card";
+import { PetDeleteCard } from "@/components/features/pets/pet-delete-card";
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileEditorCard } from "@/components/features/pets/pet-profile-editor-card";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
@@ -58,7 +59,8 @@ const sectionLinks = [
   { id: "vaccinations", label: "ワクチン" },
   { id: "health", label: "健康記録" },
   { id: "records", label: "医療記録" },
-  { id: "history", label: "更新履歴" }
+  { id: "history", label: "更新履歴" },
+  { id: "delete", label: "削除" }
 ] as const;
 
 const resolveOriginAndCookie = async () => {
@@ -268,6 +270,10 @@ export default async function PetDetailPage({
               })}
             />
           </section>
+
+          <section id="delete" className="scroll-mt-44">
+            <PetDeleteCard petId={petId} petName={e2ePet.name} />
+          </section>
         </div>
       );
   }
@@ -468,6 +474,10 @@ export default async function PetDetailPage({
 
       <section id="history" className="scroll-mt-44">
         <ChangeHistoryList items={changeHistoryItems} />
+      </section>
+
+      <section id="delete" className="scroll-mt-44">
+        <PetDeleteCard petId={petId} petName={pet.name} />
       </section>
 
     </div>
