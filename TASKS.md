@@ -23,13 +23,16 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-198` 拡張緊急フィールドのデータ登録＆緊急公開画面UIの拡張
 
 ### todo
-1. `TASK-193` プログレス表示視覚化
-2. `TASK-192` ペット詳細ページ情報整理
-3. `TASK-191` カスタム確認ダイアログ
-4. `TASK-190` フォームバリデーション改善
+1. `TASK-201` パスワードリセット機能の実装
+2. `TASK-200` アカウント削除（退会）機能の実装
+3. `TASK-199` ログインAPIのレート制限とFail-Open実装
+4. `TASK-193` プログレス表示視覚化
+5. `TASK-192` ペット詳細ページ情報整理
+6. `TASK-191` カスタム確認ダイアログ
+7. `TASK-190` フォームバリデーション改善
 
 ### blocked
 （なし）
@@ -132,6 +135,61 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### パスワードリセット機能の実装
+- Task ID: `TASK-201`
+- ブランチ: `feat/TASK-201-password-reset-implementation`
+- ステータス: `todo`
+- 概要: パスワードを紛失したユーザーが、メールリンク（Temp JWT）経由で新パスワードを設定可能にする。
+- Issue: #222
+- 依存関係: なし
+- 完了条件:
+  - `POST /api/auth/reset-password-request` を実装し、無効アドレスでも情報非開示で常に200を返すセキュリティを確保する。
+  - `POST /api/auth/reset-password` を実装し、8文字以上の英数字混合新パスワードを安全に登録可能にする。
+  - パスワード再設定画面のマークアップと遷移の作成。
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る。
+
+### アカウント削除（退会）機能の実装
+- Task ID: `TASK-200`
+- ブランチ: `feat/TASK-200-account-delete-退会`
+- ステータス: `todo`
+- 概要: アカウントと全データ、およびStripeサブスクリプションを即時キャンセル・物理消去する。
+- Issue: #221
+- 依存関係: なし
+- 完了条件:
+  - `DELETE /api/account` を実装。
+  - 唯一のOWNERが他メンバーを残した状態で削除を試みた場合、409エラーで防止する。
+  - 退会時にStripe APIを通じて該当世帯のサブスクリプションを即時キャンセル (`customer.subscription.cancel`) する。
+  - Prismaのカスケード削除で、関連するペット、投薬、タイムライン等のデータを物理削除する。
+  - `supabase.auth.admin.deleteUser` を経由して認証情報自体も消去する。
+  - `npx vitest run` / `npm run test:e2e` の正常退会テストが通る。
+
+### ログインAPIのレート制限とFail-Open実装
+- Task ID: `TASK-199`
+- ブランチ: `feat/TASK-199-login-rate-limiting-fail-open`
+- ステータス: `todo`
+- 概要: ブルートフォース防止のためログイン・サインアップ・公開緊急APIにレート制限をかけ、障害時はFail-Open動作にする。
+- Issue: #220
+- 依存関係: なし
+- 完了条件:
+  - `x-forwarded-for` から安全にIPを特定し、Upstash Redisを用いた1分間10回のログインレート制限を実装する。
+  - Redis接続エラー時でも、サービスを停止させずに `Fail-Open`（ログ警告出力のうえAPI通過）とする。
+  - レート制限およびFail-Open例外のVitest統合テストが通る。
+  - `npm run lint` が通る。
+
+### 拡張緊急フィールドのデータ登録＆緊急公開画面UIの拡張
+- Task ID: `TASK-198`
+- ブランチ: `feat/TASK-198-emergency-fields-and-ui-extension`
+- ステータス: `todo`
+- 概要: 血液型、夜間救急病院、第二緊急連絡先のデータ登録と、緊急公開画面への優先レイアウト表示を実装する。
+- Issue: #219
+- 依存関係: なし
+- 完了条件:
+  - `Prisma`のスキーマおよびマイグレーションを実行し、`PetEmergencyInfo`に `bloodType`, `emergencyVetName`, `emergencyVetPhone`, `emergencyContactName2`, `emergencyContactPhone2` を追加する。
+  - `PUT /api/pets/[petId]/emergency-info` へのリクエストボディとバリデーションを拡張する。
+  - ペット一覧カード上に、詳細ページを介さない「🚨緊急QR」へのダイレクトショートカット（2タップ到達）を追加する。
+  - 緊急公開画面 (`/e/[token]`) のファーストビューで持病・アレルギーを最上部に固定表示し、拡張された救急病院・血液型を正しく優先配置する。
+  - `npm run lint` / `npx vitest run` が通る。
 
 ### ペット詳細ページのサーバーエラー修正
 - Task ID: `TASK-197`

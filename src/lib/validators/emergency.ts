@@ -44,7 +44,12 @@ export const emergencyInfoInputSchema = z.object({
   vetName: nullableTrimmedText(120),
   vetPhone: nullablePhone,
   emergencyContactName: nullableTrimmedText(120),
-  emergencyContactPhone: nullablePhone
+  emergencyContactPhone: nullablePhone,
+  bloodType: nullableTrimmedText(50),
+  emergencyVetName: nullableTrimmedText(200),
+  emergencyVetPhone: nullablePhone,
+  emergencyContactName2: nullableTrimmedText(100),
+  emergencyContactPhone2: nullablePhone
 });
 
 export type EmergencyInfoInput = z.infer<typeof emergencyInfoInputSchema>;

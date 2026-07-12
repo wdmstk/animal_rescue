@@ -198,6 +198,11 @@ model PetEmergencyInfo {
   vetPhone             String?
   emergencyContactName String?
   emergencyContactPhone String?
+  bloodType            String?  @db.Text
+  emergencyVetName     String?  @db.Text
+  emergencyVetPhone    String?  @db.Text
+  emergencyContactName2 String? @db.Text
+  emergencyContactPhone2 String? @db.Text
   updatedAt            DateTime @updatedAt
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
