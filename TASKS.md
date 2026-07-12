@@ -146,7 +146,6 @@ Development Task List
 - ブランチ: `feat/TASK-200-account-delete-withdrawal`
 - ステータス: `done`
 - 概要: アカウントと全データ、およびStripeサブスクリプションを即時キャンセル・物理消去する。
-- Issue: #221
 - 依存関係: なし
 - 実装計画: [docs/TASK-200-account-delete-implementation-plan.md](../docs/TASK-200-account-delete-implementation-plan.md)
 - 完了条件:
