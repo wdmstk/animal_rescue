@@ -29,7 +29,7 @@ export async function checkRateLimit(
     const redis = getRedisClient()
     const ratelimit = new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(config.limit, config.window),
+      limiter: Ratelimit.slidingWindow(config.limit, config.window as `${number} ${'s' | 'ms' | 'm' | 'h' | 'd'}`),
       analytics: false, // Disable analytics to reduce overhead
     })
 
