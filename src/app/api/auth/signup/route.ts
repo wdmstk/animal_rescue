@@ -3,8 +3,15 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import { signupInputSchema } from "@/lib/validators/auth";
 import { badRequest, unauthorized } from "@/lib/api-error";
+import { checkRateLimit, createRateLimitResponse, createRateLimitHeaders } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
+  // Check rate limit
+  const rateLimitResult = await checkRateLimit(request, 'signup');
+  if (!rateLimitResult.success) {
+    return createRateLimitResponse(rateLimitResult);
+  }
+
   const body = await request.json();
   const parsed = signupInputSchema.safeParse(body);
 
@@ -58,5 +65,7 @@ export async function POST(request: Request) {
     });
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true }, {
+    headers: createRateLimitHeaders(rateLimitResult),
+  });
 }
