@@ -1,10 +1,24 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { rpcMock, createSupabaseServerClientMock, findFirstEmergencyTokenMock, findUniqueOwnerDisplaySettingsMock } = vi.hoisted(() => ({
+// Define global mock outside hoisted function
+const globalMockLimit = vi.fn()
+const mockRatelimitInstance = {
+  limit: globalMockLimit
+}
+
+const { rpcMock, createSupabaseServerClientMock, findFirstEmergencyTokenMock, findUniqueOwnerDisplaySettingsMock, RatelimitMock } = vi.hoisted(() => ({
   rpcMock: vi.fn(),
   createSupabaseServerClientMock: vi.fn(),
   findFirstEmergencyTokenMock: vi.fn(),
-  findUniqueOwnerDisplaySettingsMock: vi.fn()
+  findUniqueOwnerDisplaySettingsMock: vi.fn(),
+  RatelimitMock: class MockRatelimit {
+    constructor(config: any) {
+      return mockRatelimitInstance
+    }
+    static slidingWindow(limit: number, window: string) {
+      return { limiter: 'slidingWindow' }
+    }
+  }
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -22,6 +36,15 @@ vi.mock("@/lib/prisma", () => ({
   }
 }));
 
+// Mock Upstash Redis and Ratelimit
+vi.mock('@upstash/redis', () => ({
+  Redis: vi.fn()
+}))
+
+vi.mock('@upstash/ratelimit', () => ({
+  Ratelimit: RatelimitMock
+}))
+
 import { GET } from "../../src/app/api/public/emergency/[token]/route";
 
 describe("GET /api/public/emergency/[token]", () => {
@@ -30,6 +53,17 @@ describe("GET /api/public/emergency/[token]", () => {
     createSupabaseServerClientMock.mockResolvedValue({
       rpc: rpcMock
     });
+    
+    // Set environment variables for tests
+    process.env.UPSTASH_REDIS_REST_URL = 'https://test.upstash.io'
+    process.env.UPSTASH_REDIS_REST_TOKEN = 'test-token'
+    
+    // Mock rate limiting to allow requests by default for existing tests
+    globalMockLimit.mockResolvedValue({
+      success: true,
+      remaining: 59,
+      reset: Date.now() + 60000
+    })
   });
 
   it("returns 400 for non-uuid token", async () => {
@@ -332,5 +366,99 @@ describe("GET /api/public/emergency/[token]", () => {
     expect(payload.data.recentMedicationSummaries).toBeUndefined();
     expect(payload.data.recentVaccinationSummaries).toBeUndefined();
     expect(payload.data.recentMedicalRecordSummaries).toBeUndefined();
+  });
+
+  it("returns 429 when rate limit is exceeded", async () => {
+    globalMockLimit.mockResolvedValue({
+      success: false,
+      remaining: 0,
+      reset: Date.now() + 60000
+    })
+
+    const response = await GET(new Request("http://localhost"), {
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
+    });
+
+    expect(response.status).toBe(429);
+    const payload = await response.json();
+    expect(payload.error).toBe('Too many requests');
+    expect(rpcMock).not.toHaveBeenCalled();
+  });
+
+  it("allows request when rate limit is not exceeded", async () => {
+    globalMockLimit.mockResolvedValue({
+      success: true,
+      remaining: 59,
+      reset: Date.now() + 60000
+    })
+
+    rpcMock.mockResolvedValue({
+      data: [
+        {
+          pet_name: "Mugi",
+          disease: "CKD",
+          current_medications: "Renal meds",
+          allergy: "None",
+          vet_name: "City Vet",
+          vet_phone: "03-0000-0000",
+          emergency_contact_name: "Owner",
+          emergency_contact_phone: "090-0000-0000",
+          blood_type: null,
+          emergency_vet_name: null,
+          emergency_vet_phone: null,
+          emergency_contact_name_2: null,
+          emergency_contact_phone_2: null
+        }
+      ],
+      error: null
+    });
+
+    const response = await GET(new Request("http://localhost"), {
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get('X-RateLimit-Limit')).toBe('60');
+    expect(response.headers.get('X-RateLimit-Remaining')).toBe('59');
+  });
+
+  it("implements Fail-Open when Redis connection fails", async () => {
+    globalMockLimit.mockRejectedValue(new Error('Connection failed'))
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    rpcMock.mockResolvedValue({
+      data: [
+        {
+          pet_name: "Mugi",
+          disease: "CKD",
+          current_medications: "Renal meds",
+          allergy: "None",
+          vet_name: "City Vet",
+          vet_phone: "03-0000-0000",
+          emergency_contact_name: "Owner",
+          emergency_contact_phone: "090-0000-0000",
+          blood_type: null,
+          emergency_vet_name: null,
+          emergency_vet_phone: null,
+          emergency_contact_name_2: null,
+          emergency_contact_phone_2: null
+        }
+      ],
+      error: null
+    });
+
+    const response = await GET(new Request("http://localhost"), {
+      params: Promise.resolve({ token: "11111111-1111-4111-8111-111111111111" })
+    });
+
+    expect(response.status).toBe(200); // Fail-Open allows request
+    expect(rpcMock).toHaveBeenCalled();
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'Rate Limit Store Error (Fail-Open active):',
+      expect.any(Error)
+    );
+
+    consoleSpy.mockRestore();
   });
 });
