@@ -174,6 +174,7 @@ export function ClientSettings({
   const [isRecoveringOwner, setIsRecoveringOwner] = useState(false);
   const [ownerProfile, setOwnerProfile] = useState<OwnerProfile | null>(initialOwnerProfile);
   const [isOwnerProfileSaving, setIsOwnerProfileSaving] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const isOwner = currentUserRole === "OWNER";
   const hasOwner = members.some((member) => member.role === "OWNER");
@@ -418,6 +419,34 @@ export function ClientSettings({
     setMessage("飼い主情報を更新しました。");
   };
 
+  const handleDeleteAccount = async () => {
+    const confirmed = window.confirm(
+      "アカウントを削除すると、以下のデータが完全に消去されます：\n・全てのペット情報\n・全ての医療記録\n・全ての写真\n・世帯情報\n・サブスクリプション（即時キャンセル）\n\nこの操作は取り消せません。本当に削除しますか？"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setErrorMessage(null);
+    setMessage(null);
+    setIsDeletingAccount(true);
+
+    const response = await fetch("/api/account", { method: "DELETE" });
+    const payload = (await response.json().catch(() => null)) as { error?: string } | null;
+
+    if (!response.ok) {
+      setIsDeletingAccount(false);
+      setErrorMessage(typeof payload?.error === "string" ? payload.error : "アカウント削除に失敗しました。");
+      return;
+    }
+
+    setIsDeletingAccount(false);
+    setMessage("アカウントを削除しました。");
+    router.push("/login");
+    router.refresh();
+  };
+
   return (
     <div className="space-y-4">
       {message && <ToastMessage message={message} type="success" />}
@@ -554,6 +583,20 @@ export function ClientSettings({
             更新する
           </button>
         </form>
+      </section>
+
+      <section className="rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm">
+        <h2 className="text-lg font-bold text-red-900">アカウント削除（退会）</h2>
+        <p className="mt-1 text-sm text-red-700">
+          アカウントを削除すると、全てのデータが完全に消去されます。この操作は取り消せません。
+        </p>
+        <button
+          className="mt-3 rounded-lg border border-red-300 bg-red-100 px-4 py-2 text-sm font-semibold text-red-800 disabled:cursor-not-allowed disabled:opacity-60"
+          onClick={() => void handleDeleteAccount()}
+          disabled={isDeletingAccount}
+        >
+          {isDeletingAccount ? "削除中..." : "アカウントを削除する"}
+        </button>
       </section>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">

@@ -23,15 +23,14 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-200` アカウント削除（退会）機能の実装
 
 ### todo
 1. `TASK-201` パスワードリセット機能の実装
-2. `TASK-200` アカウント削除（退会）機能の実装
-3. `TASK-193` プログレス表示視覚化
-4. `TASK-192` ペット詳細ページ情報整理
-5. `TASK-191` カスタム確認ダイアログ
-6. `TASK-190` フォームバリデーション改善
+2. `TASK-193` プログレス表示視覚化
+3. `TASK-192` ペット詳細ページ情報整理
+4. `TASK-191` カスタム確認ダイアログ
+5. `TASK-190` フォームバリデーション改善
 
 ### blocked
 （なし）
@@ -153,10 +152,11 @@ Development Task List
 ### アカウント削除（退会）機能の実装
 - Task ID: `TASK-200`
 - ブランチ: `feat/TASK-200-account-delete-退会`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: アカウントと全データ、およびStripeサブスクリプションを即時キャンセル・物理消去する。
 - Issue: #221
 - 依存関係: なし
+- 実装計画: [docs/TASK-200-account-delete-implementation-plan.md](../docs/TASK-200-account-delete-implementation-plan.md)
 - 完了条件:
   - `DELETE /api/account` を実装。
   - 唯一のOWNERが他メンバーを残した状態で削除を試みた場合、409エラーで防止する。

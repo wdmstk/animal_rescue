@@ -134,8 +134,8 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
       ];
     } else if (e2eTestType === "multiple_members") {
       baseHousehold.members = [
-        { id: "m1", userId: "u1", role: "FAMILY", createdAt: "2026-04-28T00:00:00.000Z" },
-        { id: "m2", userId: "test-user-id", role: "FAMILY", createdAt: "2026-04-29T00:00:00.000Z" }
+        { id: "m1", userId: "test-user-id", role: "OWNER", createdAt: "2026-04-28T00:00:00.000Z" },
+        { id: "m2", userId: "u2", role: "FAMILY", createdAt: "2026-04-29T00:00:00.000Z" }
       ];
     }
 
