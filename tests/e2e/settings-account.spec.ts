@@ -655,6 +655,228 @@ test("settings can recover owner only for oldest member when owner is missing", 
   expect(recoverCalled).toBe(true);
 });
 
+test("settings can delete account for single owner", async ({ page }) => {
+  let deleteCalled = false;
+
+  await page.route("**/api/households/members", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          household: {
+            id: "h1",
+            name: "Test Household",
+            members: [{ id: "m1", userId: "u1", role: "OWNER", createdAt: "2026-04-29T00:00:00.000Z" }]
+          },
+          currentUserRole: "OWNER"
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/account", async (route) => {
+    if (route.request().method() === "DELETE") {
+      deleteCalled = true;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ data: { userId: "u1", email: "user@example.com", displayName: "User" } })
+    });
+  });
+
+  await page.route("**/api/billing/subscription", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          planTier: "free",
+          subscriptionStatus: "INCOMPLETE",
+          status: "INCOMPLETE",
+          isActive: false,
+          trialEndsAt: null,
+          currentPeriodEnd: null
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/pets", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [] }) });
+  });
+
+  await page.route("**/api/settings/display", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "test-user-id",
+          showMedicationCard: true,
+          showVaccinationCard: true,
+          showHealthCard: true,
+          showMedicalRecordCard: true,
+          showEmergencyMedicationSummary: true,
+          showEmergencyVaccinationSummary: true,
+          showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "test-user-id",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
+        }
+      })
+    });
+  });
+
+  await page.goto("/settings");
+  await expect(page.getByRole("heading", { name: "アカウント削除（退会）" })).toBeVisible();
+
+  // Handle the confirmation dialog
+  page.on("dialog", async dialog => {
+    await dialog.accept();
+  });
+
+  await page.getByRole("button", { name: "アカウントを削除する" }).click();
+  expect(deleteCalled).toBe(true);
+});
+
+test("settings shows error when last owner tries to delete with other members", async ({ page }) => {
+  let deleteCalled = false;
+
+  await page.route("**/api/households/members", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          household: {
+            id: "h1",
+            name: "Test Household",
+            members: [
+              { id: "m1", userId: "u1", role: "OWNER", createdAt: "2026-04-29T00:00:00.000Z" },
+              { id: "m2", userId: "u2", role: "FAMILY", createdAt: "2026-04-30T00:00:00.000Z" }
+            ]
+          },
+          currentUserRole: "OWNER"
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/account", async (route) => {
+    if (route.request().method() === "DELETE") {
+      deleteCalled = true;
+      await route.fulfill({
+        status: 409,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "最後のOWNERは、他のメンバーがいる世帯を削除できません。先に権限を移譲するか、メンバーを削除してください。" })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ data: { userId: "u1", email: "user@example.com", displayName: "User" } })
+    });
+  });
+
+  await page.route("**/api/billing/subscription", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          planTier: "free",
+          subscriptionStatus: "INCOMPLETE",
+          status: "INCOMPLETE",
+          isActive: false,
+          trialEndsAt: null,
+          currentPeriodEnd: null
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/pets", async (route) => {
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: [] }) });
+  });
+
+  await page.route("**/api/settings/display", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "test-user-id",
+          showMedicationCard: true,
+          showVaccinationCard: true,
+          showHealthCard: true,
+          showMedicalRecordCard: true,
+          showEmergencyMedicationSummary: true,
+          showEmergencyVaccinationSummary: true,
+          showEmergencyMedicalRecordSummary: true
+        }
+      })
+    });
+  });
+
+  await page.route("**/api/settings/owner-profile", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        data: {
+          ownerUserId: "test-user-id",
+          fullName: null,
+          phone: null,
+          email: null,
+          postalCode: null,
+          addressLine1: null,
+          addressLine2: null,
+          note: null
+        }
+      })
+    });
+  });
+
+  await page.goto("/settings?e2e=multiple_members");
+  await expect(page.getByRole("heading", { name: "アカウント削除（退会）" })).toBeVisible();
+
+  // Handle the confirmation dialog
+  page.on("dialog", async dialog => {
+    await dialog.accept();
+  });
+
+  await page.getByRole("button", { name: "アカウントを削除する" }).click();
+  await expect(page.getByText("最後のOWNERは、他のメンバーがいる世帯を削除できません")).toBeVisible();
+  expect(deleteCalled).toBe(true);
+});
+
 test("settings hides owner recovery button for non-oldest member", async ({ page }) => {
   await page.route("**/api/households/members", async (route) => {
     await route.fulfill({
