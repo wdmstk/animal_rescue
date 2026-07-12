@@ -9,6 +9,11 @@ type RawEmergency = {
   vetPhone: string | null;
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
+  bloodType: string | null;
+  emergencyVetName: string | null;
+  emergencyVetPhone: string | null;
+  emergencyContactName2: string | null;
+  emergencyContactPhone2: string | null;
 };
 
 const normalize = (value: string | null): string | null => {
@@ -28,5 +33,10 @@ export const toPublicEmergencyView = (raw: RawEmergency): EmergencyViewPayload =
   vetName: normalize(raw.vetName),
   vetPhone: normalize(raw.vetPhone),
   emergencyContactName: normalize(raw.emergencyContactName),
-  emergencyContactPhone: normalize(raw.emergencyContactPhone)
+  emergencyContactPhone: normalize(raw.emergencyContactPhone),
+  bloodType: normalize(raw.bloodType),
+  emergencyVetName: normalize(raw.emergencyVetName),
+  emergencyVetPhone: normalize(raw.emergencyVetPhone),
+  emergencyContactName2: normalize(raw.emergencyContactName2),
+  emergencyContactPhone2: normalize(raw.emergencyContactPhone2)
 });

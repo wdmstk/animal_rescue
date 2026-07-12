@@ -65,7 +65,12 @@ describe("GET /api/public/emergency/[token]", () => {
           vet_name: "City Vet",
           vet_phone: "03-0000-0000",
           emergency_contact_name: "Owner",
-          emergency_contact_phone: "090-0000-0000"
+          emergency_contact_phone: "090-0000-0000",
+          blood_type: null,
+          emergency_vet_name: null,
+          emergency_vet_phone: null,
+          emergency_contact_name_2: null,
+          emergency_contact_phone_2: null
         }
       ],
       error: null
@@ -86,6 +91,11 @@ describe("GET /api/public/emergency/[token]", () => {
       vetPhone: "03-0000-0000",
       emergencyContactName: "Owner",
       emergencyContactPhone: "090-0000-0000",
+      bloodType: null,
+      emergencyVetName: null,
+      emergencyVetPhone: null,
+      emergencyContactName2: null,
+      emergencyContactPhone2: null,
       recentMedicationSummaries: [],
       recentVaccinationSummaries: [],
       recentMedicalRecordSummaries: []
@@ -103,7 +113,12 @@ describe("GET /api/public/emergency/[token]", () => {
           vet_name: " ",
           vet_phone: null,
           emergency_contact_name: " Owner ",
-          emergency_contact_phone: "090-0000-0000"
+          emergency_contact_phone: "090-0000-0000",
+          blood_type: null,
+          emergency_vet_name: null,
+          emergency_vet_phone: null,
+          emergency_contact_name_2: null,
+          emergency_contact_phone_2: null
         }
       ],
       error: null
@@ -124,6 +139,11 @@ describe("GET /api/public/emergency/[token]", () => {
       vetPhone: null,
       emergencyContactName: "Owner",
       emergencyContactPhone: "090-0000-0000",
+      bloodType: null,
+      emergencyVetName: null,
+      emergencyVetPhone: null,
+      emergencyContactName2: null,
+      emergencyContactPhone2: null,
       recentMedicationSummaries: [],
       recentVaccinationSummaries: [],
       recentMedicalRecordSummaries: []
@@ -162,7 +182,12 @@ describe("GET /api/public/emergency/[token]", () => {
           vetName: "City Vet",
           vetPhone: "03-0000-0000",
           emergencyContactName: "Owner",
-          emergencyContactPhone: "090-0000-0000"
+          emergencyContactPhone: "090-0000-0000",
+          bloodType: null,
+          emergencyVetName: null,
+          emergencyVetPhone: null,
+          emergencyContactName2: null,
+          emergencyContactPhone2: null
         }
       }
     });
@@ -189,7 +214,12 @@ describe("GET /api/public/emergency/[token]", () => {
                 vetName: true,
                 vetPhone: true,
                 emergencyContactName: true,
-                emergencyContactPhone: true
+                emergencyContactPhone: true,
+                bloodType: true,
+                emergencyVetName: true,
+                emergencyVetPhone: true,
+                emergencyContactName2: true,
+                emergencyContactPhone2: true
               }
             }
           }
@@ -245,6 +275,11 @@ describe("GET /api/public/emergency/[token]", () => {
       vetPhone: null,
       emergencyContactName: null,
       emergencyContactPhone: null,
+      bloodType: null,
+      emergencyVetName: null,
+      emergencyVetPhone: null,
+      emergencyContactName2: null,
+      emergencyContactPhone2: null,
       recentMedicationSummaries: [],
       recentVaccinationSummaries: [],
       recentMedicalRecordSummaries: []
@@ -262,7 +297,12 @@ describe("GET /api/public/emergency/[token]", () => {
           vet_name: "City Vet",
           vet_phone: "03-0000-0000",
           emergency_contact_name: "Owner",
-          emergency_contact_phone: "090-0000-0000"
+          emergency_contact_phone: "090-0000-0000",
+          blood_type: null,
+          emergency_vet_name: null,
+          emergency_vet_phone: null,
+          emergency_contact_name_2: null,
+          emergency_contact_phone_2: null
         }
       ],
       error: null

@@ -8,7 +8,7 @@ test("emergency editor shows phone format hints", async ({ page }) => {
   await expect(vetPhoneInput).toHaveAttribute("pattern", "[0-9+()\\\\-\\\\s]+");
   await expect(vetPhoneInput).toHaveAttribute("placeholder", "例: 03-1234-5678");
 
-  const emergencyPhoneInput = page.getByLabel("緊急連絡先電話番号");
+  const emergencyPhoneInput = page.getByLabel("緊急連絡先電話番号").first();
   await expect(emergencyPhoneInput).toHaveAttribute("pattern", "[0-9+()\\\\-\\\\s]+");
   await expect(emergencyPhoneInput).toHaveAttribute("placeholder", "例: 090-1234-5678");
 });

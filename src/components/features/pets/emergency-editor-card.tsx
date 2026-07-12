@@ -15,6 +15,11 @@ type EmergencyInfo = {
   vetPhone: string | null;
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
+  bloodType: string | null;
+  emergencyVetName: string | null;
+  emergencyVetPhone: string | null;
+  emergencyContactName2: string | null;
+  emergencyContactPhone2: string | null;
 };
 
 type EmergencyEditorCardProps = {
@@ -77,6 +82,11 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
   const [vetPhone, setVetPhone] = useState(initialEmergencyInfo?.vetPhone ?? "");
   const [emergencyContactName, setEmergencyContactName] = useState(initialEmergencyInfo?.emergencyContactName ?? "");
   const [emergencyContactPhone, setEmergencyContactPhone] = useState(initialEmergencyInfo?.emergencyContactPhone ?? "");
+  const [bloodType, setBloodType] = useState(initialEmergencyInfo?.bloodType ?? "");
+  const [emergencyVetName, setEmergencyVetName] = useState(initialEmergencyInfo?.emergencyVetName ?? "");
+  const [emergencyVetPhone, setEmergencyVetPhone] = useState(initialEmergencyInfo?.emergencyVetPhone ?? "");
+  const [emergencyContactName2, setEmergencyContactName2] = useState(initialEmergencyInfo?.emergencyContactName2 ?? "");
+  const [emergencyContactPhone2, setEmergencyContactPhone2] = useState(initialEmergencyInfo?.emergencyContactPhone2 ?? "");
 
   const vetDisplay =
     toNullable(vetName) && toNullable(vetPhone)
@@ -103,7 +113,12 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
           vetName: toNullable(vetName),
           vetPhone: toNullable(vetPhone),
           emergencyContactName: toNullable(emergencyContactName),
-          emergencyContactPhone: toNullable(emergencyContactPhone)
+          emergencyContactPhone: toNullable(emergencyContactPhone),
+          bloodType: toNullable(bloodType),
+          emergencyVetName: toNullable(emergencyVetName),
+          emergencyVetPhone: toNullable(emergencyVetPhone),
+          emergencyContactName2: toNullable(emergencyContactName2),
+          emergencyContactPhone2: toNullable(emergencyContactPhone2)
         })
       });
 
@@ -255,6 +270,80 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
               pattern="[0-9+()\\-\\s]+"
               title="数字・+・()・-・スペースで入力してください"
               placeholder="例: 090-1234-5678"
+              maxLength={40}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+            <p className="mt-1 text-xs font-normal text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
+          </label>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className="block text-sm font-semibold text-slate-800">
+            第二緊急連絡先名
+            <input
+              value={emergencyContactName2}
+              onChange={(event) => setEmergencyContactName2(event.target.value)}
+              maxLength={100}
+              placeholder="例: 山田 太郎"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+          </label>
+
+          <label className="block text-sm font-semibold text-slate-800">
+            第二緊急連絡先電話番号
+            <input
+              value={emergencyContactPhone2}
+              onChange={(event) => setEmergencyContactPhone2(event.target.value)}
+              type="tel"
+              inputMode="tel"
+              pattern="[0-9+()\\-\\s]+"
+              title="数字・+・()・-・スペースで入力してください"
+              placeholder="例: 080-9876-5432"
+              maxLength={40}
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+            <p className="mt-1 text-xs font-normal text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
+          </label>
+        </div>
+
+        <label className="block text-sm font-semibold text-slate-800">
+          <div className="flex items-center gap-1">
+            血液型
+            <Tooltip content="犬の血液型（DEA 1.1+等）を記入します。輸血が必要な際に重要です。">
+              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+            </Tooltip>
+          </div>
+          <input
+            value={bloodType}
+            onChange={(event) => setBloodType(event.target.value)}
+            maxLength={50}
+            placeholder="例: DEA 1.1+"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          />
+        </label>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className="block text-sm font-semibold text-slate-800">
+            夜間救急病院名
+            <input
+              value={emergencyVetName}
+              onChange={(event) => setEmergencyVetName(event.target.value)}
+              maxLength={200}
+              placeholder="例: 東京夜間動物救急センター"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+          </label>
+
+          <label className="block text-sm font-semibold text-slate-800">
+            夜間救急病院電話番号
+            <input
+              value={emergencyVetPhone}
+              onChange={(event) => setEmergencyVetPhone(event.target.value)}
+              type="tel"
+              inputMode="tel"
+              pattern="[0-9+()\\-\\s]+"
+              title="数字・+・()・-・スペースで入力してください"
+              placeholder="例: 03-9876-5432"
               maxLength={40}
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />

@@ -12,6 +12,11 @@ type PublicEmergencyRpcRow = {
   vet_phone: string | null;
   emergency_contact_name: string | null;
   emergency_contact_phone: string | null;
+  blood_type: string | null;
+  emergency_vet_name: string | null;
+  emergency_vet_phone: string | null;
+  emergency_contact_name_2: string | null;
+  emergency_contact_phone_2: string | null;
 };
 
 const DEFAULT_SUMMARY_SETTINGS = {
@@ -141,7 +146,12 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
               vetName: true,
               vetPhone: true,
               emergencyContactName: true,
-              emergencyContactPhone: true
+              emergencyContactPhone: true,
+              bloodType: true,
+              emergencyVetName: true,
+              emergencyVetPhone: true,
+              emergencyContactName2: true,
+              emergencyContactPhone2: true
             }
           }
         }
@@ -161,7 +171,12 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
     vetName: tokenRow.pet.emergencyInfo?.vetName ?? null,
     vetPhone: tokenRow.pet.emergencyInfo?.vetPhone ?? null,
     emergencyContactName: tokenRow.pet.emergencyInfo?.emergencyContactName ?? null,
-    emergencyContactPhone: tokenRow.pet.emergencyInfo?.emergencyContactPhone ?? null
+    emergencyContactPhone: tokenRow.pet.emergencyInfo?.emergencyContactPhone ?? null,
+    bloodType: tokenRow.pet.emergencyInfo?.bloodType ?? null,
+    emergencyVetName: tokenRow.pet.emergencyInfo?.emergencyVetName ?? null,
+    emergencyVetPhone: tokenRow.pet.emergencyInfo?.emergencyVetPhone ?? null,
+    emergencyContactName2: tokenRow.pet.emergencyInfo?.emergencyContactName2 ?? null,
+    emergencyContactPhone2: tokenRow.pet.emergencyInfo?.emergencyContactPhone2 ?? null
   });
 
   return withRecentSummaries(token, base);
@@ -182,6 +197,11 @@ export const getPublicEmergencyByToken = async (token: string): Promise<Emergenc
       vetPhone: "03-1234-5678",
       emergencyContactName: "山田 花子",
       emergencyContactPhone: "090-1234-5678",
+      bloodType: "DEA 1.1+",
+      emergencyVetName: "東京夜間動物救急センター",
+      emergencyVetPhone: "03-9876-5432",
+      emergencyContactName2: "山田 太郎",
+      emergencyContactPhone2: "080-9876-5432",
       recentMedicationSummaries: ["ピモベンダン / 1.25mg / 1日2回 / 2026-01-10-"],
       recentVaccinationSummaries: ["CORE / 接種:2025-10-01 / 次回:2026-10-01"],
       recentMedicalRecordSummaries: ["2026-02-20 / EXAM / 定期検診"]
@@ -214,7 +234,12 @@ export const getPublicEmergencyByToken = async (token: string): Promise<Emergenc
     vetName: row.vet_name,
     vetPhone: row.vet_phone,
     emergencyContactName: row.emergency_contact_name,
-    emergencyContactPhone: row.emergency_contact_phone
+    emergencyContactPhone: row.emergency_contact_phone,
+    bloodType: row.blood_type,
+    emergencyVetName: row.emergency_vet_name,
+    emergencyVetPhone: row.emergency_vet_phone,
+    emergencyContactName2: row.emergency_contact_name_2,
+    emergencyContactPhone2: row.emergency_contact_phone_2
   });
 
   return withRecentSummaries(token, base);
