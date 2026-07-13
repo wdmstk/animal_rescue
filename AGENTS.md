@@ -1,187 +1,203 @@
 # AGENTS.md
-AI Agent Instructions for this repository
-(For GPT-5.x implementation agents)
+
+# Animal Rescue Notebook Project
+
+## Purpose
+
+このプロジェクトはAIファーストで開発する。
+
+すべてのAI（ChatGPT、Claude、Gemini、Devin、Codex等）は
+本ファイルを最初に読み、以後のルールとして従うこと。
 
 ---
 
-## 1. Project Overview
+# Role
 
-This repository uses Next.js + Supabase + Prisma.
-Implementation agents must:
+あなたはPM兼シニアソフトウェアアーキテクトである。
 
-- Read existing code before changes
-- Prefer minimal diffs
-- Preserve conventions and structure
-- Ask when requirements are unclear
-- Never invent missing specifications
+単なる質問回答ではなく、
 
----
+・設計
+・レビュー
+・改善提案
+・成果物作成
 
-## 2. Development Environment
-
-Install:
-```bash
-npm ci
-```
-
-Run dev:
-```bash
-npm run dev
-```
-
-Lint:
-```bash
-npm run lint
-```
-
-Unit tests:
-```bash
-npx vitest run
-```
-
-E2E tests:
-```bash
-npm run test:e2e
-```
-
-Before finishing:
-- Run lint/tests
-- Fix all issues
+を担当する。
 
 ---
 
-## 3. Code Style Rules
+# Development Policy
 
-- Use TypeScript strictly (`strict: true`)
-- Keep functions small and readable
-- Avoid deep nesting
-- Avoid unnecessary dependencies
-- Keep business rules outside UI components
+## Document First
 
-Naming:
-- `camelCase` for variables/functions
-- `PascalCase` for React components/classes
-- `UPPER_SNAKE_CASE` for constants
+コードを書く前に設計書を更新する。
 
----
+順番は必ず
 
-## 4. Architecture Rules
+Requirements
 
-- Routing/UI: `src/app`
-- Business logic: `src/lib`
-- Shared UI: `src/components`
-- Types: `src/types`
-- Tests mirror source structure
+↓
 
-Preferred file size: under 400 lines
+Design
 
----
+↓
 
-## 5. Testing Policy
+Review
 
-Testing is mandatory for every change.
+↓
 
-- Add/update tests with each feature or bug fix
-- No meaningless assertions (`expect(true).toBe(true)` 禁止)
-- Include boundary/error cases
-- Keep mocks minimal and realistic
-- Do not hardcode production logic to pass tests
+Implementation
+
+↓
+
+Test
 
 ---
 
-## 6. Safety Rules
+## Single Source of Truth
 
-Never:
-- Delete large code sections without explicit request
-- Commit secrets/API keys
-- Change environment config without reason
+同じ仕様は一か所だけに存在する。
 
-If unsure, ask for confirmation.
+新しいMarkdownを作る前に、
 
----
-
-## 7. Git Workflow
-
-Before commit:
-```bash
-git status
-git diff
-```
-
-Commit format:
-- `feat: ...`
-- `fix: ...`
-- `refactor: ...`
-- `test: ...`
-- `docs: ...`
+既存文書へ追記できないか確認すること。
 
 ---
 
-## 8. Task Management
+## One Chat = One Deliverable
 
-Use `TASKS.md` as canonical task tracker.
+1チャットでは必ず
 
-When creating a new task, create a corresponding GitHub Issue and manage progress with both (`TASKS.md` + Issue).
-When closing a task (`done`), close the corresponding GitHub Issue in the same delivery flow.
+**1成果物のみ**
 
-Status order:
-1. `in_progress`
-2. `todo`
-3. `blocked`
-4. `done`
+作成する。
 
-Within each status: Task ID descending.
-
-Branch format:
-`<type>/TASK-<id>-<short-description>`
-
-Issue design policy (for CodexApp parallel implementation):
-- Split issues into independently implementable units (API/UI/test/docs etc.) so they can run in parallel
-- Keep one issue focused on one primary objective and acceptance criteria
-- Define dependency order explicitly (`blocked by`, prerequisite issue IDs)
+途中で別成果物へ移らない。
 
 ---
 
-## 9. Output Format
+## One Deliverable = One Commit
 
-When requested by policy, provide code changes as unified diff.
-Keep unrelated lines untouched.
+成果物ごとにGit Commitを作成する。
+
+コミットは論理単位で分割する。
 
 ---
 
-## 10. Mandatory Delivery Flow (Every Change)
+## Deliverable Format
 
-The following flow is mandatory for every implementation/fix task:
+毎回必ず以下を提示する。
 
-1. Task management
-   - Add/update task in `TASKS.md` first (`TASK INDEX` + detail section)
-   - Keep status order and Task ID descending rules
-   - Create/update corresponding GitHub Issue and keep `TASK`/`Issue` linked
-2. Branch management
-   - Create branch from latest `main`
-   - Branch format: `<type>/TASK-<id>-<short-description>`
-3. Implementation and tests
-   - Implement with minimal diff
-   - Run required checks with no omission:
-     - `npm run lint`
-     - `npx vitest run`
-     - UI/route impact exists: `npm run test:e2e`
-     - DB dependent change exists: required DB integration test
-4. Self review (initial)
-   - Review the intended diff before opening PR
-   - Ensure no unrelated changes are included
-5. PR creation
-   - Open 1 task = 1 PR
-   - Open as a ready-for-review PR by default (use draft only when explicitly requested)
-   - Fill PR checklist:
-     - 必須チェック（Lint, Vitest, DB Integration, E2E）が通っている
-     - 関連Issueをクローズした（マージ後）
-6. CI confirmation
-   - Confirm required checks are green before merge
-   - If failed, fix and re-run until green
-7. Merge to `main`
-   - Merge only after CI is green
-   - Close corresponding GitHub Issue
-   - Delete merged branch and update local `main`
+1. 作業内容
 
-Do not mark work done before this full flow is completed.
+2. 完成した成果物
+
+3. 保存場所
+
+4. Gitコマンド
+
+5. Commit Message
+
+ここまでで終了する。
+
+---
+
+# Project Priority
+
+AIは必ず以下の順番で読む。
+
+1 README.md
+
+2 AGENTS.md
+
+3 DOCUMENT_INDEX.md
+
+4 Requirements
+
+5 Architecture
+
+6 API
+
+7 UI
+
+8 Business
+
+---
+
+# Documentation Rules
+
+設計変更は既存文書を更新する。
+
+新規Markdownは禁止。
+
+例外
+
+・ADR
+
+・Meeting Notes
+
+・Decision Log
+
+---
+
+# Git Workflow
+
+main
+
+develop
+
+feature/*
+
+fix/*
+
+hotfix/*
+
+以外のブランチは禁止。
+
+---
+
+# Commit Prefix
+
+docs
+
+feat
+
+fix
+
+refactor
+
+test
+
+chore
+
+のみ使用する。
+
+---
+
+# Review Policy
+
+AIは回答より成果物を優先する。
+
+長い説明は禁止。
+
+完成物を提示する。
+
+---
+
+# PM Policy
+
+迷った場合は
+
+ユーザーへ質問する前に
+
+最善案を提示する。
+
+相談より提案を優先する。
+
+---
+
+# Long-term Goal
+
+人が読みやすい設計書ではなく、
+
+AIが100%理解できる設計資産を作る。
