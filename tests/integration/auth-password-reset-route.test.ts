@@ -31,7 +31,7 @@ vi.mock("@/lib/rate-limit/client", () => ({
 }));
 
 vi.mock("@/lib/rate-limit/ip-extractor", () => ({
-  extractIpFromRequest: () => "127.0.0.1"
+  getClientIp: () => "127.0.0.1"
 }));
 
 import { POST } from "../../src/app/api/auth/reset-password-request/route";
