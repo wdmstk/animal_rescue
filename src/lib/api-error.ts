@@ -28,5 +28,8 @@ export const notFound = (resource: string = "Resource"): NextResponse<ApiErrorRe
 export const paymentRequired = (message: string = "この機能は有料プランで利用できます"): NextResponse<ApiErrorResponse> =>
   apiError(message, 402);
 
+export const tooManyRequests = (message: string = "リクエストが多すぎます。しばらく待ってから再度お試しください"): NextResponse<ApiErrorResponse> =>
+  apiError(message, 429);
+
 export const serverError = (message: string = "サーバーエラーが発生しました", status: number = 500): NextResponse<ApiErrorResponse> =>
   apiError(message, status);
