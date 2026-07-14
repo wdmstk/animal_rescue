@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { passwordResetRequestSchema } from "@/lib/validators/auth";
 import { badRequest, tooManyRequests } from "@/lib/api-error";
 import { getRedisClient } from "@/lib/rate-limit/client";
-import { extractIpFromRequest } from "@/lib/rate-limit/ip-extractor";
+import { getClientIp } from "@/lib/rate-limit/ip-extractor";
 
 const RATE_LIMIT_REQUESTS = 5;
 const RATE_LIMIT_WINDOW = 60; // 1 minute in seconds
@@ -11,7 +11,7 @@ const RATE_LIMIT_WINDOW = 60; // 1 minute in seconds
 export async function POST(req: Request) {
   try {
     // Rate limiting check
-    const ip = extractIpFromRequest(req);
+    const ip = getClientIp(req);
     const redis = getRedisClient();
     
     const rateLimitKey = `password-reset-request:${ip}`;
