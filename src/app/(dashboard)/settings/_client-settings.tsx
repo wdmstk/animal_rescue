@@ -770,6 +770,25 @@ export function ClientSettings({
           ログアウト
         </button>
       </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900">法務ドキュメント</h2>
+        <p className="mt-1 text-sm text-slate-600">サービス利用に関する法務情報</p>
+        <div className="mt-3 flex flex-wrap gap-4">
+          <Link href="/legal/terms" className="text-sm text-slate-600 hover:text-slate-900 hover:underline">
+            利用規約
+          </Link>
+          <Link href="/legal/privacy" className="text-sm text-slate-600 hover:text-slate-900 hover:underline">
+            プライバシーポリシー
+          </Link>
+          <Link href="/legal/commercial" className="text-sm text-slate-600 hover:text-slate-900 hover:underline">
+            特定商取引法表記
+          </Link>
+          <Link href="/legal/cookie" className="text-sm text-slate-600 hover:text-slate-900 hover:underline">
+            Cookieポリシー
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

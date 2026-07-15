@@ -85,6 +85,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             新規登録
           </Link>
         </p>
+        <p className="text-center text-xs text-slate-500 dark:text-slate-500">
+          <Link href="/legal/terms" className="hover:underline">利用規約</Link>
+          {"・"}
+          <Link href="/legal/privacy" className="hover:underline">プライバシーポリシー</Link>
+        </p>
       </form>
     </div>
   );
