@@ -23,10 +23,13 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-202` 緊急QRボタンをペット詳細画面の最上部に移動
 
 ### todo
-（なし）
+1. `TASK-203` ペット一覧カードに「緊急」ボタン追加
+2. `TASK-204` 緊急公開画面の情報優先度改善
+3. `TASK-205` 管理画面MVP（ユーザー一覧・課金状態確認）
+4. `TASK-206` エラーモニタリング（Sentry等）導入
 
 ### blocked
 （なし）
@@ -1368,8 +1371,17 @@ Development Task List
 - Task ID: `TASK-101`
 - ブランチ: `docs/TASK-101-mvp-docs-security-ops`
 - ステータス: `done`
-- 概要: セットアップ、設計、運用手順の明文化
+
+### 緊急QRボタンをペット詳細画面の最上部に移動
+- Task ID: `TASK-202`
+- ブランチ: `feat/TASK-202-emergency-qr-top-priority`
+- ステータス: `in_progress`
+- 概要: 緊急時の3タップルール達成のため、緊急QRボタンをペット詳細画面の最上部に移動する
+- Issue: #229
+- 依存関係:
+  - prerequisite: なし
 - 完了条件:
-  - `README.md` にセットアップ/設計ドキュメント導線が整理される
-  - `docs/development-workflow.md` に PR作成〜CI確認〜マージ〜後片付け手順が明記される
-  - `docs/security-policy.md` に運用時のセキュリティ確認手順が明記される
+  - ペット詳細画面の最上部に緊急QRボタンを表示する
+  - ボタン押下でQR表示モーダルを開く
+  - モバイル対応のレイアウトとタップターゲットサイズ
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る

@@ -117,6 +117,8 @@ export default async function PetDetailPage({
             </ul>
           </nav>
 
+          <EmergencyQrShareCard petId={petId} initialToken={e2eToken} />
+
           <section id="profile" className="scroll-mt-44">
             <PetProfileCard pet={e2ePet} />
           </section>
@@ -177,8 +179,6 @@ export default async function PetDetailPage({
               }}
             />
           </section>
-
-          <EmergencyQrShareCard petId={petId} initialToken={e2eToken} />
 
           <section id="medications" className="scroll-mt-44">
             <MedicationManagerCard
@@ -397,6 +397,8 @@ export default async function PetDetailPage({
         </ul>
       </nav>
 
+      <EmergencyQrShareCard petId={petId} initialToken={activeToken ?? undefined} />
+
       <section id="profile" className="scroll-mt-44">
         <PetProfileEditorCard
           petId={petId}
@@ -444,8 +446,6 @@ export default async function PetDetailPage({
       <section id="emergency" className="scroll-mt-44">
         <EmergencyEditorCard petId={petId} initialEmergencyInfo={pet.emergencyInfo} />
       </section>
-
-      <EmergencyQrShareCard petId={petId} initialToken={activeToken ?? undefined} />
 
       <section id="medications" className="scroll-mt-44">
         <MedicationManagerCard
