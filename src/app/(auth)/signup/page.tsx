@@ -2,6 +2,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signupInputSchema } from "@/lib/validators/auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { LegalLinks } from "@/components/legal-links";
 
 const signup = async (formData: FormData) => {
   "use server";
@@ -53,15 +54,7 @@ export default function SignupPage() {
             </Link>
           </p>
         </form>
-        <p className="text-center text-xs text-slate-500 dark:text-slate-500">
-          <Link href="/legal/terms" className="hover:underline">利用規約</Link>
-          {"・"}
-          <Link href="/legal/privacy" className="hover:underline">プライバシーポリシー</Link>
-          {"・"}
-          <Link href="/legal/commercial" className="hover:underline">特定商取引法表記</Link>
-          {"・"}
-          <Link href="/legal/cookie" className="hover:underline">Cookieポリシー</Link>
-        </p>
+        <LegalLinks />
       </div>
     </div>
   );
