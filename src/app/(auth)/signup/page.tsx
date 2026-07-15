@@ -54,13 +54,13 @@ export default function SignupPage() {
           </p>
         </form>
         <p className="text-center text-xs text-slate-500 dark:text-slate-500">
-          <Link href="/legal/terms" className="hover:underline">利用規約</Link>
+          <a href="/legal/terms" className="hover:underline">利用規約</a>
           {"・"}
-          <Link href="/legal/privacy" className="hover:underline">プライバシーポリシー</Link>
+          <a href="/legal/privacy" className="hover:underline">プライバシーポリシー</a>
           {"・"}
-          <Link href="/legal/commercial" className="hover:underline">特定商取引法表記</Link>
+          <a href="/legal/commercial" className="hover:underline">特定商取引法表記</a>
           {"・"}
-          <Link href="/legal/cookie" className="hover:underline">Cookieポリシー</Link>
+          <a href="/legal/cookie" className="hover:underline">Cookieポリシー</a>
         </p>
       </div>
     </div>
