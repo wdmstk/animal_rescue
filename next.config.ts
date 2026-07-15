@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: *.supabase.co images.unsplash.com; font-src 'self' data:; connect-src 'self' *.supabase.co; frame-ancestors 'self';"
+            value: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: *.supabase.co images.unsplash.com; font-src 'self' data:; connect-src 'self' *.supabase.co; frame-ancestors 'self';"
           }
         ]
       }
