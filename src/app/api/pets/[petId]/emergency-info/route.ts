@@ -5,6 +5,7 @@ import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-acces
 import { requireEditAccess } from "@/lib/billing/access-guard";
 import { emergencyInfoInputSchema } from "@/lib/validators/emergency";
 import { badRequest } from "@/lib/api-error";
+import { logEmergencyInfoAction, AuditAction } from "@/lib/audit-log";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -45,6 +46,21 @@ export async function PUT(request: Request, { params }: { params: Promise<{ petI
       ...parsed.data
     }
   });
+
+  // 監査ログを記録
+  const ipAddress = request.headers.get("x-forwarded-for") || 
+                     request.headers.get("x-real-ip") || 
+                     "unknown";
+  const userAgent = request.headers.get("user-agent") || "unknown";
+  
+  await logEmergencyInfoAction(
+    auth.userId,
+    AuditAction.EMERGENCY_INFO_UPDATE,
+    access.petId,
+    parsed.data,
+    ipAddress,
+    userAgent
+  );
 
   return NextResponse.json({ data: emergencyInfo });
 }
