@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { React } from "react";
 
 interface TabItem {
   id: string;
@@ -15,7 +15,7 @@ interface TabsProps {
 }
 
 export function Tabs({ tabs, defaultTab, variant = "default" }: TabsProps) {
-  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]?.id);
+  const [activeTab, setActiveTab] = React.useState(defaultTab || tabs[0]?.id);
 
   const activeTabContent = tabs.find(tab => tab.id === activeTab)?.content;
 
