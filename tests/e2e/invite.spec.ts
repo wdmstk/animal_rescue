@@ -28,7 +28,7 @@ test("invite join keeps input value and shows API error", async ({ page }) => {
 test("pets page links to pet detail", async ({ page }) => {
   await page.goto("/pets");
   await page.getByRole("link", { name: "モカ 犬 / トイプードル" }).click();
-  await expect(page).toHaveURL(/\/pets\/sample-pet$/);
+  await expect(page).toHaveURL(/\/pets\/demo-pet$/);
   await expect(page.getByRole("heading", { name: "モカ" })).toBeVisible();
 });
 

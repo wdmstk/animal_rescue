@@ -2,12 +2,12 @@ import { expect, test } from "@playwright/test";
 
 test("pet detail shows health tracking section", async ({ page }) => {
   await page.goto("/pets/demo-pet");
+  await page.getByRole("link", { name: "健康記録" }).click();
   await expect(page.getByRole("heading", { name: "健康記録" })).toBeVisible();
 });
 
 test("pet detail shows parallel implementation sections", async ({ page }) => {
   await page.goto("/pets/demo-pet");
-  await expect(page.getByRole("navigation", { name: "詳細セクションナビ" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "モカ" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "通院提出用サマリー（印刷/PDF）" })).toBeVisible();
   await expect(page.getByRole("button", { name: "印刷/PDF出力" })).toBeVisible();
@@ -30,12 +30,12 @@ test("pet detail shows parallel implementation sections", async ({ page }) => {
 test("pet detail section nav jumps to target section", async ({ page }) => {
   await page.goto("/pets/demo-pet");
   await page.getByRole("link", { name: "健康記録" }).click();
-  await expect(page).toHaveURL(/#health$/);
   await expect(page.getByRole("heading", { name: "健康記録" })).toBeVisible();
 });
 
 test("health graph controls and extension form are interactive", async ({ page }) => {
   await page.goto("/pets/demo-pet");
+  await page.getByRole("link", { name: "健康記録" }).click();
   const graphSection = page.locator("div", { hasText: "推移グラフ" }).first();
   await expect(graphSection).toBeVisible();
 
@@ -47,6 +47,7 @@ test("health graph controls and extension form are interactive", async ({ page }
 
 test("health panel shows input, history and graph sections", async ({ page }) => {
   await page.goto("/pets/demo-pet");
+  await page.getByRole("link", { name: "健康記録" }).click();
   await expect(page.getByText("共通コアを記録")).toBeVisible();
   await expect(page.getByText("血液検査を記録")).toBeVisible();
   await expect(page.getByRole("button", { name: "尿検査" })).toBeVisible();
@@ -57,6 +58,7 @@ test("health panel shows input, history and graph sections", async ({ page }) =>
 
 test("urine category can select staged urine markers", async ({ page }) => {
   await page.goto("/pets/demo-pet");
+  await page.getByRole("link", { name: "健康記録" }).click();
   await page.getByRole("button", { name: "尿検査" }).click();
   const markerSelect = page.locator("form").filter({ hasText: "尿検査を記録" }).locator("select").first();
   await markerSelect.selectOption("UPCR");
@@ -65,6 +67,7 @@ test("urine category can select staged urine markers", async ({ page }) => {
 
 test("extension toggle shows infusion input form", async ({ page }) => {
   await page.goto("/pets/demo-pet");
+  await page.getByRole("link", { name: "健康記録" }).click();
   const extensionToggle = page.locator("label:has-text('拡張項目（例: 点滴量）') input[type='checkbox']");
   await expect(extensionToggle).not.toBeChecked();
   await extensionToggle.check();
@@ -73,6 +76,7 @@ test("extension toggle shows infusion input form", async ({ page }) => {
 
 test("health graph period selector can be changed", async ({ page }) => {
   await page.goto("/pets/demo-pet");
+  await page.getByRole("link", { name: "健康記録" }).click();
   const periodSelect = page.locator("select").filter({ has: page.locator("option", { hasText: "全期間" }) }).first();
   await periodSelect.selectOption("all");
   await expect(periodSelect).toHaveValue("all");

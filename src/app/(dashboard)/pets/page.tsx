@@ -48,7 +48,7 @@ export default async function PetsPage() {
   }
 
   if (process.env.PLAYWRIGHT_E2E === "1" && (pets.length === 0 || hasError)) {
-    pets = [{ id: "sample-pet", name: "モカ", species: "dog" as "dog" | "cat" | "other", breed: "トイプードル" }];
+    pets = [{ id: "demo-pet", name: "モカ", species: "dog" as "dog" | "cat" | "other", breed: "トイプードル" }];
     hasError = false;
   }
 
