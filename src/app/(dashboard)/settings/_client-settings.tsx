@@ -169,6 +169,8 @@ export function ClientSettings({
   const [billing, setBilling] = useState<BillingPayload>(initialBilling);
   const [isBillingSubmitting, setIsBillingSubmitting] = useState(false);
   const [isPortalSubmitting, setIsPortalSubmitting] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual">("monthly");
+  const [annualPlanAvailable, setAnnualPlanAvailable] = useState(false);
   const [pets, setPets] = useState<PetListItem[]>(initialPets);
   const [ownerDisplaySettings, setOwnerDisplaySettings] = useState<OwnerDisplaySettings | null>(initialOwnerDisplaySettings);
   const [isDisplaySettingsSaving, setIsDisplaySettingsSaving] = useState(false);
@@ -224,6 +226,18 @@ export function ClientSettings({
       setPets(petsJson.data);
       setOwnerDisplaySettings(ownerSettingsJson.data);
       setOwnerProfile(ownerProfileJson?.data ?? null);
+      
+      // Check if annual plan is available
+      try {
+        const testResponse = await fetch("/api/billing/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan: "annual" })
+        });
+        setAnnualPlanAvailable(testResponse.ok);
+      } catch {
+        setAnnualPlanAvailable(false);
+      }
     } catch {
       setErrorMessage("設定情報の取得に失敗しました。");
     }
@@ -308,7 +322,11 @@ export function ClientSettings({
     setErrorMessage(null);
     setIsBillingSubmitting(true);
 
-    const response = await fetch("/api/billing/checkout", { method: "POST" });
+    const response = await fetch("/api/billing/checkout", { 
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan: selectedPlan })
+    });
     const payload = (await response.json().catch(() => null)) as { data?: { url?: string }; error?: string } | null;
 
     if (!response.ok || !payload?.data?.url) {
@@ -506,7 +524,50 @@ export function ClientSettings({
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">課金プラン</h2>
-        <p className="mt-1 text-sm text-slate-600">30日無料トライアル、その後月額680円（Stripe定期課金）</p>
+        <p className="mt-1 text-sm text-slate-600">
+          {annualPlanAvailable 
+            ? "30日無料トライアル、その後月額680円または年額7,800円（Stripe定期課金）"
+            : "30日無料トライアル、その後月額680円（Stripe定期課金）"
+          }
+        </p>
+        
+        {billing?.subscriptionStatus === "INCOMPLETE" && annualPlanAvailable && (
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <div 
+              className={`rounded-xl border-2 p-4 cursor-pointer transition ${
+                selectedPlan === "monthly" 
+                  ? "border-emerald-500 bg-emerald-50" 
+                  : "border-slate-200 bg-slate-50 hover:border-slate-300"
+              }`}
+              onClick={() => setSelectedPlan("monthly")}
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-slate-900">月払い</h3>
+                <span className="text-2xl font-bold text-slate-900">¥680<span className="text-sm font-normal text-slate-600">/月</span></span>
+              </div>
+              <p className="mt-2 text-sm text-slate-600">月額コースで柔軟に利用</p>
+            </div>
+            
+            <div 
+              className={`rounded-xl border-2 p-4 cursor-pointer transition ${
+                selectedPlan === "annual" 
+                  ? "border-emerald-500 bg-emerald-50" 
+                  : "border-slate-200 bg-slate-50 hover:border-slate-300"
+              }`}
+              onClick={() => setSelectedPlan("annual")}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-slate-900">年払い</h3>
+                  <span className="inline-flex rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white mt-1">4%お得</span>
+                </div>
+                <span className="text-2xl font-bold text-slate-900">¥7,800<span className="text-sm font-normal text-slate-600">/年</span></span>
+              </div>
+              <p className="mt-2 text-sm text-slate-600">年額7,800円（¥650/月相当）</p>
+            </div>
+          </div>
+        )}
+        
         <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex rounded-full bg-slate-900 px-2 py-1 text-xs font-semibold text-white">
