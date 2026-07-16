@@ -1,6 +1,5 @@
 "use client";
 
-// Force rebuild - E2E fix
 import { useState } from "react";
 
 interface TabItem {
