@@ -6,6 +6,7 @@ import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 import { Tooltip } from "@/components/ui/tooltip";
+import { FormField } from "@/components/ui/form-field";
 
 type Species = "dog" | "cat" | "other";
 type Sex = "MALE" | "FEMALE" | "UNKNOWN";
@@ -60,6 +61,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [name, setName] = useState(initialPet.name);
   const [species, setSpecies] = useState<Species>(initialPet.species);
@@ -72,6 +74,53 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
   const [weightKg, setWeightKg] = useState(initialPet.weightKg !== null ? String(initialPet.weightKg) : "");
   const [notesPersonality, setNotesPersonality] = useState(initialPet.notesPersonality ?? "");
   const [notesFeatures, setNotesFeatures] = useState(initialPet.notesFeatures ?? "");
+
+  // Validation errors
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateField = (field: string, value: string) => {
+    let error = "";
+    
+    switch (field) {
+      case "name":
+        if (!value.trim()) error = "名前を入力してください";
+        else if (value.length > 64) error = "名前は64文字以内で入力してください";
+        break;
+      case "breed":
+        if (value.length > 64) error = "品種は64文字以内で入力してください";
+        break;
+      case "ageYears":
+        if (value && (Number(value) < 0 || Number(value) > 99)) error = "年齢は0〜99歳で入力してください";
+        break;
+      case "weightKg":
+        if (value && (Number(value) < 0.1 || Number(value) > 200)) error = "体重は0.1〜200kgで入力してください";
+        break;
+      case "sterilizedAt":
+        if (reproductiveStatus === "NEUTERED" || reproductiveStatus === "SPAYED") {
+          if (!value) error = "実施日を入力してください";
+        }
+        break;
+    }
+    
+    setErrors(prev => ({ ...prev, [field]: error }));
+    return error;
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!name.trim()) newErrors.name = "名前を入力してください";
+    if (name.length > 64) newErrors.name = "名前は64文字以内で入力してください";
+    if (breed.length > 64) newErrors.breed = "品種は64文字以内で入力してください";
+    if (ageYears && (Number(ageYears) < 0 || Number(ageYears) > 99)) newErrors.ageYears = "年齢は0〜99歳で入力してください";
+    if (weightKg && (Number(weightKg) < 0.1 || Number(weightKg) > 200)) newErrors.weightKg = "体重は0.1〜200kgで入力してください";
+    if ((reproductiveStatus === "NEUTERED" || reproductiveStatus === "SPAYED") && !sterilizedAt) {
+      newErrors.sterilizedAt = "実施日を入力してください";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const firstPhoto = initialPet.photos[0]?.photoUrl;
   const profile = {
@@ -95,6 +144,12 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage(null);
+    setSuccessMessage(null);
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -127,6 +182,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
         return;
       }
 
+      setSuccessMessage("基本情報を保存しました");
       setIsEditing(false);
       router.refresh();
     } catch {
@@ -157,127 +213,163 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
       <p className="mt-1 text-sm text-slate-600">ペットの基本情報を登録します。すべての項目は後で変更できます。</p>
 
       <form className="mt-4 space-y-3" onSubmit={onSubmit}>
-        <label className="block text-sm font-semibold text-slate-800">
-          名前
+        <FormField
+          label="名前"
+          required
+          error={errors.name}
+          description="ペットの名前を入力してください"
+        >
           <input
             name="name"
             value={name}
-            onChange={(event) => setName(event.target.value)}
+            onChange={(event) => {
+              setName(event.target.value);
+              validateField("name", event.target.value);
+            }}
             required
             maxLength={64}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            placeholder="例: ポコ"
+            className={`w-full rounded-lg border px-3 py-2 text-sm ${
+              errors.name ? "border-rose-300 bg-rose-50" : "border-slate-300"
+            }`}
           />
-        </label>
+        </FormField>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-800">
-            <div className="flex items-center gap-1">
-              種類
-              <Tooltip content="ペットの種類を選択します。犬、猫、またはその他の動物を指定できます。">
-                <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
-              </Tooltip>
-            </div>
+          <FormField
+            label="種類"
+            tooltip="ペットの種類を選択します。犬、猫、またはその他の動物を指定できます。"
+          >
             <select
               name="species"
               value={species}
               onChange={(event) => setSpecies(event.target.value as Species)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             >
               <option value="dog">犬</option>
               <option value="cat">猫</option>
               <option value="other">その他</option>
             </select>
-          </label>
+          </FormField>
 
-          <label className="block text-sm font-semibold text-slate-800">
-            性別
+          <FormField
+            label="性別"
+          >
             <select
               name="sex"
               value={sex}
               onChange={(event) => setSex(event.target.value as Sex)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             >
               <option value="MALE">オス</option>
               <option value="FEMALE">メス</option>
               <option value="UNKNOWN">不明</option>
             </select>
-          </label>
+          </FormField>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-800">
-            品種
+          <FormField
+            label="品種"
+            error={errors.breed}
+            description="例: トイプードル、柴犬など"
+          >
             <input
               name="breed"
               value={breed}
-              onChange={(event) => setBreed(event.target.value)}
+              onChange={(event) => {
+                setBreed(event.target.value);
+                validateField("breed", event.target.value);
+              }}
               maxLength={64}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              placeholder="例: トイプードル"
+              className={`w-full rounded-lg border px-3 py-2 text-sm ${
+                errors.breed ? "border-rose-300 bg-rose-50" : "border-slate-300"
+              }`}
             />
-          </label>
+          </FormField>
 
-          <label className="block text-sm font-semibold text-slate-800">
-            誕生日
+          <FormField
+            label="誕生日"
+            description="誕生日がわかる場合のみ入力"
+          >
             <input
               name="birthday"
               type="date"
               value={birthday}
               onChange={(event) => setBirthday(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
-          </label>
+          </FormField>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-800">
-            <div className="flex items-center gap-1">
-              去勢・避妊
-              <Tooltip content="去勢はオスの生殖能力を除去する手術、避妊はメスの生殖能力を除去する手術です。健康上のメリットがあります。">
-                <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
-              </Tooltip>
-            </div>
+          <FormField
+            label="去勢・避妊"
+            tooltip="去勢はオスの生殖能力を除去する手術、避妊はメスの生殖能力を除去する手術です。健康上のメリットがあります。"
+          >
             <select
               name="reproductiveStatus"
               value={reproductiveStatus}
               onChange={(event) => setReproductiveStatus(event.target.value as ReproductiveStatus)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             >
               <option value="UNKNOWN">不明</option>
               <option value="INTACT">未実施</option>
               <option value="NEUTERED">去勢済み</option>
               <option value="SPAYED">避妊済み</option>
             </select>
-          </label>
+          </FormField>
 
-          <label className="block text-sm font-semibold text-slate-800">
-            実施日
+          <FormField
+            label="実施日"
+            error={errors.sterilizedAt}
+            description="去勢・避妊の場合は実施日を入力"
+          >
             <input
               name="sterilizedAt"
               type="date"
               value={sterilizedAt}
               disabled={reproductiveStatus !== "NEUTERED" && reproductiveStatus !== "SPAYED"}
-              onChange={(event) => setSterilizedAt(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:bg-slate-100"
+              onChange={(event) => {
+                setSterilizedAt(event.target.value);
+                validateField("sterilizedAt", event.target.value);
+              }}
+              className={`w-full rounded-lg border px-3 py-2 text-sm disabled:bg-slate-100 ${
+                errors.sterilizedAt ? "border-rose-300 bg-rose-50" : "border-slate-300"
+              }`}
             />
-          </label>
+          </FormField>
         </div>
 
         <div className="grid gap-3 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-800">
-            年齢
+          <FormField
+            label="年齢"
+            error={errors.ageYears}
+            description="0〜99歳の範囲で入力"
+          >
             <input
               name="ageYears"
               type="number"
               min={0}
               max={99}
               value={ageYears}
-              onChange={(event) => setAgeYears(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              onChange={(event) => {
+                setAgeYears(event.target.value);
+                validateField("ageYears", event.target.value);
+              }}
+              placeholder="例: 3"
+              className={`w-full rounded-lg border px-3 py-2 text-sm ${
+                errors.ageYears ? "border-rose-300 bg-rose-50" : "border-slate-300"
+              }`}
             />
-          </label>
+          </FormField>
 
-          <label className="block text-sm font-semibold text-slate-800">
-            体重(kg)
+          <FormField
+            label="体重(kg)"
+            error={errors.weightKg}
+            description="0.1〜200kgの範囲で入力"
+          >
             <input
               name="weightKg"
               type="number"
@@ -285,10 +377,16 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
               max={200}
               step={0.1}
               value={weightKg}
-              onChange={(event) => setWeightKg(event.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              onChange={(event) => {
+                setWeightKg(event.target.value);
+                validateField("weightKg", event.target.value);
+              }}
+              placeholder="例: 5.2"
+              className={`w-full rounded-lg border px-3 py-2 text-sm ${
+                errors.weightKg ? "border-rose-300 bg-rose-50" : "border-slate-300"
+              }`}
             />
-          </label>
+          </FormField>
         </div>
 
         <label className="block text-sm font-semibold text-slate-800">
@@ -326,6 +424,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
         </label>
 
         <ToastMessage message={errorMessage} type="error" />
+        <ToastMessage message={successMessage} type="success" />
 
         <div className="grid grid-cols-2 gap-2">
           <button
