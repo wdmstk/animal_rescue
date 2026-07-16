@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-190` フォームバリデーション改善
 
 ### todo
 （なし）
@@ -1356,7 +1356,7 @@ Development Task List
 ### フォームバリデーション改善
 - Task ID: `TASK-190`
 - ブランチ: `feat/TASK-190-form-validation-improvement`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: リアルタイムバリデーション、具体的なプレースホルダー、フィールドごとのエラー表示を実装し、フォーム体験を改善する
 - Issue: #210
 - 依存関係:
