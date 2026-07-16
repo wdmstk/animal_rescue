@@ -1,11 +1,11 @@
-import { React } from "react";
+import type { ReactNode } from "react";
 
 interface FormFieldProps {
   label: string;
   error?: string;
   required?: boolean;
   tooltip?: string;
-  children: React.ReactNode;
+  children: ReactNode;
   description?: string;
 }
 
