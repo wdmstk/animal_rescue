@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-192` ペット詳細ページ情報整理
 
 ### todo
 （なし）
@@ -1385,7 +1385,7 @@ Development Task List
 ### ペット詳細ページ情報整理
 - Task ID: `TASK-192`
 - ブランチ: `feat/TASK-192-pet-detail-page-organization`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: ペット詳細ページの9つのセクションをグループ化またはタブ化し、情報密度を最適化する
 - Issue: #212
 - 依存関係:
