@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { HouseholdInviteCodeCard } from "@/components/features/pets/household-invite-code-card";
 import { ToastMessage } from "@/components/ui/toast-message";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type Member = {
   id: string;
@@ -175,6 +176,7 @@ export function ClientSettings({
   const [ownerProfile, setOwnerProfile] = useState<OwnerProfile | null>(initialOwnerProfile);
   const [isOwnerProfileSaving, setIsOwnerProfileSaving] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState(false);
 
   const isOwner = currentUserRole === "OWNER";
   const hasOwner = members.some((member) => member.role === "OWNER");
@@ -420,14 +422,11 @@ export function ClientSettings({
   };
 
   const handleDeleteAccount = async () => {
-    const confirmed = window.confirm(
-      "アカウントを削除すると、以下のデータが完全に消去されます：\n・全てのペット情報\n・全ての医療記録\n・全ての写真\n・世帯情報\n・サブスクリプション（即時キャンセル）\n\nこの操作は取り消せません。本当に削除しますか？"
-    );
+    setShowDeleteAccountDialog(true);
+  };
 
-    if (!confirmed) {
-      return;
-    }
-
+  const handleDeleteAccountConfirm = async () => {
+    setShowDeleteAccountDialog(false);
     setErrorMessage(null);
     setMessage(null);
     setIsDeletingAccount(true);
@@ -789,6 +788,17 @@ export function ClientSettings({
           </Link>
         </div>
       </section>
+
+      <ConfirmDialog
+        isOpen={showDeleteAccountDialog}
+        title="アカウントを削除"
+        message="アカウントを削除すると、以下のデータが完全に消去されます：\n・全てのペット情報\n・全ての医療記録\n・全ての写真\n・世帯情報\n・サブスクリプション（即時キャンセル）\n\nこの操作は取り消せません。本当に削除しますか？"
+        confirmLabel="削除"
+        cancelLabel="キャンセル"
+        variant="danger"
+        onConfirm={handleDeleteAccountConfirm}
+        onCancel={() => setShowDeleteAccountDialog(false)}
+      />
     </div>
   );
 }
