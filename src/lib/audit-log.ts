@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export enum AuditAction {
   // Pet operations
@@ -84,7 +85,7 @@ export async function createAuditLog(options: AuditLogOptions): Promise<void> {
         action: options.action,
         entityType: options.entityType,
         entityId: options.entityId,
-        changes: options.changes ? JSON.stringify(options.changes) : null,
+        changes: options.changes ? JSON.stringify(options.changes) : Prisma.JsonNull,
         ipAddress: options.ipAddress,
         userAgent: options.userAgent,
       },
