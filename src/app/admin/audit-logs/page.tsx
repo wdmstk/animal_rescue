@@ -29,19 +29,25 @@ export default async function AuditLogsPage() {
 
   // Fetch audit logs with pagination
   const logs = await prisma.auditLog.findMany({
-    include: {
-      user: {
-        select: {
-          id: true,
-          email: true,
-        }
-      }
-    },
     orderBy: {
       createdAt: 'desc'
     },
     take: 100 // Limit to last 100 logs
   });
+
+  // Fetch user emails for the logs
+  const userIds = [...new Set(logs.map(log => log.userId))];
+  const users = await prisma.user.findMany({
+    where: {
+      id: { in: userIds }
+    },
+    select: {
+      id: true,
+      email: true
+    }
+  });
+
+  const userMap = new Map(users.map(u => [u.id, u.email]));
 
   return (
     <div className="min-h-screen bg-slate-50 p-8">
@@ -72,7 +78,7 @@ export default async function AuditLogsPage() {
                 {logs.map((log) => (
                   <tr key={log.id} className="border-b border-slate-100">
                     <td className="px-4 py-3 text-slate-600">{log.id.slice(0, 8)}...</td>
-                    <td className="px-4 py-3 text-slate-900">{log.user.email}</td>
+                    <td className="px-4 py-3 text-slate-900">{userMap.get(log.userId) || "Unknown"}</td>
                     <td className="px-4 py-3 text-slate-600">
                       <span className="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-700">
                         {log.action}
