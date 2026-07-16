@@ -35,20 +35,6 @@ export default async function AuditLogsPage() {
     take: 100 // Limit to last 100 logs
   });
 
-  // Fetch user emails for the logs
-  const userIds = [...new Set(logs.map(log => log.userId))];
-  const users = await prisma.user.findMany({
-    where: {
-      id: { in: userIds }
-    },
-    select: {
-      id: true,
-      email: true
-    }
-  });
-
-  const userMap = new Map(users.map(u => [u.id, u.email]));
-
   return (
     <div className="min-h-screen bg-slate-50 p-8">
       <div className="mx-auto max-w-7xl">
@@ -65,7 +51,7 @@ export default async function AuditLogsPage() {
               <thead>
                 <tr className="border-b border-slate-200">
                   <th className="px-4 py-3 text-left font-semibold text-slate-700">ID</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-700">ユーザー</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-700">ユーザーID</th>
                   <th className="px-4 py-3 text-left font-semibold text-slate-700">操作</th>
                   <th className="px-4 py-3 text-left font-semibold text-slate-700">エンティティ</th>
                   <th className="px-4 py-3 text-left font-semibold text-slate-700">エンティティID</th>
@@ -78,7 +64,7 @@ export default async function AuditLogsPage() {
                 {logs.map((log) => (
                   <tr key={log.id} className="border-b border-slate-100">
                     <td className="px-4 py-3 text-slate-600">{log.id.slice(0, 8)}...</td>
-                    <td className="px-4 py-3 text-slate-900">{userMap.get(log.userId) || "Unknown"}</td>
+                    <td className="px-4 py-3 text-slate-900">{log.userId.slice(0, 8)}...</td>
                     <td className="px-4 py-3 text-slate-600">
                       <span className="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-700">
                         {log.action}
@@ -111,7 +97,7 @@ export default async function AuditLogsPage() {
             <p className="mt-2 text-3xl font-bold text-slate-900">{logs.length}</p>
           </div>
           <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <p className="text-sm font-semibold text-slate-600">ユニークユーザー</p>
+            <p className="text-sm font-semibold text-slate-600">ユニークユーザーID</p>
             <p className="mt-2 text-3xl font-bold text-slate-900">
               {new Set(logs.map(l => l.userId)).size}
             </p>
