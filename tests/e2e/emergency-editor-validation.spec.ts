@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("emergency editor shows phone format hints", async ({ page }) => {
   await page.goto("/pets/demo-pet");
+  await page.getByRole("button", { name: "緊急" }).click();
   await page.getByRole("button", { name: "緊急情報" }).click();
   await page.getByRole("button", { name: "緊急情報を編集" }).click();
 

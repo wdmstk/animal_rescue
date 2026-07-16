@@ -4,6 +4,7 @@ test.describe("ペット削除", () => {
   test("削除導線が表示される", async ({ page }) => {
     // E2Eモードでペット詳細ページへ
     await page.goto("/pets/demo-pet");
+    await page.getByRole("button", { name: "管理" }).click();
     await page.getByRole("button", { name: "削除" }).click();
 
     // 削除セクションが存在する
@@ -13,6 +14,7 @@ test.describe("ペット削除", () => {
 
   test("削除ボタンで確認ダイアログが表示される", async ({ page }) => {
     await page.goto("/pets/demo-pet");
+    await page.getByRole("button", { name: "管理" }).click();
     await page.getByRole("button", { name: "削除" }).click();
 
     // 削除ボタンをクリック
@@ -25,6 +27,7 @@ test.describe("ペット削除", () => {
 
   test("キャンセルで確認ダイアログが閉じる", async ({ page }) => {
     await page.goto("/pets/demo-pet");
+    await page.getByRole("button", { name: "管理" }).click();
     await page.getByRole("button", { name: "削除" }).click();
 
     // 削除ボタンをクリック
