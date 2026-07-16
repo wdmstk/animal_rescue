@@ -16,40 +16,40 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
       <p className="mt-3 text-sm font-semibold text-emergency-700 dark:text-emergency-400">Emergency Pet Pass</p>
       <h1 className="mt-1 text-3xl font-black text-slate-900 dark:text-slate-100">{data.petName}</h1>
 
-      {/* Blood Type */}
+      {/* Blood Type - Critical for emergency */}
       {data.bloodType && (
-        <div className="mt-2">
-          <p className="text-sm font-semibold text-slate-600 dark:text-slate-400">
-            血液型: <span className="font-bold text-slate-900 dark:text-slate-100">{data.bloodType}</span>
+        <div className="mt-3 rounded-xl border-l-4 border-rose-600 bg-rose-50 p-3 dark:bg-rose-950">
+          <p className="text-sm font-bold text-rose-700 dark:text-rose-400">
+            🩸 血液型: <span className="text-base font-black text-slate-900 dark:text-slate-100">{data.bloodType}</span>
           </p>
         </div>
       )}
 
-      {/* Disease and Allergy - Priority */}
+      {/* Disease and Allergy - Highest Priority */}
       <div className="mt-4 rounded-xl border-l-4 border-rose-600 bg-rose-50 p-4 dark:bg-rose-950">
         <h2 className="text-sm font-bold text-rose-700 dark:text-rose-400">⚠️ 持病・既往歴</h2>
-        <p className="mt-2 text-base font-bold text-slate-900 dark:text-slate-100">{data.disease ?? "登録なし"}</p>
+        <p className="mt-2 text-lg font-black text-slate-900 dark:text-slate-100">{data.disease ?? "登録なし"}</p>
       </div>
 
       <div className="mt-3 rounded-xl border-l-4 border-rose-600 bg-rose-50 p-4 dark:bg-rose-950">
         <h2 className="text-sm font-bold text-rose-700 dark:text-rose-400">⛔ アレルギー</h2>
-        <p className="mt-2 text-base font-bold text-slate-900 dark:text-slate-100">{data.allergy ?? "登録なし"}</p>
+        <p className="mt-2 text-lg font-black text-slate-900 dark:text-slate-100">{data.allergy ?? "登録なし"}</p>
       </div>
 
-      {/* Current Medications */}
+      {/* Current Medications - High Priority */}
       {data.medications && (
         <div className="mt-3 rounded-xl border-l-4 border-emergency-600 bg-emergency-50 p-4 dark:bg-emergency-950">
           <h2 className="text-sm font-bold text-emergency-700 dark:text-emergency-400">💊 現在の投薬</h2>
-          <p className="mt-2 text-base font-bold text-slate-900 dark:text-slate-100">{data.medications}</p>
+          <p className="mt-2 text-lg font-black text-slate-900 dark:text-slate-100">{data.medications}</p>
         </div>
       )}
 
-      {/* Emergency Contacts */}
-      <div className="mt-4 space-y-2">
+      {/* Emergency Contacts - High Priority */}
+      <div className="mt-5 space-y-3">
         {emergencyPhoneHref ? (
           <a
             href={emergencyPhoneHref}
-            className="block rounded-lg bg-rose-600 px-4 py-4 text-center text-base font-bold text-white"
+            className="block rounded-xl bg-rose-600 px-4 py-5 text-center text-lg font-black text-white shadow-lg"
           >
             📞 緊急連絡先1: {priorityContact}
           </a>
@@ -57,19 +57,19 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
         {emergencyPhoneHref2 ? (
           <a
             href={emergencyPhoneHref2}
-            className="block rounded-lg bg-rose-600 px-4 py-4 text-center text-base font-bold text-white"
+            className="block rounded-xl bg-rose-600 px-4 py-5 text-center text-lg font-black text-white shadow-lg"
           >
             📞 緊急連絡先2: {priorityContact2}
           </a>
         ) : null}
       </div>
 
-      {/* Vet Information */}
-      <div className="mt-4 space-y-2">
+      {/* Vet Information - High Priority */}
+      <div className="mt-5 space-y-3">
         {vetPhoneHref ? (
           <a
             href={vetPhoneHref}
-            className="block rounded-lg bg-emergency-600 px-4 py-4 text-center text-base font-bold text-white"
+            className="block rounded-xl bg-emergency-600 px-4 py-5 text-center text-lg font-black text-white shadow-lg"
           >
             🏥 かかりつけ病院: {data.vetName}
           </a>
@@ -79,25 +79,25 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
             href={vetMapHref}
             target="_blank"
             rel="noreferrer"
-            className="block rounded-lg border border-emergency-200 bg-emergency-50 px-4 py-4 text-center text-base font-bold text-emergency-800 dark:border-emergency-800 dark:bg-emergency-950 dark:text-emergency-300"
+            className="block rounded-xl border-2 border-emergency-300 bg-emergency-50 px-4 py-5 text-center text-lg font-black text-emergency-800 dark:border-emergency-700 dark:bg-emergency-950 dark:text-emergency-300"
           >
             🗺️ かかりつけ病院を地図で開く
           </a>
         ) : null}
       </div>
 
-      {/* Emergency Vet */}
+      {/* Emergency Vet - High Priority */}
       {data.emergencyVetName && (
-        <div className="mt-4 space-y-2">
+        <div className="mt-5 space-y-3">
           {emergencyVetPhoneHref ? (
             <a
               href={emergencyVetPhoneHref}
-              className="block rounded-lg bg-emergency-600 px-4 py-4 text-center text-base font-bold text-white"
+              className="block rounded-xl bg-emergency-600 px-4 py-5 text-center text-lg font-black text-white shadow-lg"
             >
               🏥 夜間救急病院: {data.emergencyVetName}
             </a>
           ) : (
-            <div className="rounded-lg bg-emergency-50 px-4 py-4 text-center text-base font-bold text-emergency-800 dark:bg-emergency-950 dark:text-emergency-300">
+            <div className="rounded-xl bg-emergency-50 px-4 py-5 text-center text-lg font-black text-emergency-800 dark:bg-emergency-950 dark:text-emergency-300">
               🏥 夜間救急病院: {data.emergencyVetName}
             </div>
           )}
@@ -106,7 +106,7 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
               href={emergencyVetMapHref}
               target="_blank"
               rel="noreferrer"
-              className="block rounded-lg border border-emergency-200 bg-emergency-50 px-4 py-4 text-center text-base font-bold text-emergency-800 dark:border-emergency-800 dark:bg-emergency-950 dark:text-emergency-300"
+              className="block rounded-xl border-2 border-emergency-300 bg-emergency-50 px-4 py-5 text-center text-lg font-black text-emergency-800 dark:border-emergency-700 dark:bg-emergency-950 dark:text-emergency-300"
             >
               🗺️ 夜間救急病院を地図で開く
             </a>
