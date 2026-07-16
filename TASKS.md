@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-191` カスタム確認ダイアログ
 
 ### todo
 （なし）
@@ -1371,7 +1371,7 @@ Development Task List
 ### カスタム確認ダイアログ
 - Task ID: `TASK-191`
 - ブランチ: `feat/TASK-191-custom-confirm-dialog`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: `window.confirm` をカスタムモーダルコンポーネントに置換し、一貫性のある確認UIを提供する
 - Issue: #211
 - 依存関係:
