@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-192` ペット詳細ページ情報整理
 
 ### todo
 （なし）
