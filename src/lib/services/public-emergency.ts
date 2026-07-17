@@ -14,6 +14,8 @@ type RawEmergency = {
   emergencyVetPhone: string | null;
   emergencyContactName2: string | null;
   emergencyContactPhone2: string | null;
+  insuranceCompany: string | null;
+  insurancePolicyNumber: string | null;
 };
 
 const normalize = (value: string | null): string | null => {
@@ -38,5 +40,7 @@ export const toPublicEmergencyView = (raw: RawEmergency): EmergencyViewPayload =
   emergencyVetName: normalize(raw.emergencyVetName),
   emergencyVetPhone: normalize(raw.emergencyVetPhone),
   emergencyContactName2: normalize(raw.emergencyContactName2),
-  emergencyContactPhone2: normalize(raw.emergencyContactPhone2)
+  emergencyContactPhone2: normalize(raw.emergencyContactPhone2),
+  insuranceCompany: normalize(raw.insuranceCompany),
+  insurancePolicyNumber: normalize(raw.insurancePolicyNumber)
 });

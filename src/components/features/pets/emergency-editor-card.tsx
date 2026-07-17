@@ -20,6 +20,8 @@ type EmergencyInfo = {
   emergencyVetPhone: string | null;
   emergencyContactName2: string | null;
   emergencyContactPhone2: string | null;
+  insuranceCompany: string | null;
+  insurancePolicyNumber: string | null;
 };
 
 type EmergencyEditorCardProps = {
@@ -87,6 +89,8 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
   const [emergencyVetPhone, setEmergencyVetPhone] = useState(initialEmergencyInfo?.emergencyVetPhone ?? "");
   const [emergencyContactName2, setEmergencyContactName2] = useState(initialEmergencyInfo?.emergencyContactName2 ?? "");
   const [emergencyContactPhone2, setEmergencyContactPhone2] = useState(initialEmergencyInfo?.emergencyContactPhone2 ?? "");
+  const [insuranceCompany, setInsuranceCompany] = useState(initialEmergencyInfo?.insuranceCompany ?? "");
+  const [insurancePolicyNumber, setInsurancePolicyNumber] = useState(initialEmergencyInfo?.insurancePolicyNumber ?? "");
 
   const vetDisplay =
     toNullable(vetName) && toNullable(vetPhone)
@@ -118,7 +122,9 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
           emergencyVetName: toNullable(emergencyVetName),
           emergencyVetPhone: toNullable(emergencyVetPhone),
           emergencyContactName2: toNullable(emergencyContactName2),
-          emergencyContactPhone2: toNullable(emergencyContactPhone2)
+          emergencyContactPhone2: toNullable(emergencyContactPhone2),
+          insuranceCompany: toNullable(insuranceCompany),
+          insurancePolicyNumber: toNullable(insurancePolicyNumber)
         })
       });
 
@@ -151,6 +157,8 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
           allergy={toNullable(allergy) ?? "未登録"}
           vet={vetDisplay}
           contact={contactDisplay}
+          insuranceCompany={toNullable(insuranceCompany)}
+          insurancePolicyNumber={toNullable(insurancePolicyNumber)}
         />
         <button
           type="button"
@@ -348,6 +356,30 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
             <p className="mt-1 text-xs font-normal text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
+          </label>
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className="block text-sm font-semibold text-slate-800">
+            保険会社
+            <input
+              value={insuranceCompany}
+              onChange={(event) => setInsuranceCompany(event.target.value)}
+              maxLength={200}
+              placeholder="例: アイペット損害保険"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+          </label>
+
+          <label className="block text-sm font-semibold text-slate-800">
+            保険証券番号
+            <input
+              value={insurancePolicyNumber}
+              onChange={(event) => setInsurancePolicyNumber(event.target.value)}
+              maxLength={100}
+              placeholder="例: IP-1234567-A"
+              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
           </label>
         </div>
 

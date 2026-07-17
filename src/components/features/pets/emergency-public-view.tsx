@@ -25,6 +25,23 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
         </div>
       )}
 
+      {/* Insurance Information */}
+      {(data.insuranceCompany || data.insurancePolicyNumber) && (
+        <div className="mt-3 rounded-xl border-l-4 border-emerald-600 bg-emerald-50 p-4 dark:bg-emerald-950">
+          <h2 className="text-sm font-bold text-emerald-700 dark:text-emerald-400">🛡️ 保険情報</h2>
+          {data.insuranceCompany && (
+            <p className="mt-2 text-base font-bold text-slate-900 dark:text-slate-100">
+              保険会社: {data.insuranceCompany}
+            </p>
+          )}
+          {data.insurancePolicyNumber && (
+            <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+              証券番号: {data.insurancePolicyNumber}
+            </p>
+          )}
+        </div>
+      )}
+
       {/* Disease and Allergy - Highest Priority */}
       <div className="mt-4 rounded-xl border-l-4 border-rose-600 bg-rose-50 p-4 dark:bg-rose-950">
         <h2 className="text-sm font-bold text-rose-700 dark:text-rose-400">⚠️ 持病・既往歴</h2>

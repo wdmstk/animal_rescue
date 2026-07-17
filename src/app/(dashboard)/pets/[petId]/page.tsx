@@ -8,6 +8,7 @@ import { PetDeleteCard } from "@/components/features/pets/pet-delete-card";
 import { PetPhotoGallery } from "@/components/features/pets/pet-photo-gallery";
 import { PetProfileEditorCard } from "@/components/features/pets/pet-profile-editor-card";
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
+import { PetExportCard } from "@/components/features/pets/pet-export-card";
 import { PrintCareSummaryCard } from "@/components/features/pets/print-care-summary-card";
 import { VaccinationManager } from "@/components/features/pets/vaccination-manager";
 import { Tabs } from "@/components/ui/tabs";
@@ -100,6 +101,7 @@ const tabGroups = [
     label: "管理",
     tabs: [
       { id: "history", label: "更新履歴" },
+      { id: "export", label: "データ出力" },
       { id: "delete", label: "削除" }
     ]
   }
@@ -176,6 +178,8 @@ function TabContent({ tabId, petId, pet, activeToken, changeHistoryItems, normal
       );
     case "history":
       return <ChangeHistoryList items={changeHistoryItems} />;
+    case "export":
+      return <PetExportCard petId={petId} />;
     case "delete":
       return <PetDeleteCard petId={petId} petName={pet.name} />;
     default:
@@ -206,7 +210,8 @@ export default async function PetDetailPage({
         birthday: "2020-03-10",
         personality: "怖がり。雷が苦手。",
         features: "左耳の先に白い毛あり。",
-        photoUrl: "https://images.unsplash.com/photo-1517849845537-4d257902454a"
+        photoUrl: "https://images.unsplash.com/photo-1517849845537-4d257902454a",
+        isArchived: false
       };
 
       return (
@@ -257,7 +262,9 @@ export default async function PetDetailPage({
                               emergencyVetName: null,
                               emergencyVetPhone: null,
                               emergencyContactName2: null,
-                              emergencyContactPhone2: null
+                              emergencyContactPhone2: null,
+                              insuranceCompany: null,
+                              insurancePolicyNumber: null
                             }}
                           />
                         )}
@@ -339,6 +346,9 @@ export default async function PetDetailPage({
                               ]
                             })}
                           />
+                        )}
+                        {tab.id === "export" && (
+                          <PetExportCard petId={petId} />
                         )}
                         {tab.id === "delete" && (
                           <PetDeleteCard petId={petId} petName={e2ePet.name} />
@@ -488,7 +498,7 @@ export default async function PetDetailPage({
 
   return (
     <div className="space-y-4">
-      {emergencyLinkToken ? (
+      {emergencyLinkToken && !pet.isArchived ? (
         <Link
           href={`/e/${emergencyLinkToken}`}
           className="sticky top-[68px] z-10 block rounded-xl bg-emergency-500 px-4 py-3 text-center text-sm font-bold text-white shadow"
@@ -498,7 +508,14 @@ export default async function PetDetailPage({
       ) : null}
 
       <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">{pet.name}の情報</h2>
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          <h2 className="text-lg font-bold text-slate-900">{pet.name}の情報</h2>
+          {pet.isArchived && (
+            <span className="rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-xs font-semibold text-amber-800 flex items-center gap-1 shadow-sm">
+              🕯️ 思い出モード
+            </span>
+          )}
+        </div>
         
         <Tabs
           tabs={tabGroups.map((group) => ({

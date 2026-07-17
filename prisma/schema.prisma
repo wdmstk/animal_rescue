@@ -156,6 +156,7 @@ model Pet {
   notesPersonality String?
   notesFeatures    String?
   microchipNumber  String?
+  isArchived       Boolean  @default(false)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -169,6 +170,7 @@ model Pet {
   emergencyToken   PetEmergencyToken?
   displaySettings  PetDisplaySettings?
   reminderDispatchLogs PetMedicationReminderDispatchLog[]
+  vaccineReminderDispatchLogs PetVaccineReminderDispatchLog[]
   coreMetrics      PetCoreMetricEntry[]
   labResults       PetLabResultEntry[]
   healthExtensions PetHealthExtensionEntry[]
@@ -203,6 +205,8 @@ model PetEmergencyInfo {
   emergencyVetPhone    String?  @db.Text
   emergencyContactName2 String? @db.Text
   emergencyContactPhone2 String? @db.Text
+  insuranceCompany     String?  @db.Text
+  insurancePolicyNumber String? @db.Text
   updatedAt            DateTime @updatedAt
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
@@ -255,6 +259,7 @@ model PetMedication {
   updatedAt  DateTime @updatedAt
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+  logs PetMedicationLog[]
 
   @@index([petId, startDate])
 }
@@ -298,6 +303,9 @@ model PetDisplaySettings {
   medicationReminderEnabled       Boolean  @default(false)
   medicationReminderChannel       String   @default("email")
   medicationReminderDestination   String   @default("")
+  vaccineReminderEnabled          Boolean  @default(false)
+  vaccineReminderChannel          String   @default("email")
+  vaccineReminderDestination      String   @default("")
   updatedAt                       DateTime @updatedAt
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
@@ -425,4 +433,29 @@ model AuditLog {
   @@index([userId, createdAt])
   @@index([entityType, entityId, createdAt])
   @@index([action, createdAt])
+}
+
+model PetMedicationLog {
+  id           String   @id @default(uuid()) @db.Uuid
+  medicationId String   @db.Uuid
+  status       String
+  loggedAt     DateTime @default(now())
+  note         String?
+
+  medication PetMedication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+
+  @@index([medicationId, loggedAt])
+}
+
+model PetVaccineReminderDispatchLog {
+  id            String   @id @default(uuid()) @db.Uuid
+  petId         String   @db.Uuid
+  vaccinationId String   @db.Uuid
+  reminderDate  DateTime
+  createdAt     DateTime @default(now())
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@unique([petId, vaccinationId, reminderDate])
+  @@index([reminderDate])
 }

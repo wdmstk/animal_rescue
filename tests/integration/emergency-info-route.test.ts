@@ -26,7 +26,9 @@ describe("PUT /api/pets/[petId]/emergency-info", () => {
     vetName: "みなと動物病院",
     vetPhone: "03-1234-5678",
     emergencyContactName: "山田 花子",
-    emergencyContactPhone: "090-1234-5678"
+    emergencyContactPhone: "090-1234-5678",
+    insuranceCompany: "アイペット損害保険",
+    insurancePolicyNumber: "IP-1234567-A"
   };
 
   beforeEach(() => {

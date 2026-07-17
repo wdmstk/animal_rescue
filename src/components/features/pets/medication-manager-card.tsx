@@ -21,6 +21,60 @@ type MedicationManagerCardProps = {
 
 const normalizeDate = (value: string) => value.slice(0, 10);
 
+function MedicationLogView({
+  petId,
+  medicationId,
+  refreshTrigger
+}: {
+  petId: string;
+  medicationId: string;
+  refreshTrigger: number;
+}) {
+  const [logs, setLogs] = useState<any[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchLogs = async () => {
+      try {
+        const response = await fetch(`/api/pets/${petId}/medications/${medicationId}/logs`);
+        if (response.ok && isMounted) {
+          const payload = await response.json();
+          setLogs(payload.data || []);
+        }
+      } catch {
+        // noop
+      }
+    };
+    void fetchLogs();
+    return () => {
+      isMounted = false;
+    };
+  }, [petId, medicationId, refreshTrigger]);
+
+  if (logs.length === 0) return null;
+
+  return (
+    <div className="mt-2 border-t border-slate-100 pt-1.5 text-xs">
+      <span className="font-semibold text-slate-500">最近の記録: </span>
+      <div className="mt-1 flex flex-wrap gap-1">
+        {logs.slice(0, 3).map((log) => (
+          <span
+            key={log.id}
+            className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
+              log.status === "TAKEN"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                : "bg-rose-50 text-rose-700 border border-rose-200"
+            }`}
+          >
+            {log.status === "TAKEN" ? "飲んだ" : "スキップ"} (
+            {new Date(log.loggedAt).toLocaleDateString("ja-JP", { month: "short", day: "numeric" })})
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function MedicationManagerCard({ petId, initialItems }: MedicationManagerCardProps) {
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -43,6 +97,8 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
   const [editFrequency, setEditFrequency] = useState("");
   const [editStartDate, setEditStartDate] = useState("");
   const [editEndDate, setEditEndDate] = useState("");
+
+  const [refreshLogsTrigger, setRefreshLogsTrigger] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -168,6 +224,23 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
     }
   };
 
+  const handleLogMedication = async (medicationId: string, status: "TAKEN" | "SKIPPED") => {
+    setErrorMessage(null);
+    try {
+      const response = await fetch(`/api/pets/${petId}/medications/${medicationId}/logs`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ status })
+      });
+      if (!response.ok) {
+        throw new Error("failed");
+      }
+      setRefreshLogsTrigger((prev) => prev + 1);
+    } catch {
+      setErrorMessage("投薬状況の記録に失敗しました。");
+    }
+  };
+
   const onSaveReminderSettings = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage(null);
@@ -215,22 +288,41 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
       />
 
       <div className="rounded-lg border border-slate-200 p-3">
-        <h3 className="text-sm font-bold text-slate-900">投薬一覧・編集</h3>
-        <div className="mt-2 space-y-2">
+        <h3 className="text-sm font-bold text-slate-900">投薬一覧・実施記録</h3>
+        <div className="mt-2 space-y-3">
           {initialItems.length === 0 ? <p className="text-sm text-slate-600">登録済みの投薬はありません。</p> : null}
           {initialItems.map((item) => (
-            <button
+            <div
               key={item.id}
-              type="button"
-              onClick={() => startEdit(item)}
-              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-left text-sm"
+              className="rounded-lg border border-slate-200 p-3 text-sm"
             >
-              <p className="font-semibold text-slate-800">{item.name}</p>
-              <p className="text-slate-600">{item.dosage} / {item.frequency}</p>
-              <p className="text-xs text-slate-500">
-                {normalizeDate(item.startDate)} - {item.endDate ? normalizeDate(item.endDate) : "継続中"}
-              </p>
-            </button>
+              <div className="flex justify-between items-start">
+                <div onClick={() => startEdit(item)} className="cursor-pointer flex-grow">
+                  <p className="font-semibold text-slate-800 hover:text-slate-600">{item.name}</p>
+                  <p className="text-slate-600">{item.dosage} / {item.frequency}</p>
+                  <p className="text-xs text-slate-500">
+                    {normalizeDate(item.startDate)} - {item.endDate ? normalizeDate(item.endDate) : "継続中"}
+                  </p>
+                </div>
+                <div className="flex gap-1.5 ml-2">
+                  <button
+                    type="button"
+                    onClick={() => handleLogMedication(item.id, "TAKEN")}
+                    className="rounded bg-emerald-600 px-2 py-1 text-xs font-bold text-white hover:bg-emerald-700 whitespace-nowrap"
+                  >
+                    飲んだ
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleLogMedication(item.id, "SKIPPED")}
+                    className="rounded bg-rose-600 px-2 py-1 text-xs font-bold text-white hover:bg-rose-700 whitespace-nowrap"
+                  >
+                    スキップ
+                  </button>
+                </div>
+              </div>
+              <MedicationLogView petId={petId} medicationId={item.id} refreshTrigger={refreshLogsTrigger} />
+            </div>
           ))}
         </div>
       </div>
