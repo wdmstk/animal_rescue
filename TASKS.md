@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-295` Should Have / Could Have 残タスク実装
 
 ### todo
 （なし）
@@ -1471,4 +1471,21 @@ Development Task List
   - 年払いプランの割引表示
   - Stripe Checkoutでのプラン選択対応
   - 既存サブスクリプションのプラン変更対応
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### Should Have / Could Have 残タスク実装
+- Task ID: `TASK-295`
+- ブランチ: `feat/TASK-should-could-have-features`
+- ステータス: `in_progress`
+- 概要: MoSCoW分析におけるShould Have/Could Haveの残タスクを実装し、製品価値を高める
+- Issue: なし
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 医療記録の編集・削除機能の実装
+  - 保険情報（保険会社・証券番号）フィールドの追加
+  - 投薬実施ログ（飲んだ・飲まなかった記録）機能の実装
+  - ワクチン期限リマインダー通知機能の実装
+  - CSVエクスポート機能の実装
+  - アーカイブモード（ペット死亡後の思い出保管）の実装
   - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
