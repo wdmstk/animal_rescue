@@ -567,6 +567,44 @@ export function ClientSettings({
             </div>
           </div>
         )}
+
+        {billing?.subscriptionStatus === "INCOMPLETE" && (
+          <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
+            <h3 className="text-sm font-bold text-indigo-900 flex items-center gap-1">
+              ✨ プレミアムプランの機能一覧
+            </h3>
+            <ul className="mt-3 space-y-2 text-xs text-indigo-950">
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-600">✓</span>
+                <div>
+                  <strong>緊急時の確実な情報共有:</strong>
+                  <p className="text-slate-600">持病やアレルギー、緊急連絡先をワンタップで開示できるQRコード機能。</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-600">✓</span>
+                <div>
+                  <strong>家族間でのリアルタイム同期:</strong>
+                  <p className="text-slate-600">投薬履歴やお世話の記録を家族全員で同期・共同管理。</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-600">✓</span>
+                <div>
+                  <strong>リマインダー通知設定:</strong>
+                  <p className="text-slate-600">LINEやメール、Webフックでワクチンの更新予定や投薬期限をお知らせ。</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-indigo-600">✓</span>
+                <div>
+                  <strong>データ出力（CSV/PDF）:</strong>
+                  <p className="text-slate-600">かかりつけ医への相談やバックアップに便利なデータエクスポート。</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        )}
         
         <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
           <div className="flex flex-wrap items-center gap-2">

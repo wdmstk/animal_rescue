@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireEditAccess } from "@/lib/billing/access-guard";
 import { badRequest, notFound } from "@/lib/api-error";
+import { createAuditLog, AuditAction, EntityType } from "@/lib/audit-log";
 
 const paramsSchema = z.object({
   petId: z.string().uuid(),
@@ -65,6 +66,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
       startDate: new Date(parsedBody.data.startDate),
       endDate: parsedBody.data.endDate ? new Date(parsedBody.data.endDate) : null
     }
+  });
+
+  void createAuditLog({
+    userId: auth.userId,
+    action: AuditAction.MEDICATION_UPDATE,
+    entityType: EntityType.MEDICATION,
+    entityId: updated.id,
+    changes: parsedBody.data
   });
 
   return NextResponse.json({ data: updated });

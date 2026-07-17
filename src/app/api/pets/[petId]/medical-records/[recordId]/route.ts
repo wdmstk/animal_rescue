@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireEditAccess } from "@/lib/billing/access-guard";
 import { badRequest, notFound } from "@/lib/api-error";
+import { createAuditLog, AuditAction, EntityType } from "@/lib/audit-log";
 
 const paramsSchema = z.object({
   petId: process.env.PLAYWRIGHT_E2E === "1" ? z.string() : z.string().uuid(),
@@ -85,6 +86,14 @@ export async function PATCH(
     }
   });
 
+  void createAuditLog({
+    userId: auth.userId,
+    action: AuditAction.MEDICAL_RECORD_UPDATE,
+    entityType: EntityType.MEDICAL_RECORD,
+    entityId: updated.id,
+    changes: parsedBody.data
+  });
+
   return NextResponse.json({ data: updated });
 }
 
@@ -131,6 +140,13 @@ export async function DELETE(
 
   await prisma.petMedicalRecord.delete({
     where: { id: parsedParams.data.recordId }
+  });
+
+  void createAuditLog({
+    userId: auth.userId,
+    action: AuditAction.MEDICAL_RECORD_DELETE,
+    entityType: EntityType.MEDICAL_RECORD,
+    entityId: parsedParams.data.recordId
   });
 
   return NextResponse.json({ data: { success: true } });
