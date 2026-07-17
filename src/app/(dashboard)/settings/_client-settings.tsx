@@ -859,6 +859,31 @@ export function ClientSettings({
       ) : null}
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900">お友達紹介プログラム</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          紹介リンクを通してお友達がプレミアムプランに登録すると、あなたとお友達の両方に1ヶ月分無料クレジットがプレゼントされます。
+        </p>
+        <div className="mt-3 flex items-center gap-2">
+          <input
+            readOnly
+            value={typeof window !== "undefined" ? `${window.location.origin}/signup?ref=${account?.userId ?? ""}` : ""}
+            className="flex-1 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-xs text-slate-600 focus:outline-none"
+          />
+          <button
+            type="button"
+            onClick={() => {
+              const url = `${window.location.origin}/signup?ref=${account?.userId ?? ""}`;
+              void navigator.clipboard.writeText(url);
+              alert("紹介リンクをクリップボードにコピーしました！");
+            }}
+            className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+          >
+            リンクをコピー
+          </button>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">ログアウト</h2>
         <p className="mt-1 text-sm text-slate-600">現在のセッションを終了します。</p>
         <button
