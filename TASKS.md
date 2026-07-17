@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-295` Should Have / Could Have 残タスク実装
+（なし）
 
 ### todo
 （なし）
@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-294` 年払いプラン実装
+1. `TASK-295` Should Have / Could Have 残タスク実装
+2. `TASK-294` 年払いプラン実装
 2. `TASK-192` ペット詳細ページ情報整理
 3. `TASK-191` カスタム確認ダイアログ
 4. `TASK-193` プログレス表示視覚化
@@ -1476,7 +1477,7 @@ Development Task List
 ### Should Have / Could Have 残タスク実装
 - Task ID: `TASK-295`
 - ブランチ: `feat/TASK-should-could-have-features`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: MoSCoW分析におけるShould Have/Could Haveの残タスクを実装し、製品価値を高める
 - Issue: なし
 - 依存関係:
