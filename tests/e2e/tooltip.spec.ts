@@ -3,7 +3,6 @@ import { expect, test } from "@playwright/test";
 test("tooltip triggers are visible on forms", async ({ page }) => {
   await page.goto("/pets/demo-pet");
   await page.getByRole("tab", { name: "緊急" }).click();
-  await page.getByRole("tab", { name: "緊急情報" }).click();
 
   // 緊急情報を編集ボタンをクリック
   await page.getByRole("button", { name: "緊急情報を編集" }).click();
@@ -24,7 +23,6 @@ test("tooltip triggers are visible on forms", async ({ page }) => {
 test("tooltip triggers have correct accessibility attributes", async ({ page }) => {
   await page.goto("/pets/demo-pet");
   await page.getByRole("tab", { name: "緊急" }).click();
-  await page.getByRole("tab", { name: "緊急情報" }).click();
 
   // 緊急情報を編集ボタンをクリック
   await page.getByRole("button", { name: "緊急情報を編集" }).click();
