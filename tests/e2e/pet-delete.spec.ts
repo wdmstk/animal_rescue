@@ -4,17 +4,16 @@ test.describe("ペット削除", () => {
   test("削除導線が表示される", async ({ page }) => {
     // E2Eモードでペット詳細ページへ
     await page.goto("/pets/demo-pet");
+    await page.getByRole("tab", { name: "管理" }).click();
 
     // 削除セクションが存在する
-    await expect(page.locator('section#delete')).toBeVisible();
+    await expect(page.locator('#delete')).toBeVisible();
     await expect(page.locator("text=ペット削除")).toBeVisible();
   });
 
   test("削除ボタンで確認ダイアログが表示される", async ({ page }) => {
     await page.goto("/pets/demo-pet");
-
-    // 削除セクションへスクロール
-    await page.locator('a[href="#delete"]').click();
+    await page.getByRole("tab", { name: "管理" }).click();
 
     // 削除ボタンをクリック
     await page.click("text=削除する");
@@ -26,9 +25,7 @@ test.describe("ペット削除", () => {
 
   test("キャンセルで確認ダイアログが閉じる", async ({ page }) => {
     await page.goto("/pets/demo-pet");
-
-    // 削除セクションへスクロール
-    await page.locator('a[href="#delete"]').click();
+    await page.getByRole("tab", { name: "管理" }).click();
 
     // 削除ボタンをクリック
     await page.click("text=削除する");

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { HouseholdInviteCodeCard } from "@/components/features/pets/household-invite-code-card";
 import { ToastMessage } from "@/components/ui/toast-message";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type Member = {
   id: string;
@@ -168,6 +169,8 @@ export function ClientSettings({
   const [billing, setBilling] = useState<BillingPayload>(initialBilling);
   const [isBillingSubmitting, setIsBillingSubmitting] = useState(false);
   const [isPortalSubmitting, setIsPortalSubmitting] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual">("monthly");
+  const [annualPlanAvailable, setAnnualPlanAvailable] = useState(false);
   const [pets, setPets] = useState<PetListItem[]>(initialPets);
   const [ownerDisplaySettings, setOwnerDisplaySettings] = useState<OwnerDisplaySettings | null>(initialOwnerDisplaySettings);
   const [isDisplaySettingsSaving, setIsDisplaySettingsSaving] = useState(false);
@@ -175,6 +178,7 @@ export function ClientSettings({
   const [ownerProfile, setOwnerProfile] = useState<OwnerProfile | null>(initialOwnerProfile);
   const [isOwnerProfileSaving, setIsOwnerProfileSaving] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState(false);
 
   const isOwner = currentUserRole === "OWNER";
   const hasOwner = members.some((member) => member.role === "OWNER");
@@ -222,6 +226,18 @@ export function ClientSettings({
       setPets(petsJson.data);
       setOwnerDisplaySettings(ownerSettingsJson.data);
       setOwnerProfile(ownerProfileJson?.data ?? null);
+      
+      // Check if annual plan is available
+      try {
+        const testResponse = await fetch("/api/billing/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan: "annual" })
+        });
+        setAnnualPlanAvailable(testResponse.ok);
+      } catch {
+        setAnnualPlanAvailable(false);
+      }
     } catch {
       setErrorMessage("設定情報の取得に失敗しました。");
     }
@@ -306,7 +322,11 @@ export function ClientSettings({
     setErrorMessage(null);
     setIsBillingSubmitting(true);
 
-    const response = await fetch("/api/billing/checkout", { method: "POST" });
+    const response = await fetch("/api/billing/checkout", { 
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ plan: selectedPlan })
+    });
     const payload = (await response.json().catch(() => null)) as { data?: { url?: string }; error?: string } | null;
 
     if (!response.ok || !payload?.data?.url) {
@@ -420,14 +440,11 @@ export function ClientSettings({
   };
 
   const handleDeleteAccount = async () => {
-    const confirmed = window.confirm(
-      "アカウントを削除すると、以下のデータが完全に消去されます：\n・全てのペット情報\n・全ての医療記録\n・全ての写真\n・世帯情報\n・サブスクリプション（即時キャンセル）\n\nこの操作は取り消せません。本当に削除しますか？"
-    );
+    setShowDeleteAccountDialog(true);
+  };
 
-    if (!confirmed) {
-      return;
-    }
-
+  const handleDeleteAccountConfirm = async () => {
+    setShowDeleteAccountDialog(false);
     setErrorMessage(null);
     setMessage(null);
     setIsDeletingAccount(true);
@@ -507,7 +524,50 @@ export function ClientSettings({
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">課金プラン</h2>
-        <p className="mt-1 text-sm text-slate-600">30日無料トライアル、その後月額680円（Stripe定期課金）</p>
+        <p className="mt-1 text-sm text-slate-600">
+          {annualPlanAvailable 
+            ? "30日無料トライアル、その後月額680円または年額7,800円（Stripe定期課金）"
+            : "30日無料トライアル、その後月額680円（Stripe定期課金）"
+          }
+        </p>
+        
+        {billing?.subscriptionStatus === "INCOMPLETE" && annualPlanAvailable && (
+          <div className="mt-3 grid gap-3 md:grid-cols-2">
+            <div 
+              className={`rounded-xl border-2 p-4 cursor-pointer transition ${
+                selectedPlan === "monthly" 
+                  ? "border-emerald-500 bg-emerald-50" 
+                  : "border-slate-200 bg-slate-50 hover:border-slate-300"
+              }`}
+              onClick={() => setSelectedPlan("monthly")}
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-slate-900">月払い</h3>
+                <span className="text-2xl font-bold text-slate-900">¥680<span className="text-sm font-normal text-slate-600">/月</span></span>
+              </div>
+              <p className="mt-2 text-sm text-slate-600">月額コースで柔軟に利用</p>
+            </div>
+            
+            <div 
+              className={`rounded-xl border-2 p-4 cursor-pointer transition ${
+                selectedPlan === "annual" 
+                  ? "border-emerald-500 bg-emerald-50" 
+                  : "border-slate-200 bg-slate-50 hover:border-slate-300"
+              }`}
+              onClick={() => setSelectedPlan("annual")}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-slate-900">年払い</h3>
+                  <span className="inline-flex rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white mt-1">4%お得</span>
+                </div>
+                <span className="text-2xl font-bold text-slate-900">¥7,800<span className="text-sm font-normal text-slate-600">/年</span></span>
+              </div>
+              <p className="mt-2 text-sm text-slate-600">年額7,800円（¥650/月相当）</p>
+            </div>
+          </div>
+        )}
+        
         <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex rounded-full bg-slate-900 px-2 py-1 text-xs font-semibold text-white">
@@ -789,6 +849,17 @@ export function ClientSettings({
           </Link>
         </div>
       </section>
+
+      <ConfirmDialog
+        isOpen={showDeleteAccountDialog}
+        title="アカウントを削除"
+        message="アカウントを削除すると、以下のデータが完全に消去されます：\n・全てのペット情報\n・全ての医療記録\n・全ての写真\n・世帯情報\n・サブスクリプション（即時キャンセル）\n\nこの操作は取り消せません。本当に削除しますか？"
+        confirmLabel="削除"
+        cancelLabel="キャンセル"
+        variant="danger"
+        onConfirm={handleDeleteAccountConfirm}
+        onCancel={() => setShowDeleteAccountDialog(false)}
+      />
     </div>
   );
 }

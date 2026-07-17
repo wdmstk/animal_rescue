@@ -755,12 +755,8 @@ test("settings can delete account for single owner", async ({ page }) => {
   await page.goto("/settings");
   await expect(page.getByRole("heading", { name: "アカウント削除（退会）" })).toBeVisible();
 
-  // Handle the confirmation dialog
-  page.on("dialog", async dialog => {
-    await dialog.accept();
-  });
-
   await page.getByRole("button", { name: "アカウントを削除する" }).click();
+  await page.getByRole("button", { name: "削除", exact: true }).click();
   expect(deleteCalled).toBe(true);
 });
 
@@ -867,12 +863,8 @@ test("settings shows error when last owner tries to delete with other members", 
   await page.goto("/settings?e2e=multiple_members");
   await expect(page.getByRole("heading", { name: "アカウント削除（退会）" })).toBeVisible();
 
-  // Handle the confirmation dialog
-  page.on("dialog", async dialog => {
-    await dialog.accept();
-  });
-
   await page.getByRole("button", { name: "アカウントを削除する" }).click();
+  await page.getByRole("button", { name: "削除", exact: true }).click();
   await expect(page.getByText("最後のOWNERは、他のメンバーがいる世帯を削除できません")).toBeVisible();
   expect(deleteCalled).toBe(true);
 });

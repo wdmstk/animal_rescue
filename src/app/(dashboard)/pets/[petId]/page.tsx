@@ -10,6 +10,7 @@ import { PetProfileEditorCard } from "@/components/features/pets/pet-profile-edi
 import { PetProfileCard } from "@/components/features/pets/pet-profile-card";
 import { PrintCareSummaryCard } from "@/components/features/pets/print-care-summary-card";
 import { VaccinationManager } from "@/components/features/pets/vaccination-manager";
+import { Tabs } from "@/components/ui/tabs";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { E2E_PUBLIC_EMERGENCY_TOKEN } from "@/lib/constants/emergency";
@@ -67,6 +68,121 @@ const sectionLinks = [
   { id: "delete", label: "削除" }
 ] as const;
 
+const tabGroups = [
+  {
+    id: "basic",
+    label: "基本情報",
+    tabs: [
+      { id: "profile", label: "プロフィール" },
+      { id: "photos", label: "写真" }
+    ]
+  },
+  {
+    id: "emergency",
+    label: "緊急",
+    tabs: [
+      { id: "emergency", label: "緊急情報" },
+      { id: "qr", label: "QR共有" }
+    ]
+  },
+  {
+    id: "medical",
+    label: "医療",
+    tabs: [
+      { id: "medications", label: "投薬" },
+      { id: "vaccinations", label: "ワクチン" },
+      { id: "health", label: "健康記録" },
+      { id: "records", label: "医療記録" }
+    ]
+  },
+  {
+    id: "management",
+    label: "管理",
+    tabs: [
+      { id: "history", label: "更新履歴" },
+      { id: "delete", label: "削除" }
+    ]
+  }
+] as const;
+
+function TabContent({ tabId, petId, pet, activeToken, changeHistoryItems, normalizeDate }: {
+  tabId: string;
+  petId: string;
+  pet: any;
+  activeToken: string | null;
+  changeHistoryItems: any;
+  normalizeDate: (value: string) => string;
+}) {
+  switch (tabId) {
+    case "profile":
+      return <PetProfileEditorCard petId={petId} initialPet={pet} />;
+    case "photos":
+      return <PetPhotoGallery petId={petId} photos={pet.photos.map((photo: any) => photo.photoUrl)} />;
+    case "emergency":
+      return <EmergencyEditorCard petId={petId} initialEmergencyInfo={pet.emergencyInfo} />;
+    case "qr":
+      return <EmergencyQrShareCard petId={petId} initialToken={activeToken ?? undefined} />;
+    case "medications":
+      return (
+        <MedicationManagerCard
+          petId={petId}
+          initialItems={pet.medications.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            dosage: item.dosage,
+            frequency: item.frequency,
+            startDate: normalizeDate(item.startDate.toISOString()),
+            endDate: item.endDate ? normalizeDate(item.endDate.toISOString()) : null
+          }))}
+        />
+      );
+    case "vaccinations":
+      return (
+        <VaccinationManager
+          petId={petId}
+          initialItems={pet.vaccinations.map((item: any) => ({
+            id: item.id,
+            typeCode: item.type,
+            customTypeName: item.customTypeName,
+            date: normalizeDate(item.date.toISOString()),
+            nextDue: item.nextDue ? normalizeDate(item.nextDue.toISOString()) : null,
+            type:
+              item.type === "RABIES"
+                ? "狂犬病"
+                : item.type === "CORE"
+                  ? "混合ワクチン"
+                  : item.type === "HEARTWORM"
+                    ? "フィラリア"
+                    : item.type === "FLEA_TICK"
+                      ? "ノミ・ダニ"
+                      : item.customTypeName ?? "その他"
+          }))}
+        />
+      );
+    case "health":
+      return <HealthTrackingPanel petId={petId} />;
+    case "records":
+      return (
+        <MedicalRecordManager
+          petId={petId}
+          initialItems={pet.medicalRecords.map((item: any) => ({
+            id: item.id,
+            date: normalizeDate(item.date.toISOString()),
+            title: item.title,
+            description: item.description,
+            recordType: item.recordType
+          }))}
+        />
+      );
+    case "history":
+      return <ChangeHistoryList items={changeHistoryItems} />;
+    case "delete":
+      return <PetDeleteCard petId={petId} petName={pet.name} />;
+    default:
+      return null;
+  }
+}
+
 export default async function PetDetailPage({
   params
 }: {
@@ -102,27 +218,142 @@ export default async function PetDetailPage({
             緊急情報を確認
           </Link>
 
-          <nav className="sticky top-[128px] z-10 -mx-1 overflow-x-auto rounded-xl border border-slate-200 bg-white/95 p-1 shadow-sm backdrop-blur" aria-label="詳細セクションナビ">
-            <ul className="flex min-w-max gap-1">
-              {sectionLinks.map((section) => (
-                <li key={section.id}>
-                  <a
-                    href={`#${section.id}`}
-                    className="block rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
-                  >
-                    {section.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h2 className="text-lg font-bold text-slate-900">{e2ePet.name}の情報</h2>
+            
+            <Tabs
+              tabs={tabGroups.map((group) => ({
+                id: group.id,
+                label: group.label,
+                content: (
+                  <div key={group.id} className="space-y-4">
+                    {group.tabs.map((tab) => (
+                      <div key={tab.id} id={tab.id} className="scroll-mt-4">
+                        {tab.id === "profile" && (
+                          <PetProfileCard pet={e2ePet} />
+                        )}
+                        {tab.id === "photos" && (
+                          <PetPhotoGallery
+                            petId={petId}
+                            photos={[
+                              "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
+                              "https://images.unsplash.com/photo-1548681528-6a5c45b66b42",
+                              "https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8"
+                            ]}
+                          />
+                        )}
+                        {tab.id === "emergency" && (
+                          <EmergencyEditorCard
+                            petId={petId}
+                            initialEmergencyInfo={{
+                              disease: "僧帽弁閉鎖不全症（軽度）",
+                              currentMedications: "ピモベンダン 1日2回",
+                              allergy: "鶏肉アレルギー",
+                              vetName: "みなと動物病院",
+                              vetPhone: "03-1234-5678",
+                              emergencyContactName: "山田 花子",
+                              emergencyContactPhone: "090-1234-5678",
+                              bloodType: null,
+                              emergencyVetName: null,
+                              emergencyVetPhone: null,
+                              emergencyContactName2: null,
+                              emergencyContactPhone2: null
+                            }}
+                          />
+                        )}
+                        {tab.id === "qr" && (
+                          <EmergencyQrShareCard petId={petId} initialToken={e2eToken} />
+                        )}
+                        {tab.id === "medications" && (
+                          <MedicationManagerCard
+                            petId={petId}
+                            initialItems={[
+                              {
+                                id: "11111111-1111-4111-8111-111111111111",
+                                name: "ピモベンダン",
+                                dosage: "1mg",
+                                frequency: "1日2回",
+                                startDate: "2026-01-01",
+                                endDate: null
+                              },
+                              {
+                                id: "22222222-2222-4222-8222-222222222222",
+                                name: "整腸剤",
+                                dosage: "1包",
+                                frequency: "1日1回",
+                                startDate: "2026-04-20",
+                                endDate: "2026-04-25"
+                              }
+                            ]}
+                          />
+                        )}
+                        {tab.id === "vaccinations" && (
+                          <VaccinationManager
+                            petId={petId}
+                            initialItems={[
+                              { type: "狂犬病", customTypeName: null, date: "2026-03-20", nextDue: "2027-03-20" },
+                              { type: "混合ワクチン", customTypeName: null, date: "2025-04-10", nextDue: "2026-04-10" },
+                              { type: "フィラリア", customTypeName: null, date: "2026-04-01", nextDue: "2026-05-01" }
+                            ]}
+                          />
+                        )}
+                        {tab.id === "health" && (
+                          <HealthTrackingPanel petId={petId} />
+                        )}
+                        {tab.id === "records" && (
+                          <MedicalRecordManager
+                            petId={petId}
+                            initialItems={[
+                              {
+                                id: "1",
+                                date: "2026-04-01",
+                                title: "定期健診",
+                                description: "血液検査、尿検査ともに大きな異常なし。",
+                                recordType: "EXAM"
+                              },
+                              {
+                                id: "2",
+                                date: "2026-03-12",
+                                title: "胸部レントゲン",
+                                description: "心拡大の進行なし。投薬継続。",
+                                recordType: "LAB"
+                              }
+                            ]}
+                          />
+                        )}
+                        {tab.id === "history" && (
+                          <ChangeHistoryList
+                            items={buildChangeHistoryItems({
+                              emergencyInfo: { updatedAt: "2026-04-21T10:00:00.000Z" },
+                              medications: [
+                                { id: "11111111-1111-4111-8111-111111111111", name: "ピモベンダン", updatedAt: "2026-04-21T10:10:00.000Z" },
+                                { id: "22222222-2222-4222-8222-222222222222", name: "整腸剤", updatedAt: "2026-04-21T10:20:00.000Z" }
+                              ],
+                              vaccinations: [
+                                { id: "v1", type: "RABIES", customTypeName: null, updatedAt: "2026-04-22T09:00:00.000Z" },
+                                { id: "v2", type: "CORE", customTypeName: null, updatedAt: "2026-04-22T09:10:00.000Z" }
+                              ],
+                              medicalRecords: [
+                                { id: "1", title: "定期健診", updatedAt: "2026-04-22T12:00:00.000Z" },
+                                { id: "2", title: "胸部レントゲン", updatedAt: "2026-04-22T12:10:00.000Z" }
+                              ]
+                            })}
+                          />
+                        )}
+                        {tab.id === "delete" && (
+                          <PetDeleteCard petId={petId} petName={e2ePet.name} />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )
+              }))}
+              defaultTab="basic"
+            />
+          </div>
 
-          <EmergencyQrShareCard petId={petId} initialToken={e2eToken} />
-
-          <section id="profile" className="scroll-mt-44">
-            <PetProfileCard pet={e2ePet} />
-          </section>
-          <section id="summary" className="scroll-mt-44">
+          <section id="summary" className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h2 className="text-lg font-bold text-slate-900">提出サマリー</h2>
             <PrintCareSummaryCard
               pet={{
                 name: e2ePet.name,
@@ -147,122 +378,6 @@ export default async function PetDetailPage({
                 { name: "整腸剤", dosage: "1包", frequency: "1日1回" }
               ]}
             />
-          </section>
-
-          <section id="photos" className="scroll-mt-44">
-            <PetPhotoGallery
-              petId={petId}
-              photos={[
-                "https://images.unsplash.com/photo-1548199973-03cce0bbc87b",
-                "https://images.unsplash.com/photo-1548681528-6a5c45b66b42",
-                "https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8"
-              ]}
-            />
-          </section>
-
-          <section id="emergency" className="scroll-mt-44">
-            <EmergencyEditorCard
-              petId={petId}
-              initialEmergencyInfo={{
-                disease: "僧帽弁閉鎖不全症（軽度）",
-                currentMedications: "ピモベンダン 1日2回",
-                allergy: "鶏肉アレルギー",
-                vetName: "みなと動物病院",
-                vetPhone: "03-1234-5678",
-                emergencyContactName: "山田 花子",
-                emergencyContactPhone: "090-1234-5678",
-                bloodType: null,
-                emergencyVetName: null,
-                emergencyVetPhone: null,
-                emergencyContactName2: null,
-                emergencyContactPhone2: null
-              }}
-            />
-          </section>
-
-          <section id="medications" className="scroll-mt-44">
-            <MedicationManagerCard
-              petId={petId}
-              initialItems={[
-                {
-                  id: "11111111-1111-4111-8111-111111111111",
-                  name: "ピモベンダン",
-                  dosage: "1mg",
-                  frequency: "1日2回",
-                  startDate: "2026-01-01",
-                  endDate: null
-                },
-                {
-                  id: "22222222-2222-4222-8222-222222222222",
-                  name: "整腸剤",
-                  dosage: "1包",
-                  frequency: "1日1回",
-                  startDate: "2026-04-20",
-                  endDate: "2026-04-25"
-                }
-              ]}
-            />
-          </section>
-
-          <section id="vaccinations" className="scroll-mt-44">
-            <VaccinationManager
-              petId={petId}
-              initialItems={[
-                { type: "狂犬病", customTypeName: null, date: "2026-03-20", nextDue: "2027-03-20" },
-                { type: "混合ワクチン", customTypeName: null, date: "2025-04-10", nextDue: "2026-04-10" },
-                { type: "フィラリア", customTypeName: null, date: "2026-04-01", nextDue: "2026-05-01" }
-              ]}
-            />
-          </section>
-
-          <section id="health" className="scroll-mt-44">
-            <HealthTrackingPanel petId={petId} />
-          </section>
-
-          <section id="records" className="scroll-mt-44">
-            <MedicalRecordManager
-              petId={petId}
-              initialItems={[
-                {
-                  id: "1",
-                  date: "2026-04-01",
-                  title: "定期健診",
-                  description: "血液検査、尿検査ともに大きな異常なし。",
-                  recordType: "EXAM"
-                },
-                {
-                  id: "2",
-                  date: "2026-03-12",
-                  title: "胸部レントゲン",
-                  description: "心拡大の進行なし。投薬継続。",
-                  recordType: "LAB"
-                }
-              ]}
-            />
-          </section>
-
-          <section id="history" className="scroll-mt-44">
-            <ChangeHistoryList
-              items={buildChangeHistoryItems({
-                emergencyInfo: { updatedAt: "2026-04-21T10:00:00.000Z" },
-                medications: [
-                  { id: "11111111-1111-4111-8111-111111111111", name: "ピモベンダン", updatedAt: "2026-04-21T10:10:00.000Z" },
-                  { id: "22222222-2222-4222-8222-222222222222", name: "整腸剤", updatedAt: "2026-04-21T10:20:00.000Z" }
-                ],
-                vaccinations: [
-                  { id: "v1", type: "RABIES", customTypeName: null, updatedAt: "2026-04-22T09:00:00.000Z" },
-                  { id: "v2", type: "CORE", customTypeName: null, updatedAt: "2026-04-22T09:10:00.000Z" }
-                ],
-                medicalRecords: [
-                  { id: "1", title: "定期健診", updatedAt: "2026-04-22T12:00:00.000Z" },
-                  { id: "2", title: "胸部レントゲン", updatedAt: "2026-04-22T12:10:00.000Z" }
-                ]
-              })}
-            />
-          </section>
-
-          <section id="delete" className="scroll-mt-44">
-            <PetDeleteCard petId={petId} petName={e2ePet.name} />
           </section>
         </div>
       );
@@ -382,44 +497,54 @@ export default async function PetDetailPage({
         </Link>
       ) : null}
 
-      <nav className="sticky top-[128px] z-10 -mx-1 overflow-x-auto rounded-xl border border-slate-200 bg-white/95 p-1 shadow-sm backdrop-blur" aria-label="詳細セクションナビ">
-        <ul className="flex min-w-max gap-1">
-          {sectionLinks.map((section) => (
-            <li key={section.id}>
-              <a
-                href={`#${section.id}`}
-                className="block rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
-              >
-                {section.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-
-      <EmergencyQrShareCard petId={petId} initialToken={activeToken ?? undefined} />
-
-      <section id="profile" className="scroll-mt-44">
-        <PetProfileEditorCard
-          petId={petId}
-          initialPet={{
-            name: pet.name,
-            species: pet.species as "dog" | "cat" | "other",
-            breed: pet.breed,
-            sex: pet.sex,
-            ageYears: pet.ageYears,
-            weightKg: pet.weightKg !== null ? Number(pet.weightKg) : null,
-            birthday: pet.birthday ? pet.birthday.toISOString() : null,
-            notesPersonality: pet.notesPersonality,
-            notesFeatures: pet.notesFeatures,
-            mainPhotoUrl: pet.mainPhotoUrl,
-            photos: pet.photos,
-            reproductiveStatus: pet.reproductiveStatus,
-            sterilizedAt: pet.sterilizedAt ? pet.sterilizedAt.toISOString() : null
-          }}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900">{pet.name}の情報</h2>
+        
+        <Tabs
+          tabs={tabGroups.map((group) => ({
+            id: group.id,
+            label: group.label,
+            content: (
+              <div key={group.id} className="space-y-4">
+                {group.tabs.map((tab) => (
+                  <div key={tab.id} id={tab.id} className="scroll-mt-4">
+                    <TabContent
+                      tabId={tab.id}
+                      petId={petId}
+                      pet={{
+                        name: pet.name,
+                        species: pet.species as "dog" | "cat" | "other",
+                        breed: pet.breed,
+                        sex: pet.sex,
+                        ageYears: pet.ageYears,
+                        weightKg: pet.weightKg !== null ? Number(pet.weightKg) : null,
+                        birthday: pet.birthday ? pet.birthday.toISOString() : null,
+                        notesPersonality: pet.notesPersonality,
+                        notesFeatures: pet.notesFeatures,
+                        mainPhotoUrl: pet.mainPhotoUrl,
+                        photos: pet.photos,
+                        reproductiveStatus: pet.reproductiveStatus,
+                        sterilizedAt: pet.sterilizedAt ? pet.sterilizedAt.toISOString() : null,
+                        emergencyInfo: pet.emergencyInfo,
+                        medications: pet.medications,
+                        vaccinations: pet.vaccinations,
+                        medicalRecords: pet.medicalRecords
+                      }}
+                      activeToken={activeToken}
+                      changeHistoryItems={changeHistoryItems}
+                      normalizeDate={normalizeDate}
+                    />
+                  </div>
+                ))}
+              </div>
+            )
+          }))}
+          defaultTab="basic"
         />
-      </section>
-      <section id="summary" className="scroll-mt-44">
+      </div>
+
+      <section id="summary" className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900">提出サマリー</h2>
         <PrintCareSummaryCard
           pet={{
             name: pet.name,
@@ -437,76 +562,6 @@ export default async function PetDetailPage({
             frequency: item.frequency
           }))}
         />
-      </section>
-
-      <section id="photos" className="scroll-mt-44">
-        <PetPhotoGallery petId={petId} photos={pet.photos.map((photo) => photo.photoUrl)} />
-      </section>
-
-      <section id="emergency" className="scroll-mt-44">
-        <EmergencyEditorCard petId={petId} initialEmergencyInfo={pet.emergencyInfo} />
-      </section>
-
-      <section id="medications" className="scroll-mt-44">
-        <MedicationManagerCard
-          petId={petId}
-          initialItems={pet.medications.map((item) => ({
-            id: item.id,
-            name: item.name,
-            dosage: item.dosage,
-            frequency: item.frequency,
-            startDate: normalizeDate(item.startDate.toISOString()),
-            endDate: item.endDate ? normalizeDate(item.endDate.toISOString()) : null
-          }))}
-        />
-      </section>
-
-      <section id="vaccinations" className="scroll-mt-44">
-        <VaccinationManager
-          petId={petId}
-          initialItems={pet.vaccinations.map((item) => ({
-            id: item.id,
-            typeCode: item.type,
-            customTypeName: item.customTypeName,
-            date: normalizeDate(item.date.toISOString()),
-            nextDue: item.nextDue ? normalizeDate(item.nextDue.toISOString()) : null,
-            type:
-              item.type === "RABIES"
-                ? "狂犬病"
-                : item.type === "CORE"
-                  ? "混合ワクチン"
-                  : item.type === "HEARTWORM"
-                    ? "フィラリア"
-                    : item.type === "FLEA_TICK"
-                      ? "ノミ・ダニ"
-                      : item.customTypeName ?? "その他"
-          }))}
-        />
-      </section>
-
-      <section id="health" className="scroll-mt-44">
-        <HealthTrackingPanel petId={petId} />
-      </section>
-
-      <section id="records" className="scroll-mt-44">
-        <MedicalRecordManager
-          petId={petId}
-          initialItems={pet.medicalRecords.map((item) => ({
-            id: item.id,
-            date: normalizeDate(item.date.toISOString()),
-            title: item.title,
-            description: item.description,
-            recordType: item.recordType
-          }))}
-        />
-      </section>
-
-      <section id="history" className="scroll-mt-44">
-        <ChangeHistoryList items={changeHistoryItems} />
-      </section>
-
-      <section id="delete" className="scroll-mt-44">
-        <PetDeleteCard petId={petId} petName={pet.name} />
       </section>
 
     </div>

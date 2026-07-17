@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ToastMessage } from "@/components/ui/toast-message";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type PetListCardProps = {
   id: string;
@@ -24,13 +25,14 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
   const [isLoadingQr, setIsLoadingQr] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const onDelete = async () => {
-    const confirmed = window.confirm(`「${name}」を削除します。この操作は取り消せません。`);
-    if (!confirmed) {
-      return;
-    }
+    setShowDeleteDialog(true);
+  };
 
+  const handleDeleteConfirm = async () => {
+    setShowDeleteDialog(false);
     setIsDeleting(true);
     setError(null);
 
@@ -143,6 +145,17 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        title="ペットを削除"
+        message={`「${name}」を削除します。この操作は取り消せません。`}
+        confirmLabel="削除"
+        cancelLabel="キャンセル"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setShowDeleteDialog(false)}
+      />
     </>
   );
 }

@@ -7,6 +7,7 @@ import { getUserBillingAccessState, requireEditAccess } from "@/lib/billing/acce
 import { petUpdateSchema } from "@/lib/validators/pet";
 import { createSupabaseServiceRoleClient } from "@/lib/supabase/service";
 import { badRequest, notFound } from "@/lib/api-error";
+import { logPetAction, AuditAction } from "@/lib/audit-log";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -95,10 +96,25 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
     }
   });
 
+  // 監査ログを記録
+  const ipAddress = request.headers.get("x-forwarded-for") || 
+                     request.headers.get("x-real-ip") || 
+                     "unknown";
+  const userAgent = request.headers.get("user-agent") || "unknown";
+  
+  await logPetAction(
+    auth.userId,
+    AuditAction.PET_UPDATE,
+    pet.id,
+    parsedBody.data,
+    ipAddress,
+    userAgent
+  );
+
   return NextResponse.json({ data: pet });
 }
 
-export async function DELETE(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ petId: string }> }) {
   const routeParams = await params;
   const parsedParams = petIdParamSchema.safeParse(routeParams);
   if (!parsedParams.success) {
@@ -122,6 +138,21 @@ export async function DELETE(_: Request, { params }: { params: Promise<{ petId: 
   await prisma.pet.delete({
     where: { id: access.petId }
   });
+
+  // 監査ログを記録
+  const ipAddress = request.headers.get("x-forwarded-for") || 
+                     request.headers.get("x-real-ip") || 
+                     "unknown";
+  const userAgent = request.headers.get("user-agent") || "unknown";
+  
+  await logPetAction(
+    auth.userId,
+    AuditAction.PET_DELETE,
+    access.petId,
+    { deleted: true },
+    ipAddress,
+    userAgent
+  );
 
   try {
     const supabase = createSupabaseServiceRoleClient();

@@ -2,7 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { HouseholdInviteCodeCard } from "@/components/features/pets/household-invite-code-card";
 import { PetListCard } from "@/components/features/pets/pet-list-card";
-import { ONBOARDING_TOTAL_STEPS, calculateOnboardingProgress } from "@/lib/onboarding-progress";
+import { ProgressBar } from "@/components/ui/progress-bar";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ONBOARDING_TOTAL_STEPS, calculateOnboardingProgress, getOnboardingSteps } from "@/lib/onboarding-progress";
 import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
 import { prisma } from "@/lib/prisma";
 
@@ -46,24 +48,50 @@ export default async function PetsPage() {
   }
 
   if (process.env.PLAYWRIGHT_E2E === "1" && (pets.length === 0 || hasError)) {
-    pets = [{ id: "sample-pet", name: "モカ", species: "dog" as "dog" | "cat" | "other", breed: "トイプードル" }];
+    pets = [{ id: "demo-pet", name: "モカ", species: "dog" as "dog" | "cat" | "other", breed: "トイプードル" }];
     hasError = false;
   }
 
   const completedSteps = pets.length > 0 ? 1 : 0;
   const completionRate = calculateOnboardingProgress(completedSteps, ONBOARDING_TOTAL_STEPS);
+  const onboardingSteps = getOnboardingSteps(pets.length > 0);
 
   return (
     <div className="space-y-4">
       <section className="rounded-2xl border border-sky-200 bg-sky-50 p-4 shadow-sm">
-        <div className="flex items-center justify-between gap-3">
+        <div className="mb-3">
           <h2 className="text-sm font-bold text-sky-900">はじめての方へ（3ステップ）</h2>
-          <p className="text-xs font-semibold text-sky-900">完了率: {completionRate}%</p>
+          <p className="mt-1 text-xs text-sky-700">最初のペットを登録して、緊急情報の管理を始めましょう</p>
         </div>
-        <ol className="mt-2 space-y-1 text-xs text-sky-900">
-          <li>1. ペット登録: {pets.length > 0 ? "完了" : "未完了"}</li>
-          <li>2. 緊急情報入力: {pets.length > 0 ? "ペット詳細で入力" : "ペット登録後に入力"}</li>
-          <li>3. QR共有: {pets.length > 0 ? "ペット詳細で共有可能" : "ペット登録後に共有可能"}</li>
+        
+        <ProgressBar 
+          value={completionRate} 
+          max={100} 
+          size="md" 
+          color="sky" 
+          label="完了率"
+        />
+        
+        <ol className="mt-3 space-y-2">
+          {onboardingSteps.map((step, index) => (
+            <li key={step.id} className="flex items-start gap-2">
+              <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+                step.completed 
+                  ? 'bg-sky-500 text-white' 
+                  : 'bg-sky-200 text-sky-700'
+              }`}>
+                {step.completed ? '✓' : index + 1}
+              </div>
+              <div className="flex-1">
+                <p className={`text-xs font-medium ${
+                  step.completed ? 'text-sky-900' : 'text-sky-700'
+                }`}>
+                  {step.title}
+                </p>
+                <p className="text-xs text-sky-600">{step.description}</p>
+              </div>
+            </li>
+          ))}
         </ol>
       </section>
 
@@ -90,16 +118,13 @@ export default async function PetsPage() {
             ペット一覧の取得に失敗しました。時間をおいて再度お試しください。
           </p>
         ) : pets.length === 0 ? (
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-sm text-slate-700">まだペットが登録されていません。</p>
-            <p className="mt-1 text-xs text-slate-500">まずは1匹登録して、緊急情報や健康記録の管理を始めましょう。</p>
-            <Link
-              href="/pets/new"
-              className="mt-3 inline-flex rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white"
-            >
-              最初のペットを登録
-            </Link>
-          </div>
+          <EmptyState
+            title="まだペットが登録されていません"
+            description="まずは1匹登録して、緊急情報や健康記録の管理を始めましょう"
+            actionLabel="最初のペットを登録"
+            actionHref="/pets/new"
+            illustration="pets"
+          />
         ) : (
           pets.map((pet) => (
             <PetListCard

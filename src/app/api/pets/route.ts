@@ -4,6 +4,7 @@ import { requireAuthenticatedUser, requireHouseholdMember } from "@/lib/auth/pet
 import { requireCreateAccess } from "@/lib/billing/access-guard";
 import { petCreateSchema } from "@/lib/validators/pet";
 import { badRequest, notFound } from "@/lib/api-error";
+import { logPetAction, AuditAction } from "@/lib/audit-log";
 
 export async function GET() {
   const auth = await requireAuthenticatedUser();
@@ -66,6 +67,12 @@ export async function POST(request: Request) {
     return membership;
   }
 
+  // クライアント情報を取得
+  const ipAddress = request.headers.get("x-forwarded-for") || 
+                     request.headers.get("x-real-ip") || 
+                     "unknown";
+  const userAgent = request.headers.get("user-agent") || "unknown";
+
   const pet = await prisma.pet.create({
     data: {
       ...parsed.data,
@@ -74,6 +81,16 @@ export async function POST(request: Request) {
       sterilizedAt: parsed.data.sterilizedAt ? new Date(parsed.data.sterilizedAt) : null
     }
   });
+
+  // 監査ログを記録
+  await logPetAction(
+    auth.userId,
+    AuditAction.PET_CREATE,
+    pet.id,
+    { name: pet.name, species: pet.species, breed: pet.breed },
+    ipAddress,
+    userAgent
+  );
 
   return NextResponse.json({ data: pet }, { status: 201 });
 }

@@ -10,6 +10,7 @@ const envSchema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
   STRIPE_PRICE_ID_MONTHLY_680: z.string().min(1).optional(),
   STRIPE_PRICE_ID_MONTHLY_500: z.string().min(1).optional(),
+  STRIPE_PRICE_ID_ANNUAL_7800: z.string().min(1).optional(),
   MEDICATION_REMINDER_JOB_TOKEN: z.string().min(1).optional(),
   REMINDER_SCHEDULE_TIMEZONE: z.string().min(1).optional(),
   REMINDER_EMAIL_WEBHOOK_URL: z.string().url().optional(),
@@ -26,6 +27,7 @@ const parsed = envSchema.safeParse({
   STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
   STRIPE_PRICE_ID_MONTHLY_680: process.env.STRIPE_PRICE_ID_MONTHLY_680,
   STRIPE_PRICE_ID_MONTHLY_500: process.env.STRIPE_PRICE_ID_MONTHLY_500,
+  STRIPE_PRICE_ID_ANNUAL_7800: process.env.STRIPE_PRICE_ID_ANNUAL_7800,
   MEDICATION_REMINDER_JOB_TOKEN: process.env.MEDICATION_REMINDER_JOB_TOKEN,
   REMINDER_SCHEDULE_TIMEZONE: process.env.REMINDER_SCHEDULE_TIMEZONE,
   REMINDER_EMAIL_WEBHOOK_URL: process.env.REMINDER_EMAIL_WEBHOOK_URL,
@@ -42,7 +44,14 @@ if (!stripePriceIdMonthly680) {
   throw new Error("Invalid environment variables: STRIPE_PRICE_ID_MONTHLY_680 (or legacy _500) is required");
 }
 
+const stripePriceIdAnnual7800 = parsed.data.STRIPE_PRICE_ID_ANNUAL_7800;
+
+if (!stripePriceIdAnnual7800) {
+  console.warn("STRIPE_PRICE_ID_ANNUAL_7800 not configured, annual plan will be disabled");
+}
+
 export const env = {
   ...parsed.data,
-  STRIPE_PRICE_ID_MONTHLY_680: stripePriceIdMonthly680
+  STRIPE_PRICE_ID_MONTHLY_680: stripePriceIdMonthly680,
+  STRIPE_PRICE_ID_ANNUAL_7800: stripePriceIdAnnual7800
 };

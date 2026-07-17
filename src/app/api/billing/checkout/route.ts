@@ -3,9 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { stripe } from "@/lib/billing/stripe";
-import { unauthorized } from "@/lib/api-error";
+import { unauthorized, badRequest } from "@/lib/api-error";
 
-export async function POST() {
+interface CheckoutRequest {
+  plan: "monthly" | "annual";
+}
+
+export async function POST(request: Request) {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
@@ -14,6 +18,20 @@ export async function POST() {
 
   if (error || !user) {
     return unauthorized();
+  }
+
+  let plan: "monthly" | "annual" = "monthly";
+  try {
+    const body: CheckoutRequest = await request.json();
+    if (body.plan === "monthly" || body.plan === "annual") {
+      plan = body.plan;
+    }
+  } catch {
+    // If no body or invalid JSON, default to monthly
+  }
+
+  if (plan === "annual" && !env.STRIPE_PRICE_ID_ANNUAL_7800) {
+    return badRequest("Annual plan is not available");
   }
 
   const current = await prisma.userSubscription.findUnique({
@@ -45,10 +63,14 @@ export async function POST() {
     }
   });
 
+  const priceId = plan === "annual" 
+    ? env.STRIPE_PRICE_ID_ANNUAL_7800 
+    : env.STRIPE_PRICE_ID_MONTHLY_680;
+
   const session = await stripe.checkout.sessions.create({
     mode: "subscription",
     customer: customerId,
-    line_items: [{ price: env.STRIPE_PRICE_ID_MONTHLY_680, quantity: 1 }],
+    line_items: [{ price: priceId, quantity: 1 }],
     subscription_data: {
       trial_period_days: 30
     },
