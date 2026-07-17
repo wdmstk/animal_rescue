@@ -101,12 +101,20 @@ export default async function PetsPage() {
             <h2 className="text-lg font-bold">ペットプロフィール</h2>
             <p className="mt-1 text-sm text-slate-600">家族全員で最新の救急情報を管理できます。</p>
           </div>
-          <Link
-            href="/pets/new"
-            className="shrink-0 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white"
-          >
-            ペットを追加
-          </Link>
+          <div className="flex gap-2 shrink-0">
+            <Link
+              href="/pets/compare"
+              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              健康データを比較
+            </Link>
+            <Link
+              href="/pets/new"
+              className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white"
+            >
+              ペットを追加
+            </Link>
+          </div>
         </div>
       </section>
 
