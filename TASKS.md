@@ -32,8 +32,9 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-295` Should Have / Could Have 残タスク実装
-2. `TASK-294` 年払いプラン実装
+1. `TASK-296` 管理画面の機能拡充（状態変更・KPI・ユーザー管理・お知らせ）
+2. `TASK-295` Should Have / Could Have 残タスク実装
+3. `TASK-294` 年払いプラン実装
 2. `TASK-192` ペット詳細ページ情報整理
 3. `TASK-191` カスタム確認ダイアログ
 4. `TASK-193` プログレス表示視覚化
@@ -1490,3 +1491,23 @@ Development Task List
   - CSVエクスポート機能の実装
   - アーカイブモード（ペット死亡後の思い出保管）の実装
   - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+---
+
+## TASK-296: 管理画面の機能拡充（状態変更・KPI・ユーザー管理・お知らせ）
+
+- ステータス: `done`
+- 概要: 管理画面を閲覧専用から、商用SaaSとして必要な運営機能を備えた画面に拡充する
+- Issue: なし
+- 依存関係:
+  - prerequisite: TASK-205（管理画面MVP）
+- 完了条件:
+  - 共通管理レイアウト（サイドバーナビ）の実装
+  - KPIダッシュボード（MRR・ARR・転換率・チャーン率）の実装
+  - ユーザー管理ページ（一覧・フィルター・詳細・QR強制無効化）の実装
+  - サブスクリプション管理（ステータス手動変更・トライアル延長）の実装
+  - お知らせ管理（Announcement CRUD・公開/下書き切替）の実装
+  - 監査ログ改善（フィルター・ページネーション）の実装
+  - AdminAPIルート群（/api/admin/subscriptions、announcements、pets/qr-token/revoke）の実装
+  - Prisma Announcement モデル追加（マイグレーションSQL生成済み）
+  - `npm run lint` エラー0件 / `npx vitest run` 328件 全通過
