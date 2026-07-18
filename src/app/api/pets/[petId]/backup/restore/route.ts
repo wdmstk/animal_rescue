@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { CoreMetricType, LabResultCategory, MedicalRecordType, VaccinationType, LabMarkerType } from "@prisma/client";
 import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 import { requireEditAccess } from "@/lib/billing/access-guard";
 import { badRequest } from "@/lib/api-error";
@@ -104,13 +105,13 @@ export async function POST(
     // Create medical records
     if (parsed.data.medicalRecords.length > 0) {
       await tx.petMedicalRecord.createMany({
-        data: parsed.data.medicalRecords.map(r => ({
+        data: parsed.data.medicalRecords.map(m => ({
           petId: access.petId,
-          date: new Date(r.date),
-          title: r.title,
-          description: r.description,
-          recordType: r.recordType,
-          photoUrl: r.photoUrl
+          date: new Date(m.date),
+          title: m.title,
+          description: m.description,
+          recordType: m.recordType as MedicalRecordType,
+          photoUrl: m.photoUrl
         }))
       });
     }
@@ -134,7 +135,7 @@ export async function POST(
       await tx.petVaccination.createMany({
         data: parsed.data.vaccinations.map(v => ({
           petId: access.petId,
-          type: v.type,
+          type: v.type as VaccinationType,
           customTypeName: v.customTypeName,
           date: new Date(v.date),
           nextDue: v.nextDue ? new Date(v.nextDue) : null
@@ -147,7 +148,7 @@ export async function POST(
       await tx.petCoreMetricEntry.createMany({
         data: parsed.data.coreMetrics.map(c => ({
           petId: access.petId,
-          type: c.type,
+          type: c.type as CoreMetricType,
           value: c.value,
           recordedAt: new Date(c.recordedAt),
           note: c.note
@@ -160,8 +161,8 @@ export async function POST(
       await tx.petLabResultEntry.createMany({
         data: parsed.data.labResults.map(l => ({
           petId: access.petId,
-          category: l.category,
-          marker: l.marker,
+          category: l.category as LabResultCategory,
+          marker: l.marker as LabMarkerType,
           value: l.value,
           unit: l.unit,
           recordedAt: new Date(l.recordedAt),

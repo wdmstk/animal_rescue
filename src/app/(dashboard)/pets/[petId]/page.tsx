@@ -93,7 +93,8 @@ const tabGroups = [
       { id: "medications", label: "投薬" },
       { id: "vaccinations", label: "ワクチン" },
       { id: "health", label: "健康記録" },
-      { id: "records", label: "医療記録" }
+      { id: "records", label: "医療記録" },
+      { id: "export", label: "データ出力" }
     ]
   },
   {
@@ -101,7 +102,6 @@ const tabGroups = [
     label: "管理",
     tabs: [
       { id: "history", label: "更新履歴" },
-      { id: "export", label: "データ出力" },
       { id: "delete", label: "削除" }
     ]
   }

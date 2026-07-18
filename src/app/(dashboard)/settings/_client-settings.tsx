@@ -567,7 +567,6 @@ export function ClientSettings({
             </div>
           </div>
         )}
-
         {billing?.subscriptionStatus === "INCOMPLETE" && (
           <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
             <h3 className="text-sm font-bold text-indigo-900 flex items-center gap-1">

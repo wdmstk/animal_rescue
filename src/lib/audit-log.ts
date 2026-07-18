@@ -43,7 +43,7 @@ export enum AuditAction {
   // Account operations
   ACCOUNT_DELETE = "ACCOUNT_DELETE",
   PASSWORD_RESET = "PASSWORD_RESET",
-
+  
   // Admin operations
   ADMIN_SUBSCRIPTION_CHANGE = "ADMIN_SUBSCRIPTION_CHANGE",
   ADMIN_QR_REVOKE = "ADMIN_QR_REVOKE",

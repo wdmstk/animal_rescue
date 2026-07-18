@@ -1,5 +1,6 @@
 import { requireAdminUser } from "@/lib/admin/require-admin";
 import { prisma } from "@/lib/prisma";
+import { SubscriptionStatus } from "@prisma/client";
 import Link from "next/link";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -61,7 +62,7 @@ export default async function AdminUsersPage({
   const subscriptions = await prisma.userSubscription.findMany({
     where: {
       userId: { in: userIds },
-      ...(filterStatus ? { status: filterStatus } : {})
+      ...(filterStatus ? { status: filterStatus as SubscriptionStatus } : {})
     },
     select: { userId: true, status: true, trialEndsAt: true, currentPeriodEnd: true }
   });
