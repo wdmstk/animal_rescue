@@ -31,12 +31,13 @@ Development Task List
 ### blocked
 （なし）
 
-### done
-1. `TASK-294` 年払いプラン実装
-2. `TASK-192` ペット詳細ページ情報整理
-3. `TASK-191` カスタム確認ダイアログ
-4. `TASK-193` プログレス表示視覚化
-5. `TASK-190` フォームバリデーション改善
+1. `TASK-296` 管理画面の機能拡充（状態変更・KPI・ユーザー管理・お知らせ）
+2. `TASK-295` Should Have / Could Have 残タスク実装
+3. `TASK-294` 年払いプラン実装
+4. `TASK-192` ペット詳細ページ情報整理
+5. `TASK-191` カスタム確認ダイアログ
+6. `TASK-193` プログレス表示視覚化
+7. `TASK-190` フォームバリデーション改善
 6. `TASK-207` 監査ログの完全実装（AuditLogテーブル）
 7. `TASK-206` エラーモニタリング（Sentry等）導入
 8. `TASK-205` 管理画面MVP（ユーザー一覧・課金状態確認）
@@ -1472,3 +1473,40 @@ Development Task List
   - Stripe Checkoutでのプラン選択対応
   - 既存サブスクリプションのプラン変更対応
   - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+### Should Have / Could Have 残タスク実装
+- Task ID: `TASK-295`
+- ブランチ: `feat/TASK-should-could-have-features`
+- ステータス: `done`
+- 概要: MoSCoW分析におけるShould Have/Could Haveの残タスクを実装し、製品価値を高める
+- Issue: なし
+- 依存関係:
+  - prerequisite: なし
+- 完了条件:
+  - 医療記録の編集・削除機能の実装
+  - 保険情報（保険会社・証券番号）フィールドの追加
+  - 投薬実施ログ（飲んだ・飲まなかった記録）機能の実装
+  - ワクチン期限リマインダー通知機能の実装
+  - CSVエクスポート機能の実装
+  - アーカイブモード（ペット死亡後の思い出保管）の実装
+  - `npm run lint` / `npx vitest run` / `npm run test:e2e` が通る
+
+---
+
+## TASK-296: 管理画面の機能拡充（状態変更・KPI・ユーザー管理・お知らせ）
+
+- ステータス: `done`
+- 概要: 管理画面を閲覧専用から、商用SaaSとして必要な運営機能を備えた画面に拡充する
+- Issue: なし
+- 依存関係:
+  - prerequisite: TASK-205（管理画面MVP）
+- 完了条件:
+  - 共通管理レイアウト（サイドバーナビ）の実装
+  - KPIダッシュボード（MRR・ARR・転換率・チャーン率）の実装
+  - ユーザー管理ページ（一覧・フィルター・詳細・QR強制無効化）の実装
+  - サブスクリプション管理（ステータス手動変更・トライアル延長）の実装
+  - お知らせ管理（Announcement CRUD・公開/下書き切替）の実装
+  - 監査ログ改善（フィルター・ページネーション）の実装
+  - AdminAPIルート群（/api/admin/subscriptions、announcements、pets/qr-token/revoke）の実装
+  - Prisma Announcement モデル追加（マイグレーションSQL生成済み）
+  - `npm run lint` エラー0件 / `npx vitest run` 328件 全通過

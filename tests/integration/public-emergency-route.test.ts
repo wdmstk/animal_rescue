@@ -130,6 +130,8 @@ describe("GET /api/public/emergency/[token]", () => {
       emergencyVetPhone: null,
       emergencyContactName2: null,
       emergencyContactPhone2: null,
+      insuranceCompany: null,
+      insurancePolicyNumber: null,
       recentMedicationSummaries: [],
       recentVaccinationSummaries: [],
       recentMedicalRecordSummaries: []
@@ -178,6 +180,8 @@ describe("GET /api/public/emergency/[token]", () => {
       emergencyVetPhone: null,
       emergencyContactName2: null,
       emergencyContactPhone2: null,
+      insuranceCompany: null,
+      insurancePolicyNumber: null,
       recentMedicationSummaries: [],
       recentVaccinationSummaries: [],
       recentMedicalRecordSummaries: []
@@ -253,7 +257,9 @@ describe("GET /api/public/emergency/[token]", () => {
                 emergencyVetName: true,
                 emergencyVetPhone: true,
                 emergencyContactName2: true,
-                emergencyContactPhone2: true
+                emergencyContactPhone2: true,
+                insuranceCompany: true,
+                insurancePolicyNumber: true
               }
             }
           }
@@ -314,6 +320,8 @@ describe("GET /api/public/emergency/[token]", () => {
       emergencyVetPhone: null,
       emergencyContactName2: null,
       emergencyContactPhone2: null,
+      insuranceCompany: null,
+      insurancePolicyNumber: null,
       recentMedicationSummaries: [],
       recentVaccinationSummaries: [],
       recentMedicalRecordSummaries: []

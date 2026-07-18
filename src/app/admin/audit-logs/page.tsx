@@ -1,128 +1,231 @@
-import { redirect } from "next/navigation";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { requireAdminUser } from "@/lib/admin/require-admin";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
-// Admin access check - only allow specific admin users
-const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(",") || [];
+const PAGE_SIZE = 50;
 
-async function requireAdminUser() {
-  const supabase = await createSupabaseServerClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-  
-  if (error || !user || !user.email) {
-    return null;
-  }
+const ACTION_COLORS: Record<string, string> = {
+  EMERGENCY_INFO_UPDATE: "bg-orange-100 text-orange-700",
+  PET_CREATE: "bg-green-100 text-green-700",
+  PET_DELETE: "bg-red-100 text-red-700",
+  ACCOUNT_DELETE: "bg-red-100 text-red-700",
+  ADMIN_SUBSCRIPTION_CHANGE: "bg-purple-100 text-purple-700",
+  ADMIN_QR_REVOKE: "bg-red-100 text-red-700",
+  ADMIN_ANNOUNCEMENT_CREATE: "bg-blue-100 text-blue-700"
+};
 
-  if (!ADMIN_EMAILS.includes(user.email)) {
-    return null;
-  }
+export default async function AuditLogsPage({
+  searchParams
+}: {
+  searchParams: Promise<{
+    action?: string;
+    userId?: string;
+    from?: string;
+    to?: string;
+    cursor?: string;
+  }>;
+}) {
+  await requireAdminUser();
 
-  return user;
-}
+  const { action, userId, from, to, cursor } = await searchParams;
 
-export default async function AuditLogsPage() {
-  const adminUser = await requireAdminUser();
-  
-  if (!adminUser) {
-    redirect("/"); // Redirect to home if not admin
-  }
+  const where = {
+    ...(action ? { action } : {}),
+    ...(userId ? { userId } : {}),
+    ...(from || to
+      ? {
+          createdAt: {
+            ...(from ? { gte: new Date(from) } : {}),
+            ...(to ? { lte: new Date(to + "T23:59:59Z") } : {})
+          }
+        }
+      : {}),
+    ...(cursor ? { createdAt: { lt: new Date(cursor) } } : {})
+  };
 
-  // Fetch audit logs with pagination
   const logs = await prisma.auditLog.findMany({
-    orderBy: {
-      createdAt: 'desc'
-    },
-    take: 100 // Limit to last 100 logs
+    where,
+    orderBy: { createdAt: "desc" },
+    take: PAGE_SIZE + 1
   });
 
+  const hasMore = logs.length > PAGE_SIZE;
+  const displayLogs = hasMore ? logs.slice(0, PAGE_SIZE) : logs;
+  const nextCursor = hasMore
+    ? displayLogs[displayLogs.length - 1]?.createdAt.toISOString()
+    : null;
+
+  // 直近24時間の件数（フィルターなしで取得）
+  const yesterday = new Date(new Date().setHours(new Date().getHours() - 24));
+  const last24hCount = await prisma.auditLog.count({
+    where: { createdAt: { gte: yesterday } }
+  });
+
+
+  // action 種類一覧
+  const actionTypes = await prisma.auditLog.findMany({
+    select: { action: true },
+    distinct: ["action"],
+    orderBy: { action: "asc" }
+  });
+
+  const buildQueryString = (overrides: Record<string, string | undefined>) => {
+    const params = new URLSearchParams();
+    const merged = { action, userId, from, to, ...overrides };
+    Object.entries(merged).forEach(([k, v]) => {
+      if (v) params.set(k, v);
+    });
+    return params.toString() ? `?${params.toString()}` : "";
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">監査ログ</h1>
-          <p className="mt-2 text-slate-600">システム操作の監査ログ</p>
+    <div>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-slate-900">監査ログ</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          過去24時間: {last24hCount} 件
+        </p>
+      </div>
+
+      {/* フィルターフォーム */}
+      <form method="GET" className="mb-6 flex flex-wrap items-end gap-3 rounded-2xl bg-white p-4 shadow-sm">
+        <div>
+          <label className="block text-xs font-semibold text-slate-500">アクション</label>
+          <select
+            name="action"
+            defaultValue={action ?? ""}
+            className="mt-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="">すべて</option>
+            {actionTypes.map((a) => (
+              <option key={a.action} value={a.action}>
+                {a.action}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-slate-500">ユーザーID（前方一致）</label>
+          <input
+            type="text"
+            name="userId"
+            defaultValue={userId ?? ""}
+            placeholder="uuid..."
+            className="mt-1 w-56 rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-slate-500">日付（FROM）</label>
+          <input
+            type="date"
+            name="from"
+            defaultValue={from ?? ""}
+            className="mt-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-slate-500">日付（TO）</label>
+          <input
+            type="date"
+            name="to"
+            defaultValue={to ?? ""}
+            className="mt-1 rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+        <button
+          type="submit"
+          className="rounded-lg bg-slate-900 px-4 py-1.5 text-sm font-semibold text-white hover:bg-slate-700"
+        >
+          絞り込む
+        </button>
+        <Link
+          href="/admin/audit-logs"
+          className="rounded-lg border border-slate-200 px-4 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+        >
+          リセット
+        </Link>
+      </form>
+
+      {/* ログテーブル */}
+      <section className="rounded-2xl bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="px-4 py-3 text-left font-semibold text-slate-600">日時</th>
+                <th className="px-4 py-3 text-left font-semibold text-slate-600">ユーザーID</th>
+                <th className="px-4 py-3 text-left font-semibold text-slate-600">アクション</th>
+                <th className="px-4 py-3 text-left font-semibold text-slate-600">エンティティ</th>
+                <th className="px-4 py-3 text-left font-semibold text-slate-600">エンティティID</th>
+                <th className="px-4 py-3 text-left font-semibold text-slate-600">変更内容</th>
+                <th className="px-4 py-3 text-left font-semibold text-slate-600">IP</th>
+              </tr>
+            </thead>
+            <tbody>
+              {displayLogs.map((log) => (
+                <tr key={log.id} className="border-b border-slate-100 hover:bg-slate-50">
+                  <td className="whitespace-nowrap px-4 py-3 font-mono text-xs text-slate-400">
+                    {new Date(log.createdAt).toLocaleString("ja-JP")}
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-slate-500">
+                    <Link
+                      href={`/admin/users/${log.userId}`}
+                      className="hover:text-blue-600 hover:underline"
+                    >
+                      {log.userId.slice(0, 10)}…
+                    </Link>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${ACTION_COLORS[log.action] ?? "bg-slate-100 text-slate-600"}`}
+                    >
+                      {log.action}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-slate-500">{log.entityType}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-slate-400">
+                    {log.entityId.slice(0, 10)}…
+                  </td>
+                  <td className="px-4 py-3 text-xs text-slate-500">
+                    {log.changes ? (
+                      <details className="cursor-pointer">
+                        <summary className="text-xs text-blue-500">表示</summary>
+                        <pre className="mt-1 max-w-xs overflow-x-auto rounded bg-slate-50 p-2 text-xs">
+                          {JSON.stringify(log.changes, null, 2)}
+                        </pre>
+                      </details>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="px-4 py-3 font-mono text-xs text-slate-400">
+                    {log.ipAddress ?? "—"}
+                  </td>
+                </tr>
+              ))}
+              {displayLogs.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="py-8 text-center text-slate-400">
+                    該当するログがありません
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
 
-        {/* Audit Logs Section */}
-        <section className="rounded-2xl bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-bold text-slate-900">操作ログ一覧</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-200">
-                  <th className="px-4 py-3 text-left font-semibold text-slate-700">ID</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-700">ユーザーID</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-700">操作</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-700">エンティティ</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-700">エンティティID</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-700">変更内容</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-700">IPアドレス</th>
-                  <th className="px-4 py-3 text-left font-semibold text-slate-700">日時</th>
-                </tr>
-              </thead>
-              <tbody>
-                {logs.map((log) => (
-                  <tr key={log.id} className="border-b border-slate-100">
-                    <td className="px-4 py-3 text-slate-600">{log.id.slice(0, 8)}...</td>
-                    <td className="px-4 py-3 text-slate-900">{log.userId.slice(0, 8)}...</td>
-                    <td className="px-4 py-3 text-slate-600">
-                      <span className="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-700">
-                        {log.action}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-600">{log.entityType}</td>
-                    <td className="px-4 py-3 text-slate-600">{log.entityId.slice(0, 8)}...</td>
-                    <td className="px-4 py-3 text-slate-600">
-                      {log.changes ? (
-                        <pre className="text-xs bg-slate-50 p-2 rounded max-w-xs overflow-hidden">
-                          {JSON.stringify(JSON.parse(log.changes as string), null, 2)}
-                        </pre>
-                      ) : "-"}
-                    </td>
-                    <td className="px-4 py-3 text-slate-600">{log.ipAddress || "-"}</td>
-                    <td className="px-4 py-3 text-slate-600">
-                      {new Date(log.createdAt).toLocaleString('ja-JP')}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* ページネーション */}
+        {nextCursor && (
+          <div className="border-t border-slate-100 px-4 py-3">
+            <Link
+              href={`/admin/audit-logs${buildQueryString({ cursor: nextCursor })}`}
+              className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+            >
+              次の {PAGE_SIZE} 件 →
+            </Link>
           </div>
-        </section>
-
-        {/* Statistics */}
-        <section className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <p className="text-sm font-semibold text-slate-600">総ログ数</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">{logs.length}</p>
-          </div>
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <p className="text-sm font-semibold text-slate-600">ユニークユーザーID</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {new Set(logs.map(l => l.userId)).size}
-            </p>
-          </div>
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <p className="text-sm font-semibold text-slate-600">操作種類</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {new Set(logs.map(l => l.action)).size}
-            </p>
-          </div>
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
-            <p className="text-sm font-semibold text-slate-600">過去24時間</p>
-            <p className="mt-2 text-3xl font-bold text-slate-900">
-              {(() => {
-                const now = new Date();
-                return logs.filter(l => {
-                  const logDate = new Date(l.createdAt);
-                  const hoursAgo = (now.getTime() - logDate.getTime()) / (1000 * 60 * 60);
-                  return hoursAgo < 24;
-                }).length;
-              })()}
-            </p>
-          </div>
-        </section>
-      </div>
+        )}
+      </section>
     </div>
   );
 }

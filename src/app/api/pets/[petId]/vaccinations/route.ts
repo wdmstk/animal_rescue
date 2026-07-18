@@ -5,6 +5,7 @@ import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-acces
 import { getHistoryWindowStartDate } from "@/lib/billing/access-policy";
 import { getUserBillingAccessState, requireCreateAccess, requireEditAccess } from "@/lib/billing/access-guard";
 import { badRequest, notFound } from "@/lib/api-error";
+import { createAuditLog, AuditAction, EntityType } from "@/lib/audit-log";
 
 const petIdParamSchema = z.object({
   petId: z.string().uuid()
@@ -99,6 +100,14 @@ export async function POST(request: Request, { params }: { params: Promise<{ pet
     }
   });
 
+  void createAuditLog({
+    userId: auth.userId,
+    action: AuditAction.VACCINATION_CREATE,
+    entityType: EntityType.VACCINATION,
+    entityId: created.id,
+    changes: parsed.data
+  });
+
   return NextResponse.json({ data: created }, { status: 201 });
 }
 
@@ -148,6 +157,14 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
       date: new Date(parsed.data.date),
       nextDue: parsed.data.nextDue ? new Date(parsed.data.nextDue) : null
     }
+  });
+
+  void createAuditLog({
+    userId: auth.userId,
+    action: AuditAction.VACCINATION_UPDATE,
+    entityType: EntityType.VACCINATION,
+    entityId: updated.id,
+    changes: parsed.data
   });
 
   return NextResponse.json({ data: updated });

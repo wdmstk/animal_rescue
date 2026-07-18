@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useRef, useState } from "react";
 import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type MedicalRecordType = "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER";
 type DocumentType = "MEDICATION" | "VACCINATION" | "LAB" | "RECEIPT" | "OTHER";
@@ -48,6 +49,10 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Edit / Delete states
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
   const [documentError, setDocumentError] = useState<string | null>(null);
   const [isUploadingDocument, setIsUploadingDocument] = useState(false);
   const [isExtractingDocument, setIsExtractingDocument] = useState(false);
@@ -63,9 +68,14 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
     setIsSaving(true);
     setError(null);
 
+    const url = editingId
+      ? `/api/pets/${petId}/medical-records/${editingId}`
+      : `/api/pets/${petId}/medical-records`;
+    const method = editingId ? "PATCH" : "POST";
+
     try {
-      const response = await fetch(`/api/pets/${petId}/medical-records`, {
-        method: "POST",
+      const response = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           date,
@@ -90,16 +100,36 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
         };
       };
 
-      setItems((prev) => [
-        {
-          id: payload.data.id,
-          date: normalizeDate(payload.data.date),
-          title: payload.data.title,
-          description: payload.data.description,
-          recordType: payload.data.recordType
-        },
-        ...prev
-      ]);
+      if (editingId) {
+        setItems((prev) =>
+          prev.map((item) =>
+            item.id === editingId
+              ? {
+                  id: editingId,
+                  date: normalizeDate(payload.data.date),
+                  title: payload.data.title,
+                  description: payload.data.description,
+                  recordType: payload.data.recordType
+                }
+              : item
+          )
+        );
+        setEditingId(null);
+      } else {
+        setItems((prev) => [
+          {
+            id: payload.data.id,
+            date: normalizeDate(payload.data.date),
+            title: payload.data.title,
+            description: payload.data.description,
+            recordType: payload.data.recordType
+          },
+          ...prev
+        ]);
+      }
+
+      // Reset form
+      setDate(today);
       setTitle("");
       setDescription("");
       setUploadedDocumentId(null);
@@ -109,9 +139,33 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
         documentFileInputRef.current.value = "";
       }
     } catch {
-      setError("記録追加に失敗しました");
+      setError(editingId ? "記録更新に失敗しました" : "記録追加に失敗しました");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleActualDelete = async (id: string) => {
+    setError(null);
+    try {
+      const response = await fetch(`/api/pets/${petId}/medical-records/${id}`, {
+        method: "DELETE"
+      });
+
+      if (!response.ok) {
+        throw new Error("failed");
+      }
+
+      setItems((prev) => prev.filter((item) => item.id !== id));
+      if (editingId === id) {
+        setEditingId(null);
+        setDate(today);
+        setTitle("");
+        setDescription("");
+        setRecordType("EXAM");
+      }
+    } catch {
+      setError("削除に失敗しました");
     }
   };
 
@@ -209,7 +263,7 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
   return (
     <section className="space-y-3">
       <form id="medical-record-form" onSubmit={onSubmit} className="rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="text-base font-bold text-slate-900">記録を追加</h2>
+        <h2 className="text-base font-bold text-slate-900">{editingId ? "記録を編集" : "記録を追加"}</h2>
         <div className="mt-3 grid gap-2 md:grid-cols-2">
           <input
             type="date"
@@ -246,49 +300,95 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
           />
         </div>
 
-        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-          <p className="text-sm font-semibold text-slate-900">診療書類の写真登録（OCR補助）</p>
-          <div className="mt-2 flex flex-col gap-2 md:flex-row md:items-center">
-            <input ref={documentFileInputRef} type="file" accept="image/*" className="block w-full text-sm text-slate-700" />
-            <button
-              type="button"
-              onClick={handleDocumentUpload}
-              disabled={isUploadingDocument}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 disabled:opacity-50"
-            >
-              {isUploadingDocument ? "アップロード中..." : "写真を登録"}
-            </button>
-            <button
-              type="button"
-              onClick={handleExtract}
-              disabled={isExtractingDocument || !uploadedDocumentId}
-              className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
-            >
-              {isExtractingDocument ? "抽出中..." : "内容を抽出"}
-            </button>
-          </div>
-          {uploadedDocumentUrl ? <p className="mt-2 text-xs text-emerald-700">書類写真を登録しました。抽出を実行できます。</p> : null}
-          <div className="mt-1">
-            <ToastMessage message={documentError} type="error" />
-          </div>
-
-          {extracted ? (
-            <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700">
-              <p>抽出日: {extracted.examinedOn ?? "未抽出"}</p>
-              <p>病院名: {extracted.hospitalName ?? "未抽出"}</p>
-              <p>書類種別: {extracted.documentType}</p>
-              <p className="mt-1">要約: {extracted.summary}</p>
+        {!editingId && (
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <p className="text-sm font-semibold text-slate-900">診療書類の写真登録（OCR補助）</p>
+            <div className="mt-2 flex flex-col gap-2 md:flex-row md:items-center">
+              <input ref={documentFileInputRef} type="file" accept="image/*" className="block w-full text-sm text-slate-700" />
+              <button
+                type="button"
+                onClick={handleDocumentUpload}
+                disabled={isUploadingDocument}
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 disabled:opacity-50"
+              >
+                {isUploadingDocument ? "アップロード中..." : "写真を登録"}
+              </button>
+              <button
+                type="button"
+                onClick={handleExtract}
+                disabled={isExtractingDocument || !uploadedDocumentId}
+                className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+              >
+                {isExtractingDocument ? "抽出中..." : "内容を抽出"}
+              </button>
             </div>
-          ) : null}
-        </div>
+            {uploadedDocumentUrl ? <p className="mt-2 text-xs text-emerald-700">書類写真を登録しました。抽出を実行できます。</p> : null}
+            <div className="mt-1">
+              <ToastMessage message={documentError} type="error" />
+            </div>
 
-        <SubmitButton isSubmitting={isSaving} idleLabel="記録を保存" className="mt-3 text-xs" />
+            {extracted ? (
+              <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700">
+                <p>抽出日: {extracted.examinedOn ?? "未抽出"}</p>
+                <p>病院名: {extracted.hospitalName ?? "未抽出"}</p>
+                <p>書類種別: {extracted.documentType}</p>
+                <p className="mt-1">要約: {extracted.summary}</p>
+              </div>
+            ) : null}
+          </div>
+        )}
+
+        <div className="flex gap-2">
+          <SubmitButton isSubmitting={isSaving} idleLabel={editingId ? "変更を保存" : "記録を保存"} className="mt-3 text-xs" />
+          {editingId && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingId(null);
+                setDate(today);
+                setTitle("");
+                setDescription("");
+                setRecordType("EXAM");
+              }}
+              className="mt-3 rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              キャンセル
+            </button>
+          )}
+        </div>
         <div className="mt-2">
           <ToastMessage message={error} type="error" />
         </div>
       </form>
 
-      <MedicalTimeline items={sortedItems} />
+      <MedicalTimeline
+        items={sortedItems}
+        onEdit={(item) => {
+          setEditingId(item.id);
+          setDate(item.date);
+          setTitle(item.title);
+          setDescription(item.description);
+          setRecordType(item.recordType);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }}
+        onDelete={(id) => setDeletingId(id)}
+      />
+
+      <ConfirmDialog
+        isOpen={deletingId !== null}
+        title="医療記録の削除"
+        message="この医療記録を削除してもよろしいですか？この操作は取り消せません。"
+        confirmLabel="削除"
+        cancelLabel="キャンセル"
+        variant="danger"
+        onConfirm={async () => {
+          if (deletingId) {
+            await handleActualDelete(deletingId);
+            setDeletingId(null);
+          }
+        }}
+        onCancel={() => setDeletingId(null)}
+      />
     </section>
   );
 }

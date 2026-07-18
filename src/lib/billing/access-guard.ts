@@ -129,3 +129,11 @@ export const requireNotifyAccess = async (userId: string) => {
   }
   return billing;
 };
+
+export const requireExportAccess = async (userId: string) => {
+  const billing = await getUserBillingAccessState(userId);
+  if (!billing.accessPolicy.canExport) {
+    return denied("この機能は有料プランで利用できます");
+  }
+  return billing;
+};

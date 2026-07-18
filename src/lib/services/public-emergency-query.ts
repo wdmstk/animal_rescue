@@ -17,6 +17,8 @@ type PublicEmergencyRpcRow = {
   emergency_vet_phone: string | null;
   emergency_contact_name_2: string | null;
   emergency_contact_phone_2: string | null;
+  insurance_company?: string | null;
+  insurance_policy_number?: string | null;
 };
 
 const DEFAULT_SUMMARY_SETTINGS = {
@@ -151,7 +153,9 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
               emergencyVetName: true,
               emergencyVetPhone: true,
               emergencyContactName2: true,
-              emergencyContactPhone2: true
+              emergencyContactPhone2: true,
+              insuranceCompany: true,
+              insurancePolicyNumber: true
             }
           }
         }
@@ -176,7 +180,9 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
     emergencyVetName: tokenRow.pet.emergencyInfo?.emergencyVetName ?? null,
     emergencyVetPhone: tokenRow.pet.emergencyInfo?.emergencyVetPhone ?? null,
     emergencyContactName2: tokenRow.pet.emergencyInfo?.emergencyContactName2 ?? null,
-    emergencyContactPhone2: tokenRow.pet.emergencyInfo?.emergencyContactPhone2 ?? null
+    emergencyContactPhone2: tokenRow.pet.emergencyInfo?.emergencyContactPhone2 ?? null,
+    insuranceCompany: tokenRow.pet.emergencyInfo?.insuranceCompany ?? null,
+    insurancePolicyNumber: tokenRow.pet.emergencyInfo?.insurancePolicyNumber ?? null
   });
 
   return withRecentSummaries(token, base);
@@ -202,6 +208,8 @@ export const getPublicEmergencyByToken = async (token: string): Promise<Emergenc
       emergencyVetPhone: "03-9876-5432",
       emergencyContactName2: "山田 太郎",
       emergencyContactPhone2: "080-9876-5432",
+      insuranceCompany: "アイペット損害保険",
+      insurancePolicyNumber: "IP-1234567-A",
       recentMedicationSummaries: ["ピモベンダン / 1.25mg / 1日2回 / 2026-01-10-"],
       recentVaccinationSummaries: ["CORE / 接種:2025-10-01 / 次回:2026-10-01"],
       recentMedicalRecordSummaries: ["2026-02-20 / EXAM / 定期検診"]
@@ -239,7 +247,9 @@ export const getPublicEmergencyByToken = async (token: string): Promise<Emergenc
     emergencyVetName: row.emergency_vet_name,
     emergencyVetPhone: row.emergency_vet_phone,
     emergencyContactName2: row.emergency_contact_name_2,
-    emergencyContactPhone2: row.emergency_contact_phone_2
+    emergencyContactPhone2: row.emergency_contact_phone_2,
+    insuranceCompany: row.insurance_company ?? null,
+    insurancePolicyNumber: row.insurance_policy_number ?? null
   });
 
   return withRecentSummaries(token, base);
