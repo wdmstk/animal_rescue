@@ -6,6 +6,7 @@ const navItems = [
   { href: "/admin/users", label: "👤 ユーザー管理" },
   { href: "/admin/subscriptions", label: "💳 サブスクリプション" },
   { href: "/admin/announcements", label: "📢 お知らせ管理" },
+  { href: "/admin/tickets", label: "🎫 問い合わせ管理" },
   { href: "/admin/audit-logs", label: "📋 監査ログ" }
 ];
 

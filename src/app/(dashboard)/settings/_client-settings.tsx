@@ -883,6 +883,17 @@ export function ClientSettings({
       </section>
 
       <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <h2 className="text-lg font-bold text-slate-900">お問い合わせ</h2>
+        <p className="mt-1 text-sm text-slate-600">ご質問・ご要望・不具合のご報告はこちらからお送りいただけます。</p>
+        <Link
+          href="/support"
+          className="mt-3 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+        >
+          お問い合わせフォームを開く
+        </Link>
+      </section>
+
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <h2 className="text-lg font-bold text-slate-900">ログアウト</h2>
         <p className="mt-1 text-sm text-slate-600">現在のセッションを終了します。</p>
         <button
