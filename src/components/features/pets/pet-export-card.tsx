@@ -82,9 +82,9 @@ export function PetExportCard({ petId }: PetExportCardProps) {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="text-base font-bold text-slate-900">健康データのエクスポート</h2>
-        <p className="mt-2 text-sm text-slate-600">
+      <section className="rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-900/60 dark:border dark:border-white/10 dark:text-slate-100 dark:backdrop-blur-md">
+        <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">健康データのエクスポート</h2>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
           ペットの健康管理データ（医療記録、投薬履歴、ワクチン接種歴、健康指標ログ、検査値）をCSV形式で一括ダウンロードします。
           かかりつけ医への相談やデータ共有用にご活用ください。
         </p>
@@ -94,48 +94,48 @@ export function PetExportCard({ petId }: PetExportCardProps) {
             type="button"
             onClick={handleExportCSV}
             disabled={isExporting}
-            className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-gradient-to-r dark:from-blue-600 dark:to-indigo-500 dark:hover:opacity-95"
           >
             {isExporting ? "エクスポート中..." : "CSVファイルを出力"}
           </button>
         </div>
       </section>
 
-      <section className="rounded-2xl bg-white p-4 shadow-sm border border-slate-200">
-        <h2 className="text-base font-bold text-slate-900">データバックアップ & 復元</h2>
-        <p className="mt-2 text-sm text-slate-600">
+      <section className="rounded-2xl bg-white p-4 shadow-sm border border-slate-200 dark:bg-slate-900/60 dark:border-white/10 dark:text-slate-100 dark:backdrop-blur-md">
+        <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">データバックアップ & 復元</h2>
+        <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
           すべてのデータをJSON形式で書き出したり、書き出したファイルから一括復元できます。
         </p>
 
         <div className="mt-4 space-y-4">
           <div>
-            <h3 className="text-xs font-bold text-slate-700">1. バックアップの作成</h3>
+            <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300">1. バックアップの作成</h3>
             <button
               type="button"
               onClick={handleExportJSON}
               disabled={isBackupExporting}
-              className="mt-2 inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
+              className="mt-2 inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50 dark:bg-white/5 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10"
             >
               {isBackupExporting ? "作成中..." : "JSONバックアップを出力"}
             </button>
           </div>
 
-          <div className="border-t border-slate-100 pt-3">
-            <h3 className="text-xs font-bold text-slate-700">2. バックアップから復元</h3>
-            <p className="text-xs text-rose-600 mt-1">※復元を実行すると、現在のペットの健康データは上書き・上書き消去されます。</p>
+          <div className="border-t border-slate-100 dark:border-white/10 pt-3">
+            <h3 className="text-xs font-bold text-slate-700 dark:text-slate-300">2. バックアップから復元</h3>
+            <p className="text-xs text-rose-600 dark:text-rose-400 mt-1">※復元を実行すると、現在のペットの健康データは上書き・上書き消去されます。</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <input
                 type="file"
                 accept=".json"
                 onChange={handleFileChange}
-                className="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-50 file:text-slate-700 hover:file:bg-slate-100"
+                className="block w-full text-xs text-slate-500 dark:text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-50 file:text-slate-700 dark:file:bg-white/5 dark:file:text-slate-300 hover:file:bg-slate-100"
               />
               {selectedFile && (
                 <button
                   type="button"
                   onClick={handleRestoreBackup}
                   disabled={isRestoring}
-                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
+                  className="rounded-xl bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800 disabled:opacity-50 dark:bg-gradient-to-r dark:from-blue-600 dark:to-indigo-500 dark:hover:opacity-95"
                 >
                   {isRestoring ? "復元中..." : "復元を実行"}
                 </button>
@@ -144,8 +144,8 @@ export function PetExportCard({ petId }: PetExportCardProps) {
           </div>
         </div>
 
-        {error && <p className="mt-3 text-xs text-rose-600">{error}</p>}
-        {successMessage && <p className="mt-3 text-xs text-emerald-700">{successMessage}</p>}
+        {error && <p className="mt-3 text-xs text-rose-600 dark:text-rose-400">{error}</p>}
+        {successMessage && <p className="mt-3 text-xs text-emerald-700 dark:text-emerald-400">{successMessage}</p>}
       </section>
     </div>
   );

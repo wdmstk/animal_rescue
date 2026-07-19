@@ -262,20 +262,20 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
 
   return (
     <section className="space-y-3">
-      <form id="medical-record-form" onSubmit={onSubmit} className="rounded-2xl bg-white p-4 shadow-sm">
-        <h2 className="text-base font-bold text-slate-900">{editingId ? "記録を編集" : "記録を追加"}</h2>
+      <form id="medical-record-form" onSubmit={onSubmit} className="rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-900/60 dark:border dark:border-white/10 dark:text-slate-100 dark:backdrop-blur-md">
+        <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{editingId ? "記録を編集" : "記録を追加"}</h2>
         <div className="mt-3 grid gap-2 md:grid-cols-2">
           <input
             type="date"
             value={date}
             onChange={(event) => setDate(event.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-white/10 dark:bg-slate-950/60 dark:text-white dark:focus:border-blue-500/50 dark:focus:outline-none"
             required
           />
           <select
             value={recordType}
             onChange={(event) => setRecordType(event.target.value as MedicalRecordType)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-white/10 dark:bg-slate-950/60 dark:text-white dark:focus:border-blue-500/50 dark:focus:outline-none"
           >
             <option value="EXAM">診察</option>
             <option value="SURGERY">手術</option>
@@ -288,28 +288,28 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
             value={title}
             onChange={(event) => setTitle(event.target.value)}
             placeholder="タイトル"
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2"
+            className="rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2 dark:border-white/10 dark:bg-slate-950/60 dark:text-white dark:focus:border-blue-500/50 dark:focus:outline-none"
             required
           />
           <textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             placeholder="内容"
-            className="min-h-20 rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2"
+            className="min-h-20 rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2 dark:border-white/10 dark:bg-slate-950/60 dark:text-white dark:focus:border-blue-500/50 dark:focus:outline-none"
             required
           />
         </div>
 
         {!editingId && (
-          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
-            <p className="text-sm font-semibold text-slate-900">診療書類の写真登録（OCR補助）</p>
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/5 dark:bg-slate-950/40">
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">診療書類の写真登録（OCR補助）</p>
             <div className="mt-2 flex flex-col gap-2 md:flex-row md:items-center">
-              <input ref={documentFileInputRef} type="file" accept="image/*" className="block w-full text-sm text-slate-700" />
+              <input ref={documentFileInputRef} type="file" accept="image/*" className="block w-full text-sm text-slate-700 dark:text-slate-400" />
               <button
                 type="button"
                 onClick={handleDocumentUpload}
                 disabled={isUploadingDocument}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 disabled:opacity-50"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 disabled:opacity-50 dark:bg-white/5 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10"
               >
                 {isUploadingDocument ? "アップロード中..." : "写真を登録"}
               </button>
@@ -317,18 +317,18 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
                 type="button"
                 onClick={handleExtract}
                 disabled={isExtractingDocument || !uploadedDocumentId}
-                className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50 dark:bg-gradient-to-r dark:from-blue-600 dark:to-indigo-500 dark:hover:opacity-95"
               >
                 {isExtractingDocument ? "抽出中..." : "内容を抽出"}
               </button>
             </div>
-            {uploadedDocumentUrl ? <p className="mt-2 text-xs text-emerald-700">書類写真を登録しました。抽出を実行できます。</p> : null}
+            {uploadedDocumentUrl ? <p className="mt-2 text-xs text-emerald-700 dark:text-emerald-400">書類写真を登録しました。抽出を実行できます。</p> : null}
             <div className="mt-1">
               <ToastMessage message={documentError} type="error" />
             </div>
 
             {extracted ? (
-              <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700">
+              <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700 dark:border-white/5 dark:bg-slate-950/60 dark:text-slate-300">
                 <p>抽出日: {extracted.examinedOn ?? "未抽出"}</p>
                 <p>病院名: {extracted.hospitalName ?? "未抽出"}</p>
                 <p>書類種別: {extracted.documentType}</p>
@@ -350,7 +350,7 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
                 setDescription("");
                 setRecordType("EXAM");
               }}
-              className="mt-3 rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              className="mt-3 rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:bg-white/5 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10"
             >
               キャンセル
             </button>
