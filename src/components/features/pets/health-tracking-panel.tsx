@@ -409,7 +409,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
               <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
             </Tooltip>
           </div>
-          <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1">
+          <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 dark:bg-slate-950/60 p-1">
             {(Object.keys(labCategoryLabelMap) as LabResultEntry["category"][]).map((item) => (
               <button
                 key={item}
@@ -419,8 +419,8 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
                   const nextDefaultMarker = labMarkersByCategory[item][0];
                   setLabMarker(nextDefaultMarker);
                 }}
-                className={`rounded px-2 py-1 text-xs ${
-                  labCategory === item ? "bg-white font-semibold text-slate-900 shadow-sm" : "text-slate-600"
+                className={`rounded px-2 py-1 text-xs transition-colors duration-200 ${
+                  labCategory === item ? "bg-white font-semibold text-slate-900 shadow-sm dark:bg-white/10 dark:text-white" : "text-slate-600 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
               >
                 {labCategoryLabelMap[item]}

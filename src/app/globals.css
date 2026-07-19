@@ -210,15 +210,15 @@ form.rounded-xl {
   color: #60a5fa;
 }
 
-/* 5. General Buttons inside cards fallback to transparent border styling, EXCLUDING buttons with bg-white or from- classes */
-.rounded-2xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]),
-.rounded-xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]) {
+/* 5. General Buttons inside cards fallback to transparent border styling, EXCLUDING buttons with bg-white, from- classes, or explicit text classes */
+.rounded-2xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="text-slate-"]):not([class*="text-gray-"]):not([class*="text-sky-"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]),
+.rounded-xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="text-slate-"]):not([class*="text-gray-"]):not([class*="text-sky-"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]) {
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: #f8fafc;
 }
-.rounded-2xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):hover,
-.rounded-xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):hover {
+.rounded-2xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="text-slate-"]):not([class*="text-gray-"]):not([class*="text-sky-"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]):hover,
+.rounded-xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="text-slate-"]):not([class*="text-gray-"]):not([class*="text-sky-"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]):hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.2);
 }
