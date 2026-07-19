@@ -90,15 +90,35 @@ div.rounded-xl {
   color: #f8fafc !important;
 }
 
-/* Specific sub-elements inside card (labels, text-slate-X etc) */
-.text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600 {
-  color: #e2e8f0 !important;
+/* Specific sub-elements inside card (labels, text-slate-X etc) - dark mode high contrast */
+.text-slate-950, .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600,
+.text-gray-950, .text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600,
+.text-zinc-950, .text-zinc-900, .text-zinc-800, .text-zinc-700, .text-zinc-600,
+.text-neutral-950, .text-neutral-900, .text-neutral-800, .text-neutral-700, .text-neutral-600,
+.text-stone-950, .text-stone-900, .text-stone-800, .text-stone-700, .text-stone-600 {
+  color: #f1f5f9 !important;
 }
-.text-slate-500, .text-slate-400 {
-  color: #94a3b8 !important;
+
+.text-slate-500, .text-slate-400,
+.text-gray-500, .text-gray-400,
+.text-zinc-500, .text-zinc-400,
+.text-neutral-500, .text-neutral-400,
+.text-stone-500, .text-stone-400 {
+  color: #cbd5e1 !important;
 }
-.text-sky-900, .text-sky-700, .text-sky-600 {
+
+.text-sky-950, .text-sky-900, .text-sky-850, .text-sky-800, .text-sky-700, .text-sky-600,
+.text-blue-950, .text-blue-900, .text-blue-800, .text-blue-700, .text-blue-600 {
   color: #93c5fd !important;
+}
+
+.text-emerald-950, .text-emerald-900, .text-emerald-800, .text-emerald-700, .text-emerald-600 {
+  color: #6ee7b7 !important;
+}
+
+.text-rose-950, .text-rose-900, .text-rose-800, .text-rose-700, .text-rose-600,
+.text-red-950, .text-red-900, .text-red-800, .text-red-700, .text-red-600 {
+  color: #fca5a5 !important;
 }
 
 /* Fix text readability on bright/light background elements (active tabs, white buttons, etc.) */
@@ -106,6 +126,15 @@ div.rounded-xl {
   color: #0a0a0f !important;
 }
 .bg-white *, .bg-sky-50 *, .bg-slate-50 *, .bg-emerald-50 *, .bg-rose-50 *, .bg-amber-50 * {
+  color: #0a0a0f !important;
+}
+
+.bg-white [class*="text-"],
+.bg-sky-50 [class*="text-"],
+.bg-slate-50 [class*="text-"],
+.bg-emerald-50 [class*="text-"],
+.bg-rose-50 [class*="text-"],
+.bg-amber-50 [class*="text-"] {
   color: #0a0a0f !important;
 }
 
