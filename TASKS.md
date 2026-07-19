@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-306` LPの実装、シード対応モックアップ差し替え、Stripe年契約変数修正、Cookieエラー修正
+（なし）
 
 ### todo
 （なし）
@@ -155,7 +155,7 @@ Development Task List
 ### LPの実装、シード対応モックアップ差し替え、Stripe年契約変数修正、Cookieエラー修正
 - Task ID: `TASK-306`
 - ブランチ: `feat/TASK-306-lp-implementation-and-stripe-fix`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: LPの新規作成、シードデータ（ココ/糖尿病）に即した実画像モックアップの差し替え、Stripeの旧年払い環境変数名（7800）から新年払い価格（6800）へのリネーム、およびServer ComponentCookieエラーの修正。
 - 依存関係: なし
 - 完了条件:
