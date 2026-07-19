@@ -31,7 +31,11 @@ Development Task List
 ### blocked
 （なし）
 
-1. `TASK-296` 管理画面の機能拡充（状態変更・KPI・ユーザー管理・お知らせ）
+1. `TASK-303` 問い合わせ環境（チケット制サポート）の管理画面UI（/admin/tickets）の実装
+2. `TASK-302` 問い合わせ環境（チケット制サポート）のユーザー側UI（/support）の実装
+3. `TASK-301` 問い合わせ環境（チケット制サポート）のAPIエンドポイント実装
+4. `TASK-300` 問い合わせ環境（チケット制サポート）のDBスキーマ定義 & マイグレーション
+5. `TASK-296` 管理画面の機能拡充（状態変更・KPI・ユーザー管理・お知らせ）
 2. `TASK-295` Should Have / Could Have 残タスク実装
 3. `TASK-294` 年払いプラン実装
 4. `TASK-192` ペット詳細ページ情報整理
@@ -1510,3 +1514,58 @@ Development Task List
   - AdminAPIルート群（/api/admin/subscriptions、announcements、pets/qr-token/revoke）の実装
   - Prisma Announcement モデル追加（マイグレーションSQL生成済み）
   - `npm run lint` エラー0件 / `npx vitest run` 328件 全通過
+
+---
+
+## TASK-300: 問い合わせ環境（チケット制サポート）のDBスキーマ定義 & マイグレーション
+
+- ステータス: `done`
+- 概要: `Ticket` および `TicketMessage` の Prisma スキーマモデルを追加しマイグレーションを適用する
+- Issue: なし
+- 依存関係: （なし）
+- 完了条件:
+  - `prisma/schema.prisma` へ `Ticket` / `TicketMessage` モデルおよび対応する enum の追加。
+  - Prisma Migration の生成とローカル適用。
+
+---
+
+## TASK-301: 問い合わせ環境（チケット制サポート）のAPIエンドポイント実装
+
+- ステータス: `done`
+- 概要: ユーザー用および管理画面用のチケット操作APIエンドポイントとテストを実装する
+- Issue: なし
+- 依存関係:
+  - prerequisite: TASK-300
+- 完了条件:
+  - ユーザー用API (/api/support/*) および管理者用API (/api/admin/tickets/*) の実装。
+  - エラーハンドリング、ロール権限チェックの徹底。
+  - APIユニットテストの作成およびパス。
+
+---
+
+## TASK-302: 問い合わせ環境（チケット制サポート）のユーザー側UI（/support）の実装
+
+- ステータス: `done`
+- 概要: ユーザー向けお問い合わせ一覧、新規作成、チャット対話スレッドUIを実装する
+- Issue: なし
+- 依存関係:
+  - prerequisite: TASK-301
+- 完了条件:
+  - 設定画面への導線追加。
+  - `/support`, `/support/new`, `/support/[id]` ページの追加。
+  - モバイル最適化されたリッチなチャット風UI of the ticket system.
+
+---
+
+## TASK-303: 問い合わせ環境（チケット制サポート）の管理画面UI（/admin/tickets）の実装
+
+- ステータス: `done`
+- 概要: 管理者向けの問い合わせ一覧、詳細、返信・ステータス管理UIを実装する
+- Issue: なし
+- 依存関係:
+  - prerequisite: TASK-301
+- 完了条件:
+  - 管理画面サイドバーへのリンク追加。
+  - `/admin/tickets`, `/admin/tickets/[id]` ページの追加。
+  - ステータス変更、返信機能、監査ログへの記録連動。
+

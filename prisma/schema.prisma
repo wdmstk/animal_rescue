@@ -493,3 +493,46 @@ model Announcement {
 
   @@index([isPublished, publishedAt])
 }
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum TicketCategory {
+  BUG
+  FEATURE
+  BILLING
+  OTHER
+}
+
+model Ticket {
+  id        String         @id @default(uuid()) @db.Uuid
+  userId    String         @db.Uuid
+  title     String
+  category  TicketCategory @default(OTHER)
+  status    TicketStatus   @default(OPEN)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  messages  TicketMessage[]
+
+  @@index([userId, status])
+  @@index([status, createdAt])
+}
+
+model TicketMessage {
+  id        String   @id @default(uuid()) @db.Uuid
+  ticketId  String   @db.Uuid
+  senderId  String   @db.Uuid
+  isAdmin   Boolean  @default(false)
+  body      String   @db.Text
+  createdAt DateTime @default(now())
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId, createdAt])
+}
+
