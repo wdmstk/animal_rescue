@@ -11,84 +11,100 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
   const priorityContact2 = joinLabel(data.emergencyContactName2, data.emergencyContactPhone2);
 
   return (
-    <section className="rounded-2xl border border-emergency-100 bg-white p-5 shadow-sm dark:border-emergency-900 dark:bg-slate-800">
-      <p className="inline-flex rounded-full bg-rose-600 px-3 py-1 text-xs font-bold text-white">救急モード</p>
-      <p className="mt-3 text-sm font-semibold text-emergency-700 dark:text-emergency-400">Emergency Pet Pass</p>
-      <h1 className="mt-1 text-3xl font-black text-slate-900 dark:text-slate-100">{data.petName}</h1>
+    <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 shadow-2xl backdrop-blur-xl text-white relative overflow-hidden transition-all duration-300 hover:border-white/20">
+      {/* Decorative top gradient bar */}
+      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 via-rose-500 to-amber-500" />
 
-      {/* Blood Type - Critical for emergency */}
-      {data.bloodType && (
-        <div className="mt-3 rounded-xl border-l-4 border-rose-600 bg-rose-50 p-3 dark:bg-rose-950">
-          <p className="text-sm font-bold text-rose-700 dark:text-rose-400">
-            🩸 血液型: <span className="text-base font-black text-slate-900 dark:text-slate-100">{data.bloodType}</span>
-          </p>
-        </div>
-      )}
+      {/* Header section with status badges */}
+      <div className="flex items-center justify-between gap-4 mt-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 border border-red-500/30 px-3 py-1 text-xs font-bold text-red-400 animate-pulse">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+          救急モード
+        </span>
+        <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
+          Emergency Pet Pass
+        </span>
+      </div>
 
-      {/* Insurance Information */}
+      <div className="mt-4 flex items-baseline justify-between">
+        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+          {data.petName}
+        </h1>
+        {data.bloodType && (
+          <span className="inline-block rounded-lg bg-red-500/20 border border-red-500/30 px-2.5 py-1 text-xs font-bold text-red-400">
+            🩸 血液型: {data.bloodType}
+          </span>
+        )}
+      </div>
+
+      {/* Insurance Information (Premium Style) */}
       {(data.insuranceCompany || data.insurancePolicyNumber) && (
-        <div className="mt-3 rounded-xl border-l-4 border-emerald-600 bg-emerald-50 p-4 dark:bg-emerald-950">
-          <h2 className="text-sm font-bold text-emerald-700 dark:text-emerald-400">🛡️ 保険情報</h2>
-          {data.insuranceCompany && (
-            <p className="mt-2 text-base font-bold text-slate-900 dark:text-slate-100">
-              保険会社: {data.insuranceCompany}
-            </p>
-          )}
-          {data.insurancePolicyNumber && (
-            <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
-              証券番号: {data.insurancePolicyNumber}
-            </p>
-          )}
+        <div className="mt-5 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 transition-all hover:bg-emerald-500/10">
+          <h2 className="text-xs font-bold text-emerald-400 tracking-wider uppercase">🛡️ 保険情報</h2>
+          <div className="mt-2 space-y-1">
+            {data.insuranceCompany && (
+              <p className="text-base font-bold text-white">
+                {data.insuranceCompany}
+              </p>
+            )}
+            {data.insurancePolicyNumber && (
+              <p className="text-xs text-slate-400">
+                証券番号: {data.insurancePolicyNumber}
+              </p>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Disease and Allergy - Highest Priority */}
-      <div className="mt-4 rounded-xl border-l-4 border-rose-600 bg-rose-50 p-4 dark:bg-rose-950">
-        <h2 className="text-sm font-bold text-rose-700 dark:text-rose-400">⚠️ 持病・既往歴</h2>
-        <p className="mt-2 text-lg font-black text-slate-900 dark:text-slate-100">{data.disease ?? "登録なし"}</p>
+      {/* Health Conditions / Allergies */}
+      <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-4 transition-all hover:bg-rose-500/10">
+          <h2 className="text-xs font-bold text-rose-400 tracking-wider uppercase">⚠️ 持病・既往歴</h2>
+          <p className="mt-2 text-base font-bold text-white leading-snug">{data.disease ?? "登録なし"}</p>
+        </div>
+
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-4 transition-all hover:bg-rose-500/10">
+          <h2 className="text-xs font-bold text-rose-400 tracking-wider uppercase">⛔ アレルギー</h2>
+          <p className="mt-2 text-base font-bold text-white leading-snug">{data.allergy ?? "登録なし"}</p>
+        </div>
       </div>
 
-      <div className="mt-3 rounded-xl border-l-4 border-rose-600 bg-rose-50 p-4 dark:bg-rose-950">
-        <h2 className="text-sm font-bold text-rose-700 dark:text-rose-400">⛔ アレルギー</h2>
-        <p className="mt-2 text-lg font-black text-slate-900 dark:text-slate-100">{data.allergy ?? "登録なし"}</p>
-      </div>
-
-      {/* Current Medications - High Priority */}
+      {/* Current Medications */}
       {data.medications && (
-        <div className="mt-3 rounded-xl border-l-4 border-emergency-600 bg-emergency-50 p-4 dark:bg-emergency-950">
-          <h2 className="text-sm font-bold text-emergency-700 dark:text-emergency-400">💊 現在の投薬</h2>
-          <p className="mt-2 text-lg font-black text-slate-900 dark:text-slate-100">{data.medications}</p>
+        <div className="mt-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 transition-all hover:bg-amber-500/10">
+          <h2 className="text-xs font-bold text-amber-400 tracking-wider uppercase">💊 現在の投薬</h2>
+          <p className="mt-2 text-base font-bold text-white leading-snug">{data.medications}</p>
         </div>
       )}
 
-      {/* Emergency Contacts - High Priority */}
-      <div className="mt-5 space-y-3">
+      {/* Action Buttons - Emergency Contacts (Vivid Primary Action) */}
+      <div className="mt-6 space-y-3">
         {emergencyPhoneHref ? (
           <a
             href={emergencyPhoneHref}
-            className="block rounded-xl bg-rose-600 px-4 py-5 text-center text-lg font-black text-white shadow-lg"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-rose-500 px-4 py-4 text-center text-base font-bold text-white shadow-lg shadow-red-900/30 transition-all hover:opacity-95 active:scale-98"
           >
-            📞 緊急連絡先1: {priorityContact}
+            <span>📞</span> 緊急連絡先1: {priorityContact}
           </a>
         ) : null}
         {emergencyPhoneHref2 ? (
           <a
             href={emergencyPhoneHref2}
-            className="block rounded-xl bg-rose-600 px-4 py-5 text-center text-lg font-black text-white shadow-lg"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-rose-500 px-4 py-4 text-center text-base font-bold text-white shadow-lg shadow-red-900/30 transition-all hover:opacity-95 active:scale-98"
           >
-            📞 緊急連絡先2: {priorityContact2}
+            <span>📞</span> 緊急連絡先2: {priorityContact2}
           </a>
         ) : null}
       </div>
 
-      {/* Vet Information - High Priority */}
+      {/* Vet Hospital Contacts */}
       <div className="mt-5 space-y-3">
         {vetPhoneHref ? (
           <a
             href={vetPhoneHref}
-            className="block rounded-xl bg-emergency-600 px-4 py-5 text-center text-lg font-black text-white shadow-lg"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-500 px-4 py-4 text-center text-base font-bold text-white shadow-lg shadow-blue-900/30 transition-all hover:opacity-95 active:scale-98"
           >
-            🏥 かかりつけ病院: {data.vetName}
+            <span>🏥</span> かかりつけ病院: {data.vetName}
           </a>
         ) : null}
         {vetMapHref && data.vetName ? (
@@ -96,25 +112,25 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
             href={vetMapHref}
             target="_blank"
             rel="noreferrer"
-            className="block rounded-xl border-2 border-emergency-300 bg-emergency-50 px-4 py-5 text-center text-lg font-black text-emergency-800 dark:border-emergency-700 dark:bg-emergency-950 dark:text-emergency-300"
+            className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-center text-sm font-semibold text-slate-300 transition-all hover:bg-white/10 active:scale-98"
           >
-            🗺️ かかりつけ病院を地図で開く
+            <span>🗺️</span> かかりつけ病院を地図で開く
           </a>
         ) : null}
       </div>
 
-      {/* Emergency Vet - High Priority */}
+      {/* Emergency Vet Contacts */}
       {data.emergencyVetName && (
         <div className="mt-5 space-y-3">
           {emergencyVetPhoneHref ? (
             <a
               href={emergencyVetPhoneHref}
-              className="block rounded-xl bg-emergency-600 px-4 py-5 text-center text-lg font-black text-white shadow-lg"
+              className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-500 px-4 py-4 text-center text-base font-bold text-white shadow-lg shadow-blue-900/30 transition-all hover:opacity-95 active:scale-98"
             >
-              🏥 夜間救急病院: {data.emergencyVetName}
+              <span>🏥</span> 夜間救急病院: {data.emergencyVetName}
             </a>
           ) : (
-            <div className="rounded-xl bg-emergency-50 px-4 py-5 text-center text-lg font-black text-emergency-800 dark:bg-emergency-950 dark:text-emergency-300">
+            <div className="rounded-2xl border border-white/5 bg-slate-900 px-4 py-4 text-center text-base font-bold text-slate-400">
               🏥 夜間救急病院: {data.emergencyVetName}
             </div>
           )}
@@ -123,22 +139,24 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
               href={emergencyVetMapHref}
               target="_blank"
               rel="noreferrer"
-              className="block rounded-xl border-2 border-emergency-300 bg-emergency-50 px-4 py-5 text-center text-lg font-black text-emergency-800 dark:border-emergency-700 dark:bg-emergency-950 dark:text-emergency-300"
+              className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-center text-sm font-semibold text-slate-300 transition-all hover:bg-white/10 active:scale-98"
             >
-              🗺️ 夜間救急病院を地図で開く
+              <span>🗺️</span> 夜間救急病院を地図で開く
             </a>
           ) : null}
         </div>
       )}
 
-      {/* Additional Information */}
-      <div className="mt-5 space-y-3 text-sm dark:text-slate-300">
+      {/* Additional Historical Summaries (Refined layout) */}
+      <div className="mt-6 space-y-3">
         <SummaryItems label="直近の投薬" values={data.recentMedicationSummaries} />
         <SummaryItems label="直近のワクチン" values={data.recentVaccinationSummaries} />
         <SummaryItems label="直近の医療記録" values={data.recentMedicalRecordSummaries} />
       </div>
 
-      <p className="mt-4 text-[11px] text-slate-500 dark:text-slate-400">閲覧専用 / Token: {token}</p>
+      <p className="mt-6 text-center text-[10px] text-slate-500 font-mono">
+        閲覧専用 / Token: {token}
+      </p>
     </section>
   );
 }
@@ -157,15 +175,16 @@ const SummaryItems = ({ label, values }: { label: string; values?: string[] }) =
   }
 
   return (
-    <div className="rounded-lg bg-emergency-50 p-3 dark:bg-emergency-950">
-      <p className="text-xs font-bold text-emergency-700 dark:text-emergency-400">{label}</p>
+    <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-4 transition-all hover:bg-slate-950/60">
+      <p className="text-xs font-bold text-slate-400 tracking-wider uppercase">{label}</p>
       {values.length === 0 ? (
-        <p className="mt-1 font-semibold text-slate-900 dark:text-slate-100">登録なし</p>
+        <p className="mt-1 text-sm font-medium text-slate-500">登録なし</p>
       ) : (
-        <ul className="mt-1 space-y-1">
+        <ul className="mt-2 space-y-1 text-sm font-semibold text-slate-200">
           {values.map((value, index) => (
-            <li className="font-semibold text-slate-900 dark:text-slate-100" key={`${label}-${index}`}>
-              {value}
+            <li className="flex items-start gap-2" key={`${label}-${index}`}>
+              <span className="text-slate-500">•</span>
+              <span>{value}</span>
             </li>
           ))}
         </ul>
