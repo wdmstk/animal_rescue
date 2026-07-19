@@ -75,3 +75,99 @@ html {
     display: none;
   }
 }
+
+/* ==========================================================================
+   UNIFIED PREMIUM DARK THEME OVERRIDES (No !important used)
+   Ensures 100% text readability and matches LP aesthetics.
+   ========================================================================== */
+
+/* 1. Card Backgrounds: Unify card sections, forms, and container divs to transparent glassmorphic dark theme */
+section.rounded-2xl, 
+div.rounded-2xl,
+form.rounded-2xl,
+section.rounded-3xl,
+div.rounded-3xl,
+section.rounded-xl,
+div.rounded-xl,
+form.rounded-xl {
+  background-color: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  color: #f8fafc;
+}
+
+/* 2. Typography overrides: target text classes inside cards to use dark-mode friendly light colors */
+.rounded-2xl .text-slate-900, .rounded-2xl .text-slate-800, .rounded-2xl .text-slate-700, .rounded-2xl .text-slate-600,
+.rounded-3xl .text-slate-900, .rounded-3xl .text-slate-800, .rounded-3xl .text-slate-700, .rounded-3xl .text-slate-600,
+.rounded-xl .text-slate-900, .rounded-xl .text-slate-800, .rounded-xl .text-slate-700, .rounded-xl .text-slate-600,
+.rounded-2xl .text-gray-900, .rounded-2xl .text-gray-800, .rounded-2xl .text-gray-700, .rounded-2xl .text-gray-600,
+.rounded-3xl .text-gray-900, .rounded-3xl .text-gray-800, .rounded-3xl .text-gray-700, .rounded-3xl .text-gray-600,
+.rounded-xl .text-gray-900, .rounded-xl .text-gray-800, .rounded-xl .text-gray-700, .rounded-xl .text-gray-600 {
+  color: #f1f5f9;
+}
+
+.rounded-2xl .text-slate-500, .rounded-2xl .text-slate-400,
+.rounded-3xl .text-slate-500, .rounded-3xl .text-slate-400,
+.rounded-xl .text-slate-500, .rounded-xl .text-slate-400 {
+  color: #cbd5e1;
+}
+
+.rounded-2xl .text-sky-900, .rounded-2xl .text-sky-800, .rounded-2xl .text-sky-700, .rounded-2xl .text-sky-600,
+.rounded-3xl .text-sky-900, .rounded-3xl .text-sky-800, .rounded-3xl .text-sky-700, .rounded-3xl .text-sky-600,
+.rounded-xl .text-sky-900, .rounded-xl .text-sky-800, .rounded-xl .text-sky-700, .rounded-xl .text-sky-600,
+.rounded-2xl .text-blue-900, .rounded-2xl .text-blue-800, .rounded-2xl .text-blue-700, .rounded-2xl .text-blue-600,
+.rounded-3xl .text-blue-900, .rounded-3xl .text-blue-800, .rounded-3xl .text-blue-700, .rounded-3xl .text-blue-600,
+.rounded-xl .text-blue-900, .rounded-xl .text-blue-800, .rounded-xl .text-blue-700, .rounded-xl .text-blue-600 {
+  color: #93c5fd;
+}
+
+.rounded-2xl .text-emerald-900, .rounded-2xl .text-emerald-800, .rounded-2xl .text-emerald-700, .rounded-2xl .text-emerald-600,
+.rounded-xl .text-emerald-900, .rounded-xl .text-emerald-800, .rounded-xl .text-emerald-700, .rounded-xl .text-emerald-600 {
+  color: #6ee7b7;
+}
+
+.rounded-2xl .text-rose-900, .rounded-2xl .text-rose-800, .rounded-2xl .text-rose-700, .rounded-2xl .text-rose-600,
+.rounded-xl .text-rose-900, .rounded-xl .text-rose-800, .rounded-xl .text-rose-700, .rounded-xl .text-rose-600 {
+  color: #fca5a5;
+}
+
+/* 3. Form Input Overrides (target non-checkboxes inside dark cards) */
+.rounded-2xl input:not([type="checkbox"]):not([type="radio"]), 
+.rounded-2xl textarea, 
+.rounded-2xl select,
+.rounded-xl input:not([type="checkbox"]):not([type="radio"]), 
+.rounded-xl textarea, 
+.rounded-xl select {
+  background-color: #0a0a0f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* 4. Active Tab Highlight */
+.rounded-2xl .bg-white.font-semibold, 
+.rounded-2xl [class*="bg-white"][class*="font-semibold"],
+.rounded-xl .bg-white.font-semibold, 
+.rounded-xl [class*="bg-white"][class*="font-semibold"] {
+  background-color: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+.rounded-2xl .bg-white.font-semibold *, 
+.rounded-2xl [class*="bg-white"][class*="font-semibold"] *,
+.rounded-xl .bg-white.font-semibold *, 
+.rounded-xl [class*="bg-white"][class*="font-semibold"] * {
+  color: #60a5fa;
+}
+
+/* 5. General Buttons inside cards fallback to transparent border styling */
+.rounded-2xl button:not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]),
+.rounded-xl button:not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]) {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+.rounded-2xl button:not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):hover,
+.rounded-xl button:not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
