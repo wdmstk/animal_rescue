@@ -9,7 +9,7 @@ const { getUserMock, findUniqueMock, upsertMock, createCustomerMock, createSessi
   envMock: {
     NEXT_PUBLIC_APP_URL: "https://example.com",
     STRIPE_PRICE_ID_MONTHLY_680: "price_123",
-    STRIPE_PRICE_ID_ANNUAL_7800: "price_456"
+    STRIPE_PRICE_ID_ANNUAL_6800: "price_456"
   }
 }));
 
@@ -42,7 +42,7 @@ import { POST } from "../../src/app/api/billing/checkout/route";
 describe("POST /api/billing/checkout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    envMock.STRIPE_PRICE_ID_ANNUAL_7800 = "price_456";
+    envMock.STRIPE_PRICE_ID_ANNUAL_6800 = "price_456";
   });
 
   it("returns 401 when unauthenticated", async () => {
@@ -89,7 +89,7 @@ describe("POST /api/billing/checkout", () => {
   });
 
   it("returns 400 when annual plan is not available", async () => {
-    envMock.STRIPE_PRICE_ID_ANNUAL_7800 = undefined;
+    envMock.STRIPE_PRICE_ID_ANNUAL_6800 = undefined;
     getUserMock.mockResolvedValue({ data: { user: { id: "u1", email: "u@example.com" } }, error: null });
 
     const res = await POST(
