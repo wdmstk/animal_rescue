@@ -87,7 +87,7 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
 
   return (
     <>
-      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 dark:border-slate-700/80 dark:bg-slate-800/90 dark:hover:border-slate-600 dark:backdrop-blur-md">
+      <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 shadow-xl backdrop-blur-md text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:border-white/20">
         <Link
           href={`/pets/${id}`}
           className="block group"

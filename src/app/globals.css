@@ -75,3 +75,35 @@ html {
     display: none;
   }
 }
+
+/* Unify all card backgrounds to glassmorphic dark style and fix text visibility */
+section.rounded-2xl, 
+div.rounded-2xl,
+form.rounded-2xl,
+section.rounded-3xl,
+div.rounded-3xl,
+section.rounded-xl,
+div.rounded-xl {
+  background-color: rgba(30, 41, 59, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(12px) !important;
+  color: #f8fafc !important;
+}
+
+/* Specific sub-elements inside card (labels, text-slate-X etc) */
+.text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600 {
+  color: #e2e8f0 !important;
+}
+.text-slate-500, .text-slate-400 {
+  color: #94a3b8 !important;
+}
+.text-sky-900, .text-sky-700, .text-sky-600 {
+  color: #93c5fd !important;
+}
+
+/* Consolidate form fields */
+input, textarea, select {
+  background-color: #0a0a0f !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}

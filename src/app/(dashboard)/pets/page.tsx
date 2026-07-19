@@ -58,10 +58,10 @@ export default async function PetsPage() {
 
   return (
     <div className="space-y-4">
-      <section className="rounded-2xl border border-sky-200 bg-sky-50 p-4 shadow-sm">
+      <section className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5 shadow-xl">
         <div className="mb-3">
-          <h2 className="text-sm font-bold text-sky-900">はじめての方へ（3ステップ）</h2>
-          <p className="mt-1 text-xs text-sky-700">最初のペットを登録して、緊急情報の管理を始めましょう</p>
+          <h2 className="text-sm font-bold text-blue-300">はじめての方へ（3ステップ）</h2>
+          <p className="mt-1 text-xs text-slate-300">最初のペットを登録して、緊急情報の管理を始めましょう</p>
         </div>
         
         <ProgressBar 
@@ -77,40 +77,40 @@ export default async function PetsPage() {
             <li key={step.id} className="flex items-start gap-2">
               <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
                 step.completed 
-                  ? 'bg-sky-500 text-white' 
-                  : 'bg-sky-200 text-sky-700'
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-slate-700 text-slate-300'
               }`}>
                 {step.completed ? '✓' : index + 1}
               </div>
               <div className="flex-1">
                 <p className={`text-xs font-medium ${
-                  step.completed ? 'text-sky-900' : 'text-sky-700'
+                  step.completed ? 'text-blue-300' : 'text-slate-300'
                 }`}>
                   {step.title}
                 </p>
-                <p className="text-xs text-sky-600">{step.description}</p>
+                <p className="text-xs text-slate-400">{step.description}</p>
               </div>
             </li>
           ))}
         </ol>
       </section>
 
-      <section className="rounded-2xl bg-white p-4 shadow-sm">
+      <section className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 shadow-xl backdrop-blur-md text-white">
         <div className="flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold">ペットプロフィール</h2>
-            <p className="mt-1 text-sm text-slate-600">家族全員で最新の救急情報を管理できます。</p>
+            <h2 className="text-lg font-bold text-white">ペットプロフィール</h2>
+            <p className="mt-1 text-sm text-slate-400">家族全員で最新の救急情報を管理できます。</p>
           </div>
           <div className="flex gap-2 shrink-0">
             <Link
               href="/pets/compare"
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-white/10 active:scale-95 transition-all min-h-[36px]"
             >
               健康データを比較
             </Link>
             <Link
               href="/pets/new"
-              className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white"
+              className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-bold text-xs hover:opacity-95 active:scale-95 transition-all min-h-[36px] px-4"
             >
               ペットを追加
             </Link>

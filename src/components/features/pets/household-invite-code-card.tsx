@@ -80,12 +80,12 @@ export function HouseholdInviteCodeCard() {
   };
 
   return (
-    <section className="rounded-2xl bg-white p-4 shadow-sm">
-      <h2 className="text-base font-bold text-slate-900">家族招待コード</h2>
-      <p className="mt-1 text-sm text-slate-600">家族に共有するための招待コードを発行します。</p>
+    <section className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 shadow-xl backdrop-blur-md text-white">
+      <h2 className="text-base font-bold text-white">家族招待コード</h2>
+      <p className="mt-1 text-sm text-slate-400">家族に共有するための招待コードを発行します。</p>
 
-      <form className="mt-3 flex items-end gap-2" onSubmit={onSubmit}>
-        <label className="flex-1 text-sm font-semibold text-slate-800">
+      <form className="mt-4 flex items-end gap-3" onSubmit={onSubmit}>
+        <label className="flex-1 text-sm font-medium text-slate-300">
           有効期限（時間）
           <input
             type="number"
@@ -93,24 +93,33 @@ export function HouseholdInviteCodeCard() {
             max={168}
             value={expiresInHours}
             onChange={(event) => setExpiresInHours(event.target.value)}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white focus:border-blue-500/50 focus:outline-none transition-all"
           />
         </label>
-        <SubmitButton isSubmitting={isSubmitting} idleLabel="発行" submittingLabel="保存中..." />
+        <SubmitButton
+          isSubmitting={isSubmitting}
+          idleLabel="発行"
+          submittingLabel="保存中..."
+          className="bg-slate-800 border border-white/10 hover:bg-slate-750 text-white rounded-xl font-bold min-h-[44px] px-5 transition-all"
+        />
       </form>
 
       {issuedCode ? (
-        <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
-          <p className="text-xs text-slate-600">発行済みコード</p>
-          <p className="mt-1 font-mono text-lg font-bold text-slate-900">{issuedCode}</p>
-          <p className="mt-1 text-xs text-slate-600">有効期限: {expiresAt ? new Date(expiresAt).toLocaleString("ja-JP") : "-"}</p>
-          <div className="mt-2 flex gap-2">
-            <button type="button" onClick={onCopy} className="rounded-lg border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-800">
+        <div className="mt-4 rounded-xl border border-white/5 bg-slate-950/50 p-4">
+          <p className="text-xs text-slate-400">発行済みコード</p>
+          <p className="mt-1 font-mono text-xl font-bold text-blue-400">{issuedCode}</p>
+          <p className="mt-1 text-xs text-slate-400">有効期限: {expiresAt ? new Date(expiresAt).toLocaleString("ja-JP") : "-"}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={onCopy}
+              className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-bold text-slate-200 hover:bg-white/10 active:scale-95 transition-all min-h-[36px]"
+            >
               コードをコピー
             </button>
-            {inviteJoinPath ? <p className="text-xs text-slate-600">参加URL: {inviteJoinPath}</p> : null}
+            {inviteJoinPath ? <p className="text-xs text-slate-400">参加URL: <span className="font-mono text-slate-300">{inviteJoinPath}</span></p> : null}
           </div>
-          <div className="mt-1">
+          <div className="mt-2">
             <ToastMessage message={copied ? "コピーしました。" : null} type="success" />
           </div>
         </div>
