@@ -101,6 +101,14 @@ div.rounded-xl {
   color: #93c5fd !important;
 }
 
+/* Fix text readability on bright/light background elements (active tabs, white buttons, etc.) */
+.bg-white, .bg-sky-50, .bg-slate-50, .bg-emerald-50, .bg-rose-50, .bg-amber-50 {
+  color: #0a0a0f !important;
+}
+.bg-white *, .bg-sky-50 *, .bg-slate-50 *, .bg-emerald-50 *, .bg-rose-50 *, .bg-amber-50 * {
+  color: #0a0a0f !important;
+}
+
 /* Consolidate form fields */
 input, textarea, select {
   background-color: #0a0a0f !important;
