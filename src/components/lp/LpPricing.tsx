@@ -116,7 +116,7 @@ export function LpPricing() {
         {/* Notes */}
         <div className="mt-12 text-center space-y-2">
           <p className="text-sm text-gray-500">
-            ※ 年払いプランは Coming Soon
+            ※ 年払いプラン（年額6,800円・税別）は Coming Soon
           </p>
           <p className="text-sm text-gray-500">
             ※ 解約はStripe顧客ポータルまたは設定画面からいつでも可能です

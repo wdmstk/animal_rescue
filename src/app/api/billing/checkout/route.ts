@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     // If no body or invalid JSON, default to monthly
   }
 
-  if (plan === "annual" && !env.STRIPE_PRICE_ID_ANNUAL_7800) {
+  if (plan === "annual" && !env.STRIPE_PRICE_ID_ANNUAL_6800) {
     return badRequest("Annual plan is not available");
   }
 
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
   });
 
   const priceId = plan === "annual" 
-    ? env.STRIPE_PRICE_ID_ANNUAL_7800 
+    ? env.STRIPE_PRICE_ID_ANNUAL_6800 
     : env.STRIPE_PRICE_ID_MONTHLY_680;
 
   const session = await stripe.checkout.sessions.create({

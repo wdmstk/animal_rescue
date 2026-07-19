@@ -12,11 +12,18 @@ export const createSupabaseServerClient = async () => {
       },
       setAll(cookiesToSet) {
         try {
-          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+          cookiesToSet.forEach(({ name, value, options }) => {
+            try {
+              cookieStore.set(name, value, options);
+            } catch {
+              // Ignore individual cookie setting errors inside Server Components
+            }
+          });
         } catch {
-          // Ignore error when called during Server Component rendering
+          // Ignore overall errors when called during Server Component rendering
         }
       }
     }
   });
 };
+
