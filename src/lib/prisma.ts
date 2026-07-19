@@ -16,7 +16,10 @@ if (!databaseUrl) {
 const pool =
   global.prismaPool ??
   new Pool({
-    connectionString: databaseUrl
+    connectionString: databaseUrl,
+    max: 2, // サーバーレス環境での1インスタンスあたりのプール上限を最小限に設定してコネクションバーストを防ぐ
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000
   });
 
 const adapter = new PrismaPg(pool);
@@ -28,7 +31,5 @@ export const prisma =
     log: process.env.NODE_ENV === "development" ? ["query", "warn", "error"] : ["error"]
   });
 
-if (process.env.NODE_ENV !== "production") {
-  global.prismaPool = pool;
-  global.prisma = prisma;
-}
+global.prismaPool = pool;
+global.prisma = prisma;
