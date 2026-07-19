@@ -25,15 +25,15 @@ export function Tabs({ tabs, defaultTab, variant = "default" }: TabsProps) {
       : "px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap";
     
     const activeClasses = activeTab === tabId
-      ? "border-emerald-500 text-emerald-700"
-      : "border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300";
+      ? "border-blue-500 text-blue-400 font-bold"
+      : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-700";
     
     return `${baseClasses} ${activeClasses}`;
   };
 
   return (
     <div className="w-full">
-      <div className="border-b border-slate-200" role="tablist" aria-label="Tabs">
+      <div className="border-b border-slate-700/50" role="tablist" aria-label="Tabs">
         <nav className="flex gap-1 overflow-x-auto">
           {tabs.map((tab) => (
             <button

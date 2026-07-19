@@ -501,17 +501,17 @@ export default async function PetDetailPage({
       {emergencyLinkToken && !pet.isArchived ? (
         <Link
           href={`/e/${emergencyLinkToken}`}
-          className="sticky top-[68px] z-10 block rounded-xl bg-emergency-500 px-4 py-3 text-center text-sm font-bold text-white shadow"
+          className="sticky top-[68px] z-10 block rounded-2xl bg-gradient-to-r from-red-600 to-rose-500 px-4 py-4.5 text-center text-sm font-bold text-white shadow-lg shadow-red-900/20 hover:opacity-95 active:scale-95 transition-all"
         >
-          緊急情報を確認
+          🚨 緊急情報を確認（緊急パス画面を開く）
         </Link>
       ) : null}
 
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-wrap items-center gap-2 mb-2">
-          <h2 className="text-lg font-bold text-slate-900">{pet.name}の情報</h2>
+      <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-6 shadow-xl backdrop-blur-md">
+        <div className="flex flex-wrap items-center gap-2 mb-4 border-b border-slate-700/50 pb-3">
+          <h2 className="text-xl font-bold text-white">{pet.name}の情報</h2>
           {pet.isArchived && (
-            <span className="rounded-full bg-amber-50 border border-amber-200 px-2.5 py-0.5 text-xs font-semibold text-amber-800 flex items-center gap-1 shadow-sm">
+            <span className="rounded-full bg-amber-500/10 border border-amber-500/30 px-2.5 py-0.5 text-xs font-semibold text-amber-400 flex items-center gap-1 shadow-sm">
               🕯️ 思い出モード
             </span>
           )}

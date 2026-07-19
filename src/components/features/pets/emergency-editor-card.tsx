@@ -163,7 +163,7 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
         <button
           type="button"
           onClick={() => setIsEditing(true)}
-          className="w-full rounded-lg border border-emergency-200 bg-white px-4 py-2 text-sm font-semibold text-emergency-700"
+          className="w-full inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-slate-200 hover:bg-white/10 active:scale-95 transition-all min-h-[44px]"
         >
           緊急情報を編集
         </button>
@@ -172,15 +172,15 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
   }
 
   return (
-    <section className="rounded-2xl border border-emergency-100 bg-emergency-50 p-4">
-      <h2 className="text-base font-bold text-emergency-700">緊急情報を編集</h2>
-      <p className="mt-1 text-sm text-slate-600">緊急時に必要な医療情報と連絡先を登録します。これらの情報はQRコードで共有できます。</p>
-      <form className="mt-3 space-y-3" onSubmit={onSubmit}>
-        <label className="block text-sm font-semibold text-slate-800">
+    <section className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 shadow-inner backdrop-blur-sm">
+      <h2 className="text-base font-bold text-red-400">緊急情報を編集</h2>
+      <p className="mt-1 text-xs text-slate-400">緊急時に必要な医療情報と連絡先を登録します。これらの情報はQRコードで共有できます。</p>
+      <form className="mt-4 space-y-4" onSubmit={onSubmit}>
+        <label className="block text-sm font-medium text-slate-300">
           <div className="flex items-center gap-1">
             持病
             <Tooltip content="現在治療中または管理中の病気を記入します。緊急時の医療対応に重要です。">
-              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              <span className="text-slate-400 hover:text-slate-200 cursor-help">?</span>
             </Tooltip>
           </div>
           <textarea
@@ -189,15 +189,15 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
             rows={2}
             maxLength={1000}
             placeholder="例: 僧帽弁閉鎖不全症（軽度）"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-slate-800">
+        <label className="block text-sm font-medium text-slate-300">
           <div className="flex items-center gap-1">
             服薬
             <Tooltip content="現在服用中の薬を記入します。薬名、用量、投与頻度を含めると医師が対応しやすくなります。">
-              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              <span className="text-slate-400 hover:text-slate-200 cursor-help">?</span>
             </Tooltip>
           </div>
           <textarea
@@ -206,15 +206,15 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
             rows={2}
             maxLength={1000}
             placeholder="例: ピモベンダン 1日2回"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
           />
         </label>
 
-        <label className="block text-sm font-semibold text-slate-800">
+        <label className="block text-sm font-medium text-slate-300">
           <div className="flex items-center gap-1">
             アレルギー
             <Tooltip content="食物、薬物、環境などのアレルギーを記入します。緊急時のアナフィラキシー対応に重要です。">
-              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              <span className="text-slate-400 hover:text-slate-200 cursor-help">?</span>
             </Tooltip>
           </div>
           <textarea
@@ -223,23 +223,23 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
             rows={2}
             maxLength={1000}
             placeholder="例: 鶏肉アレルギー"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
           />
         </label>
 
-        <div className="grid gap-3 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-800">
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block text-sm font-medium text-slate-300">
             かかりつけ病院名
             <input
               value={vetName}
               onChange={(event) => setVetName(event.target.value)}
               maxLength={120}
               placeholder="例: みなと動物病院"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
           </label>
 
-          <label className="block text-sm font-semibold text-slate-800">
+          <label className="block text-sm font-medium text-slate-300">
             かかりつけ病院電話番号
             <input
               value={vetPhone}
@@ -250,25 +250,25 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
               title="数字・+・()・-・スペースで入力してください"
               placeholder="例: 03-1234-5678"
               maxLength={40}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
-            <p className="mt-1 text-xs font-normal text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
+            <p className="mt-1.5 text-xs text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
           </label>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-800">
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block text-sm font-medium text-slate-300">
             緊急連絡先名
             <input
               value={emergencyContactName}
               onChange={(event) => setEmergencyContactName(event.target.value)}
               maxLength={120}
               placeholder="例: 山田 花子"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
           </label>
 
-          <label className="block text-sm font-semibold text-slate-800">
+          <label className="block text-sm font-medium text-slate-300">
             緊急連絡先電話番号
             <input
               value={emergencyContactPhone}
@@ -279,25 +279,25 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
               title="数字・+・()・-・スペースで入力してください"
               placeholder="例: 090-1234-5678"
               maxLength={40}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
-            <p className="mt-1 text-xs font-normal text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
+            <p className="mt-1.5 text-xs text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
           </label>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-800">
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block text-sm font-medium text-slate-300">
             第二緊急連絡先名
             <input
               value={emergencyContactName2}
               onChange={(event) => setEmergencyContactName2(event.target.value)}
               maxLength={100}
               placeholder="例: 山田 太郎"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
           </label>
 
-          <label className="block text-sm font-semibold text-slate-800">
+          <label className="block text-sm font-medium text-slate-300">
             第二緊急連絡先電話番号
             <input
               value={emergencyContactPhone2}
@@ -308,17 +308,17 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
               title="数字・+・()・-・スペースで入力してください"
               placeholder="例: 080-9876-5432"
               maxLength={40}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
-            <p className="mt-1 text-xs font-normal text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
+            <p className="mt-1.5 text-xs text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
           </label>
         </div>
 
-        <label className="block text-sm font-semibold text-slate-800">
+        <label className="block text-sm font-medium text-slate-300">
           <div className="flex items-center gap-1">
             血液型
             <Tooltip content="犬の血液型（DEA 1.1+等）を記入します。輸血が必要な際に重要です。">
-              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              <span className="text-slate-400 hover:text-slate-200 cursor-help">?</span>
             </Tooltip>
           </div>
           <input
@@ -326,23 +326,23 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
             onChange={(event) => setBloodType(event.target.value)}
             maxLength={50}
             placeholder="例: DEA 1.1+"
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
           />
         </label>
 
-        <div className="grid gap-3 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-800">
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block text-sm font-medium text-slate-300">
             夜間救急病院名
             <input
               value={emergencyVetName}
               onChange={(event) => setEmergencyVetName(event.target.value)}
               maxLength={200}
               placeholder="例: 東京夜間動物救急センター"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
           </label>
 
-          <label className="block text-sm font-semibold text-slate-800">
+          <label className="block text-sm font-medium text-slate-300">
             夜間救急病院電話番号
             <input
               value={emergencyVetPhone}
@@ -353,47 +353,51 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
               title="数字・+・()・-・スペースで入力してください"
               placeholder="例: 03-9876-5432"
               maxLength={40}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
-            <p className="mt-1 text-xs font-normal text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
+            <p className="mt-1.5 text-xs text-slate-500">数字・+・()・-・スペースのみ入力できます。</p>
           </label>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
-          <label className="block text-sm font-semibold text-slate-800">
+        <div className="grid gap-4 md:grid-cols-2">
+          <label className="block text-sm font-medium text-slate-300">
             保険会社
             <input
               value={insuranceCompany}
               onChange={(event) => setInsuranceCompany(event.target.value)}
               maxLength={200}
               placeholder="例: アイペット損害保険"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
           </label>
 
-          <label className="block text-sm font-semibold text-slate-800">
+          <label className="block text-sm font-medium text-slate-300">
             保険証券番号
             <input
               value={insurancePolicyNumber}
               onChange={(event) => setInsurancePolicyNumber(event.target.value)}
               maxLength={100}
               placeholder="例: IP-1234567-A"
-              className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
             />
           </label>
         </div>
 
         <ToastMessage message={errorMessage} type="error" />
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3 pt-2">
           <button
             type="button"
             onClick={() => setIsEditing(false)}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800"
+            className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-semibold text-slate-200 hover:bg-white/10 active:scale-95 transition-all min-h-[44px]"
           >
             キャンセル
           </button>
-          <SubmitButton isSubmitting={isSubmitting} idleLabel="保存する" className="bg-emergency-600" />
+          <SubmitButton
+            isSubmitting={isSubmitting}
+            idleLabel="保存する"
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-red-600 to-rose-500 text-white font-bold text-sm shadow-lg shadow-red-900/10 hover:opacity-95 active:scale-95 transition-all min-h-[44px]"
+          />
         </div>
       </form>
     </section>

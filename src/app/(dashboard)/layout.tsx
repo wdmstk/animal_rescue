@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,7 +7,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div className="mx-auto flex w-full max-w-md items-center justify-between">
           <h1 className="text-base font-bold text-slate-900 dark:text-slate-100">動物の救急手帳</h1>
           <div className="flex items-center gap-2">
-            <ThemeToggle />
             <Link href="/settings" className="rounded-md border border-slate-300 px-3 py-1 text-xs font-semibold text-slate-700 dark:border-slate-600 dark:text-slate-300">
               設定
             </Link>

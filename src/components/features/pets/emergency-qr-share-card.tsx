@@ -110,17 +110,19 @@ export function EmergencyQrShareCard({ petId, initialToken }: EmergencyQrShareCa
   };
 
   return (
-    <section className="rounded-2xl border border-emergency-100 bg-white p-4 shadow-sm">
-      <h2 className="text-base font-bold text-slate-900">QR共有</h2>
-      <p className="mt-2 text-sm text-slate-600">緊急時に必要最小限の情報を公開するURLです。</p>
-      <div className="mt-3 rounded-lg bg-slate-100 p-2 text-xs text-slate-700 break-all" suppressHydrationWarning>
+    <section className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 shadow-inner backdrop-blur-sm">
+      <h2 className="text-base font-bold text-white">QR共有</h2>
+      <p className="mt-2 text-sm text-slate-400">緊急時に必要最小限の情報を公開するURLです。</p>
+      
+      <div className="mt-3 rounded-xl bg-slate-950/80 border border-white/5 p-3 text-xs text-slate-300 font-mono break-all" suppressHydrationWarning>
         {isLoading ? "読み込み中..." : resolvedPublicUrl}
       </div>
-      <div className="mt-3 flex flex-wrap gap-2">
+      
+      <div className="mt-4 flex flex-wrap gap-2">
         <Link
           href={resolvedToken ? `/e/${resolvedToken}` : "#"}
-          className={`rounded-lg px-3 py-2 text-xs font-semibold text-white ${
-            resolvedToken ? "bg-emergency-500" : "bg-slate-400 pointer-events-none"
+          className={`inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-xs font-bold text-white transition-all active:scale-95 ${
+            resolvedToken ? "bg-gradient-to-r from-red-600 to-rose-500 hover:opacity-95 shadow-md shadow-red-900/10" : "bg-slate-700 pointer-events-none opacity-40"
           }`}
         >
           公開画面を確認
@@ -129,7 +131,7 @@ export function EmergencyQrShareCard({ petId, initialToken }: EmergencyQrShareCa
           type="button"
           onClick={showQr}
           disabled={!resolvedToken || isLoading || isQrLoading}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 disabled:opacity-60"
+          className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-white/10 active:scale-95 disabled:opacity-60 transition-all"
         >
           {isQrLoading ? "QR取得中..." : isQrVisible ? "QRを隠す" : "QRを表示"}
         </button>
@@ -137,17 +139,19 @@ export function EmergencyQrShareCard({ petId, initialToken }: EmergencyQrShareCa
           type="button"
           onClick={regenerate}
           disabled={isUpdating || isLoading}
-          className="rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-60"
+          className="inline-flex items-center justify-center rounded-xl bg-slate-800 border border-white/5 px-4 py-2.5 text-xs font-bold text-slate-200 hover:bg-slate-750 active:scale-95 disabled:opacity-60 transition-all"
         >
           {isUpdating ? "再生成中..." : "トークン再生成"}
         </button>
       </div>
+
       {isQrVisible && qrImage ? (
-        <div className="mt-3 rounded-lg border border-slate-200 bg-white p-2">
+        <div className="mt-4 rounded-2xl border border-white/10 bg-white p-4 max-w-[224px] mx-auto shadow-lg">
           <Image src={qrImage} alt="公開URLのQRコード" width={192} height={192} unoptimized className="mx-auto h-48 w-48" />
         </div>
       ) : null}
-      {error && <p className="mt-2 text-xs text-rose-700">{error}</p>}
+      
+      {error && <p className="mt-2.5 text-xs text-rose-400 font-semibold">{error}</p>}
     </section>
   );
 }
