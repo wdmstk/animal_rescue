@@ -76,71 +76,84 @@ html {
   }
 }
 
-/* Unify all card backgrounds to glassmorphic dark style and fix text visibility */
+/* ==========================================================================
+   UNIFIED PREMIUM DARK THEME OVERRIDES
+   Ensures 100% text readability and matches LP aesthetics.
+   ========================================================================== */
+
+/* 1. Global typography reset for dark theme compatibility */
+body, html, h1, h2, h3, h4, h5, h6, p, span, label, dt, dd, li, a, th, td {
+  color: #f8fafc !important;
+}
+
+/* Secondary/dimmed text elements */
+.text-slate-500, .text-slate-400, .text-gray-500, .text-gray-400,
+.text-zinc-500, .text-zinc-400, .text-neutral-500, .text-neutral-400,
+.text-stone-500, .text-stone-400, .text-slate-600, .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+/* Accent texts */
+.text-sky-900, .text-sky-800, .text-sky-700, .text-sky-600,
+.text-blue-900, .text-blue-800, .text-blue-700, .text-blue-600 {
+  color: #93c5fd !important;
+}
+.text-emerald-900, .text-emerald-800, .text-emerald-700, .text-emerald-600 {
+  color: #6ee7b7 !important;
+}
+.text-rose-900, .text-rose-800, .text-rose-700, .text-rose-600,
+.text-red-900, .text-red-800, .text-red-700, .text-red-600 {
+  color: #fca5a5 !important;
+}
+
+/* 2. Card Backgrounds: Unify all white/light cards to transparent glassmorphic dark theme */
 section.rounded-2xl, 
 div.rounded-2xl,
 form.rounded-2xl,
 section.rounded-3xl,
 div.rounded-3xl,
 section.rounded-xl,
-div.rounded-xl {
+div.rounded-xl,
+.bg-white, 
+.bg-slate-50, 
+.bg-slate-100, 
+.bg-gray-50, 
+.bg-zinc-50, 
+.bg-sky-50 {
   background-color: rgba(30, 41, 59, 0.6) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   backdrop-filter: blur(12px) !important;
-  color: #f8fafc !important;
 }
 
-/* Specific sub-elements inside card (labels, text-slate-X etc) - dark mode high contrast */
-.text-slate-950, .text-slate-900, .text-slate-800, .text-slate-700, .text-slate-600,
-.text-gray-950, .text-gray-900, .text-gray-800, .text-gray-700, .text-gray-600,
-.text-zinc-950, .text-zinc-900, .text-zinc-800, .text-zinc-700, .text-zinc-600,
-.text-neutral-950, .text-neutral-900, .text-neutral-800, .text-neutral-700, .text-neutral-600,
-.text-stone-950, .text-stone-900, .text-stone-800, .text-stone-700, .text-stone-600 {
-  color: #f1f5f9 !important;
-}
-
-.text-slate-500, .text-slate-400,
-.text-gray-500, .text-gray-400,
-.text-zinc-500, .text-zinc-400,
-.text-neutral-500, .text-neutral-400,
-.text-stone-500, .text-stone-400 {
-  color: #cbd5e1 !important;
-}
-
-.text-sky-950, .text-sky-900, .text-sky-850, .text-sky-800, .text-sky-700, .text-sky-600,
-.text-blue-950, .text-blue-900, .text-blue-800, .text-blue-700, .text-blue-600 {
-  color: #93c5fd !important;
-}
-
-.text-emerald-950, .text-emerald-900, .text-emerald-800, .text-emerald-700, .text-emerald-600 {
-  color: #6ee7b7 !important;
-}
-
-.text-rose-950, .text-rose-900, .text-rose-800, .text-rose-700, .text-rose-600,
-.text-red-950, .text-red-900, .text-red-800, .text-red-700, .text-red-600 {
-  color: #fca5a5 !important;
-}
-
-/* Fix text readability on bright/light background elements (active tabs, white buttons, etc.) */
-.bg-white, .bg-sky-50, .bg-slate-50, .bg-emerald-50, .bg-rose-50, .bg-amber-50 {
-  color: #0a0a0f !important;
-}
-.bg-white *, .bg-sky-50 *, .bg-slate-50 *, .bg-emerald-50 *, .bg-rose-50 *, .bg-amber-50 * {
-  color: #0a0a0f !important;
-}
-
-.bg-white [class*="text-"],
-.bg-sky-50 [class*="text-"],
-.bg-slate-50 [class*="text-"],
-.bg-emerald-50 [class*="text-"],
-.bg-rose-50 [class*="text-"],
-.bg-amber-50 [class*="text-"] {
-  color: #0a0a0f !important;
-}
-
-/* Consolidate form fields */
+/* 3. Form Control Elements */
 input, textarea, select {
   background-color: #0a0a0f !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
   color: #ffffff !important;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: rgba(59, 130, 246, 0.5) !important;
+}
+
+/* 4. Active item / Active Tab highlight */
+.bg-white.font-semibold, 
+[class*="bg-white"][class*="font-semibold"] {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  color: #60a5fa !important;
+}
+.bg-white.font-semibold *, 
+[class*="bg-white"][class*="font-semibold"] * {
+  color: #60a5fa !important;
+}
+
+/* 5. General button styling fallback to premium dark-border styles */
+button:not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]) {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+}
+button:not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
