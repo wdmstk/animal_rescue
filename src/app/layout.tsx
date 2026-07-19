@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja" suppressHydrationWarning>
+    <html lang="ja" className="dark" style={{ colorScheme: "dark" }} suppressHydrationWarning>
       <body>
-        <ThemeProvider defaultTheme="system" storageKey="theme">
+        <ThemeProvider defaultTheme="dark" storageKey="theme">
           <ServiceWorkerRegister />
           {children}
         </ThemeProvider>

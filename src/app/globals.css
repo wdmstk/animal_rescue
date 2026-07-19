@@ -3,30 +3,13 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
-  --background-start: #f8fafc;
-  --background-end: #f1f5f9;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --card-bg: #ffffff;
-  --card-border: #e2e8f0;
-  --input-bg: #f8fafc;
-  --button-primary: #0f172a;
-  --button-primary-text: #ffffff;
-  --button-secondary: #e2e8f0;
-  --button-secondary-text: #475569;
-  --link-color: #0f172a;
-  --focus-outline: #0f172a;
-}
-
-.dark {
   color-scheme: dark;
-  --background-start: #0f172a;
-  --background-end: #1e293b;
+  --background-start: #0a0a0f;
+  --background-end: #0e0e17;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --card-bg: #1e293b;
-  --card-border: #334155;
+  --card-bg: rgba(30, 41, 59, 0.7);
+  --card-border: rgba(255, 255, 255, 0.1);
   --input-bg: #0f172a;
   --button-primary: #f8fafc;
   --button-primary-text: #0f172a;
@@ -91,4 +74,151 @@ html {
   .no-print {
     display: none;
   }
+}
+
+/* ==========================================================================
+   UNIFIED PREMIUM DARK THEME OVERRIDES (No !important used)
+   Ensures 100% text readability and matches LP aesthetics.
+   ========================================================================== */
+
+/* 1. Card Backgrounds: Unify card sections, forms, and container divs to transparent glassmorphic dark theme */
+section.rounded-2xl, 
+div.rounded-2xl,
+form.rounded-2xl,
+section.rounded-3xl,
+div.rounded-3xl,
+section.rounded-xl,
+div.rounded-xl,
+form.rounded-xl {
+  background-color: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  color: #f8fafc;
+}
+
+/* 2. Typography overrides: target text classes inside cards to use dark-mode friendly light colors, excluding buttons and inputs */
+.rounded-2xl .text-slate-900:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-slate-800:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-slate-700:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-slate-600:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-slate-900:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-slate-800:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-slate-700:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-slate-600:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-slate-900:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-slate-800:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-slate-700:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-slate-600:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-gray-900:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-gray-800:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-gray-700:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-gray-600:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-gray-900:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-gray-800:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-gray-700:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-gray-600:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-gray-900:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-gray-800:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-gray-700:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-gray-600:not(button):not(input):not(select):not(textarea) {
+  color: #f1f5f9;
+}
+
+.rounded-2xl .text-slate-500:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-slate-400:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-slate-500:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-slate-400:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-slate-500:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-slate-400:not(button):not(input):not(select):not(textarea) {
+  color: #cbd5e1;
+}
+
+.rounded-2xl .text-sky-900:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-sky-800:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-sky-700:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-sky-600:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-sky-900:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-sky-800:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-sky-700:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-sky-600:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-sky-900:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-sky-800:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-sky-700:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-sky-600:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-blue-900:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-blue-800:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-blue-700:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-blue-600:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-blue-900:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-blue-800:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-blue-700:not(button):not(input):not(select):not(textarea),
+.rounded-3xl .text-blue-600:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-blue-900:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-blue-800:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-blue-700:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-blue-600:not(button):not(input):not(select):not(textarea) {
+  color: #93c5fd;
+}
+
+.rounded-2xl .text-emerald-900:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-emerald-800:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-emerald-700:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-emerald-600:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-emerald-900:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-emerald-800:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-emerald-700:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-emerald-600:not(button):not(input):not(select):not(textarea) {
+  color: #6ee7b7;
+}
+
+.rounded-2xl .text-rose-900:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-rose-800:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-rose-700:not(button):not(input):not(select):not(textarea),
+.rounded-2xl .text-rose-600:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-rose-900:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-rose-800:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-rose-700:not(button):not(input):not(select):not(textarea),
+.rounded-xl .text-rose-600:not(button):not(input):not(select):not(textarea) {
+  color: #fca5a5;
+}
+
+/* 3. Form Input Overrides (target non-checkboxes inside dark cards) */
+.rounded-2xl input:not([type="checkbox"]):not([type="radio"]), 
+.rounded-2xl textarea, 
+.rounded-2xl select,
+.rounded-xl input:not([type="checkbox"]):not([type="radio"]), 
+.rounded-xl textarea, 
+.rounded-xl select {
+  background-color: #0a0a0f;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+/* 4. Active Tab Highlight */
+.rounded-2xl .bg-white.font-semibold, 
+.rounded-2xl [class*="bg-white"][class*="font-semibold"],
+.rounded-xl .bg-white.font-semibold, 
+.rounded-xl [class*="bg-white"][class*="font-semibold"] {
+  background-color: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  color: #60a5fa;
+}
+.rounded-2xl .bg-white.font-semibold *, 
+.rounded-2xl [class*="bg-white"][class*="font-semibold"] *,
+.rounded-xl .bg-white.font-semibold *, 
+.rounded-xl [class*="bg-white"][class*="font-semibold"] * {
+  color: #60a5fa;
+}
+
+/* 5. General Buttons inside cards fallback to transparent border styling, EXCLUDING buttons with bg-white, from- classes, or explicit text classes */
+.rounded-2xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="text-slate-"]):not([class*="text-gray-"]):not([class*="text-sky-"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]),
+.rounded-xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="text-slate-"]):not([class*="text-gray-"]):not([class*="text-sky-"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]) {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+.rounded-2xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="text-slate-"]):not([class*="text-gray-"]):not([class*="text-sky-"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]):hover,
+.rounded-xl button:not(.bg-white):not([class*="bg-white"]):not(.bg-gradient-to-r):not([class*="from-"]):not([class*="bg-red-"]):not([class*="bg-rose-"]):not([class*="bg-blue-"]):not([class*="bg-indigo-"]):not([class*="text-slate-"]):not([class*="text-gray-"]):not([class*="text-sky-"]):not([class*="text-blue-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
 }

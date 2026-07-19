@@ -7,6 +7,7 @@ import type { CoreHealthEntry, HealthExtensionEntry, HealthTrendSeries, LabResul
 import { CORE_METRIC_TYPES, LAB_MARKER_CATEGORY_MAP, LAB_MARKER_TYPES } from "@/types/health";
 import { isValidDateInput, parseNonNegativeNumber } from "@/lib/validators/health-input-ui";
 import { Tooltip } from "@/components/ui/tooltip";
+import { SubmitButton } from "@/components/ui/submit-button";
 
 type HealthTrackingPanelProps = {
   petId: string;
@@ -408,7 +409,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
               <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
             </Tooltip>
           </div>
-          <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1">
+          <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 dark:bg-slate-950/60 p-1">
             {(Object.keys(labCategoryLabelMap) as LabResultEntry["category"][]).map((item) => (
               <button
                 key={item}
@@ -418,8 +419,8 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
                   const nextDefaultMarker = labMarkersByCategory[item][0];
                   setLabMarker(nextDefaultMarker);
                 }}
-                className={`rounded px-2 py-1 text-xs ${
-                  labCategory === item ? "bg-white font-semibold text-slate-900 shadow-sm" : "text-slate-600"
+                className={`rounded px-2 py-1 text-xs transition-colors duration-200 ${
+                  labCategory === item ? "bg-white font-semibold text-slate-900 shadow-sm dark:bg-white/10 dark:text-white" : "text-slate-600 dark:text-slate-400 dark:hover:text-slate-200"
                 }`}
               >
                 {labCategoryLabelMap[item]}
@@ -469,17 +470,17 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
       </div>
 
       {enableExtension && (
-        <form onSubmit={submitExtension} className="mt-3 space-y-2 rounded-xl border border-teal-100 bg-teal-50 p-3">
-          <p className="text-sm font-semibold text-teal-900">拡張項目（複数可）</p>
+        <form onSubmit={submitExtension} className="mt-4 space-y-4 rounded-2xl border border-teal-500/20 bg-teal-950/20 p-4">
+          <p className="text-sm font-bold text-teal-400">拡張項目（複数可）</p>
           {extensionRows.map((row) => (
-            <div key={row.id} className="grid gap-2 rounded-lg border border-teal-200 bg-white p-2 md:grid-cols-5">
+            <div key={row.id} className="grid gap-3 rounded-xl border border-white/5 bg-slate-950/40 p-3 md:grid-cols-5">
               <input
                 value={row.name}
                 onChange={(event) =>
                   setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, name: event.target.value } : item)))
                 }
                 type="text"
-                className="rounded border border-teal-300 px-2 py-1 text-sm"
+                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
                 placeholder="項目名"
               />
               <input
@@ -489,7 +490,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
                 }
                 type="number"
                 step="0.01"
-                className="rounded border border-teal-300 px-2 py-1 text-sm"
+                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
                 placeholder="値"
               />
               <input
@@ -498,7 +499,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
                   setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, unit: event.target.value } : item)))
                 }
                 type="text"
-                className="rounded border border-teal-300 px-2 py-1 text-sm"
+                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
                 placeholder="単位"
               />
               <input
@@ -507,7 +508,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
                   setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, recordedAt: event.target.value } : item)))
                 }
                 type="date"
-                className="rounded border border-teal-300 px-2 py-1 text-sm"
+                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
               />
               <input
                 value={row.note}
@@ -515,14 +516,14 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
                   setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, note: event.target.value } : item)))
                 }
                 type="text"
-                className="rounded border border-teal-300 px-2 py-1 text-sm"
+                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
                 placeholder="メモ"
               />
               {extensionRows.length > 1 && (
                 <button
                   type="button"
                   onClick={() => setExtensionRows((current) => current.filter((item) => item.id !== row.id))}
-                  className="rounded border border-rose-300 px-2 py-1 text-xs font-semibold text-rose-700 md:col-span-5"
+                  className="inline-flex items-center justify-center rounded-xl border border-rose-500/20 bg-rose-500/5 px-3 py-1.5 text-xs font-bold text-rose-400 hover:bg-rose-500/10 active:scale-95 transition-all md:col-span-5"
                 >
                   この行を削除
                 </button>
@@ -532,17 +533,17 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
           <button
             type="button"
             onClick={() => setExtensionRows((current) => [...current, createExtensionDraft()])}
-            className="w-full rounded border border-teal-300 bg-white px-3 py-2 text-xs font-semibold text-teal-800"
+            className="w-full inline-flex items-center justify-center rounded-xl border border-teal-500/20 bg-teal-500/5 px-3 py-2 text-xs font-bold text-teal-400 hover:bg-teal-500/10 active:scale-95 transition-all"
           >
             行を追加
           </button>
-          <button
-            type="submit"
-            disabled={isSubmitting || hasExtensionInputError}
-            className="w-full rounded bg-teal-700 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
-          >
-            拡張項目を保存
-          </button>
+          <SubmitButton
+            isSubmitting={isSubmitting}
+            idleLabel="拡張項目を保存"
+            submittingLabel="保存中..."
+            disabled={hasExtensionInputError}
+            className="w-full inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 text-white font-bold text-xs hover:opacity-95 active:scale-95 transition-all min-h-[38px] disabled:opacity-50"
+          />
         </form>
       )}
 

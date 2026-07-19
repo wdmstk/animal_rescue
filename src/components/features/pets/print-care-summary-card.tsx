@@ -30,13 +30,13 @@ const normalizeLabel = (value: string | null) => (value && value.trim().length >
 
 export function PrintCareSummaryCard({ pet, emergencyInfo, medications }: PrintCareSummaryCardProps) {
   return (
-    <section className="print-care-summary rounded-2xl bg-white p-4 shadow-sm">
+    <section className="print-care-summary rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-900/60 dark:border dark:border-white/10 dark:text-slate-100 dark:backdrop-blur-md">
       <div className="no-print flex items-center justify-between gap-2">
-        <h2 className="text-base font-bold text-slate-900">通院提出用サマリー（印刷/PDF）</h2>
+        <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">通院提出用サマリー（印刷/PDF）</h2>
         <button
           type="button"
           onClick={() => window.print()}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800"
+          className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-800 dark:bg-white/5 dark:border-white/10 dark:text-slate-200 dark:hover:bg-white/10"
         >
           印刷/PDF出力
         </button>
@@ -44,7 +44,7 @@ export function PrintCareSummaryCard({ pet, emergencyInfo, medications }: PrintC
 
       <div className="mt-3 space-y-3 text-sm">
         <section>
-          <h3 className="font-semibold text-slate-800">基本情報</h3>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-200">基本情報</h3>
           <p>{pet.name} / {pet.species}{pet.breed ? ` / ${pet.breed}` : ""}</p>
           <p>性別: {pet.sex}</p>
           <p>誕生日: {normalizeLabel(pet.birthday)}</p>
@@ -53,7 +53,7 @@ export function PrintCareSummaryCard({ pet, emergencyInfo, medications }: PrintC
         </section>
 
         <section>
-          <h3 className="font-semibold text-slate-800">緊急情報</h3>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-200">緊急情報</h3>
           <p>持病: {normalizeLabel(emergencyInfo?.disease ?? null)}</p>
           <p>アレルギー: {normalizeLabel(emergencyInfo?.allergy ?? null)}</p>
           <p>現在の投薬メモ: {normalizeLabel(emergencyInfo?.currentMedications ?? null)}</p>
@@ -62,7 +62,7 @@ export function PrintCareSummaryCard({ pet, emergencyInfo, medications }: PrintC
         </section>
 
         <section>
-          <h3 className="font-semibold text-slate-800">投薬一覧</h3>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-200">投薬一覧</h3>
           {medications.length === 0 ? (
             <p>登録なし</p>
           ) : (

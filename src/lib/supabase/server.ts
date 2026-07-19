@@ -11,7 +11,11 @@ export const createSupabaseServerClient = async () => {
         return cookieStore.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+        try {
+          cookiesToSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+        } catch {
+          // Ignore error when called during Server Component rendering
+        }
       }
     }
   });

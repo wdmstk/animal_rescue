@@ -18,27 +18,27 @@ export function EmergencyCard({
   insurancePolicyNumber
 }: EmergencyCardProps) {
   return (
-    <section className="rounded-2xl border border-emergency-100 bg-emergency-50 p-4 dark:border-emergency-900 dark:bg-emergency-950">
-      <h2 className="text-base font-bold text-emergency-700 dark:text-emergency-400">緊急情報</h2>
-      <ul className="mt-3 space-y-2 text-sm dark:text-slate-300">
+    <section className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 shadow-inner">
+      <h2 className="text-base font-bold text-red-400">🚨 緊急情報</h2>
+      <ul className="mt-3 space-y-2 text-sm text-slate-300">
         <li>
-          <span className="font-semibold">持病:</span> {disease}
+          <span className="font-semibold text-slate-400">持病:</span> {disease}
         </li>
         <li>
-          <span className="font-semibold">服薬:</span> {medications}
+          <span className="font-semibold text-slate-400">服薬:</span> {medications}
         </li>
         <li>
-          <span className="font-semibold">アレルギー:</span> {allergy}
+          <span className="font-semibold text-slate-400">アレルギー:</span> {allergy}
         </li>
         <li>
-          <span className="font-semibold">病院:</span> {vet}
+          <span className="font-semibold text-slate-400">病院:</span> {vet}
         </li>
         <li>
-          <span className="font-semibold">連絡先:</span> {contact}
+          <span className="font-semibold text-slate-400">連絡先:</span> {contact}
         </li>
         {(insuranceCompany || insurancePolicyNumber) && (
           <li>
-            <span className="font-semibold">保険:</span> {[insuranceCompany, insurancePolicyNumber].filter(Boolean).join(" / ")}
+            <span className="font-semibold text-slate-400">保険:</span> {[insuranceCompany, insurancePolicyNumber].filter(Boolean).join(" / ")}
           </li>
         )}
       </ul>
