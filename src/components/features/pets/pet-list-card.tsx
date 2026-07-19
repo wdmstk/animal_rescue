@@ -79,31 +79,50 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
     }
   };
 
+  const speciesEmojiMap: Record<"dog" | "cat" | "other", string> = {
+    dog: "🐶",
+    cat: "🐱",
+    other: "🐾"
+  };
+
   return (
     <>
-      <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-800">
-        <Link href={`/pets/${id}`} className="block">
-          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">{name}</h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            {speciesLabelMap[species]} / {breed ?? "未登録"}
+      <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300 dark:border-slate-700/80 dark:bg-slate-800/90 dark:hover:border-slate-600 dark:backdrop-blur-md">
+        <Link
+          href={`/pets/${id}`}
+          className="block group"
+          aria-label={`${name} ${speciesLabelMap[species]} / ${breed ?? "未登録"}`}
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-2xl" role="img" aria-label={speciesLabelMap[species]}>
+              {speciesEmojiMap[species]}
+            </span>
+            <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-600 dark:text-slate-100 dark:group-hover:text-blue-400 transition-colors">
+              {name}
+            </h3>
+          </div>
+          <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400 pl-8">
+            種類: {speciesLabelMap[species]} &middot; {breed ?? "種類未登録"}
           </p>
         </Link>
-        <div className="mt-3 flex items-center justify-end gap-2">
+        
+        <div className="mt-4 flex items-center justify-end gap-2 border-t border-slate-100 pt-3 dark:border-slate-700/50">
           <button
             type="button"
             onClick={onShowQr}
             disabled={isLoadingQr}
             aria-label={`${name}の緊急QRを表示`}
-            className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:border-transparent min-h-[44px] min-w-[44px] dark:border-rose-700 dark:bg-rose-950 dark:text-rose-400"
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-rose-500 px-4 py-2.5 text-xs font-bold text-white shadow-sm shadow-rose-500/10 hover:bg-rose-600 hover:shadow-md active:scale-95 disabled:opacity-50 transition-all min-h-[44px]"
           >
-            {isLoadingQr ? "読み込み中..." : "🚨緊急QR"}
+            <span>🚨</span>
+            {isLoadingQr ? "読み込み中..." : "緊急QRを表示"}
           </button>
           <button
             type="button"
             onClick={onDelete}
             disabled={isDeleting}
             aria-label={`${name}を削除`}
-            className="rounded-lg border border-slate-300 bg-slate-50 px-4 py-3 text-xs font-semibold text-slate-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent min-h-[44px] min-w-[44px] dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300"
+            className="inline-flex items-center justify-center rounded-xl bg-slate-100 px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-200 active:scale-95 disabled:opacity-50 transition-all min-h-[44px] dark:bg-slate-700 dark:text-slate-200 dark:hover:bg-slate-600"
           >
             {isDeleting ? "削除中..." : "削除"}
           </button>
