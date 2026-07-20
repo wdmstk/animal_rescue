@@ -31,6 +31,10 @@ Development Task List
 ### blocked
 （なし）
 
+### done
+1. `TASK-307` LP公開アクセス許可 (middleware.tsでの/lpルート除外)
+2. `TASK-306` LPの実装、シード対応モックアップ差し替え、Stripe年契約変数修正、Cookieエラー修正
+
 1. `TASK-305` ダッシュボードおよび管理画面のUI洗練化・テーマ一本化
 2. `TASK-304` LPの生成AIイメージに合わせたUI洗練化（ダッシュボード・緊急公開画面）
 3. `TASK-303` 問い合わせ環境（チケット制サポート）の管理画面UI（/admin/tickets）の実装
@@ -151,6 +155,17 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### LP公開アクセス許可 (middleware.tsでの/lpルート除外)
+- Task ID: `TASK-307`
+- ブランチ: `fix/TASK-307-make-lp-public`
+- ステータス: `done`
+- 概要: LP（/lp）がログインしないと見えない状態になっているため、middleware.tsのPUBLIC_PATHSに/lpを追加してログインなしでもアクセスできるようにする。
+- 依存関係: なし
+- 完了条件:
+  - `middleware.ts` の `PUBLIC_PATHS` に `"/lp"` を追加する。
+  - `npm run lint` / `npx vitest run` が通る。
+
 
 ### LPの実装、シード対応モックアップ差し替え、Stripe年契約変数修正、Cookieエラー修正
 - Task ID: `TASK-306`
