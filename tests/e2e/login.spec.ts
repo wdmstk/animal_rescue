@@ -10,6 +10,12 @@ test("home redirects to pets", async ({ page }) => {
   await expect(page).toHaveURL(/\/pets$/);
 });
 
+test("landing page can be opened without login", async ({ page }) => {
+  await page.goto("/lp");
+  await expect(page).toHaveURL(/\/lp$/);
+  await expect(page.getByText("30日間無料トライアル実施中")).toBeVisible();
+});
+
 test("login page shows registration notice", async ({ page }) => {
   await page.goto("/login?registered=1");
   await expect(page.getByText("確認メールを送信しました。メール内のリンクを開いてからログインしてください。")).toBeVisible();
