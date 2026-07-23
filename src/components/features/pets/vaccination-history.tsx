@@ -22,32 +22,41 @@ type VaccinationHistoryProps = {
 
 export function VaccinationHistory({ items, editingId, onEdit }: VaccinationHistoryProps) {
   return (
-    <section className="rounded-2xl bg-white p-4 shadow-sm">
-      <h2 className="text-base font-bold text-slate-900">ワクチン・予防歴</h2>
-      <div className="mt-3 space-y-2">
+    <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md text-white">
+      <h2 className="text-base font-bold text-emerald-300 flex items-center gap-2">💉 ワクチン・予防歴</h2>
+      <div className="mt-3 space-y-2.5">
+        {items.length === 0 ? <p className="text-xs text-slate-400">登録済みのワクチン・予防歴はありません。</p> : null}
         {items.map((item) => {
           const status = getVaccinationDueStatus(item.nextDue);
           return (
-            <div key={item.id} className="rounded-lg border border-slate-200 p-3 text-sm">
+            <div key={item.id} className="rounded-xl border border-white/10 bg-slate-950/40 p-3.5 text-xs text-slate-200">
               <div className="flex items-center justify-between">
-                <p className="font-semibold text-slate-800">{item.type}</p>
+                <p className="font-bold text-white text-sm">{item.type}</p>
                 <div className="flex items-center gap-2">
-                  <span className="rounded-full bg-slate-100 px-3 py-2 text-[11px] font-semibold text-slate-700 min-h-[44px] min-w-[44px] flex items-center justify-center">
+                  <span className={`rounded-full px-3 py-1 text-xs font-bold border ${
+                    status === "overdue"
+                      ? "bg-rose-500/20 text-rose-300 border-rose-500/40"
+                      : status === "upcoming"
+                        ? "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                        : "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
+                  }`}>
                     {labelMap[status]}
                   </span>
                   {onEdit && (
                     <button
                       type="button"
                       onClick={() => onEdit(item)}
-                      className="rounded-md border border-slate-300 px-3 py-2 text-[11px] font-semibold text-slate-700 min-h-[44px] min-w-[44px]"
+                      className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:bg-slate-700 hover:text-white"
                     >
                       {editingId === item.id ? "編集中" : "編集"}
                     </button>
                   )}
                 </div>
               </div>
-              <p className="mt-1 text-slate-600">接種日: {item.date}</p>
-              <p className="text-slate-600">次回予定: {item.nextDue ?? "未設定"}</p>
+              <div className="mt-2 space-y-0.5 text-slate-300">
+                <p>接種日: <span className="font-semibold text-white">{item.date}</span></p>
+                <p>次回予定: <span className="font-semibold text-white">{item.nextDue ?? "未設定"}</span></p>
+              </div>
             </div>
           );
         })}

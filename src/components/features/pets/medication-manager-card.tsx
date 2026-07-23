@@ -278,7 +278,7 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
   };
 
   return (
-    <section className="space-y-3 rounded-2xl bg-white p-4 shadow-sm">
+    <section className="space-y-4 rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md text-white">
       <MedicationCalendar
         periods={initialItems.map((item) => ({
           name: item.name,
@@ -287,20 +287,20 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
         }))}
       />
 
-      <div className="rounded-lg border border-slate-200 p-3">
-        <h3 className="text-sm font-bold text-slate-900">投薬一覧・実施記録</h3>
-        <div className="mt-2 space-y-3">
-          {initialItems.length === 0 ? <p className="text-sm text-slate-600">登録済みの投薬はありません。</p> : null}
+      <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
+        <h3 className="text-base font-bold text-teal-300 flex items-center gap-2">💊 投薬一覧・実施記録</h3>
+        <div className="mt-3 space-y-3">
+          {initialItems.length === 0 ? <p className="text-xs text-slate-400">登録済みの投薬はありません。</p> : null}
           {initialItems.map((item) => (
             <div
               key={item.id}
-              className="rounded-lg border border-slate-200 p-3 text-sm"
+              className="rounded-lg border border-white/10 bg-slate-900/60 p-3.5 text-xs text-slate-200"
             >
               <div className="flex justify-between items-start">
-                <div onClick={() => startEdit(item)} className="cursor-pointer flex-grow">
-                  <p className="font-semibold text-slate-800 hover:text-slate-600">{item.name}</p>
-                  <p className="text-slate-600">{item.dosage} / {item.frequency}</p>
-                  <p className="text-xs text-slate-500">
+                <div onClick={() => startEdit(item)} className="cursor-pointer flex-grow space-y-0.5">
+                  <p className="font-bold text-white text-sm hover:text-teal-300 transition-all">{item.name}</p>
+                  <p className="text-slate-300 font-medium">{item.dosage} / {item.frequency}</p>
+                  <p className="text-xs text-slate-400">
                     {normalizeDate(item.startDate)} - {item.endDate ? normalizeDate(item.endDate) : "継続中"}
                   </p>
                 </div>
@@ -308,14 +308,14 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
                   <button
                     type="button"
                     onClick={() => handleLogMedication(item.id, "TAKEN")}
-                    className="rounded bg-emerald-600 px-2 py-1 text-xs font-bold text-white hover:bg-emerald-700 whitespace-nowrap"
+                    className="rounded-lg bg-emerald-600 px-2.5 py-1 text-xs font-bold text-white hover:bg-emerald-500 active:scale-95 transition-all shadow"
                   >
                     飲んだ
                   </button>
                   <button
                     type="button"
                     onClick={() => handleLogMedication(item.id, "SKIPPED")}
-                    className="rounded bg-rose-600 px-2 py-1 text-xs font-bold text-white hover:bg-rose-700 whitespace-nowrap"
+                    className="rounded-lg bg-rose-600 px-2.5 py-1 text-xs font-bold text-white hover:bg-rose-500 active:scale-95 transition-all shadow"
                   >
                     スキップ
                   </button>
@@ -328,66 +328,69 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
       </div>
 
       {editingId ? (
-        <form className="rounded-lg border border-slate-200 p-3" onSubmit={onUpdate}>
-          <h3 className="text-sm font-bold text-slate-900">投薬を編集</h3>
-          <div className="mt-2 grid gap-2 md:grid-cols-2">
+        <form className="rounded-xl border border-white/10 bg-slate-950/40 p-4 space-y-3" onSubmit={onUpdate}>
+          <h3 className="text-sm font-bold text-amber-300">✏️ 投薬を編集</h3>
+          <div className="grid gap-2 sm:grid-cols-2">
             <label htmlFor="edit-name" className="sr-only">薬名</label>
-            <input id="edit-name" required value={editName} onChange={(event) => setEditName(event.target.value)} placeholder="薬名" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+            <input id="edit-name" required value={editName} onChange={(event) => setEditName(event.target.value)} placeholder="薬名" className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
             <label htmlFor="edit-dosage" className="sr-only">用量</label>
-            <input id="edit-dosage" required value={editDosage} onChange={(event) => setEditDosage(event.target.value)} placeholder="用量" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+            <input id="edit-dosage" required value={editDosage} onChange={(event) => setEditDosage(event.target.value)} placeholder="用量" className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
             <label htmlFor="edit-frequency" className="sr-only">頻度</label>
-            <input id="edit-frequency" required value={editFrequency} onChange={(event) => setEditFrequency(event.target.value)} placeholder="頻度" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+            <input id="edit-frequency" required value={editFrequency} onChange={(event) => setEditFrequency(event.target.value)} placeholder="頻度" className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
             <label htmlFor="edit-start-date" className="sr-only">開始日</label>
-            <input id="edit-start-date" required type="date" value={editStartDate} onChange={(event) => setEditStartDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+            <input id="edit-start-date" required type="date" value={editStartDate} onChange={(event) => setEditStartDate(event.target.value)} className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none" />
             <label htmlFor="edit-end-date" className="sr-only">終了日</label>
-            <input id="edit-end-date" type="date" value={editEndDate} onChange={(event) => setEditEndDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent md:col-span-2" />
+            <input id="edit-end-date" type="date" value={editEndDate} onChange={(event) => setEditEndDate(event.target.value)} className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none sm:col-span-2" />
           </div>
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => setEditingId(null)} className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800">キャンセル</button>
-            <SubmitButton isSubmitting={isSubmitting} idleLabel="更新する" />
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <button type="button" onClick={() => setEditingId(null)} className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700">キャンセル</button>
+            <SubmitButton isSubmitting={isSubmitting} idleLabel="更新する" className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-500 text-xs font-bold text-white" />
           </div>
         </form>
       ) : null}
 
-      <form className="rounded-lg border border-slate-200 p-3" onSubmit={onCreate}>
-        <h3 className="text-sm font-bold text-slate-900">投薬を追加</h3>
-        <div className="mt-2 grid gap-2 md:grid-cols-2">
+      <form className="rounded-xl border border-white/10 bg-slate-950/40 p-4 space-y-3" onSubmit={onCreate}>
+        <h3 className="text-sm font-bold text-teal-300">➕ 投薬を追加</h3>
+        <div className="grid gap-2 sm:grid-cols-2">
           <label htmlFor="new-name" className="sr-only">薬名</label>
-          <input id="new-name" required value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="薬名" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+          <input id="new-name" required value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="薬名 (例: アモキシシリン)" className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
           <label htmlFor="new-dosage" className="sr-only">用量</label>
-          <input id="new-dosage" required value={newDosage} onChange={(event) => setNewDosage(event.target.value)} placeholder="用量" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+          <input id="new-dosage" required value={newDosage} onChange={(event) => setNewDosage(event.target.value)} placeholder="用量 (例: 1錠)" className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
           <label htmlFor="new-frequency" className="sr-only">頻度</label>
-          <input id="new-frequency" required value={newFrequency} onChange={(event) => setNewFrequency(event.target.value)} placeholder="頻度" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+          <input id="new-frequency" required value={newFrequency} onChange={(event) => setNewFrequency(event.target.value)} placeholder="頻度 (例: 1日2回 朝夕食後)" className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" />
           <label htmlFor="new-start-date" className="sr-only">開始日</label>
-          <input id="new-start-date" required type="date" value={newStartDate} onChange={(event) => setNewStartDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent" />
+          <input id="new-start-date" required type="date" value={newStartDate} onChange={(event) => setNewStartDate(event.target.value)} className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none" />
           <label htmlFor="new-end-date" className="sr-only">終了日</label>
-          <input id="new-end-date" type="date" value={newEndDate} onChange={(event) => setNewEndDate(event.target.value)} className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent md:col-span-2" />
+          <input id="new-end-date" type="date" value={newEndDate} onChange={(event) => setNewEndDate(event.target.value)} className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-blue-500 focus:outline-none sm:col-span-2" />
         </div>
-        <SubmitButton isSubmitting={isSubmitting} idleLabel="追加する" className="mt-2 w-full" />
+        <SubmitButton isSubmitting={isSubmitting} idleLabel="追加する" className="mt-2 w-full rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 py-2.5 text-xs font-bold text-white shadow" />
       </form>
 
-      <form className="rounded-lg border border-slate-200 p-3" onSubmit={onSaveReminderSettings}>
-        <h3 className="text-sm font-bold text-slate-900">投薬リマインダー通知設定</h3>
-        <p className="mt-1 text-xs text-slate-600">通知ON/OFFと送信先を保存できます。</p>
-        <div className="mt-2 grid gap-2 md:grid-cols-2">
-          <label className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2 text-sm md:col-span-2">
-            <span>通知を有効化する</span>
+      <form className="rounded-xl border border-white/10 bg-slate-950/40 p-4 space-y-3" onSubmit={onSaveReminderSettings}>
+        <div>
+          <h3 className="text-sm font-bold text-blue-300">🔔 投薬リマインダー通知設定</h3>
+          <p className="mt-0.5 text-xs text-slate-400">指定チャネルへ飲み忘れ防止リマインダーを通知します。</p>
+        </div>
+        <div className="grid gap-2 sm:grid-cols-2 text-xs">
+          <label className="flex items-center justify-between rounded-xl border border-white/10 bg-slate-900 px-3 py-2.5 text-slate-200 sm:col-span-2 cursor-pointer">
+            <span className="font-semibold">通知を有効化する</span>
             <input
               type="checkbox"
               checked={reminderEnabled}
               onChange={(event) => setReminderEnabled(event.target.checked)}
               disabled={isReminderSaving}
+              className="rounded border-slate-700 text-teal-500 focus:ring-teal-500"
             />
           </label>
           <select
             value={reminderChannel}
             onChange={(event) => setReminderChannel(event.target.value as "email" | "line" | "webhook")}
             disabled={isReminderSaving}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white"
           >
-            <option value="email">email</option>
-            <option value="line">line</option>
-            <option value="webhook">webhook</option>
+            <option value="email">メール (email)</option>
+            <option value="line">LINE Notify</option>
+            <option value="webhook">Webhook URL</option>
           </select>
           <input
             required={reminderEnabled}
@@ -395,14 +398,14 @@ export function MedicationManagerCard({ petId, initialItems }: MedicationManager
             onChange={(event) => setReminderDestination(event.target.value)}
             placeholder={reminderChannel === "webhook" ? "https://example.com/hooks/reminder" : "送信先ID / メール"}
             disabled={isReminderSaving}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className="rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white placeholder-slate-500"
           />
         </div>
-        <SubmitButton isSubmitting={isReminderSaving} idleLabel="通知設定を保存" className="mt-2 w-full" />
-        {reminderMessage ? <p className="mt-2 text-xs text-emerald-700">{reminderMessage}</p> : null}
+        <SubmitButton isSubmitting={isReminderSaving} idleLabel="通知設定を保存" className="mt-2 w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-500 py-2.5 text-xs font-bold text-white shadow" />
+        {reminderMessage ? <p className="mt-2 text-xs text-emerald-400 font-semibold">{reminderMessage}</p> : null}
       </form>
 
-      {errorMessage ? <p className="text-sm text-rose-700">{errorMessage}</p> : null}
+      {errorMessage ? <p className="text-xs text-rose-400 font-semibold">{errorMessage}</p> : null}
     </section>
   );
 }

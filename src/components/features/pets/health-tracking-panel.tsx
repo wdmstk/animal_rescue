@@ -666,78 +666,93 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
         )}
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
-          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">共通コア履歴</p>
-          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4 shadow-sm">
+          <p className="text-sm font-bold text-teal-300 border-b border-slate-700/50 pb-2 flex items-center gap-2">
+            🐾 共通コア履歴
+          </p>
+          <ul className="mt-3 space-y-2 text-xs">
             {coreEntries.slice(0, 5).map((item) => (
-              <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
-                <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
-                <span className="font-semibold text-white">{coreTypeLabelMap[item.type]}: {item.value}</span>
+              <li key={item.id} className="flex items-center justify-between gap-3 rounded-lg bg-slate-900/60 p-2.5 border border-white/5">
+                <span className="text-slate-400 font-medium whitespace-nowrap">{item.recordedAt.slice(0, 10)}</span>
+                <span className="font-semibold text-slate-200 truncate">{coreTypeLabelMap[item.type]}</span>
+                <span className="font-bold text-teal-300 whitespace-nowrap">{item.value}</span>
               </li>
             ))}
-            {coreEntries.length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
+            {coreEntries.length === 0 && <li className="text-slate-500 py-3 text-center">記録はありません</li>}
           </ul>
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
-          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">血液検査履歴</p>
-          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
+        <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4 shadow-sm">
+          <p className="text-sm font-bold text-blue-300 border-b border-slate-700/50 pb-2 flex items-center gap-2">
+            🩸 血液検査履歴
+          </p>
+          <ul className="mt-3 space-y-2 text-xs">
             {labEntries
               .filter((item) => item.category === "BLOOD")
               .slice(0, 5)
               .map((item) => (
-              <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
-                <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
-                <span className="font-semibold text-white">{labMarkerLabelMap[item.marker]}: {item.value} {item.unit}</span>
+              <li key={item.id} className="flex items-center justify-between gap-3 rounded-lg bg-slate-900/60 p-2.5 border border-white/5">
+                <span className="text-slate-400 font-medium whitespace-nowrap">{item.recordedAt.slice(0, 10)}</span>
+                <span className="font-semibold text-slate-200 truncate">{labMarkerLabelMap[item.marker]}</span>
+                <span className="font-bold text-blue-300 whitespace-nowrap">{item.value} {item.unit}</span>
               </li>
             ))}
-            {labEntries.filter((item) => item.category === "BLOOD").length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
+            {labEntries.filter((item) => item.category === "BLOOD").length === 0 && <li className="text-slate-500 py-3 text-center">記録はありません</li>}
           </ul>
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
-          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">尿検査履歴</p>
-          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
+        <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4 shadow-sm">
+          <p className="text-sm font-bold text-indigo-300 border-b border-slate-700/50 pb-2 flex items-center gap-2">
+            🧪 尿検査履歴
+          </p>
+          <ul className="mt-3 space-y-2 text-xs">
             {labEntries
               .filter((item) => item.category === "URINE")
               .slice(0, 5)
               .map((item) => (
-                <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
-                  <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
-                  <span className="font-semibold text-white">{labMarkerLabelMap[item.marker]}: {item.value} {item.unit}</span>
+                <li key={item.id} className="flex items-center justify-between gap-3 rounded-lg bg-slate-900/60 p-2.5 border border-white/5">
+                  <span className="text-slate-400 font-medium whitespace-nowrap">{item.recordedAt.slice(0, 10)}</span>
+                  <span className="font-semibold text-slate-200 truncate">{labMarkerLabelMap[item.marker]}</span>
+                  <span className="font-bold text-indigo-300 whitespace-nowrap">{item.value} {item.unit}</span>
                 </li>
               ))}
-            {labEntries.filter((item) => item.category === "URINE").length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
+            {labEntries.filter((item) => item.category === "URINE").length === 0 && <li className="text-slate-500 py-3 text-center">記録はありません</li>}
           </ul>
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
-          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">内分泌検査履歴</p>
-          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
+        <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4 shadow-sm">
+          <p className="text-sm font-bold text-purple-300 border-b border-slate-700/50 pb-2 flex items-center gap-2">
+            🧬 内分泌検査履歴
+          </p>
+          <ul className="mt-3 space-y-2 text-xs">
             {labEntries
               .filter((item) => item.category === "ENDOCRINE")
               .slice(0, 5)
               .map((item) => (
-                <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
-                  <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
-                  <span className="font-semibold text-white">{labMarkerLabelMap[item.marker]}: {item.value} {item.unit}</span>
+                <li key={item.id} className="flex items-center justify-between gap-3 rounded-lg bg-slate-900/60 p-2.5 border border-white/5">
+                  <span className="text-slate-400 font-medium whitespace-nowrap">{item.recordedAt.slice(0, 10)}</span>
+                  <span className="font-semibold text-slate-200 truncate">{labMarkerLabelMap[item.marker]}</span>
+                  <span className="font-bold text-purple-300 whitespace-nowrap">{item.value} {item.unit}</span>
                 </li>
               ))}
-            {labEntries.filter((item) => item.category === "ENDOCRINE").length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
+            {labEntries.filter((item) => item.category === "ENDOCRINE").length === 0 && <li className="text-slate-500 py-3 text-center">記録はありません</li>}
           </ul>
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
-          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">拡張項目履歴</p>
-          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
-            {extensionEntries.slice(0, 5).map((item) => (
-              <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
-                <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
-                <span className="font-semibold text-white">{item.name}: {item.value} {item.unit ?? ""}</span>
+        <div className="rounded-2xl border border-white/10 bg-slate-950/40 p-4 shadow-sm md:col-span-2">
+          <p className="text-sm font-bold text-emerald-300 border-b border-slate-700/50 pb-2 flex items-center gap-2">
+            ✨ 拡張項目履歴
+          </p>
+          <ul className="mt-3 grid gap-2 text-xs md:grid-cols-2">
+            {extensionEntries.slice(0, 6).map((item) => (
+              <li key={item.id} className="flex items-center justify-between gap-3 rounded-lg bg-slate-900/60 p-2.5 border border-white/5">
+                <span className="text-slate-400 font-medium whitespace-nowrap">{item.recordedAt.slice(0, 10)}</span>
+                <span className="font-semibold text-slate-200 truncate">{item.name}</span>
+                <span className="font-bold text-emerald-300 whitespace-nowrap">{item.value} {item.unit ?? ""}</span>
               </li>
             ))}
-            {extensionEntries.length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
+            {extensionEntries.length === 0 && <li className="text-slate-500 py-3 text-center md:col-span-2">記録はありません</li>}
           </ul>
         </div>
       </div>

@@ -11,14 +11,12 @@ test("pet detail shows parallel implementation sections", async ({ page }) => {
   await page.goto("/pets/demo-pet");
   await expect(page.getByRole("heading", { name: "モカのカルテ情報", exact: true })).toBeVisible();
   
-  // 「基本情報」サブタブ「サブ写真」の確認
-  await page.getByRole("button", { name: "🖼️ サブ写真" }).click();
+  // 「基本情報」タブ「サブ写真」の確認
   await expect(page.getByRole("heading", { name: "サブ写真" })).toBeVisible();
   await expect(page.getByRole("button", { name: "写真を追加" })).toBeVisible();
 
   // 「緊急」タブを表示して緊急情報・QR共有関連を検証
   await page.getByRole("tab", { name: "緊急" }).click();
-  await page.getByRole("button", { name: "📱 QR共有" }).click();
   await expect(page.getByRole("heading", { name: "QR共有" })).toBeVisible();
   await expect(page.getByRole("link", { name: "公開画面を確認" })).toBeVisible();
   await expect(page.getByRole("button", { name: "トークン再生成" })).toBeVisible();
