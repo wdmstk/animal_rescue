@@ -130,28 +130,30 @@ export function PetDeleteCard({ petId, petName }: PetDeleteCardProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className="mb-2 text-sm font-semibold text-slate-900">思い出モード（アーカイブ）への移行</h3>
-        <p className="mb-4 text-xs text-slate-600">
+    <div id="delete" className="space-y-4">
+      <div className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md text-white">
+        <h3 className="mb-1.5 text-sm font-bold text-emerald-300 flex items-center gap-2">🕯️ 思い出モード（アーカイブ）への移行</h3>
+        <p className="mb-4 text-xs text-slate-300">
           ペットがお亡くなりになった後、これまでの健康ログや思い出の写真を大切に保管・振り返るモードへ移行します。緊急公開用QRコードは自動で無効化されます。
         </p>
         <button
+          type="button"
           onClick={() => setShowArchiveConfirm(true)}
-          className="rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100"
+          className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-2.5 text-xs font-bold text-emerald-300 transition hover:bg-emerald-500/20 active:scale-95 shadow-sm"
         >
-          思い出モードに移行する
+          🕯️ 思い出モードに移行する
         </button>
       </div>
 
-      <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h3 className="mb-2 text-sm font-semibold text-slate-900">ペット削除</h3>
-        <p className="mb-4 text-xs text-slate-600">
+      <div className="rounded-2xl border border-rose-500/20 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md text-white">
+        <h3 className="mb-1.5 text-sm font-bold text-rose-400 flex items-center gap-2">🗑️ ペット削除</h3>
+        <p className="mb-4 text-xs text-slate-300">
           このペットのデータを完全に削除します。この操作は取り消せません。
         </p>
         <button
+          type="button"
           onClick={() => setShowConfirm(true)}
-          className="rounded-lg border border-rose-300 bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-700 transition hover:bg-rose-100"
+          className="rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-2.5 text-xs font-bold text-rose-300 transition hover:bg-rose-500/20 active:scale-95 shadow-sm"
         >
           削除する
         </button>

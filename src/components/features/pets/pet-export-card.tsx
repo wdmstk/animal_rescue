@@ -81,7 +81,7 @@ export function PetExportCard({ petId }: PetExportCardProps) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="no-print print:hidden space-y-4">
       <section className="rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-900/60 dark:border dark:border-white/10 dark:text-slate-100 dark:backdrop-blur-md">
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">健康データのエクスポート</h2>
         <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">

@@ -237,34 +237,44 @@ export function PetDetailTabs({
         label: group.label,
         content: (
           <div key={group.id} className="space-y-4">
-            <div className="flex flex-wrap gap-2 border-b border-slate-700/50 pb-3">
-              {group.tabs.map((tab) => {
-                const isSelected = activeSubTabs[group.id] === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setSubTab(group.id, tab.id)}
-                    className={`rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
-                      isSelected
-                        ? "bg-gradient-to-r from-blue-600 to-indigo-500 text-white shadow-md shadow-blue-500/20 scale-[1.02]"
-                        : "bg-slate-950/40 border border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
+            {/* 医療タブのみサブタブ選択ボタンを表示 */}
+            {group.id === "medical" && (
+              <div className="flex flex-wrap gap-2 border-b border-slate-700/50 pb-3">
+                {group.tabs.map((tab) => {
+                  const isSelected = activeSubTabs[group.id] === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      type="button"
+                      onClick={() => setSubTab(group.id, tab.id)}
+                      className={`rounded-xl px-3.5 py-2 text-xs font-bold transition-all ${
+                        isSelected
+                          ? "bg-gradient-to-r from-blue-600 to-indigo-500 text-white shadow-md shadow-blue-500/20 scale-[1.02]"
+                          : "bg-slate-950/40 border border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
 
-            {group.tabs.map((tab) => {
-              const isSelected = activeSubTabs[group.id] === tab.id;
-              return (
-                <div key={tab.id} id={tab.id} className={isSelected ? "block" : "hidden"}>
-                  {renderTabContent(tab.id)}
-                </div>
-              );
-            })}
+            {/* 医療タブは選択中サブタブのみ表示、それ以外のタブは全項目を縦並びで表示 */}
+            {group.id === "medical"
+              ? group.tabs.map((tab) => {
+                  const isSelected = activeSubTabs[group.id] === tab.id;
+                  return (
+                    <div key={tab.id} id={tab.id} className={isSelected ? "block" : "hidden"}>
+                      {renderTabContent(tab.id)}
+                    </div>
+                  );
+                })
+              : group.tabs.map((tab) => (
+                  <div key={tab.id} className="scroll-mt-4">
+                    {renderTabContent(tab.id)}
+                  </div>
+                ))}
           </div>
         )
       }))}

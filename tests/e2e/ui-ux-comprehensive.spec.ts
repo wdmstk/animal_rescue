@@ -4,8 +4,7 @@ test.describe("UI/UX Comprehensive Improvements Verification", () => {
   test("Requirement 1 & 2: Sub-photos, summary, medication calendar, and graph titles have high contrast and visibility", async ({ page }) => {
     await page.goto("/pets/demo-pet");
 
-    // Basic info tab -> Photos subtab
-    await page.getByRole("button", { name: "🖼️ サブ写真" }).click();
+    // Basic info tab -> Photos card is visible vertically
     await expect(page.getByRole("heading", { name: "サブ写真" })).toBeVisible();
 
     // Medical tab -> Medications subtab

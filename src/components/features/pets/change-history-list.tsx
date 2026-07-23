@@ -16,17 +16,17 @@ const formatChangedAt = (value: string) =>
 
 export function ChangeHistoryList({ items }: ChangeHistoryListProps) {
   return (
-    <section className="rounded-2xl bg-white p-4 shadow-sm">
-      <h2 className="text-base font-bold text-slate-900">変更履歴（監査ログ）</h2>
-      <p className="mt-1 text-xs text-slate-600">更新時刻と対象を新しい順に表示します。</p>
+    <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md text-white">
+      <h2 className="text-base font-bold text-blue-300 flex items-center gap-2">📜 変更履歴（監査ログ）</h2>
+      <p className="mt-0.5 text-xs text-slate-400">更新時刻と対象を新しい順に表示します。</p>
       {items.length === 0 ? (
-        <p className="mt-3 text-sm text-slate-600">変更履歴はまだありません。</p>
+        <p className="mt-3 text-xs text-slate-400">変更履歴はまだありません。</p>
       ) : (
         <ul className="mt-3 space-y-2">
           {items.map((item) => (
-            <li key={item.id} className="rounded-lg border border-slate-200 px-3 py-2 text-sm">
-              <p className="font-semibold text-slate-800">{item.target}</p>
-              <p className="text-xs text-slate-600">{formatChangedAt(item.changedAt)}</p>
+            <li key={item.id} className="rounded-xl border border-white/10 bg-slate-950/40 px-3.5 py-2.5 text-xs">
+              <p className="font-bold text-white text-sm">{item.target}</p>
+              <p className="mt-0.5 text-xs text-slate-400 font-medium">{formatChangedAt(item.changedAt)}</p>
             </li>
           ))}
         </ul>
