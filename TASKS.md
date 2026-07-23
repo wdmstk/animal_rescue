@@ -23,19 +23,19 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-310` デザイントークン正規化とglobals.cssオーバーライドの撤去
+1. `TASK-311` 共通UIコンポーネント基盤の拡充とアクセシビリティ標準化
 
 ### todo
 1. `TASK-314` CI品質ゲート（A11y自動テスト・ブランド禁止語スクリプト）導入
 2. `TASK-313` オフラインデータ競合解決ダイアログの実装
 3. `TASK-312` Brand × UX × AI 統合UI標準化（AI確信度表示・緊急モード修復）
-4. `TASK-311` 共通UIコンポーネント基盤の拡充とアクセシビリティ標準化
 
 ### blocked
 （なし）
 
 ### done
-1. `TASK-309` 設計基盤ドキュメント群の統合・100点品質改訂（BRAND/UX/AIの完全整合）
+1. `TASK-310` デザイントークン正規化とglobals.cssオーバーライドの撤去
+2. `TASK-309` 設計基盤ドキュメント群の統合・100点品質改訂（BRAND/UX/AIの完全整合）
 2. `TASK-308` 設計基盤ドキュメント（BRAND/DESIGN/COMPONENT等8ファイル）の改訂
 1. `TASK-307` LP公開アクセス許可 (middleware.tsでの/lpルート除外)
 2. `TASK-306` LPの実装、シード対応モックアップ差し替え、Stripe年契約変数修正、Cookieエラー修正
@@ -165,7 +165,7 @@ Development Task List
 - Task ID: `TASK-310`
 - GitHub Issue: #249
 - ブランチ: `refactor/TASK-310-normalize-design-tokens`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: `docs/foundation/DESIGN_TOKENS.md` の役割ベース命名規則に従い、`src/app/globals.css` の独自変数および強引なCSS上書きパッチを撤去・正規化する。
 - 依存関係: なし
 - 完了条件:
@@ -219,7 +219,7 @@ Development Task List
 - Task ID: `TASK-311`
 - GitHub Issue: #250
 - ブランチ: `feat/TASK-311-expand-common-ui-components`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: `docs/foundation/COMPONENT_LIBRARY.md` の仕様に従い、生HTMLタグで記述されているフォーム入力要素やカード要素を共通UIコンポーネント化し、WCAG 2.1 AA 準拠の ARIA 属性・キーボード操作を標準化する。
 - 依存関係: `TASK-310`
 - 完了条件:
