@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-314` CI品質ゲート（A11y自動テスト・ブランド禁止語スクリプト）導入
+（なし）
 
 ### todo
 （なし）
@@ -32,8 +32,9 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-313` オフラインデータ競合解決ダイアログの実装
-2. `TASK-312` Brand × UX × AI 統合UI標準化（AI確信度表示・緊急モード修復）
+1. `TASK-314` CI品質ゲート（A11y自動テスト・ブランド禁止語スクリプト）導入
+2. `TASK-313` オフラインデータ競合解決ダイアログの実装
+3. `TASK-312` Brand × UX × AI 統合UI標準化（AI確信度表示・緊急モード修復）
 3. `TASK-311` 共通UIコンポーネント基盤の拡充とアクセシビリティ標準化
 2. `TASK-310` デザイントークン正規化とglobals.cssオーバーライドの撤去
 2. `TASK-309` 設計基盤ドキュメント群の統合・100点品質改訂（BRAND/UX/AIの完全整合）
@@ -180,7 +181,7 @@ Development Task List
 - Task ID: `TASK-314`
 - GitHub Issue: #253
 - ブランチ: `feat/TASK-314-ci-quality-gate`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: `docs/foundation/DESIGN_GOVERNANCE.md #6.1` の Quality Gate 規定に従い、CI 環境において WCAG AA アクセシビリティ検証およびブランドコピー禁止語・煽り表現の静的チェックを実行する環境を導入する。
 - 依存関係: `TASK-310`, `TASK-311`, `TASK-312`, `TASK-313`
 - 完了条件:
