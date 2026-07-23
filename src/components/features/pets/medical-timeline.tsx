@@ -1,3 +1,5 @@
+import { Badge, BadgeVariant } from "@/components/ui/badge";
+
 type TimelineItem = {
   id: string;
   date: string;
@@ -12,6 +14,14 @@ const labelMap: Record<TimelineItem["recordType"], string> = {
   LAB: "検査",
   MEDICATION: "投薬",
   OTHER: "その他"
+};
+
+const variantMap: Record<TimelineItem["recordType"], BadgeVariant> = {
+  EXAM: "info",
+  SURGERY: "error",
+  LAB: "warning",
+  MEDICATION: "success",
+  OTHER: "default"
 };
 
 type MedicalTimelineProps = {
@@ -42,9 +52,9 @@ export function MedicalTimeline({ items, onEdit, onDelete }: MedicalTimelineProp
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">{item.date}</p>
               <div className="flex items-center gap-2">
-                <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-700 dark:bg-white/10 dark:text-slate-300">
+                <Badge variant={variantMap[item.recordType]}>
                   {labelMap[item.recordType]}
-                </span>
+                </Badge>
               </div>
             </div>
             <h3 className="mt-1 text-sm font-bold text-slate-800 dark:text-slate-200">{item.title}</h3>
