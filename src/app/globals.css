@@ -138,27 +138,50 @@ html {
 }
 
 @media print {
-  body * {
-    visibility: hidden;
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt !important;
   }
 
-  .print-care-summary,
-  .print-care-summary * {
-    visibility: visible;
+  .no-print,
+  header,
+  nav,
+  aside,
+  button,
+  .no-print-area {
+    display: none !important;
+  }
+
+  /* 非表示の巨大コンテナで空ページが生まれないよう非プリント要素を非表示化 */
+  .no-print-area * {
+    display: none !important;
   }
 
   .print-care-summary {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    box-shadow: none;
-    border-radius: 0;
-    padding: 0;
+    display: block !important;
+    visibility: visible !important;
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    border: none !important;
+    page-break-before: avoid !important;
+    break-before: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
-  .no-print {
-    display: none;
+  .print-care-summary * {
+    visibility: visible !important;
+    color: #000000 !important;
+    background: transparent !important;
+    border-color: #cbd5e1 !important;
   }
 }
 
