@@ -17,13 +17,18 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
 
       {/* Header section with status badges */}
       <div className="flex items-center justify-between gap-4 mt-2">
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 border border-red-500/30 px-3 py-1 text-xs font-bold text-red-400 animate-pulse">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 border border-red-500/30 px-3 py-1 text-xs font-bold text-red-400">
           <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
           救急モード
         </span>
         <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
           Emergency Pet Pass
         </span>
+      </div>
+
+      {/* BRAND_UX_AI_INTEGRATION_GUIDE Calm 3-step Guide (< 60 chars) */}
+      <div className="mt-3 rounded-xl border border-blue-500/20 bg-blue-950/40 p-3 text-xs text-blue-200">
+        <p className="font-semibold">{data.petName}ちゃんの緊急カードです。安静を保ち、以下の緊急連絡先またはかかりつけ病院へ連絡してください。</p>
       </div>
 
       <div className="mt-4 flex items-baseline justify-between">
@@ -82,7 +87,7 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
         {emergencyPhoneHref ? (
           <a
             href={emergencyPhoneHref}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-rose-500 px-4 py-4 text-center text-base font-bold text-white shadow-lg shadow-red-900/30 transition-all hover:opacity-95 active:scale-98"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-red-600 hover:bg-red-500 px-4 py-4 text-center text-base font-bold text-white shadow-lg shadow-red-950/40 transition-all active:scale-98"
           >
             <span>📞</span> 緊急連絡先1: {priorityContact}
           </a>
@@ -90,7 +95,7 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
         {emergencyPhoneHref2 ? (
           <a
             href={emergencyPhoneHref2}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-red-600 to-rose-500 px-4 py-4 text-center text-base font-bold text-white shadow-lg shadow-red-900/30 transition-all hover:opacity-95 active:scale-98"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-red-600 hover:bg-red-500 px-4 py-4 text-center text-base font-bold text-white shadow-lg shadow-red-950/40 transition-all active:scale-98"
           >
             <span>📞</span> 緊急連絡先2: {priorityContact2}
           </a>

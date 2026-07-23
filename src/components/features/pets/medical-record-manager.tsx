@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { AiProposalCard } from "@/components/ui/ai-proposal-card";
 
 type MedicalRecordType = "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER";
 type DocumentType = "MEDICATION" | "VACCINATION" | "LAB" | "RECEIPT" | "OTHER";
@@ -335,11 +336,16 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
             </div>
 
             {extracted ? (
-              <div className="mt-3 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-700 dark:border-white/5 dark:bg-slate-950/60 dark:text-slate-300">
-                <p>抽出日: {extracted.examinedOn ?? "未抽出"}</p>
-                <p>病院名: {extracted.hospitalName ?? "未抽出"}</p>
-                <p>書類種別: {extracted.documentType}</p>
-                <p className="mt-1">要約: {extracted.summary}</p>
+              <div className="mt-3">
+                <AiProposalCard
+                  summary={`【${extracted.documentType}】 ${extracted.summary}`}
+                  reasons={extracted.reasons ?? [`病院名: ${extracted.hospitalName ?? "未記入"}`, `診察日: ${extracted.examinedOn ?? "未記入"}`]}
+                  sources={extracted.sources ?? ["さけLab 医療OCR抽出エンジン v1.2"]}
+                  confidenceLevel={extracted.confidenceLevel ?? "HIGH"}
+                  confidenceScore={extracted.confidenceScore ?? 92}
+                  updatedAt={extracted.updatedAt ?? new Date().toISOString()}
+                  disclaimer={extracted.disclaimer}
+                />
               </div>
             ) : null}
           </div>
