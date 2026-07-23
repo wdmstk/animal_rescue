@@ -10,16 +10,20 @@ export function ToastMessage({ message, type = "success" }: ToastMessageProps) {
     return null;
   }
 
+  const isError = type === "error";
+
   return (
-    <p
-      role="status"
-      className={`rounded-lg border px-3 py-2 text-sm ${
+    <div
+      role={isError ? "alert" : "status"}
+      aria-live={isError ? "assertive" : "polite"}
+      aria-atomic="true"
+      className={`rounded-lg border px-3.5 py-2.5 text-sm backdrop-blur-md transition-all ${
         type === "success"
-          ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-          : "border-rose-200 bg-rose-50 text-rose-800"
+          ? "border-emerald-500/30 bg-emerald-950/60 text-emerald-200"
+          : "border-rose-500/30 bg-rose-950/60 text-rose-200"
       }`}
     >
       {message}
-    </p>
+    </div>
   );
 }

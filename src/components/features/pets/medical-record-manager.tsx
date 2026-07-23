@@ -5,6 +5,9 @@ import { MedicalTimeline } from "@/components/features/pets/medical-timeline";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { ToastMessage } from "@/components/ui/toast-message";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 
 type MedicalRecordType = "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER";
 type DocumentType = "MEDICATION" | "VACCINATION" | "LAB" | "RECEIPT" | "OTHER";
@@ -265,17 +268,18 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
       <form id="medical-record-form" onSubmit={onSubmit} className="rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-900/60 dark:border dark:border-white/10 dark:text-slate-100 dark:backdrop-blur-md">
         <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{editingId ? "記録を編集" : "記録を追加"}</h2>
         <div className="mt-3 grid gap-2 md:grid-cols-2">
-          <input
+          <Input
             type="date"
             value={date}
             onChange={(event) => setDate(event.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-white/10 dark:bg-slate-950/60 dark:text-white dark:focus:border-blue-500/50 dark:focus:outline-none"
+            aria-label="診療日"
             required
           />
           <select
             value={recordType}
             onChange={(event) => setRecordType(event.target.value as MedicalRecordType)}
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm dark:border-white/10 dark:bg-slate-950/60 dark:text-white dark:focus:border-blue-500/50 dark:focus:outline-none"
+            aria-label="記録種別"
+            className="w-full px-3.5 py-2 text-sm rounded-lg bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="EXAM">診察</option>
             <option value="SURGERY">手術</option>
@@ -283,19 +287,22 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
             <option value="MEDICATION">投薬</option>
             <option value="OTHER">その他</option>
           </select>
-          <input
-            type="text"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            placeholder="タイトル"
-            className="rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2 dark:border-white/10 dark:bg-slate-950/60 dark:text-white dark:focus:border-blue-500/50 dark:focus:outline-none"
-            required
-          />
+          <div className="md:col-span-2">
+            <Input
+              type="text"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder="タイトル"
+              aria-label="タイトル"
+              required
+            />
+          </div>
           <textarea
             value={description}
             onChange={(event) => setDescription(event.target.value)}
             placeholder="内容"
-            className="min-h-20 rounded-lg border border-slate-300 px-3 py-2 text-sm md:col-span-2 dark:border-white/10 dark:bg-slate-950/60 dark:text-white dark:focus:border-blue-500/50 dark:focus:outline-none"
+            aria-label="内容"
+            className="min-h-20 w-full px-3.5 py-2 text-sm rounded-lg bg-slate-900 border border-slate-700 text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 md:col-span-2"
             required
           />
         </div>
