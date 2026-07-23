@@ -23,18 +23,18 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-311` 共通UIコンポーネント基盤の拡充とアクセシビリティ標準化
+1. `TASK-312` Brand × UX × AI 統合UI標準化（AI確信度表示・緊急モード修復）
 
 ### todo
 1. `TASK-314` CI品質ゲート（A11y自動テスト・ブランド禁止語スクリプト）導入
 2. `TASK-313` オフラインデータ競合解決ダイアログの実装
-3. `TASK-312` Brand × UX × AI 統合UI標準化（AI確信度表示・緊急モード修復）
 
 ### blocked
 （なし）
 
 ### done
-1. `TASK-310` デザイントークン正規化とglobals.cssオーバーライドの撤去
+1. `TASK-311` 共通UIコンポーネント基盤の拡充とアクセシビリティ標準化
+2. `TASK-310` デザイントークン正規化とglobals.cssオーバーライドの撤去
 2. `TASK-309` 設計基盤ドキュメント群の統合・100点品質改訂（BRAND/UX/AIの完全整合）
 2. `TASK-308` 設計基盤ドキュメント（BRAND/DESIGN/COMPONENT等8ファイル）の改訂
 1. `TASK-307` LP公開アクセス許可 (middleware.tsでの/lpルート除外)
@@ -206,7 +206,7 @@ Development Task List
 - Task ID: `TASK-312`
 - GitHub Issue: #251
 - ブランチ: `refactor/TASK-312-ai-brand-integration-ui`
-- ステータス: `todo`
+- ステータス: `in_progress`
 - 概要: `docs/foundation/BRAND_UX_AI_INTEGRATION_GUIDE.md` の規定に従い、医療OCR等のAI抽出結果に確信度・免責事項・根拠等の6要素テンプレートを導入し、緊急公開画面での過度な点滅・赤色グラデーションを修正して Calm Score 90% 以上を満たす視認性に刷新する。
 - 依存関係: `TASK-310`, `TASK-311`
 - 完了条件:
@@ -219,7 +219,7 @@ Development Task List
 - Task ID: `TASK-311`
 - GitHub Issue: #250
 - ブランチ: `feat/TASK-311-expand-common-ui-components`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: `docs/foundation/COMPONENT_LIBRARY.md` の仕様に従い、生HTMLタグで記述されているフォーム入力要素やカード要素を共通UIコンポーネント化し、WCAG 2.1 AA 準拠の ARIA 属性・キーボード操作を標準化する。
 - 依存関係: `TASK-310`
 - 完了条件:
