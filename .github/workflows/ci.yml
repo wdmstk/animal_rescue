@@ -119,6 +119,9 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      - name: Check brand terms and governance rules
+        run: npm run check:brand
+
   test:
     name: Unit/Integration (Vitest)
     if: github.event_name != 'pull_request' || contains(fromJSON('["opened","synchronize","reopened","ready_for_review"]'), github.event.action)
