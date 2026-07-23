@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-314` CI品質ゲート（A11y自動テスト・ブランド禁止語スクリプト）導入
+1. `TASK-315` Next.js Production Build TypeScript型チェックエラーの修正
+2. `TASK-314` CI品質ゲート（A11y自動テスト・ブランド禁止語スクリプト）導入
 2. `TASK-313` オフラインデータ競合解決ダイアログの実装
 3. `TASK-312` Brand × UX × AI 統合UI標準化（AI確信度表示・緊急モード修復）
 3. `TASK-311` 共通UIコンポーネント基盤の拡充とアクセシビリティ標準化
@@ -175,6 +176,15 @@ Development Task List
   - `tailwind.config.ts` とトークン変数の連携
   - `globals.css` の `:not(button)` などの強引なCSSパッチの全廃
   - `npm run lint` / `npx vitest run` が通ること
+
+
+### Next.js Production Build TypeScript型チェックエラーの修正
+- Task ID: `TASK-315`
+- GitHub Issue: #259
+- ブランチ: `fix/TASK-315-next-build-type-fix`
+- ステータス: `done`
+- 概要: `npm run build` 実行時に発生した `ExtractedResult` の `reasons` 存在確認エラー、および `InputProps` の `ariaDescribedby` プロパティ未定義型エラーを修正。
+- 完了条件: `npm run build` がパスすること
 
 
 ### CI品質ゲート（A11y自動テスト・ブランド禁止語スクリプト）導入

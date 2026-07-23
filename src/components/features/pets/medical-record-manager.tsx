@@ -27,6 +27,12 @@ type ExtractedResult = {
   documentType: DocumentType;
   summary: string;
   candidates: Array<{ key: string; value: string }>;
+  confidenceLevel?: "HIGH" | "MEDIUM" | "LOW";
+  confidenceScore?: number;
+  reasons?: string[];
+  sources?: string[];
+  disclaimer?: string;
+  updatedAt?: string;
 };
 
 type MedicalRecordManagerProps = {
