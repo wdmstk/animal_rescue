@@ -349,29 +349,29 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
   };
 
   return (
-    <section className="rounded-2xl bg-white p-4 shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-base font-bold text-slate-900">健康記録</h2>
-        <label className="flex items-center gap-2 text-xs text-slate-600">
-          <input type="checkbox" checked={enableExtension} onChange={(event) => setEnableExtension(event.target.checked)} />
-          拡張項目（例: 点滴量）
+    <section className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 shadow-xl backdrop-blur-md text-white">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700/50 pb-3">
+        <h2 className="text-lg font-bold text-white">健康記録・検査データ</h2>
+        <label className="flex items-center gap-2 text-xs font-semibold text-teal-300 cursor-pointer bg-teal-500/10 border border-teal-500/30 px-3 py-1.5 rounded-full hover:bg-teal-500/20 transition-all">
+          <input type="checkbox" checked={enableExtension} onChange={(event) => setEnableExtension(event.target.checked)} className="rounded border-slate-700 text-teal-500 focus:ring-teal-500" />
+          ✨ 拡張項目の入力フォームを表示
         </label>
       </div>
 
-      {errorMessage && <p className="mt-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">{errorMessage}</p>}
+      {errorMessage && <p className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs font-semibold text-amber-300">{errorMessage}</p>}
 
-      <div className="mt-4 grid gap-3 md:grid-cols-2">
-        <form onSubmit={submitCore} className="space-y-2 rounded-xl border border-slate-200 p-3">
-          <div className="flex items-center gap-1">
-            <p className="text-sm font-semibold text-slate-800">共通コアを記録</p>
-            <Tooltip content="日常的に記録する基本的な健康指標です。体重、飲水量、食欲など。">
-              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+      <div className="mt-4 grid gap-4 md:grid-cols-2">
+        <form onSubmit={submitCore} className="space-y-3 rounded-xl border border-white/10 bg-slate-950/40 p-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-bold text-white">共通コアを記録</p>
+            <Tooltip content="日常的に記録する基本的な健康指標です（体重、飲水量、食欲など）。">
+              <span className="text-slate-400 hover:text-white cursor-help text-xs font-bold bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">? ガイド</span>
             </Tooltip>
           </div>
           <select
             value={coreType}
             onChange={(event) => setCoreType(event.target.value as (typeof CORE_METRIC_TYPES)[number])}
-            className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
+            className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
           >
             {CORE_METRIC_TYPES.map((item) => (
               <option key={item} value={item}>
@@ -384,32 +384,32 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
             onChange={(event) => setCoreValue(event.target.value)}
             type="number"
             step="0.01"
-            className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
-            placeholder="値"
+            className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+            placeholder="測定値 (例: 4.2)"
           />
           <input
             value={coreDate}
             onChange={(event) => setCoreDate(event.target.value)}
             type="date"
-            className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
+            className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
           />
           <button
             type="submit"
             disabled={isSubmitting || hasCoreInputError}
-            className="w-full rounded bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+            className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-500 px-4 py-2.5 text-xs font-bold text-white shadow hover:opacity-95 disabled:opacity-50 transition-all"
           >
-            保存
+            保存する
           </button>
         </form>
 
-        <form onSubmit={submitLab} className="space-y-2 rounded-xl border border-slate-200 p-3">
-          <div className="flex items-center gap-1">
-            <p className="text-sm font-semibold text-slate-800">{labCategoryLabelMap[labCategory]}を記録</p>
+        <form onSubmit={submitLab} className="space-y-3 rounded-xl border border-white/10 bg-slate-950/40 p-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-bold text-white">{labCategoryLabelMap[labCategory]}を記録</p>
             <Tooltip content="血液・尿・内分泌などの検査項目を記録します。獣医師からの検査結果を入力してください。">
-              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              <span className="text-slate-400 hover:text-white cursor-help text-xs font-bold bg-white/5 border border-white/10 px-2 py-0.5 rounded-full">? ガイド</span>
             </Tooltip>
           </div>
-          <div className="grid grid-cols-3 gap-1 rounded-lg bg-slate-100 dark:bg-slate-950/60 p-1">
+          <div className="grid grid-cols-3 gap-1 rounded-xl bg-slate-900/80 p-1 border border-white/5">
             {(Object.keys(labCategoryLabelMap) as LabResultEntry["category"][]).map((item) => (
               <button
                 key={item}
@@ -419,8 +419,8 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
                   const nextDefaultMarker = labMarkersByCategory[item][0];
                   setLabMarker(nextDefaultMarker);
                 }}
-                className={`rounded px-2 py-1 text-xs transition-colors duration-200 ${
-                  labCategory === item ? "bg-white font-semibold text-slate-900 shadow-sm dark:bg-white/10 dark:text-white" : "text-slate-600 dark:text-slate-400 dark:hover:text-slate-200"
+                className={`rounded-lg px-2 py-1.5 text-xs font-semibold transition-all ${
+                  labCategory === item ? "bg-gradient-to-r from-blue-600 to-indigo-500 text-white shadow font-bold" : "text-slate-400 hover:text-white"
                 }`}
               >
                 {labCategoryLabelMap[item]}
@@ -430,7 +430,7 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
           <select
             value={labMarker}
             onChange={(event) => setLabMarker(event.target.value as (typeof LAB_MARKER_TYPES)[number])}
-            className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
+            className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
           >
             {availableLabMarkers.map((item) => (
               <option key={item} value={item}>
@@ -438,123 +438,140 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
               </option>
             ))}
           </select>
-          <input
-            value={labValue}
-            onChange={(event) => setLabValue(event.target.value)}
-            type="number"
-            step="0.01"
-            className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
-            placeholder="値"
-          />
-          <input
-            value={labUnit}
-            onChange={(event) => setLabUnit(event.target.value)}
-            type="text"
-            className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
-            placeholder="単位"
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              value={labValue}
+              onChange={(event) => setLabValue(event.target.value)}
+              type="number"
+              step="0.01"
+              className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+              placeholder="検査値 (例: 32)"
+            />
+            <input
+              value={labUnit}
+              onChange={(event) => setLabUnit(event.target.value)}
+              type="text"
+              className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"
+              placeholder="単位 (例: mg/dL)"
+            />
+          </div>
           <input
             value={labDate}
             onChange={(event) => setLabDate(event.target.value)}
             type="date"
-            className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
+            className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
           />
           <button
             type="submit"
             disabled={isSubmitting || hasLabInputError}
-            className="w-full rounded bg-slate-900 px-3 py-2 text-xs font-semibold text-white disabled:opacity-50"
+            className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-500 px-4 py-2.5 text-xs font-bold text-white shadow hover:opacity-95 disabled:opacity-50 transition-all"
           >
-            保存
+            保存する
           </button>
         </form>
       </div>
 
       {enableExtension && (
-        <form onSubmit={submitExtension} className="mt-4 space-y-4 rounded-2xl border border-teal-500/20 bg-teal-950/20 p-4">
-          <p className="text-sm font-bold text-teal-400">拡張項目（複数可）</p>
-          {extensionRows.map((row) => (
-            <div key={row.id} className="grid gap-3 rounded-xl border border-white/5 bg-slate-950/40 p-3 md:grid-cols-5">
-              <input
-                value={row.name}
-                onChange={(event) =>
-                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, name: event.target.value } : item)))
-                }
-                type="text"
-                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
-                placeholder="項目名"
-              />
-              <input
-                value={row.value}
-                onChange={(event) =>
-                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, value: event.target.value } : item)))
-                }
-                type="number"
-                step="0.01"
-                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
-                placeholder="値"
-              />
-              <input
-                value={row.unit}
-                onChange={(event) =>
-                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, unit: event.target.value } : item)))
-                }
-                type="text"
-                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
-                placeholder="単位"
-              />
-              <input
-                value={row.recordedAt}
-                onChange={(event) =>
-                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, recordedAt: event.target.value } : item)))
-                }
-                type="date"
-                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
-              />
-              <input
-                value={row.note}
-                onChange={(event) =>
-                  setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, note: event.target.value } : item)))
-                }
-                type="text"
-                className="rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white focus:border-teal-500/50 focus:outline-none transition-all"
-                placeholder="メモ"
-              />
-              {extensionRows.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => setExtensionRows((current) => current.filter((item) => item.id !== row.id))}
-                  className="inline-flex items-center justify-center rounded-xl border border-rose-500/20 bg-rose-500/5 px-3 py-1.5 text-xs font-bold text-rose-400 hover:bg-rose-500/10 active:scale-95 transition-all md:col-span-5"
-                >
-                  この行を削除
-                </button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => setExtensionRows((current) => [...current, createExtensionDraft()])}
-            className="w-full inline-flex items-center justify-center rounded-xl border border-teal-500/20 bg-teal-500/5 px-3 py-2 text-xs font-bold text-teal-400 hover:bg-teal-500/10 active:scale-95 transition-all"
-          >
-            行を追加
-          </button>
-          <SubmitButton
-            isSubmitting={isSubmitting}
-            idleLabel="拡張項目を保存"
-            submittingLabel="保存中..."
-            disabled={hasExtensionInputError}
-            className="w-full inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 text-white font-bold text-xs hover:opacity-95 active:scale-95 transition-all min-h-[38px] disabled:opacity-50"
-          />
+        <form onSubmit={submitExtension} className="mt-4 space-y-4 rounded-2xl border border-teal-500/30 bg-teal-950/30 p-5 shadow-inner">
+          <div>
+            <p className="text-base font-bold text-teal-300 flex items-center gap-2">
+              🧪 拡張項目フォーム（複数可）
+            </p>
+            <p className="mt-1 text-xs text-slate-300 leading-relaxed">
+              💡 病院の検査結果や個別の健康指標（例: AST, ALT, 点滴量等）を自由に追加・記録できます。下部の「＋ 行を追加」で入力項目を増やし、「拡張項目を保存」で一括保存します。
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {extensionRows.map((row, index) => (
+              <div key={row.id} className="flex flex-wrap items-center gap-2.5 rounded-xl border border-white/10 bg-slate-950/70 p-3.5 shadow-sm">
+                <span className="text-xs font-bold text-teal-400 bg-teal-500/10 border border-teal-500/20 px-2 py-1 rounded">#{index + 1}</span>
+                <input
+                  value={row.name}
+                  onChange={(event) =>
+                    setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, name: event.target.value } : item)))
+                  }
+                  type="text"
+                  className="flex-1 min-w-[130px] rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-all"
+                  placeholder="項目名 (例: AST)"
+                />
+                <input
+                  value={row.value}
+                  onChange={(event) =>
+                    setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, value: event.target.value } : item)))
+                  }
+                  type="number"
+                  step="0.01"
+                  className="w-24 rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-all"
+                  placeholder="数値"
+                />
+                <input
+                  value={row.unit}
+                  onChange={(event) =>
+                    setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, unit: event.target.value } : item)))
+                  }
+                  type="text"
+                  className="w-20 rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-all"
+                  placeholder="単位"
+                />
+                <input
+                  value={row.recordedAt}
+                  onChange={(event) =>
+                    setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, recordedAt: event.target.value } : item)))
+                  }
+                  type="date"
+                  className="w-36 rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white focus:border-teal-400 focus:outline-none transition-all"
+                />
+                <input
+                  value={row.note}
+                  onChange={(event) =>
+                    setExtensionRows((current) => current.map((item) => (item.id === row.id ? { ...item, note: event.target.value } : item)))
+                  }
+                  type="text"
+                  className="flex-1 min-w-[130px] rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-teal-400 focus:outline-none transition-all"
+                  placeholder="メモ (任意)"
+                />
+                {extensionRows.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setExtensionRows((current) => current.filter((item) => item.id !== row.id))}
+                    className="inline-flex items-center justify-center rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-xs font-bold text-rose-300 hover:bg-rose-500/20 active:scale-95 transition-all"
+                  >
+                    削除
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button
+              type="button"
+              onClick={() => setExtensionRows((current) => [...current, createExtensionDraft()])}
+              className="flex-1 inline-flex items-center justify-center rounded-xl border border-teal-500/40 bg-teal-500/10 px-4 py-2.5 text-xs font-bold text-teal-300 hover:bg-teal-500/20 active:scale-95 transition-all min-h-[40px]"
+            >
+              ＋ 新しい行を追加
+            </button>
+            <SubmitButton
+              isSubmitting={isSubmitting}
+              idleLabel="💾 拡張項目を保存"
+              submittingLabel="保存中..."
+              disabled={hasExtensionInputError}
+              className="flex-1 inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-teal-600 to-emerald-500 text-white font-bold text-xs shadow hover:opacity-95 active:scale-95 transition-all min-h-[40px] disabled:opacity-50"
+            />
+          </div>
         </form>
       )}
 
-      <div className="mt-4 rounded-xl border border-slate-200 p-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-slate-800">推移グラフ</p>
+      <div className="mt-6 rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-700/50 pb-2">
+          <p className="text-base font-bold text-white">📈 推移グラフ</p>
           <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400">表示期間:</span>
             <select
               value={seriesDays === null ? "all" : String(seriesDays)}
               onChange={(event) => setSeriesDays(event.target.value === "all" ? null : Number(event.target.value))}
-              className="rounded border border-slate-300 px-2 py-1 text-xs"
+              className="rounded-lg border border-white/10 bg-slate-900 px-3 py-1 text-xs text-white focus:border-teal-400 focus:outline-none"
             >
               {periodOptions.map((item) => (
                 <option key={item.label} value={item.value === null ? "all" : item.value}>
@@ -564,7 +581,8 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
             </select>
           </div>
         </div>
-        <div className="mt-2 flex flex-wrap gap-1.5">
+
+        <div className="mt-3 flex flex-wrap gap-2">
           {categoryOptions.map((item) => (
             <button
               key={item.value}
@@ -573,36 +591,42 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
                 setSeriesCategory(item.value);
                 setSelectedSeriesKey((current) => pickDisplaySeriesKey(filterHealthSeries(series, item.value, seriesDays), current));
               }}
-              className={`rounded-full border px-2 py-1 text-xs ${
-                seriesCategory === item.value ? "border-slate-900 bg-slate-900 text-white" : "border-slate-300 text-slate-700"
+              className={`rounded-full border px-3 py-1 text-xs font-semibold transition-all ${
+                seriesCategory === item.value
+                  ? "border-teal-400 bg-teal-500 text-white font-bold shadow"
+                  : "border-slate-700 bg-slate-800/80 text-slate-300 hover:bg-slate-700 hover:text-white"
               }`}
             >
               {item.label}
             </button>
           ))}
         </div>
-        <div className="mt-2 flex flex-wrap gap-1.5">
+
+        <div className="mt-3 flex flex-wrap gap-2">
           {displaySeries.map((item) => (
             <button
               key={item.key}
               type="button"
               onClick={() => setSelectedSeriesKey(item.key)}
-              className={`rounded border px-2 py-1 text-xs ${
-                selectedSeries?.key === item.key ? "border-teal-700 bg-teal-700 text-white" : "border-slate-300 text-slate-700"
+              className={`rounded-xl border px-3 py-1.5 text-xs font-semibold transition-all ${
+                selectedSeries?.key === item.key
+                  ? "border-blue-400 bg-blue-600 text-white font-bold shadow"
+                  : "border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white"
               }`}
             >
               {item.label}
             </button>
           ))}
           {displaySeries.length === 0 && (
-            <p className="text-xs text-slate-500">選択条件の系列データはありません。期間やカテゴリを変えるか、新しい記録を追加してください。</p>
+            <p className="text-xs text-slate-400 py-2">選択条件の系列データはありません。期間やカテゴリを変えるか、新しい記録を追加してください。</p>
           )}
         </div>
-        <div className="mt-2">
+
+        <div className="mt-3">
           <select
             value={selectedSeries?.key ?? ""}
             onChange={(event) => setSelectedSeriesKey(event.target.value)}
-            className="rounded border border-slate-300 px-2 py-1 text-xs"
+            className="w-full rounded-xl border border-white/10 bg-slate-900 px-3 py-2 text-xs text-white focus:border-teal-400 focus:outline-none md:hidden"
           >
             {displaySeries.map((item) => (
               <option key={item.key} value={item.key}>
@@ -611,102 +635,109 @@ export function HealthTrackingPanel({ petId }: HealthTrackingPanelProps) {
             ))}
           </select>
         </div>
-        {selectedSeries ? <TrendLineChart series={selectedSeries} /> : <p className="mt-2 text-sm text-slate-500">系列データなし</p>}
+
+        {selectedSeries ? <TrendLineChart series={selectedSeries} /> : <p className="mt-4 text-sm text-slate-400 text-center py-6">系列データが登録されていません</p>}
+
         {selectedSeriesSummary && (
-          <dl className="mt-3 grid gap-2 rounded-lg border border-slate-200 bg-slate-50 p-2 text-xs text-slate-700 md:grid-cols-5">
+          <dl className="mt-4 grid gap-2 rounded-xl border border-white/10 bg-slate-900/80 p-3 text-xs text-slate-300 md:grid-cols-5">
             <div>
-              <dt className="text-slate-500">最新値</dt>
-              <dd className="font-semibold text-slate-900">{selectedSeriesSummary.latest}</dd>
+              <dt className="text-slate-400 font-semibold">最新値</dt>
+              <dd className="font-bold text-teal-300 text-sm">{selectedSeriesSummary.latest}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">最小値</dt>
-              <dd className="font-semibold text-slate-900">{selectedSeriesSummary.min}</dd>
+              <dt className="text-slate-400 font-semibold">最小値</dt>
+              <dd className="font-bold text-white text-sm">{selectedSeriesSummary.min}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">最大値</dt>
-              <dd className="font-semibold text-slate-900">{selectedSeriesSummary.max}</dd>
+              <dt className="text-slate-400 font-semibold">最大値</dt>
+              <dd className="font-bold text-white text-sm">{selectedSeriesSummary.max}</dd>
             </div>
             <div>
-              <dt className="text-slate-500">件数</dt>
-              <dd className="font-semibold text-slate-900">{selectedSeriesSummary.count}</dd>
+              <dt className="text-slate-400 font-semibold">件数</dt>
+              <dd className="font-bold text-white text-sm">{selectedSeriesSummary.count}件</dd>
             </div>
             <div>
-              <dt className="text-slate-500">期間</dt>
-              <dd className="font-semibold text-slate-900">
-                {selectedSeriesSummary.startDate} - {selectedSeriesSummary.endDate}
+              <dt className="text-slate-400 font-semibold">期間</dt>
+              <dd className="font-semibold text-slate-200">
+                {selectedSeriesSummary.startDate} 〜 {selectedSeriesSummary.endDate}
               </dd>
             </div>
           </dl>
         )}
       </div>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 p-3">
-          <p className="text-xs font-semibold text-slate-700">共通コア履歴</p>
-          <ul className="mt-2 space-y-1 text-xs text-slate-600">
+      <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
+          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">共通コア履歴</p>
+          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
             {coreEntries.slice(0, 5).map((item) => (
-              <li key={item.id}>
-                {item.recordedAt.slice(0, 10)} / {coreTypeLabelMap[item.type]}: {item.value}
+              <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
+                <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
+                <span className="font-semibold text-white">{coreTypeLabelMap[item.type]}: {item.value}</span>
               </li>
             ))}
-            {coreEntries.length === 0 && <li>記録なし</li>}
+            {coreEntries.length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
           </ul>
         </div>
 
-        <div className="rounded-xl border border-slate-200 p-3">
-          <p className="text-xs font-semibold text-slate-700">血液検査履歴</p>
-          <ul className="mt-2 space-y-1 text-xs text-slate-600">
+        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
+          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">血液検査履歴</p>
+          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
             {labEntries
               .filter((item) => item.category === "BLOOD")
               .slice(0, 5)
               .map((item) => (
-              <li key={item.id}>
-                {item.recordedAt.slice(0, 10)} / {labMarkerLabelMap[item.marker]}: {item.value} {item.unit}
+              <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
+                <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
+                <span className="font-semibold text-white">{labMarkerLabelMap[item.marker]}: {item.value} {item.unit}</span>
               </li>
             ))}
-            {labEntries.filter((item) => item.category === "BLOOD").length === 0 && <li>記録なし</li>}
+            {labEntries.filter((item) => item.category === "BLOOD").length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
           </ul>
         </div>
 
-        <div className="rounded-xl border border-slate-200 p-3">
-          <p className="text-xs font-semibold text-slate-700">尿検査履歴</p>
-          <ul className="mt-2 space-y-1 text-xs text-slate-600">
+        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
+          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">尿検査履歴</p>
+          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
             {labEntries
               .filter((item) => item.category === "URINE")
               .slice(0, 5)
               .map((item) => (
-                <li key={item.id}>
-                  {item.recordedAt.slice(0, 10)} / {labMarkerLabelMap[item.marker]}: {item.value} {item.unit}
+                <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
+                  <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
+                  <span className="font-semibold text-white">{labMarkerLabelMap[item.marker]}: {item.value} {item.unit}</span>
                 </li>
               ))}
-            {labEntries.filter((item) => item.category === "URINE").length === 0 && <li>記録なし</li>}
+            {labEntries.filter((item) => item.category === "URINE").length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
           </ul>
         </div>
 
-        <div className="rounded-xl border border-slate-200 p-3">
-          <p className="text-xs font-semibold text-slate-700">内分泌検査履歴</p>
-          <ul className="mt-2 space-y-1 text-xs text-slate-600">
+        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
+          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">内分泌検査履歴</p>
+          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
             {labEntries
               .filter((item) => item.category === "ENDOCRINE")
               .slice(0, 5)
               .map((item) => (
-                <li key={item.id}>
-                  {item.recordedAt.slice(0, 10)} / {labMarkerLabelMap[item.marker]}: {item.value} {item.unit}
+                <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
+                  <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
+                  <span className="font-semibold text-white">{labMarkerLabelMap[item.marker]}: {item.value} {item.unit}</span>
                 </li>
               ))}
-            {labEntries.filter((item) => item.category === "ENDOCRINE").length === 0 && <li>記録なし</li>}
+            {labEntries.filter((item) => item.category === "ENDOCRINE").length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
           </ul>
         </div>
 
-        <div className="rounded-xl border border-slate-200 p-3">
-          <p className="text-xs font-semibold text-slate-700">拡張項目履歴</p>
-          <ul className="mt-2 space-y-1 text-xs text-slate-600">
+        <div className="rounded-xl border border-white/10 bg-slate-950/40 p-4">
+          <p className="text-sm font-bold text-white border-b border-slate-700/50 pb-1.5">拡張項目履歴</p>
+          <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
             {extensionEntries.slice(0, 5).map((item) => (
-              <li key={item.id}>
-                {item.recordedAt.slice(0, 10)} / {item.name}: {item.value} {item.unit ?? ""}
+              <li key={item.id} className="flex justify-between border-b border-white/5 pb-1">
+                <span className="text-slate-400">{item.recordedAt.slice(0, 10)}</span>
+                <span className="font-semibold text-white">{item.name}: {item.value} {item.unit ?? ""}</span>
               </li>
             ))}
-            {extensionEntries.length === 0 && <li>記録なし</li>}
+            {extensionEntries.length === 0 && <li className="text-slate-500 py-2">記録なし</li>}
           </ul>
         </div>
       </div>
