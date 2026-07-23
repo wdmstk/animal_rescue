@@ -14,34 +14,38 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   await requireAdminUser();
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-950 text-slate-100">
       <div className="flex">
         {/* Sidebar */}
-        <aside className="sticky top-0 h-screen w-56 shrink-0 border-r border-slate-200 bg-white">
-          <div className="border-b border-slate-200 px-6 py-5">
-            <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Admin</p>
-            <h1 className="mt-1 text-base font-bold text-slate-900">動物救急手帳</h1>
+        <aside className="sticky top-0 h-screen w-60 shrink-0 border-r border-white/10 bg-slate-900/90 backdrop-blur-md flex flex-col justify-between">
+          <div>
+            <div className="border-b border-white/10 px-5 py-5 bg-gradient-to-r from-blue-900/30 to-indigo-900/30">
+              <span className="inline-flex rounded-full bg-blue-500/20 border border-blue-400/40 px-2.5 py-0.5 text-[10px] font-bold text-blue-300 tracking-wider">
+                ADMIN CONSOLE
+              </span>
+              <h1 className="mt-2 text-base font-bold text-white">動物救急手帳 管理</h1>
+            </div>
+            <nav className="p-3">
+              <ul className="space-y-1">
+                {navItems.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="flex items-center rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-300 transition-all hover:bg-slate-800 hover:text-white"
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
-          <nav className="p-4">
-            <ul className="space-y-1">
-              {navItems.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="flex items-center rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div className="absolute bottom-0 w-full border-t border-slate-200 px-4 py-4">
+          <div className="border-t border-white/10 p-4">
             <Link
-              href="/"
-              className="flex items-center text-xs text-slate-400 hover:text-slate-600"
+              href="/pets"
+              className="flex items-center gap-1.5 rounded-xl border border-teal-500/30 bg-teal-950/40 px-3 py-2 text-xs font-bold text-teal-300 hover:bg-teal-900/50 transition-colors"
             >
-              ← アプリに戻る
+              ← ユーザー画面へ戻る
             </Link>
           </div>
         </aside>

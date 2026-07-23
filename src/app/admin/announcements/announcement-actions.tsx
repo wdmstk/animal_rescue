@@ -46,35 +46,37 @@ export function CreateAnnouncementForm() {
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700"
+        className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:bg-teal-500"
       >
-        + 新規作成
+        + 新規お知らせ作成
       </button>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-4 text-base font-bold text-slate-900">新規お知らせ作成</h3>
+    <form onSubmit={handleSubmit} className="mb-6 rounded-2xl border border-white/10 bg-slate-900/90 p-6 shadow-xl backdrop-blur-md">
+      <h3 className="mb-4 text-base font-bold text-white">📝 新規お知らせ作成</h3>
       <div className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-500">タイトル</label>
+          <label className="block text-xs font-semibold text-slate-300">タイトル</label>
           <input
             type="text"
             required
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
-            className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+            placeholder="例: システムメンテナンスのお知らせ"
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-500">本文</label>
+          <label className="block text-xs font-semibold text-slate-300">本文</label>
           <textarea
             required
             rows={4}
             value={form.body}
             onChange={(e) => setForm({ ...form, body: e.target.value })}
-            className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+            placeholder="お知らせの詳しい本文を入力してください..."
           />
         </div>
         <div className="flex items-center gap-3">
@@ -83,39 +85,39 @@ export function CreateAnnouncementForm() {
             id="isPublished"
             checked={form.isPublished}
             onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
-            className="h-4 w-4"
+            className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-400"
           />
-          <label htmlFor="isPublished" className="text-sm text-slate-700">
+          <label htmlFor="isPublished" className="text-xs font-semibold text-slate-200">
             今すぐ公開する
           </label>
         </div>
         <div>
-          <label className="block text-xs font-semibold text-slate-500">
+          <label className="block text-xs font-semibold text-slate-300">
             有効期限（任意）
           </label>
           <input
             type="datetime-local"
             value={form.expiresAt}
             onChange={(e) => setForm({ ...form, expiresAt: e.target.value })}
-            className="mt-1 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="mt-1 rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-xs text-white focus:border-teal-400 focus:outline-none"
           />
         </div>
-      </div>
-      <div className="mt-4 flex gap-3">
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50"
-        >
-          作成する
-        </button>
-        <button
-          type="button"
-          onClick={() => setIsOpen(false)}
-          className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600"
-        >
-          キャンセル
-        </button>
+        <div className="flex gap-2 pt-2">
+          <button
+            type="submit"
+            disabled={isPending}
+            className="rounded-xl bg-teal-600 px-5 py-2 text-sm font-semibold text-white shadow-md hover:bg-teal-500 disabled:opacity-60"
+          >
+            保存する
+          </button>
+          <button
+            type="button"
+            onClick={() => setIsOpen(false)}
+            className="rounded-xl border border-white/10 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-300 hover:bg-slate-700"
+          >
+            キャンセル
+          </button>
+        </div>
       </div>
     </form>
   );
@@ -139,7 +141,7 @@ export function DeleteAnnouncementButton({ id, title }: { id: string; title: str
     <button
       onClick={handleDelete}
       disabled={isPending}
-      className="rounded bg-red-50 px-2 py-1 text-xs font-semibold text-red-700 hover:bg-red-100 disabled:opacity-50"
+      className="rounded-lg border border-red-500/30 bg-red-500/20 px-2.5 py-1 text-xs font-semibold text-red-300 hover:bg-red-500/30 disabled:opacity-50"
     >
       削除
     </button>
@@ -167,13 +169,13 @@ export function TogglePublishButton({ id, isPublished }: { id: string; isPublish
     <button
       onClick={handleToggle}
       disabled={isPending}
-      className={`rounded px-2 py-1 text-xs font-semibold disabled:opacity-50 ${
+      className={`rounded-full px-3 py-1 text-xs font-bold transition-all disabled:opacity-50 ${
         isPublished
-          ? "bg-green-50 text-green-700 hover:bg-green-100"
-          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+          ? "bg-teal-500/20 border border-teal-400/40 text-teal-300 hover:bg-teal-500/30"
+          : "bg-slate-800 border border-white/10 text-slate-400 hover:bg-slate-700 hover:text-slate-200"
       }`}
     >
-      {isPublished ? "公開中" : "下書き"}
+      {isPublished ? "● 公開中" : "○ 下書き"}
     </button>
   );
 }

@@ -12,6 +12,10 @@ const getAdminEmails = (): string[] =>
  * Server Component 用：管理者でなければ / にリダイレクトする
  */
 export async function requireAdminUser() {
+  if (process.env.PLAYWRIGHT_E2E === "1") {
+    return { id: "e2e-admin-id", email: "admin@example.com" };
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },

@@ -47,8 +47,8 @@ export default async function AdminSubscriptionsPage({
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">サブスクリプション管理</h2>
-        <p className="mt-1 text-sm text-slate-500">
+        <h2 className="text-2xl font-bold text-white">💳 サブスクリプション管理</h2>
+        <p className="mt-1 text-sm text-slate-400">
           ステータスの手動変更・トライアル延長ができます
         </p>
       </div>
@@ -57,10 +57,10 @@ export default async function AdminSubscriptionsPage({
       <div className="mb-6 flex flex-wrap gap-2">
         <a
           href="/admin/subscriptions"
-          className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+          className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
             !filterStatus
-              ? "bg-slate-900 text-white"
-              : "bg-white text-slate-600 hover:bg-slate-100"
+              ? "bg-teal-600 text-white shadow-md"
+              : "bg-slate-900 border border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white"
           }`}
         >
           すべて ({subscriptions.length})
@@ -69,10 +69,10 @@ export default async function AdminSubscriptionsPage({
           <a
             key={s}
             href={`/admin/subscriptions?status=${s}`}
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
               filterStatus === s
-                ? "bg-slate-900 text-white"
-                : "bg-white text-slate-600 hover:bg-slate-100"
+                ? "bg-teal-600 text-white shadow-md"
+                : "bg-slate-900 border border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white"
             }`}
           >
             {s} ({countMap[s] ?? 0})
@@ -81,25 +81,25 @@ export default async function AdminSubscriptionsPage({
       </div>
 
       {/* テーブル */}
-      <section className="rounded-2xl bg-white shadow-sm">
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 shadow-xl backdrop-blur-md">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs text-slate-300">
             <thead>
-              <tr className="border-b border-slate-200">
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">ユーザーID</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">現在のステータス</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">ステータス変更</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">トライアル延長</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">トライアル終了</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">グレース期限</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">期間終了</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">登録日</th>
+              <tr className="border-b border-white/10 text-slate-400">
+                <th className="px-4 py-3 text-left font-semibold">ユーザーID</th>
+                <th className="px-4 py-3 text-left font-semibold">現在のステータス</th>
+                <th className="px-4 py-3 text-left font-semibold">ステータス変更</th>
+                <th className="px-4 py-3 text-left font-semibold">トライアル延長</th>
+                <th className="px-4 py-3 text-left font-semibold">トライアル終了</th>
+                <th className="px-4 py-3 text-left font-semibold">グレース期限</th>
+                <th className="px-4 py-3 text-left font-semibold">期間終了</th>
+                <th className="px-4 py-3 text-left font-semibold">登録日</th>
               </tr>
             </thead>
             <tbody>
               {subscriptions.map((sub) => (
-                <tr key={sub.id} className="border-b border-slate-100 hover:bg-slate-50">
-                  <td className="px-4 py-3 font-mono text-xs text-slate-500">
+                <tr key={sub.id} className="border-b border-white/5 hover:bg-slate-800/40">
+                  <td className="px-4 py-3 font-mono text-slate-400">
                     {sub.userId.slice(0, 12)}…
                   </td>
                   <td className="px-4 py-3">

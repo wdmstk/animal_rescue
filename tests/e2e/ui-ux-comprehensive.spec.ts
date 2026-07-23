@@ -78,4 +78,27 @@ test.describe("UI/UX Comprehensive Improvements Verification", () => {
     await page.getByRole("button", { name: "📋 医療記録・書類" }).click();
     await expect(page.getByRole("heading", { name: "医療記録タイムライン" })).toBeVisible();
   });
+
+  test("Round 3 Requirement 1: Settings page cards and labels have high contrast and legibility", async ({ page }) => {
+    await page.goto("/settings");
+    await expect(page.getByRole("heading", { name: "🏠 家族情報" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "💳 課金プラン" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "🔑 ログイン情報" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "👤 飼い主情報" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "⚙️ 表示設定" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "🎁 お友達紹介プログラム" })).toBeVisible();
+  });
+
+  test("Round 3 Requirement 2 & 3: Admin dark theme console and User Announcements banner", async ({ page }) => {
+    // Admin console pages
+    await page.goto("/admin/dashboard");
+    await expect(page.getByRole("heading", { name: "📊 ダッシュボード" })).toBeVisible();
+
+    await page.goto("/admin/announcements");
+    await expect(page.getByRole("heading", { name: "📢 お知らせ管理" })).toBeVisible();
+
+    // User page announcement banner check
+    await page.goto("/pets");
+    await expect(page.getByText("📢 運営お知らせ")).toBeVisible();
+  });
 });

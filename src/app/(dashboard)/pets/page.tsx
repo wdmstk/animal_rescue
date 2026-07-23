@@ -8,6 +8,8 @@ import { ONBOARDING_TOTAL_STEPS, calculateOnboardingProgress, getOnboardingSteps
 import { requireAuthenticatedUser } from "@/lib/auth/pet-access";
 import { prisma } from "@/lib/prisma";
 
+import { AnnouncementBanner } from "@/components/features/announcements/announcement-banner";
+
 export default async function PetsPage() {
   // Server-side authentication and data fetching
   const auth = await requireAuthenticatedUser();
@@ -58,6 +60,8 @@ export default async function PetsPage() {
 
   return (
     <div className="space-y-4">
+      <AnnouncementBanner />
+
       <section className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-5 shadow-xl">
         <div className="mb-3">
           <h2 className="text-sm font-bold text-blue-300">はじめての方へ（3ステップ）</h2>

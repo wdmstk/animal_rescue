@@ -4,12 +4,12 @@ import { SubscriptionStatus } from "@prisma/client";
 import Link from "next/link";
 
 const STATUS_COLORS: Record<string, string> = {
-  INCOMPLETE: "bg-yellow-100 text-yellow-700",
-  TRIALING: "bg-blue-100 text-blue-700",
-  ACTIVE: "bg-green-100 text-green-700",
-  PAST_DUE: "bg-orange-100 text-orange-700",
-  CANCELED: "bg-slate-100 text-slate-600",
-  UNPAID: "bg-red-100 text-red-700"
+  INCOMPLETE: "bg-amber-500/20 border border-amber-500/30 text-amber-300",
+  TRIALING: "bg-blue-500/20 border border-blue-500/30 text-blue-300",
+  ACTIVE: "bg-emerald-500/20 border border-emerald-500/30 text-emerald-300",
+  PAST_DUE: "bg-orange-500/20 border border-orange-500/30 text-orange-300",
+  CANCELED: "bg-slate-800 text-slate-400",
+  UNPAID: "bg-red-500/20 border border-red-500/30 text-red-300"
 };
 
 export default async function AdminUsersPage({
@@ -71,8 +71,8 @@ export default async function AdminUsersPage({
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">ユーザー管理</h2>
-        <p className="mt-1 text-sm text-slate-500">世帯メンバーの一覧・サブスクリプション状態</p>
+        <h2 className="text-2xl font-bold text-white">👤 ユーザー管理</h2>
+        <p className="mt-1 text-sm text-slate-400">世帯メンバーの一覧およびサブスクリプション状態</p>
       </div>
 
       {/* フィルター */}
@@ -81,10 +81,10 @@ export default async function AdminUsersPage({
           <a
             key={s || "all"}
             href={`/admin/users${s ? `?status=${s}` : ""}`}
-            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+            className={`rounded-full px-4 py-1.5 text-xs font-bold transition-all ${
               filterStatus === s || (!filterStatus && !s)
-                ? "bg-slate-900 text-white"
-                : "bg-white text-slate-600 hover:bg-slate-100"
+                ? "bg-teal-600 text-white shadow-md"
+                : "bg-slate-900 border border-white/10 text-slate-300 hover:bg-slate-800 hover:text-white"
             }`}
           >
             {s || "すべて"}
@@ -93,51 +93,51 @@ export default async function AdminUsersPage({
       </div>
 
       {/* テーブル */}
-      <section className="rounded-2xl bg-white shadow-sm">
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 shadow-xl backdrop-blur-md">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs text-slate-300">
             <thead>
-              <tr className="border-b border-slate-200">
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">ユーザーID</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">ロール</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">世帯名</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">ペット数</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">サブスク状態</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">トライアル終了</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">登録日</th>
-                <th className="px-4 py-3 text-left font-semibold text-slate-600">詳細</th>
+              <tr className="border-b border-white/10 text-slate-400">
+                <th className="px-4 py-3 text-left font-semibold">ユーザーID</th>
+                <th className="px-4 py-3 text-left font-semibold">ロール</th>
+                <th className="px-4 py-3 text-left font-semibold">世帯名</th>
+                <th className="px-4 py-3 text-left font-semibold">ペット数</th>
+                <th className="px-4 py-3 text-left font-semibold">サブスク状態</th>
+                <th className="px-4 py-3 text-left font-semibold">トライアル終了</th>
+                <th className="px-4 py-3 text-left font-semibold">登録日</th>
+                <th className="px-4 py-3 text-left font-semibold">詳細</th>
               </tr>
             </thead>
             <tbody>
               {displayMembers.map((member) => {
                 const sub = subMap[member.userId];
                 return (
-                  <tr key={`${member.userId}-${member.household.id}`} className="border-b border-slate-100 hover:bg-slate-50">
-                    <td className="px-4 py-3 font-mono text-xs text-slate-500">
+                  <tr key={`${member.userId}-${member.household.id}`} className="border-b border-white/5 hover:bg-slate-800/40">
+                    <td className="px-4 py-3 font-mono text-slate-400">
                       {member.userId.slice(0, 12)}…
                     </td>
                     <td className="px-4 py-3">
                       <span
-                        className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                        className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                           member.role === "OWNER"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-slate-100 text-slate-600"
+                            ? "bg-purple-500/20 border border-purple-500/30 text-purple-300"
+                            : "bg-slate-800 text-slate-300"
                         }`}
                       >
                         {member.role}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-700">{member.household.name}</td>
-                    <td className="px-4 py-3 text-slate-600">{member.household._count.pets}</td>
+                    <td className="px-4 py-3 text-white font-medium">{member.household.name}</td>
+                    <td className="px-4 py-3 text-slate-300">{member.household._count.pets}匹</td>
                     <td className="px-4 py-3">
                       {sub ? (
                         <span
-                          className={`rounded-full px-2 py-1 text-xs font-semibold ${STATUS_COLORS[sub.status] ?? "bg-slate-100 text-slate-600"}`}
+                          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_COLORS[sub.status] ?? "bg-slate-800 text-slate-400"}`}
                         >
                           {sub.status}
                         </span>
                       ) : (
-                        <span className="text-slate-400">—</span>
+                        <span className="text-slate-500">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-slate-400">

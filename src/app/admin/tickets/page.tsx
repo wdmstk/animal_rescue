@@ -66,13 +66,13 @@ export default function AdminTicketsPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "OPEN":
-        return <span className="rounded bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-800">未対応 (OPEN)</span>;
+        return <span className="rounded-full bg-amber-500/20 border border-amber-500/30 px-2.5 py-1 text-xs font-semibold text-amber-300">未対応 (OPEN)</span>;
       case "IN_PROGRESS":
-        return <span className="rounded bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">対応中 (IN_PROGRESS)</span>;
+        return <span className="rounded-full bg-blue-500/20 border border-blue-500/30 px-2.5 py-1 text-xs font-semibold text-blue-300">対応中 (IN_PROGRESS)</span>;
       case "RESOLVED":
-        return <span className="rounded bg-emerald-100 px-2 py-1 text-xs font-semibold text-emerald-800">解決済 (RESOLVED)</span>;
+        return <span className="rounded-full bg-emerald-500/20 border border-emerald-500/30 px-2.5 py-1 text-xs font-semibold text-emerald-300">解決済 (RESOLVED)</span>;
       case "CLOSED":
-        return <span className="rounded bg-slate-100 px-2 py-1 text-xs font-semibold text-slate-800">クローズ (CLOSED)</span>;
+        return <span className="rounded-full bg-slate-800 border border-white/5 px-2.5 py-1 text-xs font-semibold text-slate-400">クローズ (CLOSED)</span>;
       default:
         return null;
     }
@@ -81,25 +81,25 @@ export default function AdminTicketsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900">🎫 問い合わせ（チケット）管理</h1>
+        <h1 className="text-2xl font-bold text-white">🎫 問い合わせ（チケット）管理</h1>
         <button
           onClick={() => setRefreshTrigger((prev) => prev + 1)}
-          className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50"
+          className="rounded-xl border border-white/10 bg-slate-900 px-3.5 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-800"
         >
           🔄 更新
         </button>
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex border-b border-slate-200 bg-white p-1 rounded-lg max-w-lg">
+      <div className="flex border border-white/10 bg-slate-900/80 p-1.5 rounded-xl max-w-lg backdrop-blur-md">
         {["ALL", "OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"].map((status) => (
           <button
             key={status}
             onClick={() => setStatusFilter(status)}
-            className={`flex-1 rounded-md py-1.5 text-center text-xs font-semibold transition-all ${
+            className={`flex-1 rounded-lg py-1.5 text-center text-xs font-bold transition-all ${
               statusFilter === status
-                ? "bg-slate-900 text-white"
-                : "text-slate-600 hover:bg-slate-100"
+                ? "bg-teal-600 text-white shadow-md"
+                : "text-slate-400 hover:bg-slate-800 hover:text-white"
             }`}
           >
             {status === "ALL"
@@ -117,17 +117,17 @@ export default function AdminTicketsPage() {
 
       {isLoading ? (
         <div className="flex h-64 items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-slate-900" />
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-700 border-t-teal-400" />
         </div>
       ) : error ? (
-        <div className="rounded-lg bg-red-50 p-4 text-sm text-red-600">{error}</div>
+        <div className="rounded-xl border border-red-500/30 bg-red-950/40 p-4 text-sm text-red-200">{error}</div>
       ) : tickets.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-300 bg-white py-12 text-center">
-          <p className="text-sm text-slate-500">該当するお問い合わせはありません。</p>
+        <div className="rounded-2xl border border-dashed border-white/10 bg-slate-900/50 py-12 text-center">
+          <p className="text-sm text-slate-400">該当するお問い合わせはありません。</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table className="min-w-full divide-y divide-slate-200">
+        <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/80 shadow-xl backdrop-blur-md">
+          <table className="min-w-full divide-y divide-white/10 text-xs text-slate-300">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
