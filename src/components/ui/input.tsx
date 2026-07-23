@@ -4,6 +4,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   error?: boolean;
   errorMessage?: string;
   helperText?: string;
+  ariaDescribedby?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
