@@ -469,33 +469,33 @@ export function ClientSettings({
       {message && <ToastMessage message={message} type="success" />}
       {errorMessage && <ToastMessage message={errorMessage} type="error" />}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">家族情報</h2>
-        <p className="mt-1 text-sm text-slate-600">世帯: {householdName || "-"}</p>
-        <p className="mt-1 text-xs text-slate-500">あなたの権限: {roleLabel[currentUserRole]}</p>
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">🏠 家族情報</h2>
+        <p className="mt-1 text-sm text-slate-300">世帯: <span className="font-bold text-white">{householdName || "-"}</span></p>
+        <p className="mt-1 text-xs text-slate-400">あなたの権限: <span className="font-semibold text-teal-300">{roleLabel[currentUserRole]}</span></p>
         <div className="mt-2">
-          <Link href="/invite/join" className="text-sm font-semibold text-slate-900 underline">
-            招待コードで家族に参加する
+          <Link href="/invite/join" className="text-xs font-bold text-teal-300 hover:underline">
+            + 招待コードで家族に参加する
           </Link>
         </div>
-        <div className="mt-3 space-y-2">
+        <div className="mt-4 space-y-2">
           {members.map((member) => (
-            <div key={member.id} className="rounded-lg border border-slate-200 p-3 text-sm">
-              <p className="font-medium text-slate-900">User ID: {member.userId}</p>
-              <div className="mt-2 flex items-center gap-2">
-                <span className="text-slate-600">Role: {member.role}</span>
+            <div key={member.id} className="rounded-xl border border-white/5 bg-slate-950/60 p-3 text-xs text-slate-300 flex items-center justify-between">
+              <p className="font-mono text-white">User ID: {member.userId}</p>
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-slate-800 px-2 py-0.5 text-xs text-slate-300 font-semibold">{member.role}</span>
                 {isOwner ? (
                   <>
                     <button
                       type="button"
-                      className="rounded bg-slate-900 px-2 py-1 text-xs font-semibold text-white"
+                      className="rounded-lg bg-teal-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-teal-500"
                       onClick={() => void handleRoleChange(member.id, "OWNER")}
                     >
                       OWNER
                     </button>
                     <button
                       type="button"
-                      className="rounded border border-slate-300 px-2 py-1 text-xs font-semibold text-slate-800"
+                      className="rounded-lg border border-white/10 bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-300 hover:bg-slate-700"
                       onClick={() => void handleRoleChange(member.id, "FAMILY")}
                     >
                       FAMILY
@@ -507,11 +507,11 @@ export function ClientSettings({
           ))}
         </div>
         {canRecoverOwner ? (
-          <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
-            <p className="text-xs text-amber-800">世帯にOWNERがいないため、最古メンバーとして復旧できます。</p>
+          <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-950/40 p-3">
+            <p className="text-xs text-amber-200">世帯にOWNERがいないため、最古メンバーとして復旧できます。</p>
             <button
               type="button"
-              className="mt-2 rounded bg-amber-700 px-3 py-1 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-2 rounded-lg bg-amber-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-500 disabled:opacity-60"
               onClick={() => void handleRecoverOwner()}
               disabled={isRecoveringOwner}
             >
@@ -522,9 +522,9 @@ export function ClientSettings({
       </section>
       {isOwner ? <HouseholdInviteCodeCard /> : null}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">課金プラン</h2>
-        <p className="mt-1 text-sm text-slate-600">
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">💳 課金プラン</h2>
+        <p className="mt-1 text-sm text-slate-400">
           {annualPlanAvailable 
             ? "30日無料トライアル、その後月額680円または年額7,800円（Stripe定期課金）"
             : "30日無料トライアル、その後月額680円（Stripe定期課金）"
@@ -532,99 +532,99 @@ export function ClientSettings({
         </p>
         
         {billing?.subscriptionStatus === "INCOMPLETE" && annualPlanAvailable && (
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
             <div 
               className={`rounded-xl border-2 p-4 cursor-pointer transition ${
                 selectedPlan === "monthly" 
-                  ? "border-emerald-500 bg-emerald-50" 
-                  : "border-slate-200 bg-slate-50 hover:border-slate-300"
+                  ? "border-teal-400 bg-teal-950/40 text-white" 
+                  : "border-white/10 bg-slate-950/60 text-slate-300 hover:border-slate-700"
               }`}
               onClick={() => setSelectedPlan("monthly")}
             >
               <div className="flex items-center justify-between">
-                <h3 className="font-bold text-slate-900">月払い</h3>
-                <span className="text-2xl font-bold text-slate-900">¥680<span className="text-sm font-normal text-slate-600">/月</span></span>
+                <h3 className="font-bold text-white">月払い</h3>
+                <span className="text-2xl font-bold text-teal-300">¥680<span className="text-sm font-normal text-slate-400">/月</span></span>
               </div>
-              <p className="mt-2 text-sm text-slate-600">月額コースで柔軟に利用</p>
+              <p className="mt-2 text-xs text-slate-400">月額コースで柔軟に利用</p>
             </div>
             
             <div 
               className={`rounded-xl border-2 p-4 cursor-pointer transition ${
                 selectedPlan === "annual" 
-                  ? "border-emerald-500 bg-emerald-50" 
-                  : "border-slate-200 bg-slate-50 hover:border-slate-300"
+                  ? "border-teal-400 bg-teal-950/40 text-white" 
+                  : "border-white/10 bg-slate-950/60 text-slate-300 hover:border-slate-700"
               }`}
               onClick={() => setSelectedPlan("annual")}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-slate-900">年払い</h3>
-                  <span className="inline-flex rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white mt-1">4%お得</span>
+                  <h3 className="font-bold text-white">年払い</h3>
+                  <span className="inline-flex rounded-full bg-red-500/20 border border-red-500/40 px-2 py-0.5 text-xs font-semibold text-red-300 mt-1">4%お得</span>
                 </div>
-                <span className="text-2xl font-bold text-slate-900">¥7,800<span className="text-sm font-normal text-slate-600">/年</span></span>
+                <span className="text-2xl font-bold text-teal-300">¥7,800<span className="text-sm font-normal text-slate-400">/年</span></span>
               </div>
-              <p className="mt-2 text-sm text-slate-600">年額7,800円（¥650/月相当）</p>
+              <p className="mt-2 text-xs text-slate-400">年額7,800円（¥650/月相当）</p>
             </div>
           </div>
         )}
         {billing?.subscriptionStatus === "INCOMPLETE" && (
-          <div className="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
-            <h3 className="text-sm font-bold text-indigo-900 flex items-center gap-1">
+          <div className="mt-4 rounded-xl border border-teal-500/30 bg-teal-950/30 p-4">
+            <h3 className="text-sm font-bold text-teal-300 flex items-center gap-1">
               ✨ プレミアムプランの機能一覧
             </h3>
-            <ul className="mt-3 space-y-2 text-xs text-indigo-950">
+            <ul className="mt-3 space-y-2 text-xs text-slate-300">
               <li className="flex items-start gap-2">
-                <span className="text-indigo-600">✓</span>
+                <span className="text-teal-400 font-bold">✓</span>
                 <div>
-                  <strong>緊急時の確実な情報共有:</strong>
-                  <p className="text-slate-600">持病やアレルギー、緊急連絡先をワンタップで開示できるQRコード機能。</p>
+                  <strong className="text-white">緊急時の確実な情報共有:</strong>
+                  <p className="text-slate-400">持病やアレルギー、緊急連絡先をワンタップで開示できるQRコード機能。</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-indigo-600">✓</span>
+                <span className="text-teal-400 font-bold">✓</span>
                 <div>
-                  <strong>家族間でのリアルタイム同期:</strong>
-                  <p className="text-slate-600">投薬履歴やお世話の記録を家族全員で同期・共同管理。</p>
+                  <strong className="text-white">家族間でのリアルタイム同期:</strong>
+                  <p className="text-slate-400">投薬履歴やお世話の記録を家族全員で同期・共同管理。</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-indigo-600">✓</span>
+                <span className="text-teal-400 font-bold">✓</span>
                 <div>
-                  <strong>リマインダー通知設定:</strong>
-                  <p className="text-slate-600">LINEやメール、Webフックでワクチンの更新予定や投薬期限をお知らせ。</p>
+                  <strong className="text-white">リマインダー通知設定:</strong>
+                  <p className="text-slate-400">LINEやメール、Webフックでワクチンの更新予定や投薬期限をお知らせ。</p>
                 </div>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-indigo-600">✓</span>
+                <span className="text-teal-400 font-bold">✓</span>
                 <div>
-                  <strong>データ出力（CSV/PDF）:</strong>
-                  <p className="text-slate-600">かかりつけ医への相談やバックアップに便利なデータエクスポート。</p>
+                  <strong className="text-white">データ出力（CSV/PDF）:</strong>
+                  <p className="text-slate-400">かかりつけ医への相談やバックアップに便利なデータエクスポート。</p>
                 </div>
               </li>
             </ul>
           </div>
         )}
         
-        <div className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+        <div className="mt-4 rounded-xl border border-white/10 bg-slate-950/60 p-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex rounded-full bg-slate-900 px-2 py-1 text-xs font-semibold text-white">
+            <span className="inline-flex rounded-full bg-teal-500/20 border border-teal-400/30 px-3 py-1 text-xs font-bold text-teal-300">
               {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).badgeLabel}
             </span>
-            <p className="text-xs font-medium text-slate-700">
+            <p className="text-xs font-semibold text-slate-300">
               {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).statusLabel}
             </p>
           </div>
-          <p className="mt-3 text-base font-bold text-slate-900">
+          <p className="mt-3 text-base font-bold text-white">
             {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).headline}
           </p>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="mt-1 text-sm text-slate-300">
             {(billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).detail}
           </p>
-          <p className="mt-3 text-xs text-slate-500">失効時も安全情報は閲覧できます。再開で全機能が復帰します。</p>
-          <div className="mt-3">
+          <p className="mt-3 text-xs text-slate-400">失効時も安全情報は閲覧できます。再開で全機能が復帰します。</p>
+          <div className="mt-4">
             <button
               type="button"
-              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg hover:bg-teal-500 disabled:opacity-60"
               onClick={() => {
                 const action = (billing ? BILLING_ACTION_COPY[billing.subscriptionStatus] : DEFAULT_BILLING_COPY).ctaAction;
                 if (action === "portal") {
@@ -641,54 +641,54 @@ export function ClientSettings({
             </button>
           </div>
         </div>
-        <div className="mt-3 rounded-lg border border-slate-200 p-3">
-          <p className="text-xs text-slate-600">
-            トライアル終了: <span className="font-medium text-slate-800">{formatBillingDate(billing?.trialEndsAt ?? null)}</span>
+        <div className="mt-3 rounded-xl border border-white/5 bg-slate-950/40 p-3">
+          <p className="text-xs text-slate-400">
+            トライアル終了: <span className="font-semibold text-slate-200">{formatBillingDate(billing?.trialEndsAt ?? null)}</span>
           </p>
-          <p className="mt-1 text-xs text-slate-600">
-            次回更新日: <span className="font-medium text-slate-800">{formatBillingDate(billing?.currentPeriodEnd ?? null)}</span>
+          <p className="mt-1 text-xs text-slate-400">
+            次回更新日: <span className="font-semibold text-slate-200">{formatBillingDate(billing?.currentPeriodEnd ?? null)}</span>
           </p>
           <p className="mt-1 text-xs text-slate-500">システム状態コード: {billing?.subscriptionStatus ?? "INCOMPLETE"}</p>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">ログイン情報</h2>
-        <p className="mt-1 text-sm text-slate-600">メール: {account?.email ?? "-"}</p>
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">🔑 ログイン情報</h2>
+        <p className="mt-1 text-sm text-slate-400">メール: <span className="text-slate-200 font-semibold">{account?.email ?? "-"}</span></p>
 
-        <form className="mt-3 space-y-3" onSubmit={handleSubmitAccount}>
+        <form className="mt-4 space-y-4" onSubmit={handleSubmitAccount}>
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-700">表示名</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-300">表示名</label>
             <input
               value={displayName}
               onChange={(event) => setDisplayName(event.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
               placeholder="表示名"
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-medium text-slate-700">新しいパスワード</label>
+            <label className="mb-1 block text-xs font-semibold text-slate-300">新しいパスワード</label>
             <input
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
               placeholder="8文字以上"
             />
           </div>
-          <button className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white" type="submit">
+          <button className="rounded-xl bg-teal-600 px-5 py-2 text-sm font-semibold text-white shadow-md hover:bg-teal-500" type="submit">
             更新する
           </button>
         </form>
       </section>
 
-      <section className="rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-red-900">アカウント削除（退会）</h2>
-        <p className="mt-1 text-sm text-red-700">
+      <section className="rounded-2xl border border-red-500/30 bg-red-950/30 p-5 shadow-xl backdrop-blur-md">
+        <h2 className="text-lg font-bold text-red-300 flex items-center gap-2">⚠️ アカウント削除（退会）</h2>
+        <p className="mt-1 text-sm text-red-200">
           アカウントを削除すると、全てのデータが完全に消去されます。この操作は取り消せません。
         </p>
         <button
-          className="mt-3 rounded-lg border border-red-300 bg-red-100 px-4 py-2 text-sm font-semibold text-red-800 disabled:cursor-not-allowed disabled:opacity-60"
+          className="mt-4 rounded-xl border border-red-500/40 bg-red-600/30 px-5 py-2 text-sm font-semibold text-red-200 hover:bg-red-600/50 disabled:opacity-60"
           onClick={() => void handleDeleteAccount()}
           disabled={isDeletingAccount}
         >
@@ -696,77 +696,83 @@ export function ClientSettings({
         </button>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">飼い主情報</h2>
-        <p className="mt-1 text-sm text-slate-600">世帯OWNERの連絡先情報を管理します。</p>
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">👤 飼い主情報</h2>
+        <p className="mt-1 text-sm text-slate-400">世帯OWNERの連絡先情報を管理します。</p>
         {ownerProfile ? (
-          <form className="mt-3 space-y-3" onSubmit={handleOwnerProfileSubmit}>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-slate-700">氏名</label>
-              <input
-                value={ownerProfile.fullName ?? ""}
-                onChange={(event) => setOwnerProfile({ ...ownerProfile, fullName: event.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2"
-                placeholder="山田 花子"
-              />
+          <form className="mt-4 space-y-4" onSubmit={handleOwnerProfileSubmit}>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-300">氏名</label>
+                <input
+                  value={ownerProfile.fullName ?? ""}
+                  onChange={(event) => setOwnerProfile({ ...ownerProfile, fullName: event.target.value })}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                  placeholder="山田 花子"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-300">電話番号</label>
+                <input
+                  value={ownerProfile.phone ?? ""}
+                  onChange={(event) => setOwnerProfile({ ...ownerProfile, phone: event.target.value })}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                  placeholder="090-1234-5678"
+                />
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-300">メール</label>
+                <input
+                  value={ownerProfile.email ?? ""}
+                  onChange={(event) => setOwnerProfile({ ...ownerProfile, email: event.target.value })}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                  placeholder="owner@example.com"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-300">郵便番号</label>
+                <input
+                  value={ownerProfile.postalCode ?? ""}
+                  onChange={(event) => setOwnerProfile({ ...ownerProfile, postalCode: event.target.value })}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                  placeholder="123-4567"
+                />
+              </div>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-300">住所1</label>
+                <input
+                  value={ownerProfile.addressLine1 ?? ""}
+                  onChange={(event) => setOwnerProfile({ ...ownerProfile, addressLine1: event.target.value })}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                  placeholder="東京都渋谷区..."
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-slate-300">住所2</label>
+                <input
+                  value={ownerProfile.addressLine2 ?? ""}
+                  onChange={(event) => setOwnerProfile({ ...ownerProfile, addressLine2: event.target.value })}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                  placeholder="建物名・部屋番号"
+                />
+              </div>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-slate-700">電話番号</label>
-              <input
-                value={ownerProfile.phone ?? ""}
-                onChange={(event) => setOwnerProfile({ ...ownerProfile, phone: event.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2"
-                placeholder="090-1234-5678"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-slate-700">メール</label>
-              <input
-                value={ownerProfile.email ?? ""}
-                onChange={(event) => setOwnerProfile({ ...ownerProfile, email: event.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2"
-                placeholder="owner@example.com"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-slate-700">郵便番号</label>
-              <input
-                value={ownerProfile.postalCode ?? ""}
-                onChange={(event) => setOwnerProfile({ ...ownerProfile, postalCode: event.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2"
-                placeholder="123-4567"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-slate-700">住所1</label>
-              <input
-                value={ownerProfile.addressLine1 ?? ""}
-                onChange={(event) => setOwnerProfile({ ...ownerProfile, addressLine1: event.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2"
-                placeholder="東京都渋谷区..."
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-slate-700">住所2</label>
-              <input
-                value={ownerProfile.addressLine2 ?? ""}
-                onChange={(event) => setOwnerProfile({ ...ownerProfile, addressLine2: event.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2"
-                placeholder="建物名・部屋番号"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-slate-700">備考</label>
+              <label className="mb-1 block text-xs font-semibold text-slate-300">備考</label>
               <textarea
                 value={ownerProfile.note ?? ""}
                 onChange={(event) => setOwnerProfile({ ...ownerProfile, note: event.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+                className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
                 placeholder="任意の備考"
                 rows={3}
               />
             </div>
             <button
-              className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-xl bg-teal-600 px-5 py-2 text-sm font-semibold text-white shadow-md hover:bg-teal-500 disabled:opacity-60"
               type="submit"
               disabled={isOwnerProfileSaving}
             >
@@ -774,99 +780,99 @@ export function ClientSettings({
             </button>
           </form>
         ) : (
-          <p className="mt-3 text-sm text-slate-600">飼い主情報が登録されていません。</p>
+          <p className="mt-3 text-sm text-slate-400">飼い主情報が登録されていません。</p>
         )}
       </section>
 
       {isOwner && ownerDisplaySettings ? (
-        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h2 className="text-lg font-bold text-slate-900">表示設定</h2>
-          <p className="mt-1 text-sm text-slate-600">ペット詳細ページの表示項目を制御します。</p>
-          <div className="mt-3 space-y-2">
-            <label className="flex items-center gap-2">
+        <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">⚙️ 表示設定</h2>
+          <p className="mt-1 text-sm text-slate-400">ペット詳細ページの表示項目を制御します。</p>
+          <div className="mt-4 grid gap-3 md:grid-cols-2 text-slate-200">
+            <label className="flex items-center gap-3 rounded-xl border border-white/5 bg-slate-950/60 p-3 hover:bg-slate-950">
               <input
                 type="checkbox"
                 checked={ownerDisplaySettings.showMedicationCard}
                 onChange={(event) => void handleToggleDisplaySetting("showMedicationCard", event.target.checked)}
                 disabled={isDisplaySettingsSaving}
-                className="rounded border-slate-300"
+                className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-400"
               />
-              <span className="text-sm text-slate-700">投薬カードを表示</span>
+              <span className="text-xs font-semibold">投薬カードを表示</span>
             </label>
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-3 rounded-xl border border-white/5 bg-slate-950/60 p-3 hover:bg-slate-950">
               <input
                 type="checkbox"
                 checked={ownerDisplaySettings.showVaccinationCard}
                 onChange={(event) => void handleToggleDisplaySetting("showVaccinationCard", event.target.checked)}
                 disabled={isDisplaySettingsSaving}
-                className="rounded border-slate-300"
+                className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-400"
               />
-              <span className="text-sm text-slate-700">ワクチンカードを表示</span>
+              <span className="text-xs font-semibold">ワクチンカードを表示</span>
             </label>
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-3 rounded-xl border border-white/5 bg-slate-950/60 p-3 hover:bg-slate-950">
               <input
                 type="checkbox"
                 checked={ownerDisplaySettings.showHealthCard}
                 onChange={(event) => void handleToggleDisplaySetting("showHealthCard", event.target.checked)}
                 disabled={isDisplaySettingsSaving}
-                className="rounded border-slate-300"
+                className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-400"
               />
-              <span className="text-sm text-slate-700">健康記録カードを表示</span>
+              <span className="text-xs font-semibold">健康記録カードを表示</span>
             </label>
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-3 rounded-xl border border-white/5 bg-slate-950/60 p-3 hover:bg-slate-950">
               <input
                 type="checkbox"
                 checked={ownerDisplaySettings.showMedicalRecordCard}
                 onChange={(event) => void handleToggleDisplaySetting("showMedicalRecordCard", event.target.checked)}
                 disabled={isDisplaySettingsSaving}
-                className="rounded border-slate-300"
+                className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-400"
               />
-              <span className="text-sm text-slate-700">医療記録カードを表示</span>
+              <span className="text-xs font-semibold">医療記録カードを表示</span>
             </label>
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-3 rounded-xl border border-white/5 bg-slate-950/60 p-3 hover:bg-slate-950">
               <input
                 type="checkbox"
                 checked={ownerDisplaySettings.showEmergencyMedicationSummary}
                 onChange={(event) => void handleToggleDisplaySetting("showEmergencyMedicationSummary", event.target.checked)}
                 disabled={isDisplaySettingsSaving}
-                className="rounded border-slate-300"
+                className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-400"
               />
-              <span className="text-sm text-slate-700">緊急画面：投薬サマリーを表示</span>
+              <span className="text-xs font-semibold">緊急画面：投薬サマリーを表示</span>
             </label>
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-3 rounded-xl border border-white/5 bg-slate-950/60 p-3 hover:bg-slate-950">
               <input
                 type="checkbox"
                 checked={ownerDisplaySettings.showEmergencyVaccinationSummary}
                 onChange={(event) => void handleToggleDisplaySetting("showEmergencyVaccinationSummary", event.target.checked)}
                 disabled={isDisplaySettingsSaving}
-                className="rounded border-slate-300"
+                className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-400"
               />
-              <span className="text-sm text-slate-700">緊急画面：ワクチンサマリーを表示</span>
+              <span className="text-xs font-semibold">緊急画面：ワクチンサマリーを表示</span>
             </label>
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-3 rounded-xl border border-white/5 bg-slate-950/60 p-3 hover:bg-slate-950 md:col-span-2">
               <input
                 type="checkbox"
                 checked={ownerDisplaySettings.showEmergencyMedicalRecordSummary}
                 onChange={(event) => void handleToggleDisplaySetting("showEmergencyMedicalRecordSummary", event.target.checked)}
                 disabled={isDisplaySettingsSaving}
-                className="rounded border-slate-300"
+                className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-400"
               />
-              <span className="text-sm text-slate-700">緊急画面：医療記録サマリーを表示</span>
+              <span className="text-xs font-semibold">緊急画面：医療記録サマリーを表示</span>
             </label>
           </div>
         </section>
       ) : null}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">お友達紹介プログラム</h2>
-        <p className="mt-1 text-sm text-slate-600">
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">🎁 お友達紹介プログラム</h2>
+        <p className="mt-1 text-sm text-slate-400">
           紹介リンクを通してお友達がプレミアムプランに登録すると、あなたとお友達の両方に1ヶ月分無料クレジットがプレゼントされます。
         </p>
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-4 flex items-center gap-2">
           <input
             readOnly
             value={typeof window !== "undefined" ? `${window.location.origin}/signup?ref=${account?.userId ?? ""}` : ""}
-            className="flex-1 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-xs text-slate-600 focus:outline-none"
+            className="flex-1 rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-xs text-teal-300 focus:outline-none"
           />
           <button
             type="button"
@@ -875,49 +881,49 @@ export function ClientSettings({
               void navigator.clipboard.writeText(url);
               alert("紹介リンクをクリップボードにコピーしました！");
             }}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
+            className="rounded-xl bg-teal-600 px-4 py-2 text-xs font-semibold text-white shadow-md hover:bg-teal-500"
           >
             リンクをコピー
           </button>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">お問い合わせ</h2>
-        <p className="mt-1 text-sm text-slate-600">ご質問・ご要望・不具合のご報告はこちらからお送りいただけます。</p>
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">💬 お問い合わせ</h2>
+        <p className="mt-1 text-sm text-slate-400">ご質問・ご要望・不具合のご報告はこちらからお送りいただけます。</p>
         <Link
           href="/support"
-          className="mt-3 inline-block rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-slate-200"
+          className="mt-4 inline-block rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-teal-500"
         >
           お問い合わせフォームを開く
         </Link>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">ログアウト</h2>
-        <p className="mt-1 text-sm text-slate-600">現在のセッションを終了します。</p>
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">🚪 ログアウト</h2>
+        <p className="mt-1 text-sm text-slate-400">現在のセッションを終了します。</p>
         <button
-          className="mt-3 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800"
+          className="mt-4 rounded-xl border border-white/10 bg-slate-800 px-5 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-700"
           onClick={() => void handleLogout()}
         >
           ログアウト
         </button>
       </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <h2 className="text-lg font-bold text-slate-900">法務ドキュメント</h2>
-        <p className="mt-1 text-sm text-slate-600">サービス利用に関する法務情報</p>
-        <div className="mt-3 flex flex-wrap gap-4">
-          <Link href="/legal/terms" className="text-sm text-slate-600 hover:text-slate-900 hover:underline">
+      <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+        <h2 className="text-lg font-bold text-white flex items-center gap-2">📜 法務ドキュメント</h2>
+        <p className="mt-1 text-sm text-slate-400">サービス利用に関する法務情報</p>
+        <div className="mt-4 flex flex-wrap gap-4">
+          <Link href="/legal/terms" className="text-xs text-slate-300 hover:text-teal-300 hover:underline">
             利用規約
           </Link>
-          <Link href="/legal/privacy" className="text-sm text-slate-600 hover:text-slate-900 hover:underline">
+          <Link href="/legal/privacy" className="text-xs text-slate-300 hover:text-teal-300 hover:underline">
             プライバシーポリシー
           </Link>
-          <Link href="/legal/commercial" className="text-sm text-slate-600 hover:text-slate-900 hover:underline">
+          <Link href="/legal/commercial" className="text-xs text-slate-300 hover:text-teal-300 hover:underline">
             特定商取引法表記
           </Link>
-          <Link href="/legal/cookie" className="text-sm text-slate-600 hover:text-slate-900 hover:underline">
+          <Link href="/legal/cookie" className="text-xs text-slate-300 hover:text-teal-300 hover:underline">
             Cookieポリシー
           </Link>
         </div>
