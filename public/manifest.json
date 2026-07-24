@@ -4,8 +4,8 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/pets",
-  "name": "動物の救急手帳",
-  "short_name": "救急手帳",
+  "name": "AniLink",
+  "short_name": "AniLink",
   "description": "緊急時にペットの命を守るための情報基盤",
   "icons": [
     {

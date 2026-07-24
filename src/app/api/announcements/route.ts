@@ -9,7 +9,7 @@ export async function GET() {
         {
           id: "demo-announcement-1",
           title: "📢 【システム通知】定期メンテナンス完了のお知らせ",
-          body: "いつも「動物救急手帳」をご利用いただきありがとうございます。本日未明の定期システムアップデートおよびデータベース最適化が正常に完了いたしました。",
+          body: "いつも「AniLink」をご利用いただきありがとうございます。本日未明の定期システムアップデートおよびデータベース最適化が正常に完了いたしました。",
           isPublished: true,
           publishedAt: new Date(Date.now() - 3600000).toISOString(),
           expiresAt: null,

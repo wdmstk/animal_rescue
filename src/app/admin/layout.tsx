@@ -23,7 +23,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               <span className="inline-flex rounded-full bg-blue-500/20 border border-blue-400/40 px-2.5 py-0.5 text-[10px] font-bold text-blue-300 tracking-wider">
                 ADMIN CONSOLE
               </span>
-              <h1 className="mt-2 text-base font-bold text-white">動物救急手帳 管理</h1>
+              <h1 className="mt-2 text-base font-bold text-white">AniLink 管理</h1>
             </div>
             <nav className="p-3">
               <ul className="space-y-1">

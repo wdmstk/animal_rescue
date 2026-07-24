@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-322` 法的情報ページUI/UX配色視認性改善＆アプリ名「AniLink」一括変更
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -168,6 +169,18 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 法的情報ページUI/UX配色視認性改善＆アプリ名「AniLink」一括変更
+- Task ID: `TASK-322`
+- GitHub Issue: #272
+- ブランチ: `feat/TASK-322-anilink-brand-and-legal-ui`
+- ステータス: `in_progress`
+- 概要: 利用規約・プライバシーポリシー・特定商取引法表記・Cookieポリシー各ページの白背景白文字不具合を解消し高コントラスト・ダークテーマへ刷新するとともに、サイト全体のアプリ名称表記を「AniLink」に更新。
+- 依存関係: なし
+- 完了条件:
+  - 法的4ページ (/legal/terms, /legal/privacy, /legal/commercial, /legal/cookie) の視認性・配色デザイン改善
+  - アプリ名称「AniLink」の一括適用
+  - `npm run lint`, `npx vitest run`, `npm run check:brand` 全緑確認
 
 ### 設計基盤ドキュメント群（docs/foundation）の復元・再追加
 - Task ID: `TASK-320`

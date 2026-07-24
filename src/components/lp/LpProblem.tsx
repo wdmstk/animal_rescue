@@ -22,7 +22,7 @@ const problems = [
 ];
 
 const solution = {
-  title: "「動物の救急手帳」が解決します",
+  title: "「AniLink」が解決します",
   desc: "すべての医療情報を一箇所に。QRコード一枚で、誰でも・どこでも・すぐに必要な情報を届けられます。",
 };
 
