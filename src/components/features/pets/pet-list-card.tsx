@@ -25,6 +25,7 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLoadingQr, setIsLoadingQr] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [qrToken, setQrToken] = useState<string | null>(null);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
   const [qrImage, setQrImage] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -72,7 +73,8 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
         throw new Error(message);
       }
 
-      const data = (await response.json()) as { data: { publicUrl: string; image: string } };
+      const data = (await response.json()) as { data: { token?: string; publicUrl: string; image: string } };
+      setQrToken(data.data.token ?? null);
       setQrUrl(data.data.publicUrl);
       setQrImage(data.data.image);
     } catch (unknownError) {
@@ -83,6 +85,7 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
   };
 
   const closeQrModal = () => {
+    setQrToken(null);
     setQrUrl(null);
     setQrImage(null);
   };
@@ -169,7 +172,7 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
               このQRコードをスキャンすると緊急情報が表示されます
             </p>
             <a
-              href={qrUrl}
+              href={qrToken ? `/e/${qrToken}` : qrUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 block w-full rounded-lg bg-slate-900 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent min-h-[44px]"

@@ -11,6 +11,12 @@ const petIdParamSchema = z.object({
 });
 
 const resolvePublicBaseUrl = (request: Request) => {
+  const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+  if (host) {
+    const proto = request.headers.get("x-forwarded-proto") || "https";
+    return `${proto}://${host}`;
+  }
+
   const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
   if (configured) {
     return configured.replace(/\/+$/, "");
