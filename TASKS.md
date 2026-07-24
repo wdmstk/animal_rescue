@@ -23,8 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-324` 緊急QR公開URL動的ホスト判定修復（リクエストヘッダー優先＆相対パス統一）
-2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -33,6 +32,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-324` 緊急QR公開URL動的ホスト判定修復（リクエストヘッダー優先＆相対パス統一）
 1. `TASK-323` ペット一覧の緊急QRモーダル表示不具合修正（qr-image APIデータURL連携）
 1. `TASK-322` 法的情報ページUI/UX配色視認性改善＆アプリ名「AniLink」一括変更
 1. `TASK-320` 設計基盤ドキュメント群（docs/foundation）の復元・再追加
@@ -1809,7 +1809,7 @@ Development Task List
 
 ## TASK-324: 緊急QR公開URL動的ホスト判定修復（リクエストヘッダー優先＆相対パス統一）
 
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: QR公開URL生成処理においてリクエストヘッダー（x-forwarded-host/host）を優先利用し、モーダルリンクを相対パス`/e/[token]`に統一する
 - Issue: #276
 - 依存関係: なし
