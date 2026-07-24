@@ -1,9 +1,9 @@
 # COMPONENT_LIBRARY.md
-Version: 1.1  
+Version: 1.3  
 Status: Official  
 Author: さけLab  
 Parent Documents:  
-- DESIGN_SYSTEM.md (v2.1)  
+- DESIGN_SYSTEM.md (v2.1.3)  
 - FOUNDATION.md  
 - BRAND_GUIDELINES.md  
 - PRODUCT_PRINCIPLES.md
@@ -95,6 +95,35 @@ Parent Documents:
 4. **ユーザーテスト要件（User Testing Requirements）**:
    - 主要な支援技術（スクリーンリーダー: NVDA / VoiceOver）を使用した音声読み上げテストを実施し、情報漏れや誤読がないこと。
    - キーボードのみでの操作テストを開発サイクル内およびCI環境で行い、マウス/タッチ操作なしで全機能が完了できること。
+
+---
+
+## 2.z ドメイン拡張設計規約 (Domain Extension Schema)
+将来的に動物分野から「人・医療・介護・防災・教育」等の別ドメインへサービスを展開する際、本ライブラリのUIコンポーネント構造を崩さずに再利用するための抽象化規約を定義する。
+
+1. **エンティティ名の一般化プロパティマップ**:
+   - コンポーネント内部の識別子・ラベルは特定ドメインの固定名（`petName`等）に依存せず、基基盤インターフェースとして `subjectName`（対象名）、`primaryOwner`（主要管理責任者）、`medicalContext`（専門コンテキスト）の共通型構造を設ける。
+2. **ドメイン別トーン切り替えインターフェース**:
+   - 各ドメインの性質（例: 防災＝即時性と視認性優先、医療＝データ正確性優先）に応じ、`domainContext="pet | human_medical | disaster_prevention"` プロパティをコンポーネント最上位へ注入可能とし、アクセシビリティ要件やCalm Score基準値を自動最適化する。
+
+---
+
+## 2.w コンポーネントPropsインターフェース標準規約 (Props Interface Standards)
+デザイン仕様からWeb / モバイル（React / TypeScript）への実装ハンドオフ時の統一規約を定義する。
+
+```typescript
+// すべてのUIコンポーネントが継承すべき共通型基盤
+export interface BaseComponentProps {
+  /** オプションのカスタムCSSクラス名 */
+  className?: string;
+  /** アクセシビリティ用ラベル (視覚的テキストがないアイコンボタン等で必須) */
+  ariaLabel?: string;
+  /** 自動E2EテストおよびQA用の識別ID */
+  dataTestId?: string;
+  /** ブランド感情スコア要件を満たす表現モード (初期値: standard) */
+  emotionMode?: 'calm' | 'warm' | 'trust' | 'standard';
+}
+```
 
 ---
 
@@ -726,6 +755,7 @@ Parent Documents:
 | 1.0 | 2026-07-22 | Official Release: COMPONENT_LIBRARY.md Version 1.0（DESIGN_SYSTEM.md v2.1 に準拠） |
 | 1.1 | 2026-07-22 | Add Component Color Matrix, Offline Conflict Resolution, and Accessibility Acceptance Criteria |
 | 1.2 | 2026-07-22 | Integrate Brand Tone and Calm Score constraints for components |
+| 1.3 | 2026-07-24 | 100点品質化改訂：他領域展開のためのドメイン拡張設計規約(2.z)およびPropsインターフェース標準規約(2.w)を追加 |
 
 ---
 

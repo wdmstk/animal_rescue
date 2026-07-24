@@ -16,7 +16,7 @@ export function LpOverview() {
             <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl">
               <Image
                 src="/lp-dashboard.jpg"
-                alt="動物の救急手帳 - ペット健康管理ダッシュボードのモックアップ"
+                alt="AniLink - ペット健康管理ダッシュボードのモックアップ"
                 width={500}
                 height={667}
                 className="w-full h-auto"
@@ -31,7 +31,7 @@ export function LpOverview() {
                 サービス概要
               </p>
               <h2 className="text-3xl sm:text-4xl font-bold text-white leading-tight">
-                「動物の救急手帳」は、
+                「AniLink」は、
                 <br />
                 <span className="bg-gradient-to-r from-blue-400 to-violet-400 bg-clip-text text-transparent">
                   命を守る情報基盤

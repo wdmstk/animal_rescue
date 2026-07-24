@@ -24,7 +24,7 @@ export function LpHeader() {
               <span className="text-white text-sm font-bold">🐾</span>
             </div>
             <span className="text-white font-semibold text-sm">
-              動物の救急手帳
+              AniLink
             </span>
           </Link>
 

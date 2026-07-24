@@ -10,7 +10,7 @@ const footerLinks = {
   法的情報: [
     { href: "/legal/terms", label: "利用規約" },
     { href: "/legal/privacy", label: "プライバシーポリシー" },
-    { href: "/legal/tokusho", label: "特定商取引法に基づく表記" },
+    { href: "/legal/commercial", label: "特定商取引法に基づく表記" },
     { href: "/legal/cookie", label: "Cookieポリシー" },
   ],
   サポート: [
@@ -30,7 +30,7 @@ export function LpFooter() {
                 <span className="text-white text-base">🐾</span>
               </div>
               <span className="text-white font-semibold">
-                動物の救急手帳
+                AniLink
               </span>
             </Link>
             <p className="text-sm text-gray-500 leading-relaxed">
@@ -64,7 +64,7 @@ export function LpFooter() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-600">
-            © 2026 動物の救急手帳. All rights reserved.
+            © 2026 AniLink. All rights reserved.
           </p>
           <p className="text-xs text-gray-600">
             本サービスは医療情報の記録・共有ツールであり、診断・治療を提供するものではありません。

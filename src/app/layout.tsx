@@ -4,8 +4,8 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ServiceWorkerRegister } from "@/components/providers/service-worker-provider";
 
 export const metadata: Metadata = {
-  title: "動物の救急手帳",
-  description: "Emergency Pet Pass"
+  title: "AniLink",
+  description: "ペットの命を守る医療情報・救急管理プラットフォーム - AniLink"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

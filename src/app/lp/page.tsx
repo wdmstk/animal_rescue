@@ -15,9 +15,9 @@ import { LpFooter } from "@/components/lp/LpFooter";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
 
 export const metadata: Metadata = {
-  title: "動物の救急手帳 | ペットの緊急医療情報をQRコードで瞬時に共有",
+  title: "AniLink | ペットの緊急医療情報をQRコードで瞬時に共有",
   description:
-    "ペットの持病・アレルギー・投薬・ワクチン・病院情報を一元管理。緊急時にQRコード一枚で獣医師に情報共有。30日間無料・家族全員で使えるペット医療管理SaaS。",
+    "ペットの持病・アレルギー・投薬・ワクチン・病院情報を一元管理。緊急時にQRコード一枚で獣医師に情報共有。30日間無料・家族全員で使えるペット医療管理SaaS AniLink。",
   keywords: [
     "ペット 緊急 QRコード",
     "ペット 健康管理 アプリ",
@@ -28,29 +28,30 @@ export const metadata: Metadata = {
     "ペット 緊急医療",
     "ペット 投薬管理",
     "ペット ワクチン管理",
+    "AniLink",
     "動物の救急手帳",
   ],
-  authors: [{ name: "動物の救急手帳" }],
+  authors: [{ name: "AniLink" }],
   openGraph: {
     type: "website",
     url: `${siteUrl}/lp`,
-    title: "動物の救急手帳 | QRコード一枚で、大切な命を守る情報基盤",
+    title: "AniLink | QRコード一枚で、大切な命を守る情報基盤",
     description:
       "ペットの緊急医療情報をQRコードで一瞬共有。家族全員で医療記録・投薬・ワクチンを一元管理。30日間無料・月額680円（税別）。",
-    siteName: "動物の救急手帳",
+    siteName: "AniLink",
     locale: "ja_JP",
     images: [
       {
         url: `${siteUrl}/lp-hero-qr.jpg`,
         width: 1200,
         height: 630,
-        alt: "動物の救急手帳 - ペット緊急QRコード管理サービス",
+        alt: "AniLink - ペット緊急QRコード管理サービス",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "動物の救急手帳 | QRコード一枚で、大切な命を守る情報基盤",
+    title: "AniLink | QRコード一枚で、大切な命を守る情報基盤",
     description:
       "ペットの緊急医療情報をQRコードで一瞬共有。30日間無料。",
     images: [`${siteUrl}/lp-hero-qr.jpg`],

@@ -77,7 +77,7 @@ export function LpDifference() {
             他サービスとの違い
           </p>
           <h2 className="text-3xl sm:text-4xl font-bold text-white">
-            なぜ「動物の救急手帳」なのか
+            なぜ「AniLink」なのか
           </h2>
           <p className="text-lg text-gray-400 max-w-2xl mx-auto">
             ペット手帳アプリとは根本的に違います。
@@ -94,7 +94,7 @@ export function LpDifference() {
               一般的なペット手帳アプリ
             </div>
             <div className="px-4 py-2 text-sm font-semibold text-blue-400">
-              動物の救急手帳
+              AniLink
             </div>
           </div>
 
