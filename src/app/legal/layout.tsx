@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,19 +13,12 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
       {/* Header */}
       <header className="relative z-10 border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl sticky top-0">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link href="/lp" className="flex items-center gap-2.5 group">
-            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-              <span className="text-white text-base">🐾</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-white font-bold tracking-tight text-base group-hover:text-blue-400 transition-colors">
-                AniLink
-              </span>
-              <span className="text-[10px] text-slate-400 -mt-1 font-medium">
-                法的情報ポータル
-              </span>
-            </div>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Logo href="/lp" width={135} />
+            <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-medium border border-slate-700">
+              法的情報ポータル
+            </span>
+          </div>
 
           <div className="flex items-center gap-3">
             <Link

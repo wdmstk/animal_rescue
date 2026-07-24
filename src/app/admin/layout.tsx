@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { requireAdminUser } from "@/lib/admin/require-admin";
+import { Logo } from "@/components/ui/logo";
 
 const navItems = [
   { href: "/admin/dashboard", label: "📊 ダッシュボード" },
@@ -19,11 +20,13 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         {/* Sidebar */}
         <aside className="sticky top-0 h-screen w-60 shrink-0 border-r border-white/10 bg-slate-900/90 backdrop-blur-md flex flex-col justify-between">
           <div>
-            <div className="border-b border-white/10 px-5 py-5 bg-gradient-to-r from-blue-900/30 to-indigo-900/30">
-              <span className="inline-flex rounded-full bg-blue-500/20 border border-blue-400/40 px-2.5 py-0.5 text-[10px] font-bold text-blue-300 tracking-wider">
-                ADMIN CONSOLE
-              </span>
-              <h1 className="mt-2 text-base font-bold text-white">AniLink 管理</h1>
+            <div className="border-b border-white/10 px-5 py-4 bg-gradient-to-r from-blue-900/30 to-indigo-900/30">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <Logo href="/admin/dashboard" width={115} />
+                <span className="inline-flex rounded-full bg-blue-500/20 border border-blue-400/40 px-2 py-0.5 text-[9px] font-bold text-blue-300 tracking-wider">
+                  ADMIN
+                </span>
+              </div>
             </div>
             <nav className="p-3">
               <ul className="space-y-1">

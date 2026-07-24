@@ -23,6 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
+1. `TASK-326` アプリ全体への公式ロゴ（AniLink_logo_20260725.png）の配置・デザイン適用
 1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
@@ -172,6 +173,19 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### アプリ全体への公式ロゴ（AniLink_logo_20260725.png）の配置・デザイン適用
+- Task ID: `TASK-326`
+- GitHub Issue: #280
+- ブランチ: `feat/TASK-326-logo-integration`
+- ステータス: `in_progress`
+- 依存関係: なし
+- 概要:
+  - ユーザーから提供された公式ロゴ (`AniLink_logo_20260725.png`) を `public/logo.png` / `public/anilink-logo.png` に配置
+  - 共通 `<Logo />` コンポーネントを新規実装し、ログイン画面・サインアップ画面・パスワードリセット・LPヘッダー/フッター・アプリダッシュボード・管理画面・法的情報ポータル・緊急公開画面に公式ロゴを配置
+- 受入条件:
+  - 公式ロゴが各画面で適切なサイズ・レスポンシブデザインで綺麗に表示される
+  - `npm run lint` および `npx vitest run` がエラーなく通る
 
 ### 飼い主情報編集不可の修復・基本情報編集画面の文字視認性向上・課金ポータル画面遷移修復
 - Task ID: `TASK-325`

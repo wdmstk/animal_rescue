@@ -1,5 +1,7 @@
 import { passwordResetRequestSchema } from "@/lib/validators/auth";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 
 const requestPasswordReset = async (formData: FormData) => {
   "use server";
@@ -45,8 +47,12 @@ export default async function ResetPasswordRequestPage({ searchParams }: ResetPa
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <form action={requestPasswordReset} className="w-full max-w-sm space-y-3 rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800">
-        <h1 className="text-xl font-bold dark:text-slate-100">パスワードリセット</h1>
+      <div className="w-full max-w-sm space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-2 text-center">
+          <Logo href="/lp" width={160} />
+        </div>
+        <form action={requestPasswordReset} className="w-full space-y-3 rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800">
+          <h1 className="text-xl font-bold dark:text-slate-100">パスワードリセット</h1>
         <p className="text-sm text-slate-600 dark:text-slate-400">
           登録したメールアドレスを入力してください。パスワード再設定用のリンクを送信します。
         </p>
@@ -82,7 +88,8 @@ export default async function ResetPasswordRequestPage({ searchParams }: ResetPa
             ログイン画面へ戻る
           </a>
         </p>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

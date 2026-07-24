@@ -3,6 +3,7 @@ import { signupInputSchema } from "@/lib/validators/auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LegalLinks } from "@/components/legal-links";
+import { Logo } from "@/components/ui/logo";
 
 const signup = async (formData: FormData) => {
   "use server";
@@ -25,9 +26,12 @@ const signup = async (formData: FormData) => {
 export default function SignupPage() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-3">
+      <div className="w-full max-w-sm space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-2 text-center">
+          <Logo href="/lp" width={160} />
+        </div>
         <form action={signup} className="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800">
-          <h1 className="text-xl font-bold dark:text-slate-100">新規登録</h1>
+          <h1 className="text-xl font-bold dark:text-slate-100 mb-4">新規登録</h1>
           <label htmlFor="email" className="sr-only">メールアドレス</label>
           <input
             id="email"

@@ -1,4 +1,5 @@
 import type { EmergencyViewPayload } from "@/types/domain";
+import { Logo } from "@/components/ui/logo";
 
 export function EmergencyPublicView({ token, data }: { token: string; data: EmergencyViewPayload }) {
   const vetPhoneHref = toTelHref(data.vetPhone);
@@ -15,14 +16,12 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
       {/* Decorative top gradient bar */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-500 via-rose-500 to-amber-500" />
 
-      {/* Header section with status badges */}
+      {/* Header section with status badges & Logo */}
       <div className="flex items-center justify-between gap-4 mt-2">
+        <Logo width={110} />
         <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 border border-red-500/30 px-3 py-1 text-xs font-bold text-red-400">
           <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
           救急モード
-        </span>
-        <span className="text-xs font-bold uppercase tracking-widest text-slate-500">
-          Emergency Pet Pass
         </span>
       </div>
 

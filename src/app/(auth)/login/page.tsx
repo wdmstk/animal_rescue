@@ -3,6 +3,7 @@ import { loginInputSchema } from "@/lib/validators/auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LegalLinks } from "@/components/legal-links";
+import { Logo } from "@/components/ui/logo";
 
 const login = async (formData: FormData) => {
   "use server";
@@ -44,9 +45,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-3">
+      <div className="w-full max-w-sm space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-2 text-center">
+          <Logo href="/lp" width={160} />
+        </div>
         <form action={login} className="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800">
-          <h1 className="text-xl font-bold dark:text-slate-100">ログイン</h1>
+          <h1 className="text-xl font-bold dark:text-slate-100 mb-4">ログイン</h1>
           {isRegistered ? (
             <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
               確認メールを送信しました。メール内のリンクを開いてからログインしてください。
