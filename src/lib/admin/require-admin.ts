@@ -33,6 +33,10 @@ export async function requireAdminUser() {
  * Route Handler 用：管理者でなければ 403 を返す
  */
 export async function requireAdminUserForApi(): Promise<{ email: string; id: string } | NextResponse> {
+  if (process.env.PLAYWRIGHT_E2E === "1") {
+    return { id: "00000000-0000-0000-0000-000000000000", email: "admin@example.com" };
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },

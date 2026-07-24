@@ -4,12 +4,22 @@ import { prisma } from "@/lib/prisma";
 import { requireAdminUserForApi } from "@/lib/admin/require-admin";
 import { createAuditLog, AuditAction, EntityType } from "@/lib/audit-log";
 
+const flexibleDateSchema = z
+  .union([z.string(), z.date()])
+  .optional()
+  .nullable()
+  .transform((val) => {
+    if (!val) return null;
+    const d = new Date(val);
+    return isNaN(d.getTime()) ? null : d.toISOString();
+  });
+
 const patchSchema = z.object({
   title: z.string().min(1).max(200).optional(),
   body: z.string().min(1).max(5000).optional(),
   isPublished: z.boolean().optional(),
-  publishedAt: z.string().datetime().optional().nullable(),
-  expiresAt: z.string().datetime().optional().nullable()
+  publishedAt: flexibleDateSchema,
+  expiresAt: flexibleDateSchema
 });
 
 export async function PATCH(

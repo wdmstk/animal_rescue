@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-318` UI/UX第3弾改善（設定画面コントラスト完全修復・Admin画面ダーク統一・ユーザー向け管理者通知表示機能の実装）
+1. `TASK-319` Adminお知らせ発報API 400 Bad Requestエラーの修正（有効期限フォーマットバリデーション柔軟化）
+2. `TASK-318` UI/UX第3弾改善（設定画面コントラスト完全修復・Admin画面ダーク統一・ユーザー向け管理者通知表示機能の実装）
 2. `TASK-317` UI/UX第2弾改善（医療のみサブタブ化・サマリー印刷レイアウト修正・投薬/ワクチン/管理コントラスト修正・履歴表示改善）
 2. `TASK-316` UI/UX包括的改善（文字コントラスト視認性・拡張項目UI・提出サマリー印刷・医療タブ構造分離）
 2. `TASK-315` Next.js Production Build TypeScript型チェックエラーの修正
@@ -166,6 +167,17 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### Adminお知らせ発報API 400 Bad Requestエラーの修正（有効期限フォーマットバリデーション柔軟化）
+- Task ID: `TASK-319`
+- GitHub Issue: #268
+- ブランチ: `fix/TASK-319-fix-announcements-datetime-400`
+- ステータス: `done`
+- 概要: `<input type="datetime-local">` から送信される日付文字列（`YYYY-MM-DDTHH:mm`）が Zod の `z.string().datetime()` で 400 エラーになる問題を修正。APIサーバー側のZodスキーマの日付判定ロジックを柔軟化し、フロントエンド送信時にも ISO 形式への変換を追加。
+- 依存関係: なし
+- 完了条件:
+  - お知らせの新規作成・更新で有効期限を設定・未設定どちらでも 400 エラーにならず正常保存される
+  - `npm run lint`, `npx vitest run`, `npm run test:e2e` が全てグリーン
 
 ### UI/UX第3弾改善（設定画面コントラスト完全修復・Admin画面ダーク統一・ユーザー向け管理者通知表示機能の実装）
 - Task ID: `TASK-318`
