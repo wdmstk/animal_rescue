@@ -23,7 +23,6 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-326` アプリ全体への公式ロゴ（AniLink_logo_20260725.png）の配置・デザイン適用
 1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
@@ -33,6 +32,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-326` アプリ全体への公式ロゴ（AniLink_logo_20260725.png）の配置・デザイン適用
 1. `TASK-325` 飼い主情報編集不可の修復・基本情報編集画面の文字視認性向上・課金ポータル画面遷移修復
 1. `TASK-324` 緊急QR公開URL動的ホスト判定修復（リクエストヘッダー優先＆相対パス統一）
 1. `TASK-323` ペット一覧の緊急QRモーダル表示不具合修正（qr-image APIデータURL連携）
@@ -178,7 +178,7 @@ Development Task List
 - Task ID: `TASK-326`
 - GitHub Issue: #280
 - ブランチ: `feat/TASK-326-logo-integration`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 依存関係: なし
 - 概要:
   - ユーザーから提供された公式ロゴ (`AniLink_logo_20260725.png`) を `public/logo.png` / `public/anilink-logo.png` に配置
