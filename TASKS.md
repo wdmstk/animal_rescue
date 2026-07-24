@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-323` ペット一覧の緊急QRモーダル表示不具合修正（qr-image APIデータURL連携）
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -1790,4 +1791,17 @@ Development Task List
   - 管理画面サイドバーへのリンク追加。
   - `/admin/tickets`, `/admin/tickets/[id]` ページの追加。
   - ステータス変更、返信機能、監査ログへの記録連動。
+
+---
+
+## TASK-323: ペット一覧の緊急QRモーダル表示不具合修正（qr-image APIデータURL連携）
+
+- ステータス: `in_progress`
+- 概要: ペット一覧カードの「緊急QRを表示」ボタン押下時にQR画像が表示されない不具合を修正する
+- Issue: #274
+- 依存関係: なし
+- 完了条件:
+  - `PetListCard` コンポーネントが `/api/pets/${id}/qr-image` を呼び出し、レスポンス内のデータURL（`image`）を取得して `<Image />` に正常表示する。
+  - テスト（`npx vitest run` / `npm run lint`）が正常に通過する。
+
 

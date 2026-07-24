@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ToastMessage } from "@/components/ui/toast-message";
@@ -25,6 +26,7 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
   const [isLoadingQr, setIsLoadingQr] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [qrUrl, setQrUrl] = useState<string | null>(null);
+  const [qrImage, setQrImage] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const onDelete = async () => {
@@ -60,7 +62,7 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
     setError(null);
 
     try {
-      const response = await fetch(`/api/pets/${id}/qr-token`, {
+      const response = await fetch(`/api/pets/${id}/qr-image`, {
         method: "GET"
       });
 
@@ -70,13 +72,19 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
         throw new Error(message);
       }
 
-      const data = await response.json() as { data: { publicUrl: string } };
+      const data = (await response.json()) as { data: { publicUrl: string; image: string } };
       setQrUrl(data.data.publicUrl);
+      setQrImage(data.data.image);
     } catch (unknownError) {
       setError(unknownError instanceof Error ? unknownError.message : "QRの取得に失敗しました");
     } finally {
       setIsLoadingQr(false);
     }
+  };
+
+  const closeQrModal = () => {
+    setQrUrl(null);
+    setQrImage(null);
   };
 
   const speciesEmojiMap: Record<"dog" | "cat" | "other", string> = {
@@ -131,12 +139,12 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
       </div>
 
       {qrUrl && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setQrUrl(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={closeQrModal}>
           <div className="rounded-2xl bg-white p-6 shadow-lg max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-slate-900">{name}の緊急QR</h3>
               <button
-                onClick={() => setQrUrl(null)}
+                onClick={closeQrModal}
                 className="text-slate-400 hover:text-slate-600 text-2xl leading-none"
                 aria-label="閉じる"
               >
@@ -144,11 +152,18 @@ export function PetListCard({ id, name, species, breed }: PetListCardProps) {
               </button>
             </div>
             <div className="bg-white p-4 rounded-lg border border-slate-200">
-              <img
-                src={`/api/pets/${id}/qr-image`}
-                alt={`${name}の緊急QRコード`}
-                className="w-full h-auto"
-              />
+              {qrImage ? (
+                <Image
+                  src={qrImage}
+                  alt={`${name}の緊急QRコード`}
+                  width={320}
+                  height={320}
+                  unoptimized
+                  className="w-full h-auto"
+                />
+              ) : (
+                <div className="h-48 w-full flex items-center justify-center text-slate-400">読み込み中...</div>
+              )}
             </div>
             <p className="mt-4 text-center text-sm text-slate-600">
               このQRコードをスキャンすると緊急情報が表示されます
