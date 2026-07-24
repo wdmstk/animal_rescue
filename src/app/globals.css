@@ -208,11 +208,8 @@ html {
   }
 }
 
-/* 標準的なダークテーマ・可読性用フォールバックルール (アドホックな:not要素上書きを整理) */
-.surface-card,
-[class*="rounded-2xl"],
-[class*="rounded-3xl"],
-[class*="rounded-xl"] {
+/* 標準的なダークテーマ・可読性用フォールバックルール */
+.surface-card {
   background-color: var(--color-surface-card);
   border: 1px solid var(--color-surface-border);
   backdrop-filter: blur(12px);

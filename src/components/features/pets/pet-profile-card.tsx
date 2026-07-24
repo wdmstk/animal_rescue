@@ -19,58 +19,58 @@ type PetProfileProps = {
 
 export function PetProfileCard({ pet }: PetProfileProps) {
   return (
-    <section className="rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-800">
+    <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
       <div className="mb-4 flex items-center gap-4">
         <Image
           src={pet.photoUrl}
           alt={pet.name}
           width={96}
           height={96}
-          className="h-24 w-24 rounded-full object-cover"
+          className="h-24 w-24 rounded-full object-cover border-2 border-white/10"
         />
         <div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{pet.name}</h2>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <h2 className="text-xl font-bold text-white">{pet.name}</h2>
+          <p className="text-sm text-slate-300">
             {pet.species} / {pet.breed}
           </p>
         </div>
       </div>
 
-      <dl className="grid grid-cols-2 gap-2 text-sm">
-        <div className="rounded-lg bg-slate-50 p-2 dark:bg-slate-700">
-          <dt className="text-slate-500 dark:text-slate-400">性別</dt>
-          <dd className="font-semibold dark:text-slate-200">{pet.sex}</dd>
+      <dl className="grid grid-cols-2 gap-2.5 text-sm">
+        <div className="rounded-xl border border-white/5 bg-slate-950/60 p-3">
+          <dt className="text-xs text-slate-400">性別</dt>
+          <dd className="font-semibold text-white mt-0.5">{pet.sex}</dd>
         </div>
-        <div className="rounded-lg bg-slate-50 p-2 dark:bg-slate-700">
-          <dt className="text-slate-500 dark:text-slate-400">年齢</dt>
-          <dd className="font-semibold dark:text-slate-200">{pet.age}</dd>
+        <div className="rounded-xl border border-white/5 bg-slate-950/60 p-3">
+          <dt className="text-xs text-slate-400">年齢</dt>
+          <dd className="font-semibold text-white mt-0.5">{pet.age}</dd>
         </div>
-        <div className="rounded-lg bg-slate-50 p-2 dark:bg-slate-700">
-          <dt className="text-slate-500 dark:text-slate-400">体重</dt>
-          <dd className="font-semibold dark:text-slate-200">{pet.weight}</dd>
+        <div className="rounded-xl border border-white/5 bg-slate-950/60 p-3">
+          <dt className="text-xs text-slate-400">体重</dt>
+          <dd className="font-semibold text-white mt-0.5">{pet.weight}</dd>
         </div>
-        <div className="rounded-lg bg-slate-50 p-2 dark:bg-slate-700">
-          <dt className="text-slate-500 dark:text-slate-400">誕生日</dt>
-          <dd className="font-semibold dark:text-slate-200">{pet.birthday}</dd>
+        <div className="rounded-xl border border-white/5 bg-slate-950/60 p-3">
+          <dt className="text-xs text-slate-400">誕生日</dt>
+          <dd className="font-semibold text-white mt-0.5">{pet.birthday}</dd>
         </div>
-        <div className="rounded-lg bg-slate-50 p-2 dark:bg-slate-700">
-          <dt className="text-slate-500 dark:text-slate-400">去勢・避妊</dt>
-          <dd className="font-semibold dark:text-slate-200">{pet.reproductive}</dd>
+        <div className="rounded-xl border border-white/5 bg-slate-950/60 p-3">
+          <dt className="text-xs text-slate-400">去勢・避妊</dt>
+          <dd className="font-semibold text-white mt-0.5">{pet.reproductive}</dd>
         </div>
-        <div className="rounded-lg bg-slate-50 p-2 dark:bg-slate-700">
-          <dt className="text-slate-500 dark:text-slate-400">実施日</dt>
-          <dd className="font-semibold dark:text-slate-200">{pet.sterilizedAt}</dd>
+        <div className="rounded-xl border border-white/5 bg-slate-950/60 p-3">
+          <dt className="text-xs text-slate-400">実施日</dt>
+          <dd className="font-semibold text-white mt-0.5">{pet.sterilizedAt}</dd>
         </div>
       </dl>
 
-      <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm dark:bg-slate-700">
-        <p className="font-semibold text-slate-700 dark:text-slate-300">性格・特徴</p>
-        <p className="mt-1 text-slate-600 dark:text-slate-400">{pet.personality}</p>
+      <div className="mt-3 rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm">
+        <p className="font-semibold text-slate-300">性格・特徴</p>
+        <p className="mt-1 text-slate-400">{pet.personality}</p>
       </div>
 
-      <div className="mt-3 rounded-lg bg-slate-50 p-3 text-sm dark:bg-slate-700">
-        <p className="font-semibold text-slate-700 dark:text-slate-300">身体的特徴</p>
-        <p className="mt-1 text-slate-600 dark:text-slate-400">{pet.features}</p>
+      <div className="mt-3 rounded-xl border border-white/5 bg-slate-950/60 p-3 text-sm">
+        <p className="font-semibold text-slate-300">身体的特徴</p>
+        <p className="mt-1 text-slate-400">{pet.features}</p>
       </div>
     </section>
   );

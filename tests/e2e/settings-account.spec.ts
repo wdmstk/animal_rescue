@@ -347,7 +347,7 @@ test("settings shows checkout CTA for inactive subscription and calls checkout e
   const cta = page.getByRole("button", { name: "無料トライアルを開始する" });
   await expect(cta).toBeVisible();
   await cta.click();
-  expect(checkoutCalled).toBe(true);
+  await expect.poll(() => checkoutCalled).toBe(true);
 });
 
 test("settings shows portal CTA for active subscription and calls portal endpoint", async ({ page }) => {
@@ -450,7 +450,7 @@ test("settings shows portal CTA for active subscription and calls portal endpoin
   const cta = page.getByRole("button", { name: "契約を管理する" });
   await expect(cta).toBeVisible();
   await cta.click();
-  expect(portalCalled).toBe(true);
+  await expect.poll(() => portalCalled).toBe(true);
 });
 
 test("settings shows API error when demoting the last owner is rejected", async ({ page }) => {
