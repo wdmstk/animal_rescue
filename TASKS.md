@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-（なし）
+1. `TASK-320` 設計基盤ドキュメント群（docs/foundation）の復元・再追加
 
 ### todo
 （なし）
@@ -167,6 +167,17 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### 設計基盤ドキュメント群（docs/foundation）の復元・再追加
+- Task ID: `TASK-320`
+- GitHub Issue: #270
+- ブランチ: `docs/TASK-320-restore-docs-foundation`
+- ステータス: `in_progress`
+- 概要: 過去コミット `01c98bf` に存在していた Brand/Design System/UX/AI ガイドライン等の設計基盤ドキュメント全10ファイル（`docs/foundation/`）を `main` リポジトリへ完全復元・再追加。
+- 依存関係: なし
+- 完了条件:
+  - `docs/foundation/` 配下に全10ファイル（BRAND_GUIDELINES, DESIGN_SYSTEM, DESIGN_TOKENS, UX_PATTERNS等）が正常に配置される
+  - `npm run lint`, `npx vitest run`, `npm run test:e2e` が全てグリーン
 
 ### Adminお知らせ発報API 400 Bad Requestエラーの修正（有効期限フォーマットバリデーション柔軟化）
 - Task ID: `TASK-319`
