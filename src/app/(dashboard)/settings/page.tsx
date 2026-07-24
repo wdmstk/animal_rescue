@@ -254,18 +254,16 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
     const profile = await prisma.ownerProfile.findUnique({
       where: { ownerUserId: ownerMember.userId }
     });
-    if (profile) {
-      ownerProfile = {
-        ownerUserId: profile.ownerUserId,
-        fullName: profile.fullName,
-        phone: profile.phone,
-        email: profile.email,
-        postalCode: profile.postalCode,
-        addressLine1: profile.addressLine1,
-        addressLine2: profile.addressLine2,
-        note: profile.note
-      };
-    }
+    ownerProfile = {
+      ownerUserId: ownerMember.userId,
+      fullName: profile?.fullName ?? null,
+      phone: profile?.phone ?? null,
+      email: profile?.email ?? null,
+      postalCode: profile?.postalCode ?? null,
+      addressLine1: profile?.addressLine1 ?? null,
+      addressLine2: profile?.addressLine2 ?? null,
+      note: profile?.note ?? null
+    };
   } else if (ownerMember && isE2E) {
     // E2E mode: provide default owner profile
     ownerProfile = {

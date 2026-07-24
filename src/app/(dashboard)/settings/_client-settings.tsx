@@ -342,20 +342,22 @@ export function ClientSettings({
     setErrorMessage(null);
     setIsPortalSubmitting(true);
 
-    const response = await fetch("/api/billing/portal", { method: "POST" });
-    const payload = (await response.json().catch(() => null)) as { data?: { url?: string }; error?: string } | null;
+    try {
+      const response = await fetch("/api/billing/portal", { method: "POST" });
+      const payload = (await response.json().catch(() => null)) as { data?: { url?: string }; error?: string } | null;
 
-    if (!response.ok || !payload?.data?.url) {
+      if (!response.ok || !payload?.data?.url) {
+        setIsPortalSubmitting(false);
+        const errStr = typeof payload?.error === "string" ? payload.error : "契約管理ページを開けませんでした。";
+        setErrorMessage(errStr);
+        return;
+      }
+
+      window.location.href = payload.data.url;
+    } catch {
       setIsPortalSubmitting(false);
-      setErrorMessage(
-        typeof payload?.error === "string"
-          ? payload.error
-          : "契約管理ページを開けませんでした。時間をおいて再度お試しください。"
-      );
-      return;
+      setErrorMessage("ネットワーク通信エラーが発生しました。時間をおいて再度お試しください。");
     }
-
-    window.location.href = payload.data.url;
   };
 
   const handleToggleDisplaySetting = async (
@@ -405,9 +407,16 @@ export function ClientSettings({
 
   const handleOwnerProfileSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!ownerProfile) {
-      return;
-    }
+    const currentProfile = ownerProfile ?? {
+      ownerUserId: account?.userId ?? "",
+      fullName: null,
+      phone: null,
+      email: null,
+      postalCode: null,
+      addressLine1: null,
+      addressLine2: null,
+      note: null
+    };
 
     setErrorMessage(null);
     setMessage(null);
@@ -417,13 +426,13 @@ export function ClientSettings({
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        fullName: ownerProfile.fullName,
-        phone: ownerProfile.phone,
-        email: ownerProfile.email,
-        postalCode: ownerProfile.postalCode,
-        addressLine1: ownerProfile.addressLine1,
-        addressLine2: ownerProfile.addressLine2,
-        note: ownerProfile.note
+        fullName: currentProfile.fullName,
+        phone: currentProfile.phone,
+        email: currentProfile.email,
+        postalCode: currentProfile.postalCode,
+        addressLine1: currentProfile.addressLine1,
+        addressLine2: currentProfile.addressLine2,
+        note: currentProfile.note
       })
     });
     const payload = (await response.json().catch(() => null)) as { data?: OwnerProfile; error?: string } | null;
@@ -699,85 +708,110 @@ export function ClientSettings({
       <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
         <h2 className="text-lg font-bold text-white flex items-center gap-2">👤 飼い主情報</h2>
         <p className="mt-1 text-sm text-slate-400">世帯OWNERの連絡先情報を管理します。</p>
-        {ownerProfile ? (
+        {ownerProfile || isOwner ? (
           <form className="mt-4 space-y-4" onSubmit={handleOwnerProfileSubmit}>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-slate-300">氏名</label>
-                <input
-                  value={ownerProfile.fullName ?? ""}
-                  onChange={(event) => setOwnerProfile({ ...ownerProfile, fullName: event.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
-                  placeholder="山田 花子"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-slate-300">電話番号</label>
-                <input
-                  value={ownerProfile.phone ?? ""}
-                  onChange={(event) => setOwnerProfile({ ...ownerProfile, phone: event.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
-                  placeholder="090-1234-5678"
-                />
-              </div>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-slate-300">メール</label>
-                <input
-                  value={ownerProfile.email ?? ""}
-                  onChange={(event) => setOwnerProfile({ ...ownerProfile, email: event.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
-                  placeholder="owner@example.com"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-slate-300">郵便番号</label>
-                <input
-                  value={ownerProfile.postalCode ?? ""}
-                  onChange={(event) => setOwnerProfile({ ...ownerProfile, postalCode: event.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
-                  placeholder="123-4567"
-                />
-              </div>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-slate-300">住所1</label>
-                <input
-                  value={ownerProfile.addressLine1 ?? ""}
-                  onChange={(event) => setOwnerProfile({ ...ownerProfile, addressLine1: event.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
-                  placeholder="東京都渋谷区..."
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold text-slate-300">住所2</label>
-                <input
-                  value={ownerProfile.addressLine2 ?? ""}
-                  onChange={(event) => setOwnerProfile({ ...ownerProfile, addressLine2: event.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
-                  placeholder="建物名・部屋番号"
-                />
-              </div>
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-semibold text-slate-300">備考</label>
-              <textarea
-                value={ownerProfile.note ?? ""}
-                onChange={(event) => setOwnerProfile({ ...ownerProfile, note: event.target.value })}
-                className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
-                placeholder="任意の備考"
-                rows={3}
-              />
-            </div>
-            <button
-              className="rounded-xl bg-teal-600 px-5 py-2 text-sm font-semibold text-white shadow-md hover:bg-teal-500 disabled:opacity-60"
-              type="submit"
-              disabled={isOwnerProfileSaving}
-            >
-              {isOwnerProfileSaving ? "保存中..." : "保存する"}
-            </button>
+            {(() => {
+              const profile = ownerProfile ?? {
+                ownerUserId: account?.userId ?? "",
+                fullName: null,
+                phone: null,
+                email: null,
+                postalCode: null,
+                addressLine1: null,
+                addressLine2: null,
+                note: null
+              };
+              return (
+                <>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-300">氏名</label>
+                      <input
+                        value={profile.fullName ?? ""}
+                        onChange={(event) => setOwnerProfile({ ...profile, fullName: event.target.value })}
+                        className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                        placeholder="山田 花子"
+                        disabled={!isOwner}
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-300">電話番号</label>
+                      <input
+                        value={profile.phone ?? ""}
+                        onChange={(event) => setOwnerProfile({ ...profile, phone: event.target.value })}
+                        className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                        placeholder="090-1234-5678"
+                        disabled={!isOwner}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-300">メール</label>
+                      <input
+                        value={profile.email ?? ""}
+                        onChange={(event) => setOwnerProfile({ ...profile, email: event.target.value })}
+                        className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                        placeholder="owner@example.com"
+                        disabled={!isOwner}
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-300">郵便番号</label>
+                      <input
+                        value={profile.postalCode ?? ""}
+                        onChange={(event) => setOwnerProfile({ ...profile, postalCode: event.target.value })}
+                        className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                        placeholder="123-4567"
+                        disabled={!isOwner}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-300">住所1</label>
+                      <input
+                        value={profile.addressLine1 ?? ""}
+                        onChange={(event) => setOwnerProfile({ ...profile, addressLine1: event.target.value })}
+                        className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                        placeholder="東京都渋谷区..."
+                        disabled={!isOwner}
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-semibold text-slate-300">住所2</label>
+                      <input
+                        value={profile.addressLine2 ?? ""}
+                        onChange={(event) => setOwnerProfile({ ...profile, addressLine2: event.target.value })}
+                        className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                        placeholder="建物名・部屋番号"
+                        disabled={!isOwner}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs font-semibold text-slate-300">備考</label>
+                    <textarea
+                      value={profile.note ?? ""}
+                      onChange={(event) => setOwnerProfile({ ...profile, note: event.target.value })}
+                      className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
+                      placeholder="任意の備考"
+                      rows={3}
+                      disabled={!isOwner}
+                    />
+                  </div>
+                  {isOwner && (
+                    <button
+                      className="rounded-xl bg-teal-600 px-5 py-2 text-sm font-semibold text-white shadow-md hover:bg-teal-500 disabled:opacity-60"
+                      type="submit"
+                      disabled={isOwnerProfileSaving}
+                    >
+                      {isOwnerProfileSaving ? "保存中..." : "保存する"}
+                    </button>
+                  )}
+                </>
+              );
+            })()}
           </form>
         ) : (
           <p className="mt-3 text-sm text-slate-400">飼い主情報が登録されていません。</p>

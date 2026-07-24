@@ -199,7 +199,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
         <button
           type="button"
           onClick={() => setIsEditing(true)}
-          className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800"
+          className="w-full rounded-xl border border-white/10 bg-slate-800 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-700 transition"
         >
           基本情報を編集
         </button>
@@ -207,12 +207,14 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
     );
   }
 
-  return (
-    <section className="rounded-2xl bg-white p-4 shadow-sm">
-      <h2 className="text-lg font-bold text-slate-900">基本情報を編集</h2>
-      <p className="mt-1 text-sm text-slate-600">ペットの基本情報を登録します。すべての項目は後で変更できます。</p>
+  const inputBaseClass = "w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none disabled:bg-slate-900 disabled:text-slate-500";
 
-      <form className="mt-4 space-y-3" onSubmit={onSubmit}>
+  return (
+    <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
+      <h2 className="text-lg font-bold text-white">基本情報を編集</h2>
+      <p className="mt-1 text-sm text-slate-300">ペットの基本情報を登録します。すべての項目は後で変更できます。</p>
+
+      <form className="mt-4 space-y-4" onSubmit={onSubmit}>
         <FormField
           label="名前"
           required
@@ -229,13 +231,11 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
             required
             maxLength={64}
             placeholder="例: ポコ"
-            className={`w-full rounded-lg border px-3 py-2 text-sm ${
-              errors.name ? "border-rose-300 bg-rose-50" : "border-slate-300"
-            }`}
+            className={`${inputBaseClass} ${errors.name ? "border-rose-500/50 bg-rose-950/30" : ""}`}
           />
         </FormField>
 
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <FormField
             label="種類"
             tooltip="ペットの種類を選択します。犬、猫、またはその他の動物を指定できます。"
@@ -244,7 +244,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
               name="species"
               value={species}
               onChange={(event) => setSpecies(event.target.value as Species)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className={inputBaseClass}
             >
               <option value="dog">犬</option>
               <option value="cat">猫</option>
@@ -259,7 +259,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
               name="sex"
               value={sex}
               onChange={(event) => setSex(event.target.value as Sex)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className={inputBaseClass}
             >
               <option value="MALE">オス</option>
               <option value="FEMALE">メス</option>
@@ -268,7 +268,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
           </FormField>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <FormField
             label="品種"
             error={errors.breed}
@@ -283,9 +283,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
               }}
               maxLength={64}
               placeholder="例: トイプードル"
-              className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                errors.breed ? "border-rose-300 bg-rose-50" : "border-slate-300"
-              }`}
+              className={`${inputBaseClass} ${errors.breed ? "border-rose-500/50 bg-rose-950/30" : ""}`}
             />
           </FormField>
 
@@ -298,12 +296,12 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
               type="date"
               value={birthday}
               onChange={(event) => setBirthday(event.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className={inputBaseClass}
             />
           </FormField>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <FormField
             label="去勢・避妊"
             tooltip="去勢はオスの生殖能力を除去する手術、避妊はメスの生殖能力を除去する手術です。健康上のメリットがあります。"
@@ -312,7 +310,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
               name="reproductiveStatus"
               value={reproductiveStatus}
               onChange={(event) => setReproductiveStatus(event.target.value as ReproductiveStatus)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className={inputBaseClass}
             >
               <option value="UNKNOWN">不明</option>
               <option value="INTACT">未実施</option>
@@ -335,14 +333,12 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
                 setSterilizedAt(event.target.value);
                 validateField("sterilizedAt", event.target.value);
               }}
-              className={`w-full rounded-lg border px-3 py-2 text-sm disabled:bg-slate-100 ${
-                errors.sterilizedAt ? "border-rose-300 bg-rose-50" : "border-slate-300"
-              }`}
+              className={`${inputBaseClass} ${errors.sterilizedAt ? "border-rose-500/50 bg-rose-950/30" : ""}`}
             />
           </FormField>
         </div>
 
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           <FormField
             label="年齢"
             error={errors.ageYears}
@@ -359,9 +355,7 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
                 validateField("ageYears", event.target.value);
               }}
               placeholder="例: 3"
-              className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                errors.ageYears ? "border-rose-300 bg-rose-50" : "border-slate-300"
-              }`}
+              className={`${inputBaseClass} ${errors.ageYears ? "border-rose-500/50 bg-rose-950/30" : ""}`}
             />
           </FormField>
 
@@ -382,18 +376,16 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
                 validateField("weightKg", event.target.value);
               }}
               placeholder="例: 5.2"
-              className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                errors.weightKg ? "border-rose-300 bg-rose-50" : "border-slate-300"
-              }`}
+              className={`${inputBaseClass} ${errors.weightKg ? "border-rose-500/50 bg-rose-950/30" : ""}`}
             />
           </FormField>
         </div>
 
-        <label className="block text-sm font-semibold text-slate-800">
+        <label className="block text-sm font-semibold text-slate-200">
           <div className="flex items-center gap-1">
             性格・特徴
             <Tooltip content="ペットの性格や行動上の特徴を記入します。例：人懐っこい、雷が苦手、など">
-              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              <span className="text-slate-400 hover:text-slate-300 cursor-help">?</span>
             </Tooltip>
           </div>
           <textarea
@@ -402,15 +394,15 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
             onChange={(event) => setNotesPersonality(event.target.value)}
             maxLength={500}
             rows={3}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className={`mt-1 ${inputBaseClass}`}
           />
         </label>
 
-        <label className="block text-sm font-semibold text-slate-800">
+        <label className="block text-sm font-semibold text-slate-200">
           <div className="flex items-center gap-1">
             身体的特徴
             <Tooltip content="ペットの身体的な特徴を記入します。例：左耳の先に白い毛あり、模様、など">
-              <span className="text-slate-400 hover:text-slate-600 cursor-help">?</span>
+              <span className="text-slate-400 hover:text-slate-300 cursor-help">?</span>
             </Tooltip>
           </div>
           <textarea
@@ -419,18 +411,18 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
             onChange={(event) => setNotesFeatures(event.target.value)}
             maxLength={500}
             rows={3}
-            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            className={`mt-1 ${inputBaseClass}`}
           />
         </label>
 
         <ToastMessage message={errorMessage} type="error" />
         <ToastMessage message={successMessage} type="success" />
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3 pt-2">
           <button
             type="button"
             onClick={() => setIsEditing(false)}
-            className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-800"
+            className="rounded-xl border border-white/10 bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-200 hover:bg-slate-700 transition"
           >
             キャンセル
           </button>
