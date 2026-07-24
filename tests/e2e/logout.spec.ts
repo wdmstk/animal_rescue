@@ -46,7 +46,7 @@ test("logout from settings redirects to login", async ({ page }) => {
   });
 
   await page.goto("/settings");
-  await expect(page.getByRole("heading", { name: "ログイン情報" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /ログイン情報/ })).toBeVisible();
 
   await page.getByRole("button", { name: "ログアウト" }).click();
   await expect(page).toHaveURL(/\/login$/);

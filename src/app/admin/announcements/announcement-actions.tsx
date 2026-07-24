@@ -23,6 +23,10 @@ export function CreateAnnouncementForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const formattedExpiresAt = form.expiresAt
+      ? new Date(form.expiresAt).toISOString()
+      : null;
+
     const res = await fetch("/api/admin/announcements", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -30,7 +34,7 @@ export function CreateAnnouncementForm() {
         title: form.title,
         body: form.body,
         isPublished: form.isPublished,
-        expiresAt: form.expiresAt || null
+        expiresAt: formattedExpiresAt
       })
     });
     if (!res.ok) {
