@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-323` ペット一覧の緊急QRモーダル表示不具合修正（qr-image APIデータURL連携）
+1. `TASK-324` 緊急QR公開URL動的ホスト判定修復（リクエストヘッダー優先＆相対パス統一）
 2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
@@ -33,6 +33,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-323` ペット一覧の緊急QRモーダル表示不具合修正（qr-image APIデータURL連携）
 1. `TASK-322` 法的情報ページUI/UX配色視認性改善＆アプリ名「AniLink」一括変更
 1. `TASK-320` 設計基盤ドキュメント群（docs/foundation）の復元・再追加
 1. `TASK-319` Adminお知らせ発報API 400 Bad Requestエラーの修正（有効期限フォーマットバリデーション柔軟化）
@@ -1796,12 +1797,27 @@ Development Task List
 
 ## TASK-323: ペット一覧の緊急QRモーダル表示不具合修正（qr-image APIデータURL連携）
 
-- ステータス: `in_progress`
+- ステータス: `done`
 - 概要: ペット一覧カードの「緊急QRを表示」ボタン押下時にQR画像が表示されない不具合を修正する
 - Issue: #274
 - 依存関係: なし
 - 完了条件:
   - `PetListCard` コンポーネントが `/api/pets/${id}/qr-image` を呼び出し、レスポンス内のデータURL（`image`）を取得して `<Image />` に正常表示する。
   - テスト（`npx vitest run` / `npm run lint`）が正常に通過する。
+
+---
+
+## TASK-324: 緊急QR公開URL動的ホスト判定修復（リクエストヘッダー優先＆相対パス統一）
+
+- ステータス: `in_progress`
+- 概要: QR公開URL生成処理においてリクエストヘッダー（x-forwarded-host/host）を優先利用し、モーダルリンクを相対パス`/e/[token]`に統一する
+- Issue: #276
+- 依存関係: なし
+- 完了条件:
+  - APIルート（`qr-token`, `qr-image`）がリクエストホストに基づく動的公開URLを生成する。
+  - `PetListCard` コンポーネントが相対パス `/e/${token}` で公開ページを開き、一覧と詳細で完全に同一のURL動作となる。
+  - `npm run lint` / `npx vitest run` が全てグリーンであること。
+
+
 
 
