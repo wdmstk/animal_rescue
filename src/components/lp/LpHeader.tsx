@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Logo } from "@/components/ui/logo";
 
 const navLinks = [
   { href: "#features", label: "機能" },
@@ -19,14 +20,9 @@ export function LpHeader() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/lp" className="flex items-center gap-2.5 flex-shrink-0">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-violet-500">
-              <span className="text-white text-sm font-bold">🐾</span>
-            </div>
-            <span className="text-white font-semibold text-sm">
-              AniLink
-            </span>
-          </Link>
+          <div className="flex-shrink-0 flex items-center">
+            <Logo href="/lp" width={135} />
+          </div>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/ui/logo";
 
 const footerLinks = {
   サービス: [
@@ -25,14 +26,7 @@ export function LpFooter() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="space-y-4">
-            <Link href="/lp" className="flex items-center gap-2.5">
-              <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-500">
-                <span className="text-white text-base">🐾</span>
-              </div>
-              <span className="text-white font-semibold">
-                AniLink
-              </span>
-            </Link>
+            <Logo href="/lp" width={140} />
             <p className="text-sm text-gray-500 leading-relaxed">
               ペットの緊急医療情報を一元管理し、
               救急時に瞬時に必要情報を届ける
