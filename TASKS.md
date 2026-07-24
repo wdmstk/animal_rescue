@@ -23,7 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-320` 設計基盤ドキュメント群（docs/foundation）の復元・再追加
+1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -32,6 +32,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-320` 設計基盤ドキュメント群（docs/foundation）の復元・再追加
 1. `TASK-319` Adminお知らせ発報API 400 Bad Requestエラーの修正（有効期限フォーマットバリデーション柔軟化）
 2. `TASK-318` UI/UX第3弾改善（設定画面コントラスト完全修復・Admin画面ダーク統一・ユーザー向け管理者通知表示機能の実装）
 2. `TASK-317` UI/UX第2弾改善（医療のみサブタブ化・サマリー印刷レイアウト修正・投薬/ワクチン/管理コントラスト修正・履歴表示改善）
