@@ -458,7 +458,11 @@ export function ClientSettings({
     setMessage(null);
     setIsDeletingAccount(true);
 
-    const response = await fetch("/api/account", { method: "DELETE" });
+    const response = await fetch("/api/account", {
+      method: "DELETE",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ confirm: true })
+    });
     const payload = (await response.json().catch(() => null)) as { error?: string } | null;
 
     if (!response.ok) {

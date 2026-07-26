@@ -48,8 +48,11 @@ describe("/api/pets/[petId]/medical-records", () => {
 
     expect(response.status).toBe(200);
     expect(findManyMock).toHaveBeenCalledWith({
-      where: { petId: validPetId },
-      orderBy: { date: "desc" }
+      where: { petId: validPetId, date: undefined },
+      take: 21,
+      cursor: undefined,
+      skip: 0,
+      orderBy: [{ date: "desc" }, { id: "desc" }]
     });
   });
 
