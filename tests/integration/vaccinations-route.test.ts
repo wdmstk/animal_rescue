@@ -46,8 +46,11 @@ describe("/api/pets/[petId]/vaccinations", () => {
 
     expect(response.status).toBe(200);
     expect(findManyMock).toHaveBeenCalledWith({
-      where: { petId: validPetId },
-      orderBy: { date: "desc" }
+      where: { petId: validPetId, date: undefined },
+      take: 21,
+      cursor: undefined,
+      skip: 0,
+      orderBy: [{ date: "desc" }, { id: "desc" }]
     });
   });
 
@@ -228,7 +231,8 @@ describe("/api/pets/[petId]/vaccinations", () => {
         type: "RABIES",
         customTypeName: null,
         date: new Date("2026-04-25"),
-        nextDue: new Date("2027-04-25")
+        nextDue: new Date("2027-04-25"),
+        documentUrl: null
       }
     });
   });

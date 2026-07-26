@@ -141,6 +141,15 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
       pet: {
         select: {
           name: true,
+          species: true,
+          breed: true,
+          sex: true,
+          weightKg: true,
+          photos: {
+            take: 1,
+            orderBy: { sortOrder: "asc" },
+            select: { photoUrl: true }
+          },
           emergencyInfo: {
             select: {
               disease: true,
@@ -171,6 +180,11 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
 
   const base = toPublicEmergencyView({
     petName: tokenRow.pet.name,
+    species: tokenRow.pet.species ?? null,
+    breed: tokenRow.pet.breed ?? null,
+    sex: tokenRow.pet.sex ?? null,
+    weightKg: tokenRow.pet.weightKg ? Number(tokenRow.pet.weightKg) : null,
+    photoUrl: tokenRow.pet.photos?.[0]?.photoUrl ?? null,
     disease: tokenRow.pet.emergencyInfo?.disease ?? null,
     allergy: tokenRow.pet.emergencyInfo?.allergy ?? null,
     currentMedications: tokenRow.pet.emergencyInfo?.currentMedications ?? null,

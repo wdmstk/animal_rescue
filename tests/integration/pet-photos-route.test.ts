@@ -48,7 +48,10 @@ describe("/api/pets/[petId]/photos", () => {
     expect(response.status).toBe(200);
     expect(findManyMock).toHaveBeenCalledWith({
       where: { petId: "11111111-1111-4111-8111-111111111111" },
-      orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
+      take: 21,
+      cursor: undefined,
+      skip: 0,
+      orderBy: [{ sortOrder: "asc" }, { id: "asc" }]
     });
   });
 

@@ -70,7 +70,12 @@ export async function PATCH(request: Request) {
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE() {
+export async function DELETE(request: Request) {
+  const body = await request.json().catch(() => null);
+  if (!body || body.confirm !== true) {
+    return badRequest("アカウントの削除を確定するには { confirm: true } が必要です");
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },

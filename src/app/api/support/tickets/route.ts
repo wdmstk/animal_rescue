@@ -10,18 +10,31 @@ const createTicketSchema = z.object({
   message: z.string().min(1, "メッセージ内容は必須です").max(2000, "メッセージは2000文字以内で入力してください")
 });
 
-export async function GET() {
+import { paginationQuerySchema, buildPaginatedResponse } from "@/lib/pagination";
+
+export async function GET(request?: Request) {
   const auth = await requireAuthenticatedUser();
   if (auth instanceof NextResponse) {
     return auth;
   }
 
+  const url = new URL(request?.url ?? "http://localhost");
+  const parsedQuery = paginationQuerySchema.safeParse({
+    limit: url.searchParams.get("limit") ?? undefined,
+    cursor: url.searchParams.get("cursor") ?? undefined
+  });
+  const { limit, cursor } = parsedQuery.success ? parsedQuery.data : { limit: 20, cursor: undefined };
+
   const tickets = await prisma.ticket.findMany({
     where: { userId: auth.userId },
-    orderBy: { createdAt: "desc" }
+    take: limit + 1,
+    cursor: cursor ? { id: cursor } : undefined,
+    skip: cursor ? 1 : 0,
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }]
   });
 
-  return NextResponse.json({ data: tickets });
+  const paginated = buildPaginatedResponse(tickets, limit);
+  return NextResponse.json(paginated);
 }
 
 export async function POST(request: Request) {

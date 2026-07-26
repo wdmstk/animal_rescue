@@ -1,5 +1,10 @@
 export type EmergencyViewPayload = {
   petName: string;
+  species?: string | null;
+  breed?: string | null;
+  sex?: string | null;
+  weightKg?: number | null;
+  photoUrl?: string | null;
   disease: string | null;
   medications: string | null;
   allergy: string | null;

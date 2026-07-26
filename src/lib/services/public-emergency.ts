@@ -2,6 +2,11 @@ import type { EmergencyViewPayload } from "@/types/domain";
 
 type RawEmergency = {
   petName: string;
+  species?: string | null;
+  breed?: string | null;
+  sex?: string | null;
+  weightKg?: number | null;
+  photoUrl?: string | null;
   disease: string | null;
   allergy: string | null;
   currentMedications: string | null;
@@ -30,6 +35,11 @@ const normalize = (value: string | null | undefined): string | null => {
 
 export const toPublicEmergencyView = (raw: RawEmergency): EmergencyViewPayload => ({
   petName: raw.petName,
+  species: normalize(raw.species ?? null),
+  breed: normalize(raw.breed ?? null),
+  sex: normalize(raw.sex ?? null),
+  weightKg: raw.weightKg ?? null,
+  photoUrl: normalize(raw.photoUrl ?? null),
   disease: normalize(raw.disease),
   medications: normalize(raw.currentMedications),
   allergy: normalize(raw.allergy),

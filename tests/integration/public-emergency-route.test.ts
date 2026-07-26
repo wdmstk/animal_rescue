@@ -118,6 +118,11 @@ describe("GET /api/public/emergency/[token]", () => {
     const payload = await response.json();
     expect(payload.data).toEqual({
       petName: "Mugi",
+      species: null,
+      breed: null,
+      sex: null,
+      weightKg: null,
+      photoUrl: null,
       disease: "CKD",
       medications: "Renal meds",
       allergy: "None",
@@ -169,6 +174,11 @@ describe("GET /api/public/emergency/[token]", () => {
     const payload = await response.json();
     expect(payload.data).toEqual({
       petName: "Mugi",
+      species: null,
+      breed: null,
+      sex: null,
+      weightKg: null,
+      photoUrl: null,
       disease: null,
       medications: "Renal meds",
       allergy: null,
@@ -246,6 +256,15 @@ describe("GET /api/public/emergency/[token]", () => {
         pet: {
           select: {
             name: true,
+            species: true,
+            breed: true,
+            sex: true,
+            weightKg: true,
+            photos: {
+              take: 1,
+              orderBy: { sortOrder: "asc" },
+              select: { photoUrl: true }
+            },
             emergencyInfo: {
               select: {
                 disease: true,
@@ -311,6 +330,11 @@ describe("GET /api/public/emergency/[token]", () => {
     const payload = await response.json();
     expect(payload.data).toEqual({
       petName: "Mugi",
+      species: null,
+      breed: null,
+      sex: null,
+      weightKg: null,
+      photoUrl: null,
       disease: null,
       medications: null,
       allergy: null,

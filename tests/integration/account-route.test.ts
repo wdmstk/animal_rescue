@@ -152,10 +152,23 @@ describe("/api/account", () => {
   });
 
   describe("DELETE", () => {
+    const makeDeleteReq = (body?: any) =>
+      new Request("http://localhost/api/account", {
+        method: "DELETE",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body ?? { confirm: true })
+      });
+
+    it("returns 400 when confirm is not provided", async () => {
+      const req = new Request("http://localhost/api/account", { method: "DELETE" });
+      const response = await DELETE(req);
+      expect(response.status).toBe(400);
+    });
+
     it("returns 401 when unauthenticated", async () => {
       getUserMock.mockResolvedValue({ data: { user: null }, error: null });
 
-      const response = await DELETE();
+      const response = await DELETE(makeDeleteReq());
 
       expect(response.status).toBe(401);
     });
@@ -164,7 +177,7 @@ describe("/api/account", () => {
       getUserMock.mockResolvedValue({ data: { user: { id: "u1" } }, error: null });
       prismaMock.householdMember.findFirst.mockResolvedValue(null);
 
-      const response = await DELETE();
+      const response = await DELETE(makeDeleteReq());
       const payload = await response.json();
 
       expect(response.status).toBe(400);
@@ -182,7 +195,7 @@ describe("/api/account", () => {
         .mockResolvedValueOnce(1) // ownerCount
         .mockResolvedValueOnce(2); // totalMemberCount
 
-      const response = await DELETE();
+      const response = await DELETE(makeDeleteReq());
       const payload = await response.json();
 
       expect(response.status).toBe(409);
@@ -201,7 +214,6 @@ describe("/api/account", () => {
         .mockResolvedValueOnce(1); // totalMemberCount
       prismaMock.userSubscription.findUnique.mockResolvedValue(null);
       prismaMock.$transaction.mockImplementation(async (operations) => {
-        // Simulate the actual transaction by calling each operation
         const userSubscriptionDeleteMany = operations[0];
         const ownerDisplaySettingsDeleteMany = operations[1];
         const ownerProfileDeleteMany = operations[2];
@@ -214,7 +226,7 @@ describe("/api/account", () => {
       });
       serviceRoleMock.auth.admin.deleteUser.mockResolvedValue({ error: null });
 
-      const response = await DELETE();
+      const response = await DELETE(makeDeleteReq());
       const payload = await response.json();
 
       expect(response.status).toBe(200);
@@ -238,7 +250,7 @@ describe("/api/account", () => {
       });
       serviceRoleMock.auth.admin.deleteUser.mockResolvedValue({ error: null });
 
-      const response = await DELETE();
+      const response = await DELETE(makeDeleteReq());
       const payload = await response.json();
 
       expect(response.status).toBe(200);
@@ -267,7 +279,7 @@ describe("/api/account", () => {
       });
       serviceRoleMock.auth.admin.deleteUser.mockResolvedValue({ error: null });
 
-      const response = await DELETE();
+      const response = await DELETE(makeDeleteReq());
 
       expect(response.status).toBe(200);
       expect(stripeMock.subscriptions.cancel).toHaveBeenCalledWith("sub_123");
@@ -294,7 +306,7 @@ describe("/api/account", () => {
       });
       serviceRoleMock.auth.admin.deleteUser.mockResolvedValue({ error: null });
 
-      const response = await DELETE();
+      const response = await DELETE(makeDeleteReq());
 
       expect(response.status).toBe(200);
       expect(prismaMock.$transaction).toHaveBeenCalled();
@@ -318,7 +330,7 @@ describe("/api/account", () => {
       });
       serviceRoleMock.auth.admin.deleteUser.mockRejectedValue(new Error("Auth error"));
 
-      const response = await DELETE();
+      const response = await DELETE(makeDeleteReq());
 
       expect(response.status).toBe(200);
       expect(prismaMock.$transaction).toHaveBeenCalled();
@@ -337,7 +349,7 @@ describe("/api/account", () => {
       prismaMock.userSubscription.findUnique.mockResolvedValue(null);
       prismaMock.$transaction.mockRejectedValue(new Error("DB error"));
 
-      const response = await DELETE();
+      const response = await DELETE(makeDeleteReq());
       const payload = await response.json();
 
       expect(response.status).toBe(500);
