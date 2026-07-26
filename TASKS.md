@@ -26,12 +26,13 @@ Development Task List
 1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
-1. `TASK-329` 02_requirements.md ドキュメント更新（実装済み記述の修正）
+（なし）
 
 ### blocked
 （なし）
 
 ### done
+1. `TASK-329` 02_requirements.md ドキュメント更新（実装済み記述の修正）
 1. `TASK-330` MVP品質向上・機能拡張（全APIカーソルページネーション・ワクチン証明書保存・緊急型拡張・世帯解散API・アカウント削除ガード）
 1. `TASK-328` specialNotes フィールド追加（緊急情報・特記事項）
 1. `TASK-327` DELETEメソッド一括実装（写真・投薬・ワクチン・メンバー除外）
@@ -204,8 +205,8 @@ Development Task List
 ### 02_requirements.md ドキュメント更新（実装済み記述の修正）
 - Task ID: `TASK-329`
 - GitHub Issue: #284
-- ブランチ: `docs/TASK-329-requirements-update`
-- ステータス: `todo`
+- ブランチ: `docs/TASK-329-update-requirements-doc`
+- ステータス: `done`
 - 目的: 要件定義書（02_requirements.md）内の実装済み9項目の「未実装」記述を最新の実装状況に合わせて「実装済み」に更新する。
 - 依存タスク: `TASK-327`, `TASK-328`, `TASK-330`
 
