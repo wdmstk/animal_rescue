@@ -19,9 +19,9 @@ export default defineConfig({
     baseURL: "http://localhost:3100"
   },
   webServer: {
-    command: `${envPrefix} npm run dev -- -p 3100`,
-    url: "http://localhost:3100",
-    reuseExistingServer: false,
+    command: `${envPrefix} npm run dev -- -p 3000`,
+    url: "http://localhost:3000",
+    reuseExistingServer: true,
     timeout: 120000
   },
   projects: [

@@ -12,9 +12,9 @@ type AuthorizedPet = {
 };
 
 export async function requireAuthenticatedUser(): Promise<AuthenticatedUser | NextResponse> {
-  // E2E test mode: skip authentication check
-  if (process.env.E2E_TEST_MODE === "true") {
-    return { userId: "test-user-id" };
+  // E2E test mode: skip authentication check ONLY during automated Playwright tests
+  if (process.env.E2E_TEST_MODE === "true" && process.env.PLAYWRIGHT_E2E === "1") {
+    return { userId: process.env.E2E_TEST_USER_ID ?? "60000000-0000-4000-8000-000000000001" };
   }
 
   const supabase = await createSupabaseServerClient();

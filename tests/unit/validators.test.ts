@@ -70,4 +70,19 @@ describe("validators", () => {
       expect(result.data.emergencyContactPhone).toBe("090-1234-5678");
     }
   });
+
+  it("validates specialNotes up to 2000 characters", () => {
+    const valid = emergencyInfoInputSchema.safeParse({
+      specialNotes: "雷の音を怖がります。"
+    });
+    expect(valid.success).toBe(true);
+    if (valid.success) {
+      expect(valid.data.specialNotes).toBe("雷の音を怖がります。");
+    }
+
+    const invalid = emergencyInfoInputSchema.safeParse({
+      specialNotes: "a".repeat(2001)
+    });
+    expect(invalid.success).toBe(false);
+  });
 });

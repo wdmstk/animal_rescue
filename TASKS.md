@@ -27,13 +27,13 @@ Development Task List
 
 ### todo
 1. `TASK-330` MVP品質向上・機能拡張（全APIカーソルページネーション・ワクチン証明書保存・緊急型拡張・世帯解散API・アカウント削除ガード）
-2. `TASK-328` specialNotes フィールド追加（緊急情報・特記事項）
-3. `TASK-329` 02_requirements.md ドキュメント更新（実装済み記述の修正）
+2. `TASK-329` 02_requirements.md ドキュメント更新（実装済み記述の修正）
 
 ### blocked
 （なし）
 
 ### done
+1. `TASK-328` specialNotes フィールド追加（緊急情報・特記事項）
 1. `TASK-327` DELETEメソッド一括実装（写真・投薬・ワクチン・メンバー除外）
 1. `TASK-326` アプリ全体への公式ロゴ（AniLink_logo_20260725.png）の配置・デザイン適用
 1. `TASK-325` 飼い主情報編集不可の修復・基本情報編集画面の文字視認性向上・課金ポータル画面遷移修復
@@ -197,7 +197,7 @@ Development Task List
 - Task ID: `TASK-328`
 - GitHub Issue: #283
 - ブランチ: `feat/TASK-328-special-notes-field`
-- ステータス: `todo`
+- ステータス: `done`
 - 目的: PetEmergencyInfo テーブルに specialNotes カラムを追加し、スキーマ・バリデータ・型定義・UIに反映する。
 - 依存タスク: なし
 

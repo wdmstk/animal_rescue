@@ -14,6 +14,7 @@ export type EmergencyViewPayload = {
   emergencyContactPhone2: string | null;
   insuranceCompany: string | null;
   insurancePolicyNumber: string | null;
+  specialNotes?: string | null;
   recentMedicationSummaries?: string[];
   recentVaccinationSummaries?: string[];
   recentMedicalRecordSummaries?: string[];
@@ -34,4 +35,5 @@ export type EmergencyInfoInput = {
   emergencyContactPhone2?: string | null;
   insuranceCompany?: string | null;
   insurancePolicyNumber?: string | null;
+  specialNotes?: string | null;
 };
