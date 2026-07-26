@@ -6,6 +6,7 @@ type EmergencyCardProps = {
   contact: string;
   insuranceCompany?: string | null;
   insurancePolicyNumber?: string | null;
+  specialNotes?: string | null;
 };
 
 export function EmergencyCard({
@@ -15,7 +16,8 @@ export function EmergencyCard({
   vet,
   contact,
   insuranceCompany,
-  insurancePolicyNumber
+  insurancePolicyNumber,
+  specialNotes
 }: EmergencyCardProps) {
   return (
     <section className="rounded-2xl border border-white/5 bg-slate-950/40 p-5 shadow-inner">
@@ -39,6 +41,11 @@ export function EmergencyCard({
         {(insuranceCompany || insurancePolicyNumber) && (
           <li>
             <span className="font-semibold text-slate-400">保険:</span> {[insuranceCompany, insurancePolicyNumber].filter(Boolean).join(" / ")}
+          </li>
+        )}
+        {specialNotes && (
+          <li>
+            <span className="font-semibold text-slate-400">特記事項:</span> {specialNotes}
           </li>
         )}
       </ul>

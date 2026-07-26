@@ -51,7 +51,8 @@ export const emergencyInfoInputSchema = z.object({
   emergencyContactName2: nullableTrimmedText(100),
   emergencyContactPhone2: nullablePhone,
   insuranceCompany: nullableTrimmedText(200),
-  insurancePolicyNumber: nullableTrimmedText(100)
+  insurancePolicyNumber: nullableTrimmedText(100),
+  specialNotes: nullableTrimmedText(2000)
 });
 
 export type EmergencyInfoInput = z.infer<typeof emergencyInfoInputSchema>;

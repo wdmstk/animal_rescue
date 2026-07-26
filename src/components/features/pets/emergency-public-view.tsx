@@ -60,6 +60,14 @@ export function EmergencyPublicView({ token, data }: { token: string; data: Emer
         </div>
       )}
 
+      {/* Special Notes Section */}
+      {data.specialNotes && (
+        <div className="mt-5 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 transition-all hover:bg-amber-500/10">
+          <h2 className="text-xs font-bold text-amber-400 tracking-wider uppercase">📝 特記事項</h2>
+          <p className="mt-2 text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">{data.specialNotes}</p>
+        </div>
+      )}
+
       {/* Health Conditions / Allergies */}
       <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-4 transition-all hover:bg-rose-500/10">

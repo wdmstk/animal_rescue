@@ -82,7 +82,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Pro
   const resolvedSearchParams = await searchParams;
 
   // Fetch account info
-  const isE2E = process.env.E2E_TEST_MODE === "true";
+  const isE2E = process.env.E2E_TEST_MODE === "true" && process.env.PLAYWRIGHT_E2E === "1";
   let account: AccountPayload;
   if (isE2E) {
     account = {

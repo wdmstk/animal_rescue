@@ -19,6 +19,7 @@ type PublicEmergencyRpcRow = {
   emergency_contact_phone_2: string | null;
   insurance_company?: string | null;
   insurance_policy_number?: string | null;
+  special_notes?: string | null;
 };
 
 const DEFAULT_SUMMARY_SETTINGS = {
@@ -155,7 +156,8 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
               emergencyContactName2: true,
               emergencyContactPhone2: true,
               insuranceCompany: true,
-              insurancePolicyNumber: true
+              insurancePolicyNumber: true,
+              specialNotes: true
             }
           }
         }
@@ -182,7 +184,8 @@ const getPublicEmergencyByTokenFallback = async (token: string): Promise<Emergen
     emergencyContactName2: tokenRow.pet.emergencyInfo?.emergencyContactName2 ?? null,
     emergencyContactPhone2: tokenRow.pet.emergencyInfo?.emergencyContactPhone2 ?? null,
     insuranceCompany: tokenRow.pet.emergencyInfo?.insuranceCompany ?? null,
-    insurancePolicyNumber: tokenRow.pet.emergencyInfo?.insurancePolicyNumber ?? null
+    insurancePolicyNumber: tokenRow.pet.emergencyInfo?.insurancePolicyNumber ?? null,
+    specialNotes: tokenRow.pet.emergencyInfo?.specialNotes ?? null
   });
 
   return withRecentSummaries(token, base);
@@ -249,7 +252,8 @@ export const getPublicEmergencyByToken = async (token: string): Promise<Emergenc
     emergencyContactName2: row.emergency_contact_name_2,
     emergencyContactPhone2: row.emergency_contact_phone_2,
     insuranceCompany: row.insurance_company ?? null,
-    insurancePolicyNumber: row.insurance_policy_number ?? null
+    insurancePolicyNumber: row.insurance_policy_number ?? null,
+    specialNotes: row.special_notes ?? null
   });
 
   return withRecentSummaries(token, base);
