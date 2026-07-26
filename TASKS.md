@@ -23,8 +23,7 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-327` DELETEメソッド一括実装（写真・投薬・ワクチン・メンバー除外）
-2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 1. `TASK-330` MVP品質向上・機能拡張（全APIカーソルページネーション・ワクチン証明書保存・緊急型拡張・世帯解散API・アカウント削除ガード）
@@ -35,6 +34,7 @@ Development Task List
 （なし）
 
 ### done
+1. `TASK-327` DELETEメソッド一括実装（写真・投薬・ワクチン・メンバー除外）
 1. `TASK-326` アプリ全体への公式ロゴ（AniLink_logo_20260725.png）の配置・デザイン適用
 1. `TASK-325` 飼い主情報編集不可の修復・基本情報編集画面の文字視認性向上・課金ポータル画面遷移修復
 1. `TASK-324` 緊急QR公開URL動的ホスト判定修復（リクエストヘッダー優先＆相対パス統一）
@@ -181,7 +181,7 @@ Development Task List
 - Task ID: `TASK-327`
 - GitHub Issue: #281
 - ブランチ: `feat/TASK-327-delete-endpoints`
-- ステータス: `in_progress`
+- ステータス: `done`
 - 目的: 設計書（05_api_design.md）に記載がありながら実装されていなかった DELETE エンドポイント（写真削除、投薬削除、ワクチン削除、メンバー除外）を一括実装する。
 - 依存タスク: なし
 
