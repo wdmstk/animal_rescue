@@ -78,3 +78,55 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
 
   return NextResponse.json({ data: updated });
 }
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ petId: string; medicationId: string }> }
+) {
+  const routeParams = await params;
+  const parsedParams = paramsSchema.safeParse(routeParams);
+  if (!parsedParams.success) {
+    return badRequest(parsedParams.error);
+  }
+
+  const auth = await requireAuthenticatedUser();
+  if (auth instanceof NextResponse) {
+    return auth;
+  }
+  const editAccess = await requireEditAccess(auth.userId);
+  if (editAccess instanceof NextResponse) {
+    return editAccess;
+  }
+
+  const access = await requirePetAccess(auth.userId, parsedParams.data.petId);
+  if (access instanceof NextResponse) {
+    return access;
+  }
+
+  const existing = await prisma.petMedication.findFirst({
+    where: {
+      id: parsedParams.data.medicationId,
+      petId: access.petId
+    },
+    select: { id: true, name: true }
+  });
+
+  if (!existing) {
+    return notFound("Medication");
+  }
+
+  await prisma.petMedication.delete({
+    where: { id: existing.id }
+  });
+
+  void createAuditLog({
+    userId: auth.userId,
+    action: AuditAction.MEDICATION_DELETE,
+    entityType: EntityType.MEDICATION,
+    entityId: existing.id,
+    changes: { name: existing.name }
+  });
+
+  return new NextResponse(null, { status: 204 });
+}
+
