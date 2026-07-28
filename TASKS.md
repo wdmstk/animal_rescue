@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-336` DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
+1. `TASK-337` requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
+2. `TASK-336` DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
 2. `TASK-335` コンソール警告・ServiceWorkerリダイレクトエラー・favicon欠落の全面解消
 2. `TASK-334` ペット詳細画面 ISO日付フォーマット不整合・コンポーネントクラッシュ完全防護修復
 2. `TASK-333` ペット詳細画面 Server-Client 境界シリアライズエラー修復（Prisma Date/Decimal オブジェクトプレーン化）
@@ -183,6 +184,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
+- Task ID: `TASK-337`
+- GitHub Issue: #296
+- ブランチ: `fix/TASK-337-pet-access-owner-permission-fix`
+- ステータス: `done`
+- 目的: requirePetAccess および 各種ペット取得クエリにおいて Household.ownerId === userId の OR 条件チェックを追加し、HouseholdMember未参加・未追加のオーナーユーザーがペット詳細画面(/pets/[petId])を開いた際に404(notFound)となるバグを解消する。
+- 依存タスク: なし
 
 ### DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
 - Task ID: `TASK-336`

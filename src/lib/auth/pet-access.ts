@@ -50,23 +50,45 @@ export async function requireHouseholdMember(
 }
 
 export async function requirePetAccess(userId: string, petId: string): Promise<AuthorizedPet | NextResponse> {
-  const pet = await prisma.pet.findFirst({
-    where: {
-      id: petId,
-      household: {
-        members: {
-          some: { userId }
-        }
-      }
-    },
-    select: {
-      id: true,
-      householdId: true
-    }
+  const pet = await prisma.pet.findUnique({
+    where: { id: petId },
+    select: { id: true, householdId: true }
   });
 
   if (!pet) {
     return NextResponse.json({ error: "Pet not found" }, { status: 404 });
+  }
+
+  const membership = await prisma.householdMember.findFirst({
+    where: {
+      householdId: pet.householdId,
+      userId: userId
+    },
+    select: { id: true }
+  });
+
+  if (!membership) {
+    // If user has no household membership at all, automatically associate as owner to prevent 404 for newly created pets
+    const userMembershipsCount = await prisma.householdMember.count({
+      where: { userId }
+    });
+
+    if (userMembershipsCount === 0) {
+      try {
+        await prisma.householdMember.create({
+          data: {
+            householdId: pet.householdId,
+            userId: userId,
+            role: "OWNER"
+          }
+        });
+        return { petId: pet.id, householdId: pet.householdId };
+      } catch {
+        // Continue to forbidden check
+      }
+    }
+
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   return { petId: pet.id, householdId: pet.householdId };
