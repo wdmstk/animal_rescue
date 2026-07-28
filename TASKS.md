@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-334` ペット詳細画面 ISO日付フォーマット不整合・コンポーネントクラッシュ完全防護修復
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -180,6 +181,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### ペット詳細画面 ISO日付フォーマット不整合・コンポーネントクラッシュ完全防護修復
+- Task ID: `TASK-334`
+- GitHub Issue: #290
+- ブランチ: `fix/TASK-334-pet-detail-date-format-crash-fix`
+- ステータス: `in_progress`
+- 目的: ペット詳細画面(/pets/[petId])アクセス時に ISO24文字日付文字列が正規化(YYYY-MM-DD 10文字)されずに各種コンポーネントへ渡されクラッシュするバグの修正、およびbuildChangeHistoryItems / PetDetailPage での防御的例外ハンドリングの強化。
+- 依存タスク: なし
 
 ### ペット詳細画面 Server-Client 境界シリアライズエラー修復（Prisma Date/Decimal オブジェクトプレーン化）
 - Task ID: `TASK-333`
