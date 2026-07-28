@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-337` requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -183,6 +184,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
+- Task ID: `TASK-337`
+- GitHub Issue: #296
+- ブランチ: `fix/TASK-337-pet-access-owner-permission-fix`
+- ステータス: `in_progress`
+- 目的: requirePetAccess および 各種ペット取得クエリにおいて Household.ownerId === userId の OR 条件チェックを追加し、HouseholdMember未参加・未追加のオーナーユーザーがペット詳細画面(/pets/[petId])を開いた際に404(notFound)となるバグを解消する。
+- 依存タスク: なし
 
 ### DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
 - Task ID: `TASK-336`
