@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-337` requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
+1. `TASK-338` ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
+2. `TASK-337` requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
 2. `TASK-336` DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
 2. `TASK-335` コンソール警告・ServiceWorkerリダイレクトエラー・favicon欠落の全面解消
 2. `TASK-334` ペット詳細画面 ISO日付フォーマット不整合・コンポーネントクラッシュ完全防護修復
@@ -184,6 +185,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
+- Task ID: `TASK-338`
+- GitHub Issue: #298
+- ブランチ: `fix/TASK-338-dual-resolution-pet-id-token`
+- ステータス: `done`
+- 目的: `/pets/[petId]` のパラメータに pet.id または EmergencyToken の token のいずれが渡された場合でも透過的に対象ペットを解消・認可チェックする二段構え検索を実装し、404エラーの再発を100%防止。
+- 依存タスク: なし
 
 ### requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
 - Task ID: `TASK-337`

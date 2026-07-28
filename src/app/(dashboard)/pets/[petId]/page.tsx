@@ -152,6 +152,35 @@ export default async function PetDetailPage({
         photos: { orderBy: { sortOrder: "asc" } }
       }
     });
+
+    if (!pet) {
+      const tokenRecord = await prisma.petEmergencyToken.findFirst({
+        where: { token: petId },
+        select: { petId: true }
+      });
+      if (tokenRecord) {
+        pet = await prisma.pet.findUnique({
+          where: { id: tokenRecord.petId },
+          include: {
+            emergencyInfo: true,
+            medicalRecords: {
+              where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
+              orderBy: { date: "desc" }
+            },
+            medications: {
+              where: historyWindowStart ? { startDate: { gte: historyWindowStart } } : undefined,
+              orderBy: { startDate: "desc" }
+            },
+            vaccinations: {
+              where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
+              orderBy: { date: "desc" }
+            },
+            emergencyToken: true,
+            photos: { orderBy: { sortOrder: "asc" } }
+          }
+        });
+      }
+    }
   } catch (error) {
     console.error("Error fetching pet data:", error);
     notFound();
