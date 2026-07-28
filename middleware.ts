@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/signup", "/e", "/pass", "/api/public", "/_next", "/favicon.ico", "/legal", "/admin", "/lp"];
+const PUBLIC_PATHS = ["/login", "/signup", "/e", "/pass", "/api/public", "/_next", "/favicon.ico", "/sw.js", "/manifest.json", "/legal", "/admin", "/lp"];
 
 const isPublicPath = (pathname: string): boolean =>
   PUBLIC_PATHS.some((path) => pathname === path || pathname.startsWith(`${path}/`));
@@ -24,5 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|.*\\.png$).*)"]
+  matcher: ["/((?!_next/static|_next/image|sw\\.js|manifest\\.json|favicon\\.ico|.*\\.(?:png|jpg|jpeg|gif|svg|ico|webmanifest)$).*)"]
 };

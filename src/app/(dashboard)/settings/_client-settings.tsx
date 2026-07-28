@@ -680,6 +680,7 @@ export function ClientSettings({
             <label className="mb-1 block text-xs font-semibold text-slate-300">新しいパスワード</label>
             <input
               type="password"
+              autoComplete="new-password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:border-teal-400 focus:outline-none"
