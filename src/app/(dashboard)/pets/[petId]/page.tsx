@@ -155,17 +155,34 @@ export default async function PetDetailPage({
     notFound();
   }
 
+  const safeToIsoString = (val: unknown): string | null => {
+    if (!val) return null;
+    if (val instanceof Date) {
+      return isNaN(val.getTime()) ? null : val.toISOString();
+    }
+    if (typeof val === "string") return val;
+    return null;
+  };
+
   let activeToken = pet.emergencyToken?.isActive ? pet.emergencyToken.token : null;
 
   if (!activeToken) {
     try {
-      const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/pets/${petId}/qr-token`, {
-        cache: "no-store"
+      const existing = await prisma.petEmergencyToken.findUnique({
+        where: { petId: access.petId }
       });
 
-      if (tokenResponse.ok) {
-        const tokenPayload = (await tokenResponse.json()) as { data: { token: string } };
-        activeToken = tokenPayload.data.token;
+      if (existing?.isActive) {
+        activeToken = existing.token;
+      } else {
+        const { generateEmergencyToken } = await import("@/lib/security/emergency-token");
+        const newToken = generateEmergencyToken();
+        const createdOrUpdated = await prisma.petEmergencyToken.upsert({
+          where: { petId: access.petId },
+          update: { token: newToken, isActive: true, rotatedAt: new Date() },
+          create: { petId: access.petId, token: newToken, isActive: true }
+        });
+        activeToken = createdOrUpdated.token;
       }
     } catch {
       activeToken = null;
@@ -174,25 +191,25 @@ export default async function PetDetailPage({
 
   const emergencyLinkToken = process.env.PLAYWRIGHT_E2E === "1" ? E2E_PUBLIC_EMERGENCY_TOKEN : activeToken;
   const changeHistoryItems = buildChangeHistoryItems({
-    emergencyInfo: pet.emergencyInfo ? { updatedAt: pet.emergencyInfo.updatedAt.toISOString() } : null,
+    emergencyInfo: pet.emergencyInfo ? { updatedAt: safeToIsoString(pet.emergencyInfo.updatedAt) ?? new Date().toISOString() } : null,
     medications: pet.medications.map((item) => ({
       id: item.id,
       name: item.name,
-      updatedAt: item.updatedAt.toISOString(),
-      createdAt: item.createdAt.toISOString()
+      updatedAt: safeToIsoString(item.updatedAt) ?? new Date().toISOString(),
+      createdAt: safeToIsoString(item.createdAt) ?? new Date().toISOString()
     })),
     vaccinations: pet.vaccinations.map((item) => ({
       id: item.id,
       type: item.type,
       customTypeName: item.customTypeName,
-      updatedAt: item.updatedAt.toISOString(),
-      createdAt: item.createdAt.toISOString()
+      updatedAt: safeToIsoString(item.updatedAt) ?? new Date().toISOString(),
+      createdAt: safeToIsoString(item.createdAt) ?? new Date().toISOString()
     })),
     medicalRecords: pet.medicalRecords.map((item) => ({
       id: item.id,
       title: item.title,
-      updatedAt: item.updatedAt.toISOString(),
-      createdAt: item.createdAt.toISOString()
+      updatedAt: safeToIsoString(item.updatedAt) ?? new Date().toISOString(),
+      createdAt: safeToIsoString(item.createdAt) ?? new Date().toISOString()
     }))
   });
 
@@ -226,13 +243,13 @@ export default async function PetDetailPage({
             sex: pet.sex,
             ageYears: pet.ageYears,
             weightKg: pet.weightKg !== null ? Number(pet.weightKg) : null,
-            birthday: pet.birthday ? pet.birthday.toISOString() : null,
+            birthday: safeToIsoString(pet.birthday),
             notesPersonality: pet.notesPersonality,
             notesFeatures: pet.notesFeatures,
             mainPhotoUrl: pet.mainPhotoUrl,
             photos: pet.photos,
             reproductiveStatus: pet.reproductiveStatus,
-            sterilizedAt: pet.sterilizedAt ? pet.sterilizedAt.toISOString() : null,
+            sterilizedAt: safeToIsoString(pet.sterilizedAt),
             emergencyInfo: pet.emergencyInfo,
             medications: pet.medications,
             vaccinations: pet.vaccinations,
