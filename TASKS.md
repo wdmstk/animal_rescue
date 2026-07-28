@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-338` ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -184,6 +185,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
+- Task ID: `TASK-338`
+- GitHub Issue: #298
+- ブランチ: `fix/TASK-338-dual-resolution-pet-id-token`
+- ステータス: `in_progress`
+- 目的: `/pets/[petId]` のパラメータに pet.id または EmergencyToken の token のいずれが渡された場合でも透過的に対象ペットを解消・認可チェックする二段構え検索を実装し、404エラーの再発を100%防止。
+- 依存タスク: なし
 
 ### requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
 - Task ID: `TASK-337`
