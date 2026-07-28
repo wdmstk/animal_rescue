@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-336` DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -182,6 +183,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
+- Task ID: `TASK-336`
+- GitHub Issue: #294
+- ブランチ: `fix/TASK-336-pet-profile-type-normalization`
+- ステータス: `in_progress`
+- 目的: Prisma DB内の species (DOG/dog/犬) や sex (MALE/male), reproductiveStatus の表記揺れによる speciesLabelMap / sexLabelMap undefined 参照クラッシュの完全防止、および PetPhotoGallery での photoUrl マッピングのNull/型安全化。
+- 依存タスク: なし
 
 ### コンソール警告・ServiceWorkerリダイレクトエラー・favicon欠落の全面解消
 - Task ID: `TASK-335`
