@@ -16,7 +16,13 @@ import { PetExportCard } from "./pet-export-card";
 import { PetDeleteCard } from "./pet-delete-card";
 import { PrintCareSummaryCard } from "./print-care-summary-card";
 
-const normalizeDate = (value: string) => value.slice(0, 10);
+const normalizeDate = (value: unknown): string => {
+  if (!value) return "";
+  if (value instanceof Date) {
+    return isNaN(value.getTime()) ? "" : value.toISOString().slice(0, 10);
+  }
+  return String(value).slice(0, 10);
+};
 
 type TabGroup = {
   id: string;
@@ -145,8 +151,8 @@ export function PetDetailTabs({
               name: item.name,
               dosage: item.dosage,
               frequency: item.frequency,
-              startDate: typeof item.startDate === "string" ? item.startDate : normalizeDate(item.startDate.toISOString()),
-              endDate: item.endDate ? (typeof item.endDate === "string" ? item.endDate : normalizeDate(item.endDate.toISOString())) : null
+              startDate: normalizeDate(item.startDate),
+              endDate: item.endDate ? normalizeDate(item.endDate) : null
             })) : []}
           />
         );
@@ -158,8 +164,8 @@ export function PetDetailTabs({
               id: item.id,
               typeCode: item.type,
               customTypeName: item.customTypeName,
-              date: typeof item.date === "string" ? item.date : normalizeDate(item.date.toISOString()),
-              nextDue: item.nextDue ? (typeof item.nextDue === "string" ? item.nextDue : normalizeDate(item.nextDue.toISOString())) : null,
+              date: normalizeDate(item.date),
+              nextDue: item.nextDue ? normalizeDate(item.nextDue) : null,
               type:
                 item.type === "RABIES"
                   ? "狂犬病"
@@ -181,7 +187,7 @@ export function PetDetailTabs({
             petId={petId}
             initialItems={pet.medicalRecords ? pet.medicalRecords.map((item: any) => ({
               id: item.id,
-              date: typeof item.date === "string" ? item.date : normalizeDate(item.date.toISOString()),
+              date: normalizeDate(item.date),
               title: item.title,
               description: item.description,
               recordType: item.recordType
@@ -199,7 +205,7 @@ export function PetDetailTabs({
                 species: pet.species,
                 breed: pet.breed,
                 sex: pet.sex,
-                birthday: pet.birthday ? (typeof pet.birthday === "string" ? pet.birthday : normalizeDate(pet.birthday.toISOString())) : null,
+                birthday: pet.birthday ? normalizeDate(pet.birthday) : null,
                 ageYears: pet.ageYears,
                 weightKg: pet.weightKg !== null ? Number(pet.weightKg) : null
               }}
@@ -211,11 +217,11 @@ export function PetDetailTabs({
               })) : []}
               vaccinations={pet.vaccinations ? pet.vaccinations.map((item: any) => ({
                 type: item.type,
-                date: typeof item.date === "string" ? item.date : normalizeDate(item.date.toISOString()),
-                nextDue: item.nextDue ? (typeof item.nextDue === "string" ? item.nextDue : normalizeDate(item.nextDue.toISOString())) : null
+                date: normalizeDate(item.date),
+                nextDue: item.nextDue ? normalizeDate(item.nextDue) : null
               })) : []}
               medicalRecords={pet.medicalRecords ? pet.medicalRecords.map((item: any) => ({
-                date: typeof item.date === "string" ? item.date : normalizeDate(item.date.toISOString()),
+                date: normalizeDate(item.date),
                 title: item.title,
                 description: item.description
               })) : []}

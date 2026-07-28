@@ -71,7 +71,7 @@ export const buildChangeHistoryItems = (sources: ChangeHistorySources): ChangeHi
     ...sources.vaccinations.map((item) => ({
       id: `vaccination-${item.id}`,
       changedAt: resolveChangedAt(item),
-      target: `ワクチン: ${item.type === "OTHER" ? item.customTypeName ?? "その他" : vaccinationTypeLabelMap[item.type]}`
+      target: `ワクチン: ${item.type === "OTHER" ? item.customTypeName ?? "その他" : (vaccinationTypeLabelMap[item.type] ?? item.customTypeName ?? item.type ?? "ワクチン")}`
     }))
   );
 
