@@ -28,20 +28,11 @@ export default async function PetsPage() {
   try {
     const userPets = await prisma.pet.findMany({
       where: {
-        OR: [
-          {
-            household: {
-              members: {
-                some: { userId: auth.userId }
-              }
-            }
-          },
-          {
-            household: {
-              ownerId: auth.userId
-            }
+        household: {
+          members: {
+            some: { userId: auth.userId }
           }
-        ]
+        }
       },
       select: {
         id: true,
