@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-333` ペット詳細画面 Server-Client 境界シリアライズエラー修復（Prisma Date/Decimal オブジェクトプレーン化）
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -179,6 +180,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### ペット詳細画面 Server-Client 境界シリアライズエラー修復（Prisma Date/Decimal オブジェクトプレーン化）
+- Task ID: `TASK-333`
+- GitHub Issue: #288
+- ブランチ: `fix/TASK-333-pet-detail-plain-object-serialization`
+- ステータス: `in_progress`
+- 目的: ペット詳細画面(/pets/[petId])アクセス時に Server Component から Client Component (PetDetailTabs) へのデータ伝達時に Prisma Date/Decimal オブジェクトが未変換のまま渡され発生するシリアライズエラーを完全修復する。
+- 依存タスク: なし
 
 ### ペット詳細画面 Server Component レンダリングエラー修復（内部fetch撤廃・Date型安全化）
 - Task ID: `TASK-332`
