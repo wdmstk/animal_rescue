@@ -34,8 +34,8 @@ describe("GET /api/billing/subscription", () => {
     const res = await GET();
     const payload = await res.json();
     expect(payload.data.status).toBe("INCOMPLETE");
-    expect(payload.data.isActive).toBe(false);
-    expect(payload.data.accessPolicy.canCreate).toBe(false);
+    expect(payload.data.isActive).toBe(true);
+    expect(payload.data.accessPolicy.canCreate).toBe(true);
   });
 
   it("returns active status", async () => {

@@ -47,21 +47,23 @@ const isDateInFuture = (value: Date | null, now: Date): boolean => {
 };
 
 export const resolveBillingAccessState = (subscription: SubscriptionLike, now = new Date()): BillingAccessState => {
+  const fullAccessPolicy: AccessPolicy = {
+    canCreate: true,
+    canEdit: true,
+    canNotify: true,
+    canShare: true,
+    canExport: true,
+    historyWindowDays: null
+  };
+
   if (!subscription) {
     return {
       planTier: "free",
       subscriptionStatus: "INCOMPLETE",
-      isActive: false,
+      isActive: true,
       trialEndsAt: null,
       currentPeriodEnd: null,
-      accessPolicy: {
-        canCreate: false,
-        canEdit: false,
-        canNotify: false,
-        canShare: false,
-        canExport: false,
-        historyWindowDays: FREE_HISTORY_WINDOW_DAYS
-      }
+      accessPolicy: fullAccessPolicy
     };
   }
 
@@ -72,14 +74,7 @@ export const resolveBillingAccessState = (subscription: SubscriptionLike, now = 
       isActive: true,
       trialEndsAt: toIso(subscription.trialEndsAt),
       currentPeriodEnd: toIso(subscription.currentPeriodEnd),
-      accessPolicy: {
-        canCreate: true,
-        canEdit: true,
-        canNotify: true,
-        canShare: true,
-        canExport: true,
-        historyWindowDays: null
-      }
+      accessPolicy: fullAccessPolicy
     };
   }
 
@@ -90,14 +85,7 @@ export const resolveBillingAccessState = (subscription: SubscriptionLike, now = 
       isActive: true,
       trialEndsAt: toIso(subscription.trialEndsAt),
       currentPeriodEnd: toIso(subscription.currentPeriodEnd),
-      accessPolicy: {
-        canCreate: true,
-        canEdit: true,
-        canNotify: true,
-        canShare: true,
-        canExport: true,
-        historyWindowDays: null
-      }
+      accessPolicy: fullAccessPolicy
     };
   }
 
@@ -105,34 +93,20 @@ export const resolveBillingAccessState = (subscription: SubscriptionLike, now = 
     return {
       planTier: "free",
       subscriptionStatus: "GRACE",
-      isActive: false,
+      isActive: true,
       trialEndsAt: toIso(subscription.trialEndsAt),
       currentPeriodEnd: toIso(subscription.currentPeriodEnd),
-      accessPolicy: {
-        canCreate: false,
-        canEdit: false,
-        canNotify: false,
-        canShare: false,
-        canExport: false,
-        historyWindowDays: FREE_HISTORY_WINDOW_DAYS
-      }
+      accessPolicy: fullAccessPolicy
     };
   }
 
   return {
     planTier: "free",
     subscriptionStatus: subscription.status,
-    isActive: false,
+    isActive: true,
     trialEndsAt: toIso(subscription.trialEndsAt),
     currentPeriodEnd: toIso(subscription.currentPeriodEnd),
-    accessPolicy: {
-      canCreate: false,
-      canEdit: false,
-      canNotify: false,
-      canShare: false,
-      canExport: false,
-      historyWindowDays: FREE_HISTORY_WINDOW_DAYS
-    }
+    accessPolicy: fullAccessPolicy
   };
 };
 

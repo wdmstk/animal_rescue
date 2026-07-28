@@ -75,58 +75,58 @@ type BillingActionCopy = {
 
 const BILLING_ACTION_COPY: Record<BillingPayload["subscriptionStatus"], BillingActionCopy> = {
   INCOMPLETE: {
-    badgeLabel: "未契約",
-    statusLabel: "無料トライアルを開始できます",
-    headline: "30日無料で使い始めましょう",
-    detail: "課金が始まる前に、編集・通知・共有を含む全機能をお試しいただけます。",
-    ctaLabel: "無料トライアルを開始する",
+    badgeLabel: "無料プラン",
+    statusLabel: "基本機能は永続無料です",
+    headline: "基本機能をすべてご利用いただけます",
+    detail: "プロファイル登録、日々の健康記録、診察用パス（QR提示）などはすべて無料でご利用いただけます。",
+    ctaLabel: "Proプラン（任意）",
     ctaAction: "checkout"
   },
   TRIALING: {
-    badgeLabel: "トライアル中",
-    statusLabel: "全機能を利用中です",
-    headline: "30日後に月額680円プランへ自動移行します",
-    detail: "移行前でも、契約管理からいつでも支払い方法の更新や解約ができます。",
+    badgeLabel: "Proトライアル中",
+    statusLabel: "Pro全機能をお試し中です",
+    headline: "Proプラン機能が有効です",
+    detail: "高度AI問診サマリー、PDF出力、OCR書類読取が無制限でご利用いただけます。",
     ctaLabel: "契約を管理する",
     ctaAction: "portal"
   },
   ACTIVE: {
-    badgeLabel: "契約中",
-    statusLabel: "全機能を利用中です",
-    headline: "契約は有効です",
-    detail: "契約管理から、いつでも支払い方法の変更や解約ができます。",
+    badgeLabel: "Proプラン",
+    statusLabel: "Pro全機能が有効です",
+    headline: "Proプランを契約中です",
+    detail: "高度AI問診サマリー、PDF出力、OCR書類読取が無制限でご利用いただけます。",
     ctaLabel: "契約を管理する",
     ctaAction: "portal"
   },
   PAST_DUE: {
-    badgeLabel: "要対応",
+    badgeLabel: "要確認",
     statusLabel: "支払い確認待ちです",
     headline: "支払い情報を確認してください",
-    detail: "契約管理で支払い情報を更新すると、機能制限の解除につながります。",
+    detail: "基本機能は引き続き無料でご利用いただけます。Pro機能の継続には更新が必要です。",
     ctaLabel: "契約を管理する",
     ctaAction: "portal"
   },
   CANCELED: {
-    badgeLabel: "停止中",
-    statusLabel: "契約が終了しています",
-    headline: "再開すると全機能がすぐ戻ります",
-    detail: "停止中でも安全情報は閲覧できます。必要なタイミングでいつでも再開できます。",
-    ctaLabel: "無料トライアルを開始する",
+    badgeLabel: "無料プラン",
+    statusLabel: "基本機能は引き続き永続無料です",
+    headline: "基本機能をすべてご利用いただけます",
+    detail: "基本機能は制限なく無料でご利用いただけます。必要に応じてProプランをアップグレードできます。",
+    ctaLabel: "Proプランを試す",
     ctaAction: "checkout"
   },
   UNPAID: {
-    badgeLabel: "停止中",
-    statusLabel: "お支払いが未完了です",
-    headline: "支払い情報の更新で利用を再開できます",
-    detail: "停止中でも安全情報は閲覧できます。再開後に編集・通知・共有が復帰します。",
+    badgeLabel: "無料プラン",
+    statusLabel: "基本機能は引き続き永続無料です",
+    headline: "基本機能をすべてご利用いただけます",
+    detail: "基本機能は制限なく無料でご利用いただけます。Pro機能の再開にはお支払い情報の更新が必要です。",
     ctaLabel: "契約を管理する",
     ctaAction: "portal"
   },
   GRACE: {
-    badgeLabel: "猶予中",
-    statusLabel: "一部機能が制限されています",
-    headline: "支払い情報の更新で全機能が復帰します",
-    detail: "猶予中でも安全情報は閲覧できます。契約管理からいつでも再開できます。",
+    badgeLabel: "無料プラン",
+    statusLabel: "基本機能は引き続き永続無料です",
+    headline: "基本機能をすべてご利用いただけます",
+    detail: "基本機能は制限なく無料でご利用いただけます。Pro機能の継続には更新が必要です。",
     ctaLabel: "契約を管理する",
     ctaAction: "portal"
   }
@@ -538,10 +538,7 @@ export function ClientSettings({
       <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
         <h2 className="text-lg font-bold text-white flex items-center gap-2">💳 課金プラン</h2>
         <p className="mt-1 text-sm text-slate-400">
-          {annualPlanAvailable 
-            ? "30日無料トライアル、その後月額680円または年額7,800円（Stripe定期課金）"
-            : "30日無料トライアル、その後月額680円（Stripe定期課金）"
-          }
+          基本機能（記録・閲覧・提示）は永続無料です。高度AI分析やOCR書類読取拡張はProプランでご利用いただけます。
         </p>
         
         {billing?.subscriptionStatus === "INCOMPLETE" && annualPlanAvailable && (
