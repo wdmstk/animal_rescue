@@ -49,11 +49,23 @@ export async function requireHouseholdMember(
   return true;
 }
 
-export async function requirePetAccess(userId: string, petId: string): Promise<AuthorizedPet | NextResponse> {
-  const pet = await prisma.pet.findUnique({
-    where: { id: petId },
+export async function requirePetAccess(userId: string, petIdOrToken: string): Promise<AuthorizedPet | NextResponse> {
+  // 1. Try finding pet by pet.id
+  let pet = await prisma.pet.findUnique({
+    where: { id: petIdOrToken },
     select: { id: true, householdId: true }
   });
+
+  // 2. Fallback: Try finding pet via PetEmergencyToken.token
+  if (!pet) {
+    const tokenRecord = await prisma.petEmergencyToken.findFirst({
+      where: { token: petIdOrToken },
+      select: { petId: true, pet: { select: { id: true, householdId: true } } }
+    });
+    if (tokenRecord?.pet) {
+      pet = tokenRecord.pet;
+    }
+  }
 
   if (!pet) {
     return NextResponse.json({ error: "Pet not found" }, { status: 404 });
