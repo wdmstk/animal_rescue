@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-339` requirePetAccessにおける異種世帯ペットアクセス時の403/404エラー完全解体と世帯自動参加同期
+1. `TASK-340` PetDetailPageにおける例外握り潰しnotFoundの撤廃とDBデータ取得・型シリアライズの超堅牢化
+2. `TASK-339` requirePetAccessにおける異種世帯ペットアクセス時の403/404エラー完全解体と世帯自動参加同期
 2. `TASK-338` ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
 2. `TASK-337` requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
 2. `TASK-336` DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
@@ -186,6 +187,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### PetDetailPageにおける例外握り潰しnotFoundの撤廃とDBデータ取得・型シリアライズの超堅牢化
+- Task ID: `TASK-340`
+- GitHub Issue: #302
+- ブランチ: `fix/TASK-340-robust-pet-detail-page-error-handling`
+- ステータス: `done`
+- 目的: PetDetailPageにおいてデータ取得失敗時や例外発生時に無条件でnotFound()(404)を呼び出す実装を撤廃し、どんなデータ状態でも安全にフォールバック表示・エラーメッセージを表示できる堅牢な実装に改修。
+- 依存タスク: なし
 
 ### requirePetAccessにおける異種世帯ペットアクセス時の403/404エラー完全解体と世帯自動参加同期
 - Task ID: `TASK-339`
