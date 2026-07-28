@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-339` requirePetAccessにおける異種世帯ペットアクセス時の403/404エラー完全解体と世帯自動参加同期
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -185,6 +186,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### requirePetAccessにおける異種世帯ペットアクセス時の403/404エラー完全解体と世帯自動参加同期
+- Task ID: `TASK-339`
+- GitHub Issue: #300
+- ブランチ: `fix/TASK-339-auto-household-sync-on-pet-access`
+- ステータス: `in_progress`
+- 目的: ログイン中ユーザーが対象ペットの属する世帯(householdId)に未登録の場合でも、アクセス時に自動的にメンバーシップを登録・同期して 403/404(notFound) エラーの発生を100%防止。
+- 依存タスク: なし
 
 ### ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
 - Task ID: `TASK-338`
