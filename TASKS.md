@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-332` ペット詳細画面 Server Component レンダリングエラー修復（内部fetch撤廃・Date型安全化）
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -178,6 +179,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### ペット詳細画面 Server Component レンダリングエラー修復（内部fetch撤廃・Date型安全化）
+- Task ID: `TASK-332`
+- GitHub Issue: #286
+- ブランチ: `fix/TASK-332-pet-detail-server-component-error`
+- ステータス: `in_progress`
+- 目的: ペット詳細画面(/pets/[petId])アクセス時に This page couldn't load エラーが発生する不具合を修復するため、Server Component 内での自APIループバック fetch の全廃、および Date シリアライズ処理の型ガード安全化を実施する。
+- 依存タスク: なし
 
 ### Discovery検証結果反映・旧680円サブスク撤廃・フリーミアム/AniLinkパス実装仕様設計
 - Task ID: `TASK-331`
