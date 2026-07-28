@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-334` ペット詳細画面 ISO日付フォーマット不整合・コンポーネントクラッシュ完全防護修復
+1. `TASK-335` コンソール警告・ServiceWorkerリダイレクトエラー・favicon欠落の全面解消
+2. `TASK-334` ペット詳細画面 ISO日付フォーマット不整合・コンポーネントクラッシュ完全防護修復
 2. `TASK-333` ペット詳細画面 Server-Client 境界シリアライズエラー修復（Prisma Date/Decimal オブジェクトプレーン化）
 2. `TASK-332` ペット詳細画面 Server Component レンダリングエラー修復（内部fetch撤廃・Date型安全化）
 2. `TASK-331` Discovery検証結果反映・旧680円サブスク撤廃・フリーミアム/AniLinkパス実装仕様設計
@@ -181,6 +182,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### コンソール警告・ServiceWorkerリダイレクトエラー・favicon欠落の全面解消
+- Task ID: `TASK-335`
+- GitHub Issue: #292
+- ブランチ: `fix/TASK-335-console-warnings-sw-fix`
+- ステータス: `done`
+- 目的: middleware.ts の matcher/PUBLIC_PATHS 拡充による ServiceWorker (sw.js) リダイレクトエラー解消、public/favicon.ico 配置、およびパスワードフォームへの autocomplete 属性付与。
+- 依存タスク: なし
 
 ### ペット詳細画面 ISO日付フォーマット不整合・コンポーネントクラッシュ完全防護修復
 - Task ID: `TASK-334`

@@ -71,6 +71,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             id="email"
             name="email"
             type="email"
+            autoComplete="email"
             placeholder="Email"
             className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:focus:ring-slate-400"
             required
@@ -80,6 +81,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             id="password"
             name="password"
             type="password"
+            autoComplete="current-password"
             placeholder="Password"
             className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:focus:ring-slate-400"
             required

@@ -68,6 +68,7 @@ export default async function ResetPasswordPage({ searchParams }: ResetPasswordP
           id="password"
           name="password"
           type="password"
+          autoComplete="new-password"
           placeholder="新しいパスワード（8文字以上、大文字・小文字・数字を含む）"
           className="w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 dark:focus:ring-slate-400"
           required
