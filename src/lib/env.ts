@@ -46,10 +46,6 @@ if (!stripePriceIdMonthly680) {
 
 const stripePriceIdAnnual6800 = parsed.data.STRIPE_PRICE_ID_ANNUAL_6800;
 
-if (!stripePriceIdAnnual6800) {
-  console.warn("STRIPE_PRICE_ID_ANNUAL_6800 not configured, annual plan will be disabled");
-}
-
 export const env = {
   ...parsed.data,
   STRIPE_PRICE_ID_MONTHLY_680: stripePriceIdMonthly680,

@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { requirePetAccess } from "@/lib/auth/pet-access";
+import { requireAuthenticatedUser, requirePetAccess } from "@/lib/auth/pet-access";
 
-const { findFirstMock, updateMock, extractMedicalDocumentMock } = vi.hoisted(() => ({
+const { findFirstMock, updateMock, countMock, findUniqueSubscriptionMock, extractMedicalDocumentMock } = vi.hoisted(() => ({
   findFirstMock: vi.fn(),
   updateMock: vi.fn(),
+  countMock: vi.fn(),
+  findUniqueSubscriptionMock: vi.fn(),
   extractMedicalDocumentMock: vi.fn()
 }));
 
@@ -11,7 +13,11 @@ vi.mock("@/lib/prisma", () => ({
   prisma: {
     petMedicalDocument: {
       findFirst: findFirstMock,
-      update: updateMock
+      update: updateMock,
+      count: countMock
+    },
+    userSubscription: {
+      findUnique: findUniqueSubscriptionMock
     }
   }
 }));
@@ -26,9 +32,15 @@ describe("/api/pets/[petId]/medical-documents/[documentId]/extract", () => {
   const validPetId = "11111111-1111-4111-8111-111111111111";
   const validDocumentId = "22222222-2222-4222-8222-222222222222";
   const requirePetAccessMock = vi.mocked(requirePetAccess);
+  const requireAuthenticatedUserMock = vi.mocked(requireAuthenticatedUser);
 
   beforeEach(() => {
     vi.clearAllMocks();
+    countMock.mockResolvedValue(0);
+    findUniqueSubscriptionMock.mockResolvedValue({ status: "INCOMPLETE" });
+    requireAuthenticatedUserMock.mockResolvedValue({
+      userId: "22222222-2222-4222-8222-222222222222"
+    });
     requirePetAccessMock.mockResolvedValue({
       petId: validPetId,
       householdId: "11111111-1111-4111-8111-111111111111"
@@ -97,5 +109,18 @@ describe("/api/pets/[petId]/medical-documents/[documentId]/extract", () => {
     });
 
     expect(response.status).toBe(500);
+  });
+
+  it("returns 402 when monthly OCR limit (2) is exceeded for free user", async () => {
+    findFirstMock.mockResolvedValue({ id: validDocumentId, petId: validPetId, photoUrl: "https://example.com/a.jpg" });
+    countMock.mockResolvedValue(2);
+
+    const response = await POST(new Request("http://localhost", { method: "POST" }), {
+      params: Promise.resolve({ petId: validPetId, documentId: validDocumentId })
+    });
+
+    expect(response.status).toBe(402);
+    const body = await response.json();
+    expect(body.code).toBe("OCR_LIMIT_EXCEEDED");
   });
 });

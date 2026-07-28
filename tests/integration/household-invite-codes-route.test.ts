@@ -129,12 +129,19 @@ describe("POST /api/households/invite-codes", () => {
     expect(createMock).not.toHaveBeenCalled();
   });
 
-  it("returns 402 when subscription is inactive", async () => {
+  it("allows creating invite code even for free plan users", async () => {
     getUserMock.mockResolvedValue({
       data: { user: { id: "22222222-2222-4222-8222-222222222222" } },
       error: null
     });
     userSubscriptionFindUniqueMock.mockResolvedValueOnce({ status: "INCOMPLETE" });
+    createMock.mockResolvedValueOnce({
+      id: "invite-free",
+      householdId: "11111111-1111-4111-8111-111111111111",
+      createdBy: "22222222-2222-4222-8222-222222222222",
+      code: "FREE99",
+      expiresAt: new Date("2026-05-01T00:00:00.000Z")
+    });
 
     const response = await POST(
       new Request("http://localhost", {
@@ -143,8 +150,8 @@ describe("POST /api/households/invite-codes", () => {
       })
     );
 
-    expect(response.status).toBe(402);
-    expect(createMock).not.toHaveBeenCalled();
+    expect(response.status).toBe(201);
+    expect(createMock).toHaveBeenCalled();
   });
 
   it("resolves householdId from membership when omitted", async () => {

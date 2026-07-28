@@ -9,6 +9,47 @@ import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { AiProposalCard } from "@/components/ui/ai-proposal-card";
+import { MedicalDisclaimer } from "@/components/common/medical-disclaimer";
+
+const compressImageFile = (file: File, maxWidth = 1200, quality = 0.8): Promise<File> => {
+  return new Promise((resolve) => {
+    if (!file.type.startsWith("image/")) {
+      resolve(file);
+      return;
+    }
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            const compressed = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), { type: "image/jpeg" });
+            resolve(compressed);
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+};
 
 type MedicalRecordType = "EXAM" | "SURGERY" | "LAB" | "MEDICATION" | "OTHER";
 type DocumentType = "MEDICATION" | "VACCINATION" | "LAB" | "RECEIPT" | "OTHER";
@@ -190,8 +231,10 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
     setDocumentError(null);
 
     try {
+      // クライアント側で画像をリサイズ・圧縮（Supabase容量節約）
+      const compressedFile = await compressImageFile(selectedFile);
       const formData = new FormData();
-      formData.append("file", selectedFile);
+      formData.append("file", compressedFile);
 
       const uploadResponse = await fetch(`/api/pets/${petId}/medical-documents/upload`, {
         method: "POST",
@@ -244,6 +287,11 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
       const response = await fetch(`/api/pets/${petId}/medical-documents/${uploadedDocumentId}/extract`, {
         method: "POST"
       });
+
+      if (response.status === 402) {
+        const errorPayload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(errorPayload?.error ?? "今月の無料OCR利用枠（月2枚）に達しました。Proプランで制限なくご利用いただけます。");
+      }
 
       if (!response.ok) {
         throw new Error("OCR抽出に失敗しました。");
@@ -342,7 +390,7 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
             </div>
 
             {extracted ? (
-              <div className="mt-3">
+              <div className="mt-3 space-y-3">
                 <AiProposalCard
                   summary={`【${extracted.documentType}】 ${extracted.summary}`}
                   reasons={extracted.reasons ?? [`病院名: ${extracted.hospitalName ?? "未記入"}`, `診察日: ${extracted.examinedOn ?? "未記入"}`]}
@@ -352,6 +400,7 @@ export function MedicalRecordManager({ petId, initialItems }: MedicalRecordManag
                   updatedAt={extracted.updatedAt ?? new Date().toISOString()}
                   disclaimer={extracted.disclaimer}
                 />
+                <MedicalDisclaimer variant="banner" />
               </div>
             ) : null}
           </div>
