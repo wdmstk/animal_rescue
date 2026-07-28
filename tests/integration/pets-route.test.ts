@@ -65,7 +65,10 @@ describe("/api/pets", () => {
         emergencyToken: true,
         photos: true
       },
-      orderBy: { createdAt: "desc" }
+      take: 21,
+      cursor: undefined,
+      skip: 0,
+      orderBy: { id: "desc" }
     });
   });
 

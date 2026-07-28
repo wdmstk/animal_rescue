@@ -19,7 +19,7 @@ const pool =
     connectionString: databaseUrl,
     max: 2, // サーバーレス環境での1インスタンスあたりのプール上限を最小限に設定してコネクションバーストを防ぐ
     idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000
+    connectionTimeoutMillis: 10000
   });
 
 const adapter = new PrismaPg(pool);

@@ -25,7 +25,8 @@ const vaccinationBaseSchema = z.object({
   type: z.enum(["RABIES", "CORE", "HEARTWORM", "FLEA_TICK", "OTHER"]),
   customTypeName: z.string().trim().min(1).max(50).optional().nullable(),
   date: z.string().date(),
-  nextDue: z.string().date().optional().nullable()
+  nextDue: z.string().date().optional().nullable(),
+  documentUrl: z.string().url().optional().nullable()
 });
 
 const vaccinationSchema = vaccinationBaseSchema.superRefine(validateOtherType);
@@ -34,7 +35,9 @@ const vaccinationUpdateSchema = vaccinationBaseSchema.extend({
   id: z.string().uuid()
 }).superRefine(validateOtherType);
 
-export async function GET(_: Request, { params }: { params: Promise<{ petId: string }> }) {
+import { paginationQuerySchema, buildPaginatedResponse } from "@/lib/pagination";
+
+export async function GET(request: Request | undefined, { params }: { params: Promise<{ petId: string }> }) {
   const parsedParams = petIdParamSchema.safeParse(await params);
   if (!parsedParams.success) {
     return badRequest(parsedParams.error);
@@ -52,15 +55,26 @@ export async function GET(_: Request, { params }: { params: Promise<{ petId: str
   const billing = await getUserBillingAccessState(auth.userId);
   const historyWindowStart = getHistoryWindowStartDate(billing.accessPolicy.historyWindowDays);
 
+  const url = new URL(request?.url ?? "http://localhost");
+  const parsedQuery = paginationQuerySchema.safeParse({
+    limit: url.searchParams.get("limit") ?? undefined,
+    cursor: url.searchParams.get("cursor") ?? undefined
+  });
+  const { limit, cursor } = parsedQuery.success ? parsedQuery.data : { limit: 20, cursor: undefined };
+
   const data = await prisma.petVaccination.findMany({
     where: {
       petId: access.petId,
       date: historyWindowStart ? { gte: historyWindowStart } : undefined
     },
-    orderBy: { date: "desc" }
+    take: limit + 1,
+    cursor: cursor ? { id: cursor } : undefined,
+    skip: cursor ? 1 : 0,
+    orderBy: [{ date: "desc" }, { id: "desc" }]
   });
 
-  return NextResponse.json({ data });
+  const paginated = buildPaginatedResponse(data, limit);
+  return NextResponse.json(paginated);
 }
 
 export async function POST(request: Request, { params }: { params: Promise<{ petId: string }> }) {
@@ -155,7 +169,8 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ pe
       type: parsed.data.type,
       customTypeName: parsed.data.type === "OTHER" ? parsed.data.customTypeName ?? null : null,
       date: new Date(parsed.data.date),
-      nextDue: parsed.data.nextDue ? new Date(parsed.data.nextDue) : null
+      nextDue: parsed.data.nextDue ? new Date(parsed.data.nextDue) : null,
+      documentUrl: parsed.data.documentUrl ?? null
     }
   });
 

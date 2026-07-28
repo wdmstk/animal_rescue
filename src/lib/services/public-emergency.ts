@@ -2,6 +2,11 @@ import type { EmergencyViewPayload } from "@/types/domain";
 
 type RawEmergency = {
   petName: string;
+  species?: string | null;
+  breed?: string | null;
+  sex?: string | null;
+  weightKg?: number | null;
+  photoUrl?: string | null;
   disease: string | null;
   allergy: string | null;
   currentMedications: string | null;
@@ -16,9 +21,10 @@ type RawEmergency = {
   emergencyContactPhone2: string | null;
   insuranceCompany: string | null;
   insurancePolicyNumber: string | null;
+  specialNotes?: string | null;
 };
 
-const normalize = (value: string | null): string | null => {
+const normalize = (value: string | null | undefined): string | null => {
   if (!value) {
     return null;
   }
@@ -29,6 +35,11 @@ const normalize = (value: string | null): string | null => {
 
 export const toPublicEmergencyView = (raw: RawEmergency): EmergencyViewPayload => ({
   petName: raw.petName,
+  species: normalize(raw.species ?? null),
+  breed: normalize(raw.breed ?? null),
+  sex: normalize(raw.sex ?? null),
+  weightKg: raw.weightKg ?? null,
+  photoUrl: normalize(raw.photoUrl ?? null),
   disease: normalize(raw.disease),
   medications: normalize(raw.currentMedications),
   allergy: normalize(raw.allergy),
@@ -42,5 +53,6 @@ export const toPublicEmergencyView = (raw: RawEmergency): EmergencyViewPayload =
   emergencyContactName2: normalize(raw.emergencyContactName2),
   emergencyContactPhone2: normalize(raw.emergencyContactPhone2),
   insuranceCompany: normalize(raw.insuranceCompany),
-  insurancePolicyNumber: normalize(raw.insurancePolicyNumber)
+  insurancePolicyNumber: normalize(raw.insurancePolicyNumber),
+  specialNotes: normalize(raw.specialNotes ?? null)
 });

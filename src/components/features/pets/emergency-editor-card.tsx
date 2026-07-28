@@ -22,6 +22,7 @@ type EmergencyInfo = {
   emergencyContactPhone2: string | null;
   insuranceCompany: string | null;
   insurancePolicyNumber: string | null;
+  specialNotes?: string | null;
 };
 
 type EmergencyEditorCardProps = {
@@ -91,6 +92,7 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
   const [emergencyContactPhone2, setEmergencyContactPhone2] = useState(initialEmergencyInfo?.emergencyContactPhone2 ?? "");
   const [insuranceCompany, setInsuranceCompany] = useState(initialEmergencyInfo?.insuranceCompany ?? "");
   const [insurancePolicyNumber, setInsurancePolicyNumber] = useState(initialEmergencyInfo?.insurancePolicyNumber ?? "");
+  const [specialNotes, setSpecialNotes] = useState(initialEmergencyInfo?.specialNotes ?? "");
 
   const vetDisplay =
     toNullable(vetName) && toNullable(vetPhone)
@@ -124,7 +126,8 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
           emergencyContactName2: toNullable(emergencyContactName2),
           emergencyContactPhone2: toNullable(emergencyContactPhone2),
           insuranceCompany: toNullable(insuranceCompany),
-          insurancePolicyNumber: toNullable(insurancePolicyNumber)
+          insurancePolicyNumber: toNullable(insurancePolicyNumber),
+          specialNotes: toNullable(specialNotes)
         })
       });
 
@@ -142,7 +145,7 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
       setIsEditing(false);
       router.refresh();
     } catch {
-      setErrorMessage("通信エラーが発生しました。時間をおいて再度お試しください。");
+      setErrorMessage("通信エラーが発生しました。ネットワーク状態を確認してください。");
     } finally {
       setIsSubmitting(false);
     }
@@ -150,7 +153,7 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
 
   if (!isEditing) {
     return (
-      <div className="space-y-3">
+      <div className="relative group space-y-3">
         <EmergencyCard
           disease={toNullable(disease) ?? "未登録"}
           medications={toNullable(currentMedications) ?? "未登録"}
@@ -159,6 +162,7 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
           contact={contactDisplay}
           insuranceCompany={toNullable(insuranceCompany)}
           insurancePolicyNumber={toNullable(insurancePolicyNumber)}
+          specialNotes={toNullable(specialNotes)}
         />
         <button
           type="button"
@@ -379,6 +383,20 @@ export function EmergencyEditorCard({ petId, initialEmergencyInfo }: EmergencyEd
               maxLength={100}
               placeholder="例: IP-1234567-A"
               className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all"
+            />
+          </label>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-300">
+            特記事項（自由記述）
+            <textarea
+              value={specialNotes}
+              onChange={(event) => setSpecialNotes(event.target.value)}
+              maxLength={2000}
+              rows={3}
+              placeholder="例: 雷の音を怖がります。マイクロチップ装着済み。"
+              className="mt-1.5 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:border-blue-500/50 focus:outline-none transition-all resize-none"
             />
           </label>
         </div>

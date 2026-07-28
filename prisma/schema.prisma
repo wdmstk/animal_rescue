@@ -291,6 +291,7 @@ model PetVaccination {
   customTypeName String?
   date       DateTime
   nextDue    DateTime?
+  documentUrl String?        @db.Text
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
 

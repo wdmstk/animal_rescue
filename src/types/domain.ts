@@ -1,5 +1,10 @@
 export type EmergencyViewPayload = {
   petName: string;
+  species?: string | null;
+  breed?: string | null;
+  sex?: string | null;
+  weightKg?: number | null;
+  photoUrl?: string | null;
   disease: string | null;
   medications: string | null;
   allergy: string | null;
@@ -14,6 +19,7 @@ export type EmergencyViewPayload = {
   emergencyContactPhone2: string | null;
   insuranceCompany: string | null;
   insurancePolicyNumber: string | null;
+  specialNotes?: string | null;
   recentMedicationSummaries?: string[];
   recentVaccinationSummaries?: string[];
   recentMedicalRecordSummaries?: string[];
@@ -34,4 +40,5 @@ export type EmergencyInfoInput = {
   emergencyContactPhone2?: string | null;
   insuranceCompany?: string | null;
   insurancePolicyNumber?: string | null;
+  specialNotes?: string | null;
 };

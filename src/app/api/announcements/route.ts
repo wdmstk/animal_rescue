@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET() {
+import { paginationQuerySchema, buildPaginatedResponse } from "@/lib/pagination";
+
+export async function GET(request: Request) {
   if (process.env.E2E_TEST_MODE === "true" || process.env.NODE_ENV === "test") {
     return NextResponse.json({
       success: true,
@@ -16,11 +18,22 @@ export async function GET() {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         }
-      ]
+      ],
+      pagination: {
+        nextCursor: null,
+        hasMore: false
+      }
     });
   }
 
   try {
+    const url = new URL(request.url);
+    const parsedQuery = paginationQuerySchema.safeParse({
+      limit: url.searchParams.get("limit") ?? undefined,
+      cursor: url.searchParams.get("cursor") ?? undefined
+    });
+    const { limit, cursor } = parsedQuery.success ? parsedQuery.data : { limit: 20, cursor: undefined };
+
     const now = new Date();
     const announcements = await prisma.announcement.findMany({
       where: {
@@ -31,13 +44,16 @@ export async function GET() {
           { expiresAt: { gte: now } }
         ]
       },
-      orderBy: { publishedAt: "desc" },
-      take: 10
+      take: limit + 1,
+      cursor: cursor ? { id: cursor } : undefined,
+      skip: cursor ? 1 : 0,
+      orderBy: [{ publishedAt: "desc" }, { id: "desc" }]
     });
 
+    const paginated = buildPaginatedResponse(announcements, limit);
     return NextResponse.json({
       success: true,
-      data: announcements
+      ...paginated
     });
   } catch (error: any) {
     console.error("Failed to fetch public announcements:", error);
