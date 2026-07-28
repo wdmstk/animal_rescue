@@ -34,15 +34,18 @@ export async function requireHouseholdMember(
   userId: string,
   householdId: string
 ): Promise<true | NextResponse> {
-  const membership = await prisma.householdMember.findFirst({
+  const household = await prisma.household.findFirst({
     where: {
-      householdId,
-      userId
+      id: householdId,
+      OR: [
+        { ownerId: userId },
+        { members: { some: { userId } } }
+      ]
     },
     select: { id: true }
   });
 
-  if (!membership) {
+  if (!household) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -53,11 +56,20 @@ export async function requirePetAccess(userId: string, petId: string): Promise<A
   const pet = await prisma.pet.findFirst({
     where: {
       id: petId,
-      household: {
-        members: {
-          some: { userId }
+      OR: [
+        {
+          household: {
+            members: {
+              some: { userId }
+            }
+          }
+        },
+        {
+          household: {
+            ownerId: userId
+          }
         }
-      }
+      ]
     },
     select: {
       id: true,
