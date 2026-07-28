@@ -164,6 +164,8 @@ export default async function PetDetailPage({
     return null;
   };
 
+  const toPlainObject = <T,>(obj: T): T => JSON.parse(JSON.stringify(obj));
+
   let activeToken = pet.emergencyToken?.isActive ? pet.emergencyToken.token : null;
 
   if (!activeToken) {
@@ -213,6 +215,12 @@ export default async function PetDetailPage({
     }))
   });
 
+  const plainEmergencyInfo = pet.emergencyInfo ? toPlainObject(pet.emergencyInfo) : null;
+  const plainMedications = toPlainObject(pet.medications);
+  const plainVaccinations = toPlainObject(pet.vaccinations);
+  const plainMedicalRecords = toPlainObject(pet.medicalRecords);
+  const plainPhotos = toPlainObject(pet.photos);
+
   return (
     <div className="space-y-4">
       {emergencyLinkToken && !pet.isArchived ? (
@@ -247,13 +255,13 @@ export default async function PetDetailPage({
             notesPersonality: pet.notesPersonality,
             notesFeatures: pet.notesFeatures,
             mainPhotoUrl: pet.mainPhotoUrl,
-            photos: pet.photos,
+            photos: plainPhotos,
             reproductiveStatus: pet.reproductiveStatus,
             sterilizedAt: safeToIsoString(pet.sterilizedAt),
-            emergencyInfo: pet.emergencyInfo,
-            medications: pet.medications,
-            vaccinations: pet.vaccinations,
-            medicalRecords: pet.medicalRecords
+            emergencyInfo: plainEmergencyInfo,
+            medications: plainMedications,
+            vaccinations: plainVaccinations,
+            medicalRecords: plainMedicalRecords
           }}
           activeToken={activeToken}
           changeHistoryItems={changeHistoryItems}
