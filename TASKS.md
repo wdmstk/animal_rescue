@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-340` PetDetailPageにおける例外握り潰しnotFoundの撤廃とDBデータ取得・型シリアライズの超堅牢化
+1. `TASK-341` PetDetailPageにおけるDB取得失敗・ダミーフォールバックの解消と実データ復旧
+2. `TASK-340` PetDetailPageにおける例外握り潰しnotFoundの撤廃とDBデータ取得・型シリアライズの超堅牢化
 2. `TASK-339` requirePetAccessにおける異種世帯ペットアクセス時の403/404エラー完全解体と世帯自動参加同期
 2. `TASK-338` ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
 2. `TASK-337` requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
@@ -187,6 +188,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### PetDetailPageにおけるDB取得失敗・ダミーフォールバックの解消と実データ復旧
+- Task ID: `TASK-341`
+- GitHub Issue: #304
+- ブランチ: `fix/TASK-341-restore-actual-pet-data-fetching`
+- ステータス: `done`
+- 目的: PetDetailPageにおいてクエリ失敗時にダミーデータ(ペット情報/未登録)へフォールバックしていた不具合を解消し、登録された実ペットデータを確実に取得・レンダリング。
+- 依存タスク: なし
 
 ### PetDetailPageにおける例外握り潰しnotFoundの撤廃とDBデータ取得・型シリアライズの超堅牢化
 - Task ID: `TASK-340`

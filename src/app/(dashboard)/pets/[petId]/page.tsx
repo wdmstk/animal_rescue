@@ -130,29 +130,35 @@ export default async function PetDetailPage({
 
   let pet = null;
   try {
-    // 1. Try by pet.id
+    // 1. Primary DB query by pet.id
     pet = await prisma.pet.findUnique({
-      where: { id: targetPetId },
+      where: { id: petId },
       include: {
         emergencyInfo: true,
-        medicalRecords: {
-          where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
-          orderBy: { date: "desc" }
-        },
-        medications: {
-          where: historyWindowStart ? { startDate: { gte: historyWindowStart } } : undefined,
-          orderBy: { startDate: "desc" }
-        },
-        vaccinations: {
-          where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
-          orderBy: { date: "desc" }
-        },
+        medicalRecords: { orderBy: { date: "desc" } },
+        medications: { orderBy: { startDate: "desc" } },
+        vaccinations: { orderBy: { date: "desc" } },
         emergencyToken: true,
         photos: { orderBy: { sortOrder: "asc" } }
       }
     });
 
-    // 2. Try by token fallback
+    // 2. Secondary DB query by targetPetId if different from petId
+    if (!pet && targetPetId && targetPetId !== petId) {
+      pet = await prisma.pet.findUnique({
+        where: { id: targetPetId },
+        include: {
+          emergencyInfo: true,
+          medicalRecords: { orderBy: { date: "desc" } },
+          medications: { orderBy: { startDate: "desc" } },
+          vaccinations: { orderBy: { date: "desc" } },
+          emergencyToken: true,
+          photos: { orderBy: { sortOrder: "asc" } }
+        }
+      });
+    }
+
+    // 3. Fallback DB query via PetEmergencyToken.token
     if (!pet) {
       const tokenRecord = await prisma.petEmergencyToken.findFirst({
         where: { token: petId },
@@ -163,18 +169,9 @@ export default async function PetDetailPage({
           where: { id: tokenRecord.petId },
           include: {
             emergencyInfo: true,
-            medicalRecords: {
-              where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
-              orderBy: { date: "desc" }
-            },
-            medications: {
-              where: historyWindowStart ? { startDate: { gte: historyWindowStart } } : undefined,
-              orderBy: { startDate: "desc" }
-            },
-            vaccinations: {
-              where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
-              orderBy: { date: "desc" }
-            },
+            medicalRecords: { orderBy: { date: "desc" } },
+            medications: { orderBy: { startDate: "desc" } },
+            vaccinations: { orderBy: { date: "desc" } },
             emergencyToken: true,
             photos: { orderBy: { sortOrder: "asc" } }
           }
@@ -182,9 +179,16 @@ export default async function PetDetailPage({
       }
     }
 
-    // 3. Fallback: Any first pet of user
+    // 4. Fallback DB query by user's first available pet
     if (!pet) {
       pet = await prisma.pet.findFirst({
+        where: {
+          household: {
+            members: {
+              some: { userId: auth.userId }
+            }
+          }
+        },
         include: {
           emergencyInfo: true,
           medicalRecords: { orderBy: { date: "desc" } },
@@ -199,29 +203,12 @@ export default async function PetDetailPage({
     console.error("Error fetching pet data:", error);
   }
 
-  // Fallback default pet if database contains no pet record
-  const petData = pet ?? {
-    id: petId,
-    name: "ペット情報",
-    species: "other",
-    breed: "未登録",
-    sex: "UNKNOWN",
-    reproductiveStatus: "UNKNOWN",
-    sterilizedAt: null,
-    ageYears: null,
-    weightKg: null,
-    birthday: null,
-    notesPersonality: null,
-    notesFeatures: null,
-    mainPhotoUrl: null,
-    isArchived: false,
-    photos: [],
-    emergencyInfo: null,
-    medications: [],
-    vaccinations: [],
-    medicalRecords: [],
-    emergencyToken: null
-  };
+  // If no pet exists at all in the system, show 404
+  if (!pet) {
+    notFound();
+  }
+
+  const petData = pet;
 
   const safeToIsoString = (val: unknown): string | null => {
     if (!val) return null;
