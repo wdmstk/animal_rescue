@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-341` PetDetailPageにおけるDB取得失敗・ダミーフォールバックの解消と実データ復旧
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -187,6 +188,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### PetDetailPageにおけるDB取得失敗・ダミーフォールバックの解消と実データ復旧
+- Task ID: `TASK-341`
+- GitHub Issue: #304
+- ブランチ: `fix/TASK-341-restore-actual-pet-data-fetching`
+- ステータス: `in_progress`
+- 目的: PetDetailPageにおいてクエリ失敗時にダミーデータ(ペット情報/未登録)へフォールバックしていた不具合を解消し、登録された実ペットデータを確実に取得・レンダリング。
+- 依存タスク: なし
 
 ### PetDetailPageにおける例外握り潰しnotFoundの撤廃とDBデータ取得・型シリアライズの超堅牢化
 - Task ID: `TASK-340`
