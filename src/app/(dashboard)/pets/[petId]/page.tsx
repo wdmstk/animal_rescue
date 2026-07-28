@@ -130,26 +130,32 @@ export default async function PetDetailPage({
     };
   }
 
-  const pet = await prisma.pet.findUnique({
-    where: { id: access.petId },
-    include: {
-      emergencyInfo: true,
-      medicalRecords: {
-        where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
-        orderBy: { date: "desc" }
-      },
-      medications: {
-        where: historyWindowStart ? { startDate: { gte: historyWindowStart } } : undefined,
-        orderBy: { startDate: "desc" }
-      },
-      vaccinations: {
-        where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
-        orderBy: { date: "desc" }
-      },
-      emergencyToken: true,
-      photos: { orderBy: { sortOrder: "asc" } }
-    }
-  });
+  let pet;
+  try {
+    pet = await prisma.pet.findUnique({
+      where: { id: access.petId },
+      include: {
+        emergencyInfo: true,
+        medicalRecords: {
+          where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
+          orderBy: { date: "desc" }
+        },
+        medications: {
+          where: historyWindowStart ? { startDate: { gte: historyWindowStart } } : undefined,
+          orderBy: { startDate: "desc" }
+        },
+        vaccinations: {
+          where: historyWindowStart ? { date: { gte: historyWindowStart } } : undefined,
+          orderBy: { date: "desc" }
+        },
+        emergencyToken: true,
+        photos: { orderBy: { sortOrder: "asc" } }
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching pet data:", error);
+    notFound();
+  }
 
   if (!pet) {
     notFound();
@@ -194,20 +200,20 @@ export default async function PetDetailPage({
   const emergencyLinkToken = process.env.PLAYWRIGHT_E2E === "1" ? E2E_PUBLIC_EMERGENCY_TOKEN : activeToken;
   const changeHistoryItems = buildChangeHistoryItems({
     emergencyInfo: pet.emergencyInfo ? { updatedAt: safeToIsoString(pet.emergencyInfo.updatedAt) ?? new Date().toISOString() } : null,
-    medications: pet.medications.map((item) => ({
+    medications: (pet.medications || []).map((item) => ({
       id: item.id,
       name: item.name,
       updatedAt: safeToIsoString(item.updatedAt) ?? new Date().toISOString(),
       createdAt: safeToIsoString(item.createdAt) ?? new Date().toISOString()
     })),
-    vaccinations: pet.vaccinations.map((item) => ({
+    vaccinations: (pet.vaccinations || []).map((item) => ({
       id: item.id,
       type: item.type,
       customTypeName: item.customTypeName,
       updatedAt: safeToIsoString(item.updatedAt) ?? new Date().toISOString(),
       createdAt: safeToIsoString(item.createdAt) ?? new Date().toISOString()
     })),
-    medicalRecords: pet.medicalRecords.map((item) => ({
+    medicalRecords: (pet.medicalRecords || []).map((item) => ({
       id: item.id,
       title: item.title,
       updatedAt: safeToIsoString(item.updatedAt) ?? new Date().toISOString(),
@@ -216,10 +222,10 @@ export default async function PetDetailPage({
   });
 
   const plainEmergencyInfo = pet.emergencyInfo ? toPlainObject(pet.emergencyInfo) : null;
-  const plainMedications = toPlainObject(pet.medications);
-  const plainVaccinations = toPlainObject(pet.vaccinations);
-  const plainMedicalRecords = toPlainObject(pet.medicalRecords);
-  const plainPhotos = toPlainObject(pet.photos);
+  const plainMedications = toPlainObject(pet.medications || []);
+  const plainVaccinations = toPlainObject(pet.vaccinations || []);
+  const plainMedicalRecords = toPlainObject(pet.medicalRecords || []);
+  const plainPhotos = toPlainObject(pet.photos || []);
 
   return (
     <div className="space-y-4">
