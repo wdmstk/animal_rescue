@@ -48,6 +48,27 @@ const reproductiveLabelMap: Record<ReproductiveStatus, string> = {
   SPAYED: "避妊済み",
   UNKNOWN: "不明"
 };
+export const normalizeSpecies = (val: unknown): Species => {
+  const str = String(val || "").toLowerCase();
+  if (str === "dog" || str === "犬") return "dog";
+  if (str === "cat" || str === "猫") return "cat";
+  return "other";
+};
+
+export const normalizeSex = (val: unknown): Sex => {
+  const str = String(val || "").toUpperCase();
+  if (str === "MALE" || str === "オス" || str === "男") return "MALE";
+  if (str === "FEMALE" || str === "メス" || str === "女") return "FEMALE";
+  return "UNKNOWN";
+};
+
+export const normalizeReproductiveStatus = (val: unknown): ReproductiveStatus => {
+  const str = String(val || "").toUpperCase();
+  if (str === "NEUTERED" || str === "去勢済み" || str === "去勢") return "NEUTERED";
+  if (str === "SPAYED" || str === "避妊済み" || str === "避妊") return "SPAYED";
+  if (str === "INTACT" || str === "未実施" || str === "未") return "INTACT";
+  return "UNKNOWN";
+};
 
 const normalizeDate = (value: string) => value.slice(0, 10);
 
@@ -63,15 +84,17 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const [name, setName] = useState(initialPet.name);
-  const [species, setSpecies] = useState<Species>(initialPet.species);
-  const [sex, setSex] = useState<Sex>(initialPet.sex);
+  const [name, setName] = useState(initialPet.name || "");
+  const [species, setSpecies] = useState<Species>(normalizeSpecies(initialPet.species));
+  const [sex, setSex] = useState<Sex>(normalizeSex(initialPet.sex));
   const [breed, setBreed] = useState(initialPet.breed ?? "");
   const [birthday, setBirthday] = useState(initialPet.birthday ? normalizeDate(initialPet.birthday) : "");
-  const [reproductiveStatus, setReproductiveStatus] = useState<ReproductiveStatus>(initialPet.reproductiveStatus);
+  const [reproductiveStatus, setReproductiveStatus] = useState<ReproductiveStatus>(
+    normalizeReproductiveStatus(initialPet.reproductiveStatus)
+  );
   const [sterilizedAt, setSterilizedAt] = useState(initialPet.sterilizedAt ? normalizeDate(initialPet.sterilizedAt) : "");
-  const [ageYears, setAgeYears] = useState(initialPet.ageYears !== null ? String(initialPet.ageYears) : "");
-  const [weightKg, setWeightKg] = useState(initialPet.weightKg !== null ? String(initialPet.weightKg) : "");
+  const [ageYears, setAgeYears] = useState(initialPet.ageYears !== null && initialPet.ageYears !== undefined ? String(initialPet.ageYears) : "");
+  const [weightKg, setWeightKg] = useState(initialPet.weightKg !== null && initialPet.weightKg !== undefined ? String(initialPet.weightKg) : "");
   const [notesPersonality, setNotesPersonality] = useState(initialPet.notesPersonality ?? "");
   const [notesFeatures, setNotesFeatures] = useState(initialPet.notesFeatures ?? "");
 
@@ -122,13 +145,14 @@ export function PetProfileEditorCard({ petId, initialPet }: PetProfileEditorCard
     return Object.keys(newErrors).length === 0;
   };
 
-  const firstPhoto = initialPet.photos[0]?.photoUrl;
+  const photosList = Array.isArray(initialPet.photos) ? initialPet.photos : [];
+  const firstPhoto = typeof photosList[0] === "string" ? photosList[0] : photosList[0]?.photoUrl;
   const profile = {
     name,
-    species: speciesLabelMap[species],
+    species: speciesLabelMap[species] ?? "その他",
     breed: toNullable(breed) ?? "未登録",
-    sex: sexLabelMap[sex],
-    reproductive: reproductiveLabelMap[reproductiveStatus],
+    sex: sexLabelMap[sex] ?? "不明",
+    reproductive: reproductiveLabelMap[reproductiveStatus] ?? "不明",
     sterilizedAt:
       (reproductiveStatus === "NEUTERED" || reproductiveStatus === "SPAYED") && toNullable(sterilizedAt)
         ? sterilizedAt

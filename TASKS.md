@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-335` コンソール警告・ServiceWorkerリダイレクトエラー・favicon欠落の全面解消
+1. `TASK-336` DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
+2. `TASK-335` コンソール警告・ServiceWorkerリダイレクトエラー・favicon欠落の全面解消
 2. `TASK-334` ペット詳細画面 ISO日付フォーマット不整合・コンポーネントクラッシュ完全防護修復
 2. `TASK-333` ペット詳細画面 Server-Client 境界シリアライズエラー修復（Prisma Date/Decimal オブジェクトプレーン化）
 2. `TASK-332` ペット詳細画面 Server Component レンダリングエラー修復（内部fetch撤廃・Date型安全化）
@@ -182,6 +183,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
+- Task ID: `TASK-336`
+- GitHub Issue: #294
+- ブランチ: `fix/TASK-336-pet-profile-type-normalization`
+- ステータス: `done`
+- 目的: Prisma DB内の species (DOG/dog/犬) や sex (MALE/male), reproductiveStatus の表記揺れによる speciesLabelMap / sexLabelMap undefined 参照クラッシュの完全防止、および PetPhotoGallery での photoUrl マッピングのNull/型安全化。
+- 依存タスク: なし
 
 ### コンソール警告・ServiceWorkerリダイレクトエラー・favicon欠落の全面解消
 - Task ID: `TASK-335`

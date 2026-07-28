@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { FormEvent, useRef, useState } from "react";
 
 type PetPhotoGalleryProps = {
@@ -116,12 +115,10 @@ export function PetPhotoGallery({ petId, photos }: PetPhotoGalleryProps) {
       {items.length > 0 ? (
         <div className="mt-3 grid grid-cols-3 gap-2">
           {items.map((url, index) => (
-            <Image
+            <img
               key={`${url}-${index}`}
               src={url}
               alt={`サブ写真${index + 1}`}
-              width={120}
-              height={120}
               className="h-24 w-full rounded-xl object-cover border border-white/10"
             />
           ))}

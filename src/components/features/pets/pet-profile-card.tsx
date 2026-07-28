@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 
 type PetProfileProps = {
   pet: {
@@ -21,11 +21,10 @@ export function PetProfileCard({ pet }: PetProfileProps) {
   return (
     <section className="rounded-2xl border border-white/10 bg-slate-900/80 p-5 shadow-xl backdrop-blur-md">
       <div className="mb-4 flex items-center gap-4">
-        <Image
-          src={pet.photoUrl}
+        {/* Standard img to support arbitrary user image URLs without Next.js domain whitelist exceptions */}
+        <img
+          src={pet.photoUrl || "https://images.unsplash.com/photo-1517849845537-4d257902454a"}
           alt={pet.name}
-          width={96}
-          height={96}
           className="h-24 w-24 rounded-full object-cover border-2 border-white/10"
         />
         <div>
