@@ -23,7 +23,8 @@ Development Task List
 ## TASK INDEX
 
 ### in_progress
-1. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
+1. `TASK-331` Discovery検証結果反映・旧680円サブスク撤廃・フリーミアム/AniLinkパス実装仕様設計
+2. `TASK-321` 設計基盤ドキュメント群（docs/foundation）の100点品質化・指摘事項全件修正
 
 ### todo
 （なし）
@@ -177,6 +178,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### Discovery検証結果反映・旧680円サブスク撤廃・フリーミアム/AniLinkパス実装仕様設計
+- Task ID: `TASK-331`
+- GitHub Issue: #285
+- ブランチ: `docs/TASK-331-discovery-refactoring-spec`
+- ステータス: `in_progress`
+- 目的: 最新Discovery検証結果（飼い主原則無料／フリーミアム／ボトムアップGTM）に合わせて、MVPソースコード（旧仕様：月額680円サブスク前提）の改修仕様書（docs/TASK-331-discovery-refactoring-spec.md）を作成し、以降の改修作業の指針とする。
+- 依存タスク: なし
 
 ### DELETEメソッド一括実装（写真・投薬・ワクチン・メンバー除外）
 - Task ID: `TASK-327`
