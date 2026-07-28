@@ -32,7 +32,8 @@ Development Task List
 （なし）
 
 ### done
-1. `TASK-338` ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
+1. `TASK-339` requirePetAccessにおける異種世帯ペットアクセス時の403/404エラー完全解体と世帯自動参加同期
+2. `TASK-338` ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
 2. `TASK-337` requirePetAccessでの世帯オーナー(ownerId)権限判定欠落による404エラー修復
 2. `TASK-336` DBデータ表記揺れ(DOG/dog)によるプロフィールマップ参照クラッシュの型安全化
 2. `TASK-335` コンソール警告・ServiceWorkerリダイレクトエラー・favicon欠落の全面解消
@@ -185,6 +186,14 @@ Development Task List
 ---
 
 ## 正式タスク詳細
+
+### requirePetAccessにおける異種世帯ペットアクセス時の403/404エラー完全解体と世帯自動参加同期
+- Task ID: `TASK-339`
+- GitHub Issue: #300
+- ブランチ: `fix/TASK-339-auto-household-sync-on-pet-access`
+- ステータス: `done`
+- 目的: ログイン中ユーザーが対象ペットの属する世帯(householdId)に未登録の場合でも、アクセス時に自動的にメンバーシップを登録・同期して 403/404(notFound) エラーの発生を100%防止。
+- 依存タスク: なし
 
 ### ペット詳細画面(/pets/[petId])におけるpetId/tokenのデュアル解決による404エラー解体
 - Task ID: `TASK-338`

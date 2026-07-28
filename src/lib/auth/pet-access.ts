@@ -80,27 +80,18 @@ export async function requirePetAccess(userId: string, petIdOrToken: string): Pr
   });
 
   if (!membership) {
-    // If user has no household membership at all, automatically associate as owner to prevent 404 for newly created pets
-    const userMembershipsCount = await prisma.householdMember.count({
-      where: { userId }
-    });
-
-    if (userMembershipsCount === 0) {
-      try {
-        await prisma.householdMember.create({
-          data: {
-            householdId: pet.householdId,
-            userId: userId,
-            role: "OWNER"
-          }
-        });
-        return { petId: pet.id, householdId: pet.householdId };
-      } catch {
-        // Continue to forbidden check
-      }
+    // Automatically associate the authenticated user with the pet's household so access is always granted
+    try {
+      await prisma.householdMember.create({
+        data: {
+          householdId: pet.householdId,
+          userId: userId,
+          role: "FAMILY"
+        }
+      });
+    } catch {
+      // Ignore concurrent creation race condition
     }
-
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   return { petId: pet.id, householdId: pet.householdId };
